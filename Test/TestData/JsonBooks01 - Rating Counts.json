@@ -1,0 +1,80 @@
+[
+  {
+    "title": "Beginning Google Maps API 3",
+    "authors": [
+      "Gabriel Svennerberg"
+    ],
+    "publisher": "Apress",
+    "publishedDate": "2010-07-27",
+    "description": "This book is about the next generation of the Google Maps API. It will provide the reader with the skills and knowledge necessary to incorporate Google Maps version 3 on web pages in both desktop and mobile browsers. It also describes how to deal with common problems that most map developers encounter at some point, like performance and usability issues with having too many markers and possible solutions to that. Introduction to the Google Maps API version 3 Solutions to common problems most developers encounters (too many markers, common JavaScript pitfalls) Best practices using HTML/CSS/JavaScript and Google Maps What you’ll learn Building reliable Google Maps web applications How to transfer from version 2 to version 3 of the API Best practices using HTML/CSS/JavaScript Dealing with large amounts of map markers How to look up addresses and coordinates using GeoCoding and reversed GeoCoding Who this book is for Web designers/web developers with a basic knowledge of HTML, CSS and JavaScript, as well as people with knowledge of the old Google Maps API that needs help to easily transfer to the new API. And, this book is for anyone interested in learning how to integrate Google Maps on their web page. Table of Contents Introducing the Google Maps API Transferring from Version 2 to 3 Creating Your First Map Taking the Map Further with MapOptions X Marks the Spot Marker Icons InfoWindow Tips and Tricks Creating Polylines and Polygons Dealing with Massive Numbers of Markers Location, Location, Location",
+    "pageCount": 328,
+    "categories": [
+      "Computers"
+    ],
+    "averageRating": 5.0,
+    "ratingsCount": 1,
+    "imageLinksThumbnail": "http://books.google.com/books/content?id=gHb8m0GSV2MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "saleInfoCountry": "GB",
+    "saleInfoForSale": false
+  },
+  {
+    "title": "Pro PayPal E-Commerce",
+    "authors": [
+      "Damon Williams"
+    ],
+    "publisher": "Apress",
+    "publishedDate": "2007-04-30",
+    "description": "PayPal offers a wide range of payment technologies, but it’s not always clear which is the best choice for a website. This book gets under the hood to show you how the different technologies work, how to choose the right solution, and how to implement it - complete with real-world examples. The book shows developers how to integrate PayPal directly into websites to make use of its payment technologies. This allows developers, no matter what language they program in, to build shopping carts or similar channel products with PayPal as a payment option. The book is written by a PayPal employee with great knowledge of the technology.",
+    "pageCount": 279,
+    "categories": [
+      "Computers"
+    ],
+    "averageRating": 3.0,
+    "ratingsCount": 2,
+    "imageLinksThumbnail": "http://books.google.com/books/content?id=KKqi2deBsg8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "saleInfoCountry": "GB",
+    "saleInfoForSale": true,
+    "saleInfoBuyLink": "https://play.google.com/store/books/details?id=KKqi2deBsg8C&rdid=book-KKqi2deBsg8C&rdot=1&source=gbs_api",
+    "saleInfoListPriceAmount": 60.0,
+    "saleInfoListPriceCurrencyCode": "USD"
+  },
+  {
+    "title": "Advanced Android 4 Games",
+    "authors": [
+      "Vladimir Silva"
+    ],
+    "publisher": "Apress",
+    "publishedDate": "2011-12-20",
+    "description": "\"Wolfenstein 3D\"-like and \"Doom\"-like game apps are some of the classic Android games presented in the original edition of this book. Since their release, Android has progressed with the debut of Android 4.0, adding better fonts, new User Interface and Experience (UI/UX) APIs, tablet considerations, multi-touch capabilities, multi-tasking, faster performance, and much more to the Android game app development repertoire. Multi-touch code gives these games and their players dynamic input and exchange ability, for a more realistic arcade game experience. Faster and better performance offers game players a more seamless, fun arcade experience like never before on Android. There is also improved native C/C++ integration with Android's NDK as well, which makes coding, compiling, and converting both productive and efficient with gains in app performance. With actionable real-world source, Advanced Android 4 Games shows you how to build more sophisticated and addictive Android games, harnessing the power of these recent advancements. Coverage of the new UI, UX, multi-touch and multi-tasking features available with Android 4.0. Learn other techniques for improving the game playing experience including Wi-Fi tethering, better multi-tasking, new and better streaming Web video using WebM, and more. By combining the elegant object-oriented features of Java and the raw power of C, there is no limit to the types of games that you can build for the platform, such as the \"Quake 3D\"-like game app case study in this book. You’ll definitely have fun, and perhaps you’ll even make some money. Enjoy! What you’ll learn Key advanced Android gaming techniques using the new Android SDK 4 to help you earn more money in the app stores How to compile native code (C) in Android using the NDK How to add and integrate multi-touch How to use Bluetooth controllers (Zeemote) More gaming tricks and tips, such as hybrid 3D graphics with OpenGL and JNI How to port and augment a 2D shooter game app similar to \"Wolfenstein\" for Android How to port and augment another 2D shooter \"Doom\"-like game app for Android using OpenGL How to build a 3D shooter game like \"Quake\" How and where to best deploy these game apps Who this book is for This book is for savvy Android app developers who are looking for professional or advanced techniques for porting, augmenting and building 2D and 3D game apps that are complex, fun and lucrative. Table of Contents Welcome to Android Gaming Gaming Tricks: More Gaming Tricks: Hybrid 3D Graphics with OpenGL and JNI Efficient Graphics with OpenGL ES 2.0 2D Shooters with OpenGL: Doom-like App for Android 3D Shooters Part I: Quake-like App 3D Shooters Part II: Quake II Appendix: Deployment and Compilation Tips",
+    "pageCount": 300,
+    "categories": [
+      "Computers"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 3,
+    "imageLinksThumbnail": "http://books.google.com/books/content?id=jZSiAd_sUaoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "saleInfoCountry": "GB",
+    "saleInfoForSale": false
+  },
+  {
+    "title": "Pro ASP.NET 4 in C# 2010",
+    "authors": [
+      "Matthew MacDonald",
+      "Adam Freeman"
+    ],
+    "publisher": "Apress",
+    "publishedDate": "2010-06-30",
+    "description": "ASP.NET 4 is the principal standard for creating dynamic web pages on the Windows platform. Pro ASP.NET 4 in C# 2010 raises the bar for high-quality, practical advice on learning and deploying Microsoft's dynamic web solution. This edition is updated with everything you need to master up to version 4 of ASP.NET, including coverage of ASP.NET MVC, ASP.NET AJAX 4, ASP.NET Dynamic Data, and Silverlight 3. Seasoned .NET professionals Matthew MacDonald and Mario Szpuszta explain how you can get the most from these groundbreaking technologies. They cover ASP.NET 4 as a whole, illustrating both the newer features and the functionality carried over from previous versions of ASP. This book will give you the knowledge you need to code real ASP.NET 4 applications in the best possible style. Table of Contents Introducing ASP.NET Visual Studio Web Forms Server Controls ASP.NET Applications State Management ADO.NET Fundamentals Data Components and the DataSet Data Binding Rich Data Controls Caching and Asynchronous Pages Files and Streams LINQ XML User Controls Themes and Master Pages Website Navigation Website Deployment The ASP.NET Security Model Forms Authentication Membership Windows Authentication Authorization and Roles Profiles Cryptography Custom Membership Providers Custom Server Controls Graphics, GDI+, and Charting JavaScript and Ajax Techniques ASP.NET AJAX Portals with Web Part Pages MVC Dynamic Data Silverlight",
+    "pageCount": 1616,
+    "categories": [
+      "Computers"
+    ],
+    "averageRating": 4.5,
+    "ratingsCount": 4,
+    "imageLinksThumbnail": "http://books.google.com/books/content?id=2wg5LCKuChcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "saleInfoCountry": "GB",
+    "saleInfoForSale": false
+  }
+
+
+]
