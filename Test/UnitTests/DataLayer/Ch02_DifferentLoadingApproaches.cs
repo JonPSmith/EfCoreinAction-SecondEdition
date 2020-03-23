@@ -25,33 +25,23 @@ namespace test.UnitTests.DataLayer
         public void TestReadJustBookTableOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>(); //#A
-            using (var context = new EfCoreContext(options)) //#B
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>(); 
+            using (var context = new EfCoreContext(options)) 
             {
-                context.Database.EnsureCreated(); //#C
-                context.SeedDatabaseFourBooks();  //#D
+                context.Database.EnsureCreated(); 
+                context.SeedDatabaseFourBooks();  
             }
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options)) //dispose first DbContext and create new one. That way the read isn't effected by the setup code
             {
                 //ATTEMPT
-                var book = context.Books.First(); //#E
+                var book = context.Books.First(); 
 
                 //VERIFY
-                book.AuthorsLink.ShouldBeNull(); //#F
-                book.Reviews.ShouldBeNull();     //#G
-                book.Promotion.ShouldBeNull();   //#H
+                book.AuthorsLink.ShouldBeNull(); 
+                book.Reviews.ShouldBeNull();     
+                book.Promotion.ShouldBeNull();   
             }
         }
-        /*********************************************************
-        #A This creates the options for a in-memory Sqlite database
-        #B This creates the DbContext we need to read the database
-        #C This creates a database using the the classes mapped to the database, the DbContext, and any EF Core configurations
-        #D This helper method seeds the empty database with four known books
-        #E This uses the EfCoreContext property Books to access the database and reads the first book
-        #F The AuthorLink should normally point to a collection
-        #G The Reviews should normally point to a collection
-        #H The promotion is optional, so this might be null anyway
-        * *******************************************************/
 
         [Fact]
         public void TestEagerLoadBookAndReviewOk()
