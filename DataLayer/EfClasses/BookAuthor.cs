@@ -1,19 +1,21 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
+
 namespace DataLayer.EfClasses
 {
-    public class BookAuthor                    //#G
+    public class BookAuthor //#G
     {
-        public int BookId { get; set; }        //#H
-        public int AuthorId { get; set; }      //#H
-        public byte Order { get; set; }        //#I
+        public int BookId { get; set; } //#H
+        public int AuthorId { get; set; } //#H
+        public byte Order { get; set; } //#I
 
         //-----------------------------
         //Relationships
 
-        public Book Book { get; set; }        //#J
-        public Author Author { get; set; }    //#K
+        public Book Book { get; set; } //#J
+        public Author Author { get; set; } //#K
     }
+
     /**************************************************
     #G The BookAuthor class is the Many-to-Many linking table between the Books and Authors tables
     #H The Primary Key is made up of the two keys of the Book and Author

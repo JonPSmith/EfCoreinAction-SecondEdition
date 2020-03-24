@@ -1,4 +1,7 @@
-﻿using System;
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
+
+using System;
 using System.Threading.Tasks;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Hosting;
@@ -15,9 +18,8 @@ namespace BookApp.HelperExtensions
 {
     public static class DatabaseStartupHelpers
     {
-
         /// <summary>
-        /// This makes sure the database is create/updated and optionally it seeds the database with books.
+        ///     This makes sure the database is create/updated and optionally it seeds the database with books.
         /// </summary>
         /// <param name="webHost"></param>
         /// <returns></returns>
@@ -40,6 +42,7 @@ namespace BookApp.HelperExtensions
                         {
                             await context.Database.EnsureCreatedAsync();
                         }
+
                         if (demoSettings.ManuallySeed)
                         {
                             await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
@@ -58,7 +61,8 @@ namespace BookApp.HelperExtensions
 
         public static void RegisterDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            var useInMemory = configuration["DemoSetup:UseInMemory"].Equals("true", StringComparison.InvariantCultureIgnoreCase);
+            var useInMemory = configuration["DemoSetup:UseInMemory"]
+                .Equals("true", StringComparison.InvariantCultureIgnoreCase);
             if (useInMemory)
             {
                 var aspNetAuthConnection = SetupSqliteInMemoryConnection();
@@ -69,7 +73,6 @@ namespace BookApp.HelperExtensions
                 services.AddDbContext<EfCoreContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             }
-
         }
 
         //--------------------------------------------------------
@@ -77,10 +80,10 @@ namespace BookApp.HelperExtensions
 
         private static SqliteConnection SetupSqliteInMemoryConnection()
         {
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionStringBuilder = new SqliteConnectionStringBuilder {DataSource = ":memory:"};
             var connectionString = connectionStringBuilder.ToString();
             var connection = new SqliteConnection(connectionString);
-            connection.Open();  //see https://github.com/aspnet/EntityFramework/issues/6968
+            connection.Open(); //see https://github.com/aspnet/EntityFramework/issues/6968
             return connection;
         }
     }

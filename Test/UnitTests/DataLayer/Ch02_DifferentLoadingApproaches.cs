@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using DataLayer.EfCode;
@@ -14,61 +14,12 @@ namespace test.UnitTests.DataLayer
 {
     public class Ch02_DifferentLoadingApproaches
     {
-        private readonly ITestOutputHelper _output;
-
         public Ch02_DifferentLoadingApproaches(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        [Fact]
-        public void TestReadJustBookTableOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>(); 
-            using (var context = new EfCoreContext(options)) 
-            {
-                context.Database.EnsureCreated(); 
-                context.SeedDatabaseFourBooks();  
-            }
-            using (var context = new EfCoreContext(options)) //dispose first DbContext and create new one. That way the read isn't effected by the setup code
-            {
-                //ATTEMPT
-                var book = context.Books.First(); 
-
-                //VERIFY
-                book.AuthorsLink.ShouldBeNull(); 
-                book.Reviews.ShouldBeNull();     
-                book.Promotion.ShouldBeNull();   
-            }
-        }
-
-        [Fact]
-        public void TestEagerLoadBookAndReviewOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books
-                    .Include(r => r.Reviews)             //#A
-                    .First();                            //#B
-                /*********************************************************
-                #A The Include() gets a collection of Reviews, which may be an empty collection
-                #B This takes the first book
-                * *******************************************************/
-
-                //VERIFY
-                book.Reviews.ShouldNotBeNull();
-                book.AuthorsLink.ShouldBeNull();
-            }
-        }
+        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void TestEagerLoadBookAllOk()
@@ -83,12 +34,11 @@ namespace test.UnitTests.DataLayer
 
                 //ATTEMPT
                 var book = context.Books
-                    .Include(r => r.AuthorsLink)         //#A
-                         .ThenInclude(r => r.Author)     //#B
-
-                    .Include(r => r.Reviews)             //#C
-                    .Include(r => r.Promotion)           //#D
-                    .First();                            //#E
+                    .Include(r => r.AuthorsLink) //#A
+                    .ThenInclude(r => r.Author) //#B
+                    .Include(r => r.Reviews) //#C
+                    .Include(r => r.Promotion) //#D
+                    .First(); //#E
                 /*********************************************************
                 #A The first Include() gets a collection of BookAuthor
                 #B The ThenInclude() gets the next link, in this case the link to the Author
@@ -98,11 +48,39 @@ namespace test.UnitTests.DataLayer
                 * *******************************************************/
 
                 //VERIFY
-                book.AuthorsLink.ShouldNotBeNull(); 
+                book.AuthorsLink.ShouldNotBeNull();
                 book.AuthorsLink.First()
-                    .Author.ShouldNotBeNull();           
+                    .Author.ShouldNotBeNull();
 
                 book.Reviews.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
+        public void TestEagerLoadBookAndReviewOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books
+                    .Include(r => r.Reviews) //#A
+                    .First(); //#B
+                /*********************************************************
+                #A The Include() gets a collection of Reviews, which may be an empty collection
+                #B This takes the first book
+                * *******************************************************/
+
+                //VERIFY
+                book.Reviews.ShouldNotBeNull();
+                book.AuthorsLink.ShouldBeNull();
             }
         }
 
@@ -118,18 +96,20 @@ namespace test.UnitTests.DataLayer
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var book = context.Books.First();               //#A
+                var book = context.Books.First(); //#A
                 context.Entry(book)
-                    .Collection(c => c.AuthorsLink).Load();//#B
-                foreach (var authorLink in book.AuthorsLink)//#C
-                {                                          //#C
-                    context.Entry(authorLink)                   //#C
-                        .Reference(r => r.Author).Load();  //#C
-                }                                          //#C
-                context.Entry(book)                             //#D
-                    .Collection(c => c.Reviews).Load();    //#D
-                context.Entry(book)                             //#E
-                    .Reference(r => r.Promotion).Load();   //#E
+                    .Collection(c => c.AuthorsLink).Load(); //#B
+                foreach (var authorLink in book.AuthorsLink) //#C
+                {
+                    //#C
+                    context.Entry(authorLink) //#C
+                        .Reference(r => r.Author).Load(); //#C
+                } //#C
+
+                context.Entry(book) //#D
+                    .Collection(c => c.Reviews).Load(); //#D
+                context.Entry(book) //#E
+                    .Reference(r => r.Promotion).Load(); //#E
                 /*********************************************************
                 #A This reads in the first book on its own
                 #B This explicitly loads the linking table, BookAuthor
@@ -159,14 +139,14 @@ namespace test.UnitTests.DataLayer
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var book = context.Books.First();           //#A
-                var numReviews = context.Entry(book)        //#B
-                    .Collection(c => c.Reviews)             //#B
-                    .Query().Count();                       //#B
-                var starRatings = context.Entry(book)       //#C
-                    .Collection(c => c.Reviews)             //#C
-                    .Query().Select(x => x.NumStars)        //#C
-                    .ToList();                              //#C
+                var book = context.Books.First(); //#A
+                var numReviews = context.Entry(book) //#B
+                    .Collection(c => c.Reviews) //#B
+                    .Query().Count(); //#B
+                var starRatings = context.Entry(book) //#C
+                    .Collection(c => c.Reviews) //#C
+                    .Query().Select(x => x.NumStars) //#C
+                    .ToList(); //#C
                 /*********************************************************
                 #A This reads in the first book on its own
                 #B This executes a query to count how many reviews there are for this book
@@ -176,6 +156,30 @@ namespace test.UnitTests.DataLayer
                 //VERIFY
                 numReviews.ShouldEqual(0);
                 starRatings.Count.ShouldEqual(0);
+            }
+        }
+
+        [Fact]
+        public void TestReadJustBookTableOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options)
+            ) //dispose first DbContext and create new one. That way the read isn't effected by the setup code
+            {
+                //ATTEMPT
+                var book = context.Books.First();
+
+                //VERIFY
+                book.AuthorsLink.ShouldBeNull();
+                book.Reviews.ShouldBeNull();
+                book.Promotion.ShouldBeNull();
             }
         }
 
@@ -192,12 +196,13 @@ namespace test.UnitTests.DataLayer
 
                 //ATTEMPT
                 var books = context.Books
-                    .Select(p => new              //#A
-                        {                         //#A
-                            p.Title,              //#B
-                            p.Price,              //#B
-                            NumReviews            //#C
-                               = p.Reviews.Count, //#C
+                    .Select(p => new //#A
+                        {
+                            //#A
+                            p.Title, //#B
+                            p.Price, //#B
+                            NumReviews //#C
+                                = p.Reviews.Count, //#C
                         }
                     ).ToList();
                 /*********************************************************

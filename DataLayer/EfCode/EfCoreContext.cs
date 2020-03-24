@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
@@ -8,21 +8,25 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        public DbSet<Book> Books { get; set; }            //#A
-        public DbSet<Author> Authors { get; set; }        //#A
-        public DbSet<PriceOffer> PriceOffers { get; set; }//#A
+        public EfCoreContext( //#B
+            DbContextOptions<EfCoreContext> options) //#B
+            : base(options)
+        {
+        } //#B
 
-        public EfCoreContext(                             //#B
-            DbContextOptions<EfCoreContext> options)      //#B
-            : base(options) {}                            //#B
+        public DbSet<Book> Books { get; set; } //#A
+        public DbSet<Author> Authors { get; set; } //#A
+        public DbSet<PriceOffer> PriceOffers { get; set; } //#A
 
         protected override void
-            OnModelCreating(ModelBuilder modelBuilder)    //#C
-        {                                                 //#C
-            modelBuilder.Entity<BookAuthor>()             //#C
+            OnModelCreating(ModelBuilder modelBuilder) //#C
+        {
+            //#C
+            modelBuilder.Entity<BookAuthor>() //#C
                 .HasKey(x => new {x.BookId, x.AuthorId}); //#C
-        }                                                 //#C
+        } //#C
     }
+
     /*********************************************************
     #A The three properties link to the database tables with the same name
     #B This constructor is how the ASP.NET creates an instance of EfCoreContext 

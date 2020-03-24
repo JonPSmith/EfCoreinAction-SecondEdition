@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -21,13 +21,13 @@ namespace EfCoreInAction.DatabaseHelpers
             var filePath = GetJsonFilePath(fileDir, fileSearchString);
             var jsonDecoded = JsonConvert.DeserializeObject<ICollection<BookInfoJson>>(File.ReadAllText(filePath));
 
-            var authorDict = new Dictionary<string,Author>();
+            var authorDict = new Dictionary<string, Author>();
             foreach (var bookInfoJson in jsonDecoded)
             {
                 foreach (var author in bookInfoJson.authors)
                 {
                     if (!authorDict.ContainsKey(author))
-                        authorDict[author] = new Author { Name = author};
+                        authorDict[author] = new Author {Name = author};
                 }
             }
 
@@ -53,17 +53,18 @@ namespace EfCoreInAction.DatabaseHelpers
             book.AuthorsLink = new List<BookAuthor>();
             foreach (var author in bookInfoJson.authors)
             {
-                book.AuthorsLink.Add(new BookAuthor { Book = book, Author = authorDict[author], Order = i++});
+                book.AuthorsLink.Add(new BookAuthor {Book = book, Author = authorDict[author], Order = i++});
             }
 
             if (bookInfoJson.averageRating != null)
-                book.Reviews = CalculateReviewsToMatch((double)bookInfoJson.averageRating, (int)bookInfoJson.ratingsCount);
+                book.Reviews =
+                    CalculateReviewsToMatch((double) bookInfoJson.averageRating, (int) bookInfoJson.ratingsCount);
 
             return book;
         }
 
         /// <summary>
-        /// This create the right number of reviews that add up to the average rating
+        ///     This create the right number of reviews that add up to the average rating
         /// </summary>
         /// <param name="averageRating"></param>
         /// <param name="ratingsCount"></param>
@@ -74,13 +75,16 @@ namespace EfCoreInAction.DatabaseHelpers
             var currentAve = averageRating;
             for (int i = 0; i < ratingsCount; i++)
             {
-                reviews.Add( new Review
+                reviews.Add(new Review
                 {
                     VoterName = "anonymous",
-                    NumStars = (int)( currentAve > averageRating ? Math.Truncate(averageRating) : Math.Ceiling(averageRating))
+                    NumStars = (int) (currentAve > averageRating
+                        ? Math.Truncate(averageRating)
+                        : Math.Ceiling(averageRating))
                 });
                 currentAve = reviews.Average(x => x.NumStars);
             }
+
             return reviews;
         }
 
@@ -105,7 +109,8 @@ namespace EfCoreInAction.DatabaseHelpers
             var fileList = Directory.GetFiles(fileDir, searchPattern);
 
             if (fileList.Length == 0)
-                throw new FileNotFoundException($"Could not find a file with the search name of {searchPattern} in directory {fileDir}");
+                throw new FileNotFoundException(
+                    $"Could not find a file with the search name of {searchPattern} in directory {fileDir}");
 
             //If there are many then we take the most recent
             return fileList.ToList().OrderBy(x => x).Last();

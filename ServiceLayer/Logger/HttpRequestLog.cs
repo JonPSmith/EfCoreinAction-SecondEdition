@@ -1,12 +1,5 @@
-﻿// =====================================================
-// EfCoreExample - Example code to go with book
-// Filename: HttpRequestLog.cs
-// Date Created: 2016/09/11
-// 
-// Under the MIT License (MIT)
-// 
-// Written by Jon P Smith : GitHub JonPSmith, www.thereformedprogrammer.net
-// =====================================================
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -21,18 +14,29 @@ using Microsoft.Extensions.Logging;
 namespace ServiceLayer.Logger
 {
     /// <summary>
-    /// This class handles the storing/retrieval of logs for each Http request, as defined by 
-    /// ASP.NET Core's TraceIdentifier. 
-    /// It uses a static ConcurrentDictionary to hold the logs. 
-    /// NOTE: THIS WILL NOT WORK WITH SCALE OUT, i.e. it will not work if multiple instances of the web app are running
+    ///     This class handles the storing/retrieval of logs for each Http request, as defined by
+    ///     ASP.NET Core's TraceIdentifier.
+    ///     It uses a static ConcurrentDictionary to hold the logs.
+    ///     NOTE: THIS WILL NOT WORK WITH SCALE OUT, i.e. it will not work if multiple instances of the web app are running
     /// </summary>
     public class HttpRequestLog
     {
         private const int MaxKeepLogMinutes = 10;
 
-        private static readonly ConcurrentDictionary<string, HttpRequestLog> AllHttpRequestLogs = new ConcurrentDictionary<string, HttpRequestLog>();
+        private static readonly ConcurrentDictionary<string, HttpRequestLog> AllHttpRequestLogs =
+            new ConcurrentDictionary<string, HttpRequestLog>();
 
         private readonly List<LogParts> _requestLogs;
+
+        private HttpRequestLog(string traceIdentifier)
+        {
+            TraceIdentifier = traceIdentifier;
+            LastAccessed = DateTime.UtcNow;
+            _requestLogs = new List<LogParts>();
+
+            //now clear old request logs
+            ClearOldLogs(MaxKeepLogMinutes);
+        }
 
         public string TraceIdentifier { get; }
 
@@ -45,16 +49,6 @@ namespace ServiceLayer.Logger
             return $"At time: {LastAccessed:s}, Logs : {string.Join("/n", _requestLogs.Select(x => x.ToString()))}";
         }
 
-        private HttpRequestLog(string traceIdentifier)
-        {
-            TraceIdentifier = traceIdentifier;
-            LastAccessed = DateTime.UtcNow;
-            _requestLogs = new List<LogParts>();
-
-            //now clear old request logs
-            ClearOldLogs(MaxKeepLogMinutes);
-        }
-
         public static void AddLog(string traceIdentifier, LogLevel logLevel, EventId eventId, string eventString)
         {
             var thisSessionLog = AllHttpRequestLogs.GetOrAdd(traceIdentifier,
@@ -65,7 +59,7 @@ namespace ServiceLayer.Logger
         }
 
         /// <summary>
-        /// This returns the HttpRequestLog for the given traceIdentifier
+        ///     This returns the HttpRequestLog for the given traceIdentifier
         /// </summary>
         /// <param name="traceIdentifier"></param>
         /// <returns>found HttpRequestLog. returns null of not found (log might be old)</returns>
@@ -77,7 +71,7 @@ namespace ServiceLayer.Logger
             //No log so make up one to say what has happened.
             result = new HttpRequestLog(traceIdentifier);
             var oldest = AllHttpRequestLogs.Values.OrderBy(x => x.LastAccessed).FirstOrDefault();
-            result._requestLogs.Add(new LogParts(LogLevel.Warning, new EventId(1, "EfCoreInAction"), 
+            result._requestLogs.Add(new LogParts(LogLevel.Warning, new EventId(1, "EfCoreInAction"),
                 $"Could not find the log you asked for. I have {AllHttpRequestLogs.Keys.Count} logs" +
                 (oldest == null ? "." : $" the oldest is {oldest.LastAccessed:s}")));
 
@@ -88,7 +82,7 @@ namespace ServiceLayer.Logger
         //private methods
 
         /// <summary>
-        /// Made internal so Unit Tests can get at it (not ideal, but needed)
+        ///     Made internal so Unit Tests can get at it (not ideal, but needed)
         /// </summary>
         /// <param name="maxKeepLogMinutes"></param>
         internal static void ClearOldLogs(int maxKeepLogMinutes)

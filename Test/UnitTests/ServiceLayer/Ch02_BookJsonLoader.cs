@@ -7,9 +7,9 @@ using TestSupport.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.AspNetCore
+namespace test.UnitTests.ServiceLayer
 {
-    public class TestBookJsonLoader
+    public class Ch02_BookJsonLoader
     {
         [Fact]
         public void TestBookLoadBuildReviewsOk()

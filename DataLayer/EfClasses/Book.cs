@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
 
 namespace DataLayer.EfClasses
 {
-    public class Book                                   //#A
+    public class Book //#A
     {
         public int BookId { get; set; } //#B
         public string Title { get; set; }
@@ -14,20 +14,24 @@ namespace DataLayer.EfClasses
         public DateTime PublishedOn { get; set; }
         public string Publisher { get; set; }
         public decimal Price { get; set; }
+
         /// <summary>
-        /// Holds the url to get the image of the book
+        ///     Holds the url to get the image of the book
         /// </summary>
         public string ImageUrl { get; set; }
+
         public bool SoftDeleted { get; set; }
 
         //-----------------------------------------------
         //relationships
 
-        public PriceOffer Promotion { get; set; }        //#C
+        public PriceOffer Promotion { get; set; } //#C
         public ICollection<Review> Reviews { get; set; } //#D
-        public ICollection<BookAuthor> 
-            AuthorsLink { get; set; }                    //#E
+
+        public ICollection<BookAuthor>
+            AuthorsLink { get; set; } //#E
     }
+
     /****************************************************#
     #A The Book class contains the main book information
     #B I use EF Core's 'by convention' approach to defining the primary key of this entity class. In this case I use <ClassName>Id, and because the property if of type int EF Core assumes that the database will use the SQL IDENTITY command to create a unique key when a new row is added

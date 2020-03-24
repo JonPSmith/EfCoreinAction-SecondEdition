@@ -1,3 +1,6 @@
+// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +32,8 @@ namespace BookApp
             //This registers the correct type of database based on the appsettings' "DemoSetup" data
             services.RegisterDatabase(Configuration);
 
-            services.Configure<DemoSetupOptions>(Configuration.GetSection("DemoSetup")); //This gets the information on how to set up my demo database
+            services.Configure<DemoSetupOptions>(
+                Configuration.GetSection("DemoSetup")); //This gets the information on how to set up my demo database
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +47,7 @@ namespace BookApp
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
             app.UseStaticFiles();
 
             app.UseRouting();

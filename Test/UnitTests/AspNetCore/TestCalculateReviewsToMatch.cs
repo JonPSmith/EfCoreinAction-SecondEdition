@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using Xunit;
@@ -12,13 +12,13 @@ namespace test.UnitTests.AspNetCore
     {
         [Theory]
         [InlineData(5)]
-        [InlineData(5,1)]
+        [InlineData(5, 1)]
         [InlineData(5, 1, 1)]
         [InlineData(5, 1, 1)]
         [InlineData(5, 1, 1, 1, 1)]
         [InlineData(5, 1, 5)]
         [InlineData(3, 4, 3)]
-        public void TestCalcReviewsOk(params int [] voteVals)
+        public void TestCalcReviewsOk(params int[] voteVals)
         {
             //SETUP
             var avgRating = voteVals.Average();

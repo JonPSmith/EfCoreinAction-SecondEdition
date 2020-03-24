@@ -1,3 +1,6 @@
+// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
+
 using System.Threading.Tasks;
 using BookApp.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
@@ -22,9 +25,6 @@ namespace BookApp
                 {
                     logging.ClearProviders(); //Clear logging providers to improve performance
                 })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

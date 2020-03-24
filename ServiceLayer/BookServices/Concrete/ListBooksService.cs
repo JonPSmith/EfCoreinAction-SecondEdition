@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,19 +22,20 @@ namespace ServiceLayer.BookServices.Concrete
         public IQueryable<BookListDto> SortFilterPage
             (SortFilterPageOptions options)
         {
-            var booksQuery = _context.Books            //#A
-                .AsNoTracking()                        //#B
-                .MapBookToDto()                        //#C
-                .OrderBooksBy(options.OrderByOptions)  //#D
-                .FilterBooksBy(options.FilterBy,       //#E
-                               options.FilterValue);   //#E
+            var booksQuery = _context.Books //#A
+                .AsNoTracking() //#B
+                .MapBookToDto() //#C
+                .OrderBooksBy(options.OrderByOptions) //#D
+                .FilterBooksBy(options.FilterBy, //#E
+                    options.FilterValue); //#E
 
-            options.SetupRestOfDto(booksQuery);        //#F
+            options.SetupRestOfDto(booksQuery); //#F
 
-            return booksQuery.Page(options.PageNum-1,  //#G
-                                   options.PageSize);  //#G
+            return booksQuery.Page(options.PageNum - 1, //#G
+                options.PageSize); //#G
         }
     }
+
     /*********************************************************
     #A This starts by selecting the Books property in the Application's DbContext 
     #B Because this is a read-only query I add .AsNoTracking(). It makes the query faster

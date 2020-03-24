@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.IO;
 using System.Linq;
@@ -9,7 +9,6 @@ using EfCoreInAction.DatabaseHelpers;
 
 namespace ServiceLayer.DatabaseServices.Concrete
 {
-
     public static class SetupHelpers
     {
         private const string SeedDataSearchName = "Apress books*.json";
@@ -17,7 +16,6 @@ namespace ServiceLayer.DatabaseServices.Concrete
 
         public static async Task<int> SeedDatabaseIfNoBooksAsync(this EfCoreContext context, string dataDirectory)
         {
-
             var numBooks = context.Books.Count();
             if (numBooks == 0)
             {

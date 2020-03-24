@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,10 +10,9 @@ namespace ServiceLayer.BookServices.QueryObjects
 {
     public enum BooksFilterBy
     {
-        [Display(Name = "All")]
-        NoFilter = 0,
-        [Display(Name = "By Votes...")]
-        ByVotes,
+        [Display(Name = "All")] NoFilter = 0,
+        [Display(Name = "By Votes...")] ByVotes,
+
         [Display(Name = "By Year published...")]
         ByPublicationYear
     }
@@ -23,34 +22,35 @@ namespace ServiceLayer.BookServices.QueryObjects
         public const string AllBooksNotPublishedString = "Coming Soon";
 
         public static IQueryable<BookListDto> FilterBooksBy(
-            this IQueryable<BookListDto> books, 
-            BooksFilterBy filterBy, string filterValue)         //#A
+            this IQueryable<BookListDto> books,
+            BooksFilterBy filterBy, string filterValue) //#A
         {
-            if (string.IsNullOrEmpty(filterValue))              //#B
-                return books;                                   //#B
+            if (string.IsNullOrEmpty(filterValue)) //#B
+                return books; //#B
 
             switch (filterBy)
             {
-                case BooksFilterBy.NoFilter:                    //#C
-                    return books;                               //#C
+                case BooksFilterBy.NoFilter: //#C
+                    return books; //#C
                 case BooksFilterBy.ByVotes:
-                    var filterVote = int.Parse(filterValue);     //#D
-                    return books.Where(x =>                      //#D
-                          x.ReviewsAverageVotes > filterVote);   //#D
-                case BooksFilterBy.ByPublicationYear:             
-                    if (filterValue == AllBooksNotPublishedString)//#E
-                        return books.Where(                       //#E
-                            x => x.PublishedOn > DateTime.UtcNow);//#E
+                    var filterVote = int.Parse(filterValue); //#D
+                    return books.Where(x => //#D
+                        x.ReviewsAverageVotes > filterVote); //#D
+                case BooksFilterBy.ByPublicationYear:
+                    if (filterValue == AllBooksNotPublishedString) //#E
+                        return books.Where( //#E
+                            x => x.PublishedOn > DateTime.UtcNow); //#E
 
-                    var filterYear = int.Parse(filterValue);      //#F
-                    return books.Where(                           //#F
-                        x => x.PublishedOn.Year == filterYear     //#F
-                          && x.PublishedOn <= DateTime.UtcNow);   //#F
+                    var filterYear = int.Parse(filterValue); //#F
+                    return books.Where( //#F
+                        x => x.PublishedOn.Year == filterYear //#F
+                             && x.PublishedOn <= DateTime.UtcNow); //#F
                 default:
                     throw new ArgumentOutOfRangeException
                         (nameof(filterBy), filterBy, null);
             }
         }
+
         /***************************************************************
         #A The method is given both the type of filter and the user selected filter value
         #B If the filter value isn't set then it returns the IQueryable with no change

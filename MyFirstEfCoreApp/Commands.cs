@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -13,19 +13,17 @@ namespace MyFirstEfCoreApp
 {
     public static class Commands
     {
-
-
         public static void ListAll()
         {
-            using (var db = new AppDbContext())              //#A
+            using (var db = new AppDbContext()) //#A
             {
                 foreach (var book in db.Books.AsNoTracking() //#B
-                    .Include(a => a.Author))                 //#C
+                    .Include(a => a.Author)) //#C
                 {
                     var webUrl = book.Author.WebUrl ?? "- no web url given -";
                     Console.WriteLine($"{book.Title} by {book.Author.Name}");
                     Console.WriteLine("     Published on " +
-                        $"{book.PublishedOn:dd-MMM-yyyy}. {webUrl}");
+                                      $"{book.PublishedOn:dd-MMM-yyyy}. {webUrl}");
                 }
             }
         }
@@ -38,20 +36,20 @@ namespace MyFirstEfCoreApp
         public static void ChangeWebUrl()
         {
             Console.Write("New Quantum Networking WebUrl > ");
-            var newWebUrl = Console.ReadLine();                   //#A
+            var newWebUrl = Console.ReadLine(); //#A
 
             using (var db = new AppDbContext())
             {
                 var book = db.Books
-                    .Include(a => a.Author)                        //#B
+                    .Include(a => a.Author) //#B
                     .Single(b => b.Title == "Quantum Networking"); //#C
 
-                book.Author.WebUrl = newWebUrl;                    //#D
-                db.SaveChanges();                                  //#E
+                book.Author.WebUrl = newWebUrl; //#D
+                db.SaveChanges(); //#E
                 Console.WriteLine("... SavedChanges called.");
             }
 
-            ListAll();                                             //#F
+            ListAll(); //#F
         }
         /**************************************************************
         #A We read in from the console the new url
@@ -69,12 +67,12 @@ namespace MyFirstEfCoreApp
             using (var db = new AppDbContext())
             {
                 var serviceProvider = db.GetInfrastructure();
-                var loggerFactory = (ILoggerFactory)serviceProvider.GetService(typeof(ILoggerFactory));
+                var loggerFactory = (ILoggerFactory) serviceProvider.GetService(typeof(ILoggerFactory));
                 loggerFactory.AddProvider(new MyLoggerProvider(logs));
 
                 foreach (var book in
                     db.Books.AsNoTracking()
-                    .Include(a => a.Author))
+                        .Include(a => a.Author))
                 {
                     var webUrl = book.Author.WebUrl == null
                         ? "- no web url given -"
@@ -82,10 +80,11 @@ namespace MyFirstEfCoreApp
                     Console.WriteLine(
                         $"{book.Title} by {book.Author.Name}");
                     Console.WriteLine("     " +
-                        $"Published on {book.PublishedOn:dd-MMM-yyyy}" +
-                        $". {webUrl}");
+                                      $"Published on {book.PublishedOn:dd-MMM-yyyy}" +
+                                      $". {webUrl}");
                 }
             }
+
             Console.WriteLine("---------- LOGS ------------------");
             foreach (var log in logs)
             {
@@ -102,7 +101,7 @@ namespace MyFirstEfCoreApp
             using (var db = new AppDbContext())
             {
                 var serviceProvider = db.GetInfrastructure();
-                var loggerFactory = (ILoggerFactory)serviceProvider.GetService(typeof(ILoggerFactory));
+                var loggerFactory = (ILoggerFactory) serviceProvider.GetService(typeof(ILoggerFactory));
                 loggerFactory.AddProvider(new MyLoggerProvider(logs));
 
                 var book = db.Books
@@ -112,6 +111,7 @@ namespace MyFirstEfCoreApp
                 db.SaveChanges();
                 Console.Write("... SavedChanges called.");
             }
+
             Console.WriteLine("---------- LOGS ------------------");
             foreach (var log in logs)
             {
@@ -120,7 +120,7 @@ namespace MyFirstEfCoreApp
         }
 
         /// <summary>
-        /// This will wipe and create a new database - which takes some time
+        ///     This will wipe and create a new database - which takes some time
         /// </summary>
         /// <param name="onlyIfNoDatabase">If true it will not do anything if the database exists</param>
         /// <returns>returns true if database database was created</returns>
@@ -139,6 +139,7 @@ namespace MyFirstEfCoreApp
                     Console.WriteLine("Seeded database");
                 }
             }
+
             return true;
         }
 
@@ -171,14 +172,14 @@ namespace MyFirstEfCoreApp
                     Title = "Domain-Driven Design",
                     Description = "Linking business needs to software design",
                     PublishedOn = new DateTime(2003, 8, 30),
-                    Author = new Author { Name = "Eric Evans", WebUrl = "http://domainlanguage.com/"}
+                    Author = new Author {Name = "Eric Evans", WebUrl = "http://domainlanguage.com/"}
                 },
                 new Book
                 {
                     Title = "Quantum Networking",
                     Description = "Entangled quantum networking provides faster-than-light data communications",
                     PublishedOn = new DateTime(2057, 1, 1),
-                    Author = new Author { Name = "Future Person"}
+                    Author = new Author {Name = "Future Person"}
                 }
             };
 

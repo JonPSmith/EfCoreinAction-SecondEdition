@@ -1,4 +1,6 @@
-﻿
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
+
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,7 @@ namespace ServiceLayer.BookServices.Concrete
         }
 
         /// <summary>
-        /// This makes the various Value + text to go in the dropdown based on the FilterBy option
+        ///     This makes the various Value + text to go in the dropdown based on the FilterBy option
         /// </summary>
         /// <param name="filterBy"></param>
         /// <returns></returns>
@@ -32,21 +34,22 @@ namespace ServiceLayer.BookServices.Concrete
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
                 case BooksFilterBy.ByPublicationYear:
-                    var comingSoon = _db.Books.                     //#A
-                        Any(x => x.PublishedOn > DateTime.UtcNow);  //#A
-                    var nextYear = DateTime.UtcNow.AddYears(1).Year;//#B
-                    var result = _db.Books                          //#C
-                        .Select(x => x.PublishedOn.Year)            //#C
-                        .Distinct()                                 //#C
-                        .Where(x => x < nextYear)                   //#C
-                        .OrderByDescending(x => x)                  //#C
-                        .Select(x => new DropdownTuple              //#D
-                        {                                           //#D
-                            Value = x.ToString(),                   //#D
-                            Text = x.ToString()                     //#D
-                        }).ToList();                                //#D
-                    if (comingSoon)                                 //#E
-                        result.Insert(0, new DropdownTuple          //#E
+                    var comingSoon = _db.Books. //#A
+                        Any(x => x.PublishedOn > DateTime.UtcNow); //#A
+                    var nextYear = DateTime.UtcNow.AddYears(1).Year; //#B
+                    var result = _db.Books //#C
+                        .Select(x => x.PublishedOn.Year) //#C
+                        .Distinct() //#C
+                        .Where(x => x < nextYear) //#C
+                        .OrderByDescending(x => x) //#C
+                        .Select(x => new DropdownTuple //#D
+                        {
+                            //#D
+                            Value = x.ToString(), //#D
+                            Text = x.ToString() //#D
+                        }).ToList(); //#D
+                    if (comingSoon) //#E
+                        result.Insert(0, new DropdownTuple //#E
                         {
                             Value = BookListDtoFilter.AllBooksNotPublishedString,
                             Text = BookListDtoFilter.AllBooksNotPublishedString

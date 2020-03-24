@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.IO;
 using System.Linq;
@@ -18,12 +18,12 @@ namespace test.UnitTests.DataLayer
 {
     public class Ch02_StringSearch
     {
-        private readonly ITestOutputHelper _output;
-
         public Ch02_StringSearch(ITestOutputHelper output)
         {
             _output = output;
         }
+
+        private readonly ITestOutputHelper _output;
 
         [Theory]
         [InlineData("Book0001 Title", 1)]
@@ -70,22 +70,52 @@ namespace test.UnitTests.DataLayer
         }
 
         [Fact]
-        public void TestStartsWith()
+        public async Task FindBooksWithCSharpInTheirTitleContains()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
+                var appWwwrootDir =
+                    Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
+                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
 
                 //ATTEMPT
                 var books = context.Books
-                    .Where(p => p.Title.StartsWith("Book001"))
+                    .Where(p => p.Title.Contains("C#"))
                     .ToList();
 
                 //VERIFY
-                books.Count.ShouldEqual(10);
+                books.Count.ShouldEqual(5);
+            }
+        }
+
+        [Fact]
+        public async Task FindBooksWithCSharpInTheirTitleLike()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var appWwwrootDir =
+                    Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
+                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
+
+                //ATTEMPT
+                var bookTitles = context.Books
+                    .Where(p => EF.Functions.Like(p.Title, "%C#%"))
+                    .Select(p => p.Title)
+                    .ToList();
+
+
+                //VERIFY
+                bookTitles.Count.ShouldEqual(5);
+                foreach (var title in bookTitles)
+                {
+                    _output.WriteLine(title);
+                }
             }
         }
 
@@ -150,50 +180,22 @@ namespace test.UnitTests.DataLayer
         }
 
         [Fact]
-        public async Task FindBooksWithCSharpInTheirTitleContains()
+        public void TestStartsWith()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var appWwwrootDir = Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
-                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
+                context.SeedDatabaseDummyBooks(40);
 
                 //ATTEMPT
                 var books = context.Books
-                    .Where(p => p.Title.Contains("C#"))
+                    .Where(p => p.Title.StartsWith("Book001"))
                     .ToList();
 
                 //VERIFY
-                books.Count.ShouldEqual(5);
-            }
-        }
-
-        [Fact]
-        public async Task FindBooksWithCSharpInTheirTitleLike()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var appWwwrootDir = Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
-                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
-
-                //ATTEMPT
-                var bookTitles = context.Books
-                    .Where(p => EF.Functions.Like(p.Title, "%C#%"))
-                    .Select(p => p.Title)
-                    .ToList();
-
-
-                //VERIFY
-                bookTitles.Count.ShouldEqual(5);
-                foreach (var title in bookTitles)
-                {
-                    _output.WriteLine(title);
-                }
+                books.Count.ShouldEqual(10);
             }
         }
     }

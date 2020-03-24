@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Net;
@@ -17,10 +17,10 @@ namespace BookApp.HelperExtensions
             if (connection.RemoteIpAddress.IsSet())
             {
                 //We have a remote address set up
-                return connection.LocalIpAddress.IsSet() 
-                      //Is local is same as remote, then we are local
-                    ? connection.RemoteIpAddress.Equals(connection.LocalIpAddress) 
-                      //else we are remote if the remote IP address is not a loopback address
+                return connection.LocalIpAddress.IsSet()
+                    //Is local is same as remote, then we are local
+                    ? connection.RemoteIpAddress.Equals(connection.LocalIpAddress)
+                    //else we are remote if the remote IP address is not a loopback address
                     : IPAddress.IsLoopback(connection.RemoteIpAddress);
             }
 
