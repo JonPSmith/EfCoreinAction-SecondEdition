@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
@@ -66,7 +68,6 @@ namespace test.UnitTests.DataLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
             }
-
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
@@ -85,9 +86,37 @@ namespace test.UnitTests.DataLayer
         }
 
         [Fact]
-        public void TestExplicitLoadBookOk()
+        public void TestLazyLoadBookAndReviewOk()
         {
             //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book = EfTestData.CreateDummyBooks(1).First();
+                book.LazyReviews = new List<LazyReview>
+                {
+                    new LazyReview{NumStars = 5},
+                    new LazyReview{NumStars = 1}
+                };
+                context.Add(book);
+                context.SaveChanges();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.Single(); //#A
+                book.LazyReviews.Count().ShouldEqual(2); //#B
+                /*********************************************************
+                #A We just load the book class
+                #B When the LazyReviews are read, then EF Core will read in the reviews
+                * *******************************************************/
+            }
+        }
+
+        [Fact]
+        public void TestExplicitLoadBookOk()
+        {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))

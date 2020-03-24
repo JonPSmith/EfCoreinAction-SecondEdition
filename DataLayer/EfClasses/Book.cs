@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace DataLayer.EfClasses
 {
@@ -30,6 +31,27 @@ namespace DataLayer.EfClasses
 
         public ICollection<BookAuthor>
             AuthorsLink { get; set; } //#E
+
+
+        //---------------------------------------------------
+        //Lazy loading parts
+
+        public Book() { }
+
+        private Book(ILazyLoader lazyLoader)
+        {
+            _lazyLoader = lazyLoader;
+        }
+
+        private readonly ILazyLoader _lazyLoader;
+        private ICollection<LazyReview> _lazyReviews;
+
+        //This is here to show how lazy loading works
+        public ICollection<LazyReview> LazyReviews
+        {
+            get => _lazyLoader.Load(this, ref _lazyReviews);
+            set => _lazyReviews = value;
+        }
     }
 
     /****************************************************#
