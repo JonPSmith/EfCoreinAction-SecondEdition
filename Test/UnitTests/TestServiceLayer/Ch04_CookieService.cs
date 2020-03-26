@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using BizLogic.Orders;
@@ -11,6 +11,23 @@ namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch04_CookieService
     {
+        [Fact]
+        public void AddLineItemEncodeDecode()
+        {
+            //SETUP
+            var service = new CheckoutCookieService((string)null);
+            service.AddLineItem(new OrderLineItem {BookId = 123, NumBooks = 456});
+            var cString = service.EncodeForCookie();
+
+            //ATTEMPT
+            service = new CheckoutCookieService(cString);
+
+            //VERIFY
+            service.LineItems.Count.ShouldEqual(1);
+            service.LineItems[0].BookId.ShouldEqual(123);
+            service.LineItems[0].NumBooks.ShouldEqual((short)456);
+        }
+
         [Fact]
         public void CreateNewCookie()
         {
@@ -41,20 +58,23 @@ namespace Test.UnitTests.TestServiceLayer
         }
 
         [Fact]
-        public void AddLineItemEncodeDecode()
+        public void RemoveLineEncodeDecode()
         {
             //SETUP
             var service = new CheckoutCookieService((string)null);
-            service.AddLineItem(new OrderLineItem {BookId = 123, NumBooks = 456});
-            var cString = service.EncodeForCookie();
+            service.AddLineItem(new OrderLineItem { BookId = 1, NumBooks = 4 });
+            service.AddLineItem(new OrderLineItem { BookId = 2, NumBooks = 5 });
+            service.AddLineItem(new OrderLineItem { BookId = 3, NumBooks = 6 });
 
             //ATTEMPT
-            service = new CheckoutCookieService(cString);
+            service.DeleteLineItem(1);
 
             //VERIFY
-            service.LineItems.Count.ShouldEqual(1);
-            service.LineItems[0].BookId.ShouldEqual(123);
-            service.LineItems[0].NumBooks.ShouldEqual((short)456);
+            service.LineItems.Count.ShouldEqual(2);
+            service.LineItems[0].BookId.ShouldEqual(1);
+            service.LineItems[0].NumBooks.ShouldEqual((short)4);
+            service.LineItems[1].BookId.ShouldEqual(3);
+            service.LineItems[1].NumBooks.ShouldEqual((short)6);
         }
 
         [Fact]
@@ -77,26 +97,6 @@ namespace Test.UnitTests.TestServiceLayer
             service.LineItems[1].NumBooks.ShouldEqual((short)11);
             service.LineItems[2].BookId.ShouldEqual(3);
             service.LineItems[2].NumBooks.ShouldEqual((short)6);
-        }
-
-        [Fact]
-        public void RemoveLineEncodeDecode()
-        {
-            //SETUP
-            var service = new CheckoutCookieService((string)null);
-            service.AddLineItem(new OrderLineItem { BookId = 1, NumBooks = 4 });
-            service.AddLineItem(new OrderLineItem { BookId = 2, NumBooks = 5 });
-            service.AddLineItem(new OrderLineItem { BookId = 3, NumBooks = 6 });
-
-            //ATTEMPT
-            service.DeleteLineItem(1);
-
-            //VERIFY
-            service.LineItems.Count.ShouldEqual(2);
-            service.LineItems[0].BookId.ShouldEqual(1);
-            service.LineItems[0].NumBooks.ShouldEqual((short)4);
-            service.LineItems[1].BookId.ShouldEqual(3);
-            service.LineItems[1].NumBooks.ShouldEqual((short)6);
         }
     }
 }

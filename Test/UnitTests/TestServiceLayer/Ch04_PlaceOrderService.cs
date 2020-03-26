@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -16,33 +16,6 @@ namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch04_PlaceOrderService
     {
-        [Fact]
-        public void TestPlaceOrderOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
-                var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
-
-                //ATTEMPT
-                var orderId = service.PlaceOrder(true);
-                context.SaveChanges();
-
-                //VERIFY
-                orderId.ShouldNotEqual(0);
-                service.Errors.Count.ShouldEqual(0);
-                context.Orders.Count().ShouldEqual(1);
-                context.Orders.First().OrderId.ShouldEqual(orderId);
-            }
-        }
-
         [Fact]
         public void TestPlaceOrderBad()
         {
@@ -69,5 +42,31 @@ namespace Test.UnitTests.TestServiceLayer
             }
         }
 
+        [Fact]
+        public void TestPlaceOrderOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
+                var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
+
+                //ATTEMPT
+                var orderId = service.PlaceOrder(true);
+                context.SaveChanges();
+
+                //VERIFY
+                orderId.ShouldNotEqual(0);
+                service.Errors.Count.ShouldEqual(0);
+                context.Orders.Count().ShouldEqual(1);
+                context.Orders.First().OrderId.ShouldEqual(orderId);
+            }
+        }
     }
 }

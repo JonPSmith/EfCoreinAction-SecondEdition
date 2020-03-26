@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,6 +45,5 @@ namespace Test.UnitTests.TestServiceLayer
                     runner.Errors.Single().ErrorMessage.ShouldEqual("If you want to order a 100 or more books please phone us on 01234-5678-90");
             }
         }
-
     }
 }

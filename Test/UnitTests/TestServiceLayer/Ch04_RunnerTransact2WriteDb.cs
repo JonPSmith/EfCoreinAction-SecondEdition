@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -49,26 +49,6 @@ namespace Test.UnitTests.TestServiceLayer
             }
         }
 
-        [Fact]
-        public void RunActionThrowException()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var action1 = new MockBizActionPart1(context);
-                var action2 = new MockBizActionPart2(context);
-                var runner = new RunnerTransact2WriteDb<TransactBizActionDto, TransactBizActionDto, TransactBizActionDto>(context, action1, action2);
-
-                //ATTEMPT
-                Assert.Throws<InvalidOperationException>(() => runner.RunAction(new TransactBizActionDto(MockBizActionTransact2Modes.ThrowExceptionPart2)));
-
-                //VERIFY
-                context.Authors.Count().ShouldEqual(0);
-            }
-        }
-
 
         [Fact]
         public void ExampleCodeForBook()
@@ -100,6 +80,26 @@ namespace Test.UnitTests.TestServiceLayer
                 //VERIFY
                 runner.HasErrors.ShouldBeFalse();
                 context.Orders.Count().ShouldEqual(1);
+            }
+        }
+
+        [Fact]
+        public void RunActionThrowException()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var action1 = new MockBizActionPart1(context);
+                var action2 = new MockBizActionPart2(context);
+                var runner = new RunnerTransact2WriteDb<TransactBizActionDto, TransactBizActionDto, TransactBizActionDto>(context, action1, action2);
+
+                //ATTEMPT
+                Assert.Throws<InvalidOperationException>(() => runner.RunAction(new TransactBizActionDto(MockBizActionTransact2Modes.ThrowExceptionPart2)));
+
+                //VERIFY
+                context.Authors.Count().ShouldEqual(0);
             }
         }
     }

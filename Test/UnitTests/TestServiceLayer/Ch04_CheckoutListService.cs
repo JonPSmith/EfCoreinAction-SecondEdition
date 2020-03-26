@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -15,6 +15,30 @@ namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch04_CheckoutListService
     {
+        [Fact]
+        public void TestCheckoutListBookWithPromotion()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                //I select the last book, which has a promotion
+                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},4,1");
+
+                //ATTEMPT
+
+                var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
+                var list = service.GetCheckoutList();
+
+                //VERIFY
+                list.Count.ShouldEqual(1);
+                list.First().BookPrice.ShouldEqual(219);
+            }
+        }
+
         [Fact]
         public void TestCheckoutListOneBookDatabaseOneBook()
         {
@@ -66,30 +90,6 @@ namespace Test.UnitTests.TestServiceLayer
                     list[i].NumBooks.ShouldEqual((short)(i + 2));
                     list[i].BookPrice.ShouldEqual((i + 1));
                 }
-            }
-        }
-
-        [Fact]
-        public void TestCheckoutListBookWithPromotion()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-
-                //I select the last book, which has a promotion
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},4,1");
-
-                //ATTEMPT
-
-                var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
-                var list = service.GetCheckoutList();
-
-                //VERIFY
-                list.Count.ShouldEqual(1);
-                list.First().BookPrice.ShouldEqual(219);
             }
         }
     }
