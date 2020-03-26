@@ -4,15 +4,13 @@
 using BizLogic.GenericInterfaces;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using Test.Mocks;
 
 namespace Test.Mocks
 {
-    public interface IMockBizActionPart1 : IBizAction<TransactBizActionDto, TransactBizActionDto> { }
+    public interface IMockBizActionPart1 : IBizAction<TransactBizActionDto, TransactBizActionDto> {}
 
     public class MockBizActionPart1 : BizActionErrors, IMockBizActionPart1
     {
-
         private readonly EfCoreContext _context;
 
         public MockBizActionPart1(EfCoreContext context)

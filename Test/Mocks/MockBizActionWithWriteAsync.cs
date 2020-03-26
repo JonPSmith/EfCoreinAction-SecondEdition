@@ -11,12 +11,11 @@ using DataLayer.EfCode;
 
 namespace Test.Mocks
 {
-    public interface IMockBizActionWithWriteAsync : IBizActionAsync<MockBizActionWithWriteModes, string> { }
+    public interface IMockBizActionWithWriteAsync : IBizActionAsync<MockBizActionWithWriteModes, string> {}
 
 
     public class MockBizActionWithWriteAsync : BizActionErrors, IMockBizActionWithWriteAsync
     {
-
         private readonly EfCoreContext _context;
 
         public MockBizActionWithWriteAsync(EfCoreContext context)

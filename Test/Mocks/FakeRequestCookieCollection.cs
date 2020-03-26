@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +46,5 @@ namespace Test.Mocks
         public string this[string key] => _cookieData.SingleOrDefault(x => x.Key == key).Value;
 
         public ICollection<string> Keys => _cookieData.Select(x => x.Key).ToList();
-
-
     }
 }

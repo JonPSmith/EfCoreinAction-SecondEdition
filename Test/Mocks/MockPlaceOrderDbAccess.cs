@@ -13,10 +13,6 @@ namespace Test.Mocks
 {
     public class MockPlaceOrderDbAccess : IPlaceOrderDbAccess
     {
-        public ImmutableList<Book> Books { get; private set; }
-
-        public Order AddedOrder { get; private set; }
-
         /// <summary>
         /// 
         /// </summary>
@@ -34,6 +30,10 @@ namespace Test.Mocks
                 };
             Books = books.ToImmutableList();
         }
+
+        public ImmutableList<Book> Books { get; private set; }
+
+        public Order AddedOrder { get; private set; }
 
 
         /// <summary>

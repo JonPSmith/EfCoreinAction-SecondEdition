@@ -8,11 +8,10 @@ using DataLayer.EfCode;
 
 namespace Test.Mocks
 {
-    public interface IMockBizActionAsync : IBizActionAsync<int, string> { }
+    public interface IMockBizActionAsync : IBizActionAsync<int, string> {}
 
     public class MockBizActionAsync : BizActionErrors, IMockBizActionAsync
     {
-
         private readonly EfCoreContext _context;
 
         public MockBizActionAsync(EfCoreContext context)

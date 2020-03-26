@@ -7,11 +7,10 @@ using DataLayer.EfCode;
 
 namespace Test.Mocks
 {
-    public interface IMockBizAction : IBizAction<int, string> { }
+    public interface IMockBizAction : IBizAction<int, string> {}
 
     public class MockBizAction : BizActionErrors, IMockBizAction
     {
-
         private readonly EfCoreContext _context;
 
         public MockBizAction(EfCoreContext context)
