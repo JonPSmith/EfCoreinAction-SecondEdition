@@ -14,7 +14,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.DataLayer
+namespace Test.UnitTests.DataLayer
 {
     public class Ch02_DifferentLoadingApproaches
     {
@@ -84,36 +84,6 @@ namespace test.UnitTests.DataLayer
                 //VERIFY
                 book.Reviews.ShouldNotBeNull();
                 book.AuthorsLink.ShouldBeNull();
-            }
-        }
-
-        [Fact]
-        public void TestLazyLoadBookAndReviewOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Lazy1DbContext>();
-            using (var context = new Lazy1DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book = new BookLazy1
-                {
-                    LazyReviews = new List<LazyReview>
-                    {
-                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
-                    }
-                };
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new Lazy1DbContext(options))
-            {
-                //ATTEMPT
-                var book = context.BookLazy1s.Single(); //#A
-                book.LazyReviews.Count().ShouldEqual(2); //#B
-                /*********************************************************
-                #A We just load the book class
-                #B When the LazyReviews are read, then EF Core will read in the reviews
-                * *******************************************************/
             }
         }
 
@@ -188,6 +158,36 @@ namespace test.UnitTests.DataLayer
                 //VERIFY
                 numReviews.ShouldEqual(0);
                 starRatings.Count.ShouldEqual(0);
+            }
+        }
+
+        [Fact]
+        public void TestLazyLoadBookAndReviewOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Lazy1DbContext>();
+            using (var context = new Lazy1DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book = new BookLazy1
+                {
+                    LazyReviews = new List<LazyReview>
+                    {
+                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
+                    }
+                };
+                context.Add(book);
+                context.SaveChanges();
+            }
+            using (var context = new Lazy1DbContext(options))
+            {
+                //ATTEMPT
+                var book = context.BookLazy1s.Single(); //#A
+                book.LazyReviews.Count().ShouldEqual(2); //#B
+                /*********************************************************
+                #A We just load the book class
+                #B When the LazyReviews are read, then EF Core will read in the reviews
+                * *******************************************************/
             }
         }
 

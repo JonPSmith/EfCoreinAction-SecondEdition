@@ -2,36 +2,33 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using ServiceLayer.BookServices.Concrete;
 using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.ServiceLayer
+namespace Test.UnitTests.ServiceLayer
 {
-    public class Ch02_BookFilterDropdowns
+    public class Ch02_Sort
     {
         [Fact]
-        public void DropdownByDate()
+        public void CheckSortVotes()
         {
             //SETUP
-            const int numBooks = 5;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Books.AddRange(EfTestData.CreateDummyBooks(numBooks, true));
-                context.SaveChanges();
-                var service = new BookFilterDropdownService(context);
+                context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var dropDown = service.GetFilterDropDownValues(BooksFilterBy.ByPublicationYear);
+                var sorted = context.Books.MapBookToDto().OrderBooksBy(OrderByOptions.ByVotes).ToList();
 
                 //VERIFY
-                dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] {"2014", "2013", "2012", "2011", "2010"});
+                sorted.First().Title.ShouldEqual("Quantum Networking");
             }
         }
     }

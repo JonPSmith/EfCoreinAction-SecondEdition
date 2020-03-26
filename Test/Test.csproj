@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EfCore.TestSupport" Version="3.1.0" />
+    <PackageReference Include="EfCore.TestSupport" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />

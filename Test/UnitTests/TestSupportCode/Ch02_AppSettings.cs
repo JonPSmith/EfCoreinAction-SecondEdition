@@ -7,7 +7,7 @@ using TestSupport.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.Tests
+namespace Test.UnitTests.Tests
 {
     public class Ch02_AppSettings
     {

@@ -8,7 +8,7 @@ using ServiceLayer.Logger;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.ServiceLayer
+namespace Test.UnitTests.ServiceLayer
 {
     public class Ch02_HttpRequestLog
     {

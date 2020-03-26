@@ -6,7 +6,7 @@ using Xunit;
 using EfCoreInAction.DatabaseHelpers;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.AspNetCore
+namespace Test.UnitTests.AspNetCore
 {
     public class TestCalculateReviewsToMatch
     {

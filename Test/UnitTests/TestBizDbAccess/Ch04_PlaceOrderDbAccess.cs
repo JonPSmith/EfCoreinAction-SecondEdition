@@ -1,21 +1,19 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Linq;
-using DataLayer.EfClasses;
+using BizDbAccess.Orders;
 using DataLayer.EfCode;
-using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.ServiceLayer
+namespace Test.UnitTests.TestBizDbAccess
 {
-    public class Ch02_Sort
+    public class Ch04_PlaceOrderDbAccess
     {
         [Fact]
-        public void CheckSortVotes()
+        public void TestCheckoutListTwoBooksSqLite()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
@@ -24,11 +22,15 @@ namespace test.UnitTests.ServiceLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
+                var dbAccess = new PlaceOrderDbAccess(context);
+
                 //ATTEMPT
-                var sorted = context.Books.MapBookToDto().OrderBooksBy(OrderByOptions.ByVotes).ToList();
+                var booksDict = dbAccess.FindBooksByIdsWithPriceOffers(new []{1, 4});
 
                 //VERIFY
-                sorted.First().Title.ShouldEqual("Quantum Networking");
+                booksDict.Count.ShouldEqual(2);
+                booksDict[1].Promotion.ShouldBeNull();
+                booksDict[4].Promotion.ShouldNotBeNull();
             }
         }
     }

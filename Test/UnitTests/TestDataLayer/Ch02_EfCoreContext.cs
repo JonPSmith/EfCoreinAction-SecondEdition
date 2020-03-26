@@ -9,7 +9,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
-namespace test.UnitTests.DataLayer
+namespace Test.UnitTests.DataLayer
 {
     public class Ch02_EfCoreContext
     {

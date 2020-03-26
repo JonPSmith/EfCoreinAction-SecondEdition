@@ -6,7 +6,7 @@ using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace test.UnitTests.DataLayer
+namespace Test.UnitTests.TestDataLayer
 {
     public class Ch02_CreateDbContext
     {
