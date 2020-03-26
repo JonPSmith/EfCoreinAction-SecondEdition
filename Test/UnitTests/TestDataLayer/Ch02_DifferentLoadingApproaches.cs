@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.TestDbContexts.EfClasses;
@@ -14,7 +13,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.DataLayer
+namespace Test.UnitTests.TestDataLayer
 {
     public class Ch02_DifferentLoadingApproaches
     {

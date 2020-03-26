@@ -2,11 +2,11 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using Xunit;
 using EfCoreInAction.DatabaseHelpers;
+using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.AspNetCore
+namespace Test.UnitTests.TestAspNetCore
 {
     public class TestCalculateReviewsToMatch
     {

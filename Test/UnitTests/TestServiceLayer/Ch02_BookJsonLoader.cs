@@ -7,7 +7,7 @@ using TestSupport.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.ServiceLayer
+namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch02_BookJsonLoader
     {

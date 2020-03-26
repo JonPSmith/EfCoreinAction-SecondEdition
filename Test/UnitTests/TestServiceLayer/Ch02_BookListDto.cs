@@ -12,7 +12,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.ServiceLayer
+namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch02_BookListDto
     {

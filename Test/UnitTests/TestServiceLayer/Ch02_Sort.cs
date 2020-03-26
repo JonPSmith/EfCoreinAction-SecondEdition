@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;
@@ -10,7 +9,7 @@ using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.ServiceLayer
+namespace Test.UnitTests.TestServiceLayer
 {
     public class Ch02_Sort
     {

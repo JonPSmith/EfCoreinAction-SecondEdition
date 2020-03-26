@@ -3,7 +3,7 @@
 
 using System.Linq;
 
-namespace Test.UnitTests.Tests
+namespace Test.UnitTests.TestSupportCode
 {
     public static class LinqHelpers //#A
     {

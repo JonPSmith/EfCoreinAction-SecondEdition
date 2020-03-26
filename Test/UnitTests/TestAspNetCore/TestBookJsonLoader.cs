@@ -7,7 +7,7 @@ using TestSupport.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.AspNetCore
+namespace Test.UnitTests.TestAspNetCore
 {
     public class TestBookJsonLoader
     {

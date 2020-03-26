@@ -5,18 +5,13 @@ using System;
 using System.Globalization;
 using System.Linq;
 using DataLayer.EfCode;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Logging;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.DataLayer
+namespace Test.UnitTests.TestDataLayer
 {
     public class Ch02_ClientServerEvaluation
     {

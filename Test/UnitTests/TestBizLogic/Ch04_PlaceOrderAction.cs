@@ -11,7 +11,7 @@ using Test.Mocks;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.BizLogic
+namespace Test.UnitTests.TestBizLogic
 {
     public class Ch04_PlaceOrderAction
     {
