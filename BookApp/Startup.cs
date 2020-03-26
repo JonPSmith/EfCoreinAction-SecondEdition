@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using BookApp.HelperExtensions;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ServiceLayer.AppStart;
+using ServiceLayer.BookServices;
 using ServiceLayer.DatabaseServices.Concrete;
 
 namespace BookApp
@@ -32,8 +35,11 @@ namespace BookApp
             //This registers the correct type of database based on the appsettings' "DemoSetup" data
             services.RegisterDatabase(Configuration);
 
-            services.Configure<DemoSetupOptions>(
-                Configuration.GetSection("DemoSetup")); //This gets the information on how to set up my demo database
+            //This gets the information on how to set up my demo database
+            services.Configure<DemoSetupOptions>(Configuration.GetSection("DemoSetup")); 
+
+            //I let each project handle its own registering of services with dependency injection
+            services.RegisterServiceLayerDi();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

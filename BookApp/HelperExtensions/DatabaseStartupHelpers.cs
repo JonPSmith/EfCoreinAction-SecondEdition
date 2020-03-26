@@ -51,7 +51,7 @@ namespace BookApp.HelperExtensions
                     catch (Exception ex)
                     {
                         var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred while creating or seeding the database.");
+                        logger.LogError(ex, "An error occurred while creating/migrating or seeding the database.");
                     }
                 }
             }

@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFirstEfCoreApp", "MyFirstEfCoreApp\MyFirstEfCoreApp.csproj", "{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFirstEfCoreApp", "MyFirstEfCoreApp\MyFirstEfCoreApp.csproj", "{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{2C541617-2312-4769-B8A9-96E7B4501AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{2C541617-2312-4769-B8A9-96E7B4501AC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{7D0D3E17-A620-4CC5-90A2-C9BCCE20BEC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\DataLayer.csproj", "{7D0D3E17-A620-4CC5-90A2-C9BCCE20BEC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{2819F3A5-99EF-4379-8A2D-2A8ECA3A42A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{2819F3A5-99EF-4379-8A2D-2A8ECA3A42A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp", "BookApp\BookApp.csproj", "{BF8812C2-5F19-4A59-8A22-968ECF89A315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp", "BookApp\BookApp.csproj", "{BF8812C2-5F19-4A59-8A22-968ECF89A315}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizDbAccess", "BizDbAccess\BizDbAccess.csproj", "{C8984C15-EA16-4933-ACCF-81E443424A1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizLogic", "BizLogic\BizLogic.csproj", "{5CE8C6CD-9C2F-4A95-89D5-5ED2B07E4D02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{BF8812C2-5F19-4A59-8A22-968ECF89A315}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF8812C2-5F19-4A59-8A22-968ECF89A315}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF8812C2-5F19-4A59-8A22-968ECF89A315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8984C15-EA16-4933-ACCF-81E443424A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8984C15-EA16-4933-ACCF-81E443424A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8984C15-EA16-4933-ACCF-81E443424A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8984C15-EA16-4933-ACCF-81E443424A1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CE8C6CD-9C2F-4A95-89D5-5ED2B07E4D02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CE8C6CD-9C2F-4A95-89D5-5ED2B07E4D02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CE8C6CD-9C2F-4A95-89D5-5ED2B07E4D02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CE8C6CD-9C2F-4A95-89D5-5ED2B07E4D02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

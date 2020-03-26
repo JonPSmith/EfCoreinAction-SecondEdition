@@ -8,23 +8,27 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        public EfCoreContext( //#B
-            DbContextOptions<EfCoreContext> options) //#B
-            : base(options)
-        {
-        } //#B
+        public EfCoreContext(DbContextOptions<EfCoreContext> options)
+            : base(options) { }
 
-        public DbSet<Book> Books { get; set; } //#A
-        public DbSet<Author> Authors { get; set; } //#A
-        public DbSet<PriceOffer> PriceOffers { get; set; } //#A
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<PriceOffer> PriceOffers { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
-        protected override void
-            OnModelCreating(ModelBuilder modelBuilder) //#C
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
-            //#C
-            modelBuilder.Entity<BookAuthor>() //#C
-                .HasKey(x => new {x.BookId, x.AuthorId}); //#C
-        } //#C
+            modelBuilder.Entity<BookAuthor>() 
+                .HasKey(x => new {x.BookId, x.AuthorId});
+
+            modelBuilder.Entity<LineItem>()
+                .HasOne(p => p.ChosenBook) 
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Book>()
+                .HasQueryFilter(p => !p.SoftDeleted);
+        } 
     }
 
     /*********************************************************

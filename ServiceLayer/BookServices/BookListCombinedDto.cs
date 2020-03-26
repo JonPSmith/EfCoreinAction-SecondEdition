@@ -6,11 +6,9 @@ using ServiceLayer.Logger;
 
 namespace ServiceLayer.BookServices
 {
-    public class BookListCombinedDto : TraceIdentBaseDto
+    public class BookListCombinedDto
     {
-        public BookListCombinedDto(string traceIdentifier,
-            SortFilterPageOptions sortFilterPageData, IEnumerable<BookListDto> booksList)
-            : base(traceIdentifier)
+        public BookListCombinedDto(SortFilterPageOptions sortFilterPageData, IEnumerable<BookListDto> booksList)
         {
             SortFilterPageData = sortFilterPageData;
             BooksList = booksList;

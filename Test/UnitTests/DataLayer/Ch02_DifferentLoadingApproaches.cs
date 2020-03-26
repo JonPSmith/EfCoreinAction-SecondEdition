@@ -6,6 +6,8 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using Test.TestDbContexts.EfClasses;
+using Test.TestDbContexts.EfCode;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -89,23 +91,24 @@ namespace test.UnitTests.DataLayer
         public void TestLazyLoadBookAndReviewOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            var options = SqliteInMemory.CreateOptions<Lazy1DbContext>();
+            using (var context = new Lazy1DbContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = EfTestData.CreateDummyBooks(1).First();
-                book.LazyReviews = new List<LazyReview>
+                var book = new BookLazy1
                 {
-                    new LazyReview{NumStars = 5},
-                    new LazyReview{NumStars = 1}
+                    LazyReviews = new List<LazyReview>
+                    {
+                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
+                    }
                 };
                 context.Add(book);
                 context.SaveChanges();
             }
-            using (var context = new EfCoreContext(options))
+            using (var context = new Lazy1DbContext(options))
             {
                 //ATTEMPT
-                var book = context.Books.Single(); //#A
+                var book = context.BookLazy1s.Single(); //#A
                 book.LazyReviews.Count().ShouldEqual(2); //#B
                 /*********************************************************
                 #A We just load the book class
