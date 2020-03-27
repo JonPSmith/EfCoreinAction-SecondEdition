@@ -92,10 +92,12 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             int bookId;
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
+                if (!context.Books.Any())
+                    context.SeedDatabaseFourBooks();
 
                 bookId = context.Books.ToList().Last().BookId; //Last has a price promotion
             }

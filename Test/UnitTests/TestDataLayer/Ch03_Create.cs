@@ -148,6 +148,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
                 disconnectedAuthor = context.Authors.First();

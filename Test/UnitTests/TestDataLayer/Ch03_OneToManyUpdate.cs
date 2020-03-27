@@ -103,6 +103,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
                 var bookWithReviews = context.Books.Include(x => x.Reviews).First(x => x.Reviews.Count > 0);
@@ -147,6 +148,8 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
                 twoReviewBookId = context.Books.ToList().Last().BookId; //Last has reviews
             }
             using (var context = new EfCoreContext(options))
@@ -200,6 +203,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
 
                 var book = context.Books.First();
                 var review = context.Set<Review>().First();

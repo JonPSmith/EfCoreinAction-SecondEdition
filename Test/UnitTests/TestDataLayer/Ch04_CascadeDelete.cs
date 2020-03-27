@@ -80,11 +80,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestDeleteBookInLineItemFailsWithEfNotKnowingAboutTheOrder()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+                if (!context.Books.Any())
+                    context.SeedDatabaseFourBooks();
 
                 var userId = Guid.NewGuid();
 

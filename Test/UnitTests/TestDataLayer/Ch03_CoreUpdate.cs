@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
+using TestSupport.SeedDatabase;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -109,15 +110,17 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
-
-
-                var author = context.Books                      //#A
-                    .Where(p => p.Title == "Quantum Networking")//#A
-                    .Select(p => p.AuthorsLink.First().Author)  //#A
-                    .Single();                                  //#A
-                author.Name = "Future Person 2";                //#A
-                json = JsonConvert.SerializeObject(author);     //#A
-            }                                                   //#A
+                var author = context.Books                                          //#A
+                    .Where(p => p.Title == "Quantum Networking")                    //#A
+                    .Select(p => p.AuthorsLink.First().Author)                      //#A
+                    .Single();                                                      //#A
+                author.Name = "Future Person 2";                                    //#A
+                json = JsonConvert.SerializeObject(author,                          //#A
+                    new JsonSerializerSettings()                                    //#A
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects //#A
+                });                                                                 //#A
+            }                                                   
 
             using (var context = new EfCoreContext(options))
             {
@@ -126,7 +129,6 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var author = JsonConvert
                     .DeserializeObject<Author>(json);  //#B
-
 
                 context.Update(author); //#C                               
                 context.SaveChanges();  //#D  
