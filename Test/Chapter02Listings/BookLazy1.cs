@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Test.TestDbContexts.EfClasses
+namespace Test.Chapter02Listings
 {
     public class BookLazy1
     {

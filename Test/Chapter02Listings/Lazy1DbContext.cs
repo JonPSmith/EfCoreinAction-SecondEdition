@@ -2,9 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
-using Test.TestDbContexts.EfClasses;
 
-namespace Test.TestDbContexts.EfCode
+namespace Test.Chapter02Listings
 {
     public class Lazy1DbContext : DbContext
     {
