@@ -18,6 +18,26 @@ namespace Test.TestHelpers
             context.SaveChanges();
         }
 
+        public static Book CreateDummyBookOneAuthor()
+        {
+
+            var book = new Book
+            {
+                Title = "Book Title",
+                Description = "Book Description",
+                Price = 123,
+                PublishedOn = DummyBookStartDate
+            };
+
+            var author = new Author { Name = "Test Author" };
+            book.AuthorsLink = new List<BookAuthor>
+            {
+                new BookAuthor {Book = book, Author = author},
+            };
+
+            return book;
+        }
+
         public static List<Book> CreateDummyBooks(int numBooks = 10, bool stepByYears = false, bool setBookId = true)
         {
             var result = new List<Book>();

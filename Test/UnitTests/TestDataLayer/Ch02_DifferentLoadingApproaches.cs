@@ -28,7 +28,6 @@ namespace Test.UnitTests.TestDataLayer
         public void TestEagerLoadBookAllOk()
         {
             //SETUP
-            //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
