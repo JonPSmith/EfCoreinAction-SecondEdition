@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UnitCommands\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BookApp\BookApp.csproj" />
     <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
