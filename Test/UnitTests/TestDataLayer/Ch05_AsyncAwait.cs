@@ -59,7 +59,7 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-
+        [Fact]
         public async Task RunSelectAverageAsync()
         {
             //SETUP
