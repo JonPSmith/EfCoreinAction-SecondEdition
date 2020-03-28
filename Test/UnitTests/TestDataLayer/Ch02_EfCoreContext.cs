@@ -1,8 +1,11 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DataLayer.EfCode;
+using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -43,25 +46,22 @@ namespace Test.UnitTests.TestDataLayer
         public void TestStandardLinqLetOk()
         {
             //SETUP
-            var showLog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
-            {
-                if (!showLog)
-                    _output.WriteLine(log.DecodeMessage());
-            });
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var books = (from book in context.Books
+                var query = from book in context.Books
                         let count = book.Reviews.Count
-                        select new {Count1 = count, Count2 = count}
-                    ).ToList();
+                        select new {Count1 = count, Count2 = count};
+                var books = query.ToList();
 
                 //VERIFY
                 books.First().Count1.ShouldEqual(books.First().Count2);
+                var sql = query.ToQueryString();
+                Regex.Matches(sql, @"SELECT COUNT\(\*\)").Count.ShouldEqual(2);
             }
         }
 

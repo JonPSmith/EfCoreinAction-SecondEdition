@@ -142,7 +142,7 @@ namespace Test.UnitTests.TestDataLayer
             var showLog = false;
             var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
             {
-                if (!showLog)
+                if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
             using (var context = new EfCoreContext(options))

@@ -61,7 +61,7 @@ namespace Test.UnitTests.TestDataLayer
             var showLog = false;
             var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
             {
-                if (!showLog)
+                if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
             using (var context = new EfCoreContext(options))
@@ -102,7 +102,7 @@ namespace Test.UnitTests.TestDataLayer
             var showLog = false;
             var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
             {
-                if (!showLog)
+                if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
             using (var context = new EfCoreContext(options))
@@ -125,7 +125,6 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 showLog = true;
-
                 //ATTEMPT
                 var author = JsonConvert
                     .DeserializeObject<Author>(json);  //#B
