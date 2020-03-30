@@ -1,22 +1,17 @@
 // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using BookApp.HelperExtensions;
 using DataLayer.EfCode;
+using EfCoreInAction.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ServiceLayer.AppStart;
-using ServiceLayer.BookServices;
-using ServiceLayer.DatabaseServices.Concrete;
 
 namespace BookApp
 {
@@ -37,13 +32,16 @@ namespace BookApp
             services.AddDbContext<EfCoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             //I let each project handle its own registering of services with dependency injection
             services.RegisterServiceLayerDi();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor)
         {
+            loggerFactory.AddProvider(new RequestTransientLogger(() => httpContextAccessor));
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

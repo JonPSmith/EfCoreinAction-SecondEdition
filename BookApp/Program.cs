@@ -21,7 +21,7 @@ namespace BookApp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                //see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?tabs=aspnetcore2x&view=aspnetcore-3.0#how-to-add-providers
+                //see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1#add-providers
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders(); //Clear logging providers to improve performance
