@@ -59,23 +59,22 @@ var LoggingDisplay = (function($) {
 
     function fillModalBody() {
         var displayType = getDisplayType();
-        var body = '<div class="panel-group" id="log-accordian" role="tablist" aria-multiselectable="true">';
+        var body = '<div id="log-accordion">';
         for (var i = 0; i < logs.requestLogs.length; i++) {
             if (displayType !== 'sql' || logs.requestLogs[i].isDb)
-            body +=     
-'<div class="panel panel-default">'+
-   '<div class ="panel-heading" role="tab" id="heading'+i+'">'+
-      '<h4 class ="panel-title text-overflow-dots">'+
-        '<a role="button" data-toggle="collapse" data-parent="#log-accordion" href="#collapse' + i + '" aria-expanded="true" aria-controls="collapse' + i + '">' +
-          '<span class="' + setContextualColors(logs.requestLogs[i].logLevel) + '">' + logs.requestLogs[i].logLevel + ':&nbsp;</span>'+
-            logs.requestLogs[i].eventString + 
-        '</a>'+
-      '</h4>'+
+                body +=
+'<div class="card">'+
+    '<div class="card-header">'+
+        '<a class="card-link text-overflow-dots" data-toggle="collapse" href="#collapse'+i+'">'+
+              '<span class="' + setContextualColors(logs.requestLogs[i].logLevel) + '">' + logs.requestLogs[i].logLevel + ':&nbsp;</span>' +
+                   logs.requestLogs[i].eventString + 
+                '</a>' +
     '</div>'+
-    '<div id="collapse'+i+'" class ="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'">'+
-            '<div class ="panel-body white-space-pre">' + logs.requestLogs[i].eventString+''+
-       '</div>'+
-  '</div>'+
+    '<div id="collapse' + i +'" class="collapse" data-parent="#log-accordion">'+
+        '<div class="card-body white-space-pre">'+
+            logs.requestLogs[i].eventString+
+        '</div>'+
+    '</div>'+
 '</div>';
         }
         body += '</div>';

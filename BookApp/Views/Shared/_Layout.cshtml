@@ -68,5 +68,14 @@
 
 
 @RenderSection("Scripts", required: false)
+<script type='text/javascript'>
+    document.addEventListener("DOMContentLoaded",
+        function(event) {
+            var numLogs = @(ViewData["NumLogs"] ?? 0);
+            if (numLogs > 0) {
+                LoggingDisplay.initialise('@Url.Action("GetLog", "Logger")', '@ViewData["TraceIdent"]', numLogs);
+            }
+        });
+</script>
 </body>
 </html>

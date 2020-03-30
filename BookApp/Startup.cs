@@ -29,6 +29,7 @@ namespace BookApp
         {
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();//This recompile a razor page if you edit it while the app is running
+            services.AddRazorPages();
 
             services.AddDbContext<EfCoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -56,7 +57,7 @@ namespace BookApp
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
