@@ -1,0 +1,30 @@
+﻿@* // sends in the number of logs *@
+
+<!-- Logs Modal -->
+<div class="modal fade" id="log-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Logs (<span></span>)</h4>
+            </div>
+            <div class="modal-body">
+                <p>One fine body&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <div class="float-left">
+                    <span class="badge">Show</span>
+                    <div id="displaySelect" class="btn-group" data-toggle="buttons" aria-label="select log types">
+                        <label id="all-select" class="btn btn-secondary">
+                            <input type="radio" value="all" name="displaySelect">All&nbsp;(<span></span>)
+                        </label>
+                        <label id="sql-select" class="btn btn-secondary active">
+                            <input type="radio" value="sql" name="displaySelect" checked>SQL&nbsp;(<span></span>)
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
