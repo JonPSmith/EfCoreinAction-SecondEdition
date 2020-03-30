@@ -151,15 +151,15 @@ var LoggingDisplay = (function($) {
         }
     }
 
-    function fillModalBody() {
-        var displayType = getDisplayType();
+    function fillModalBody(displayType) {
+        displayType = displayType || getDisplayType();
         var body = '<div id="log-accordion">';
         for (var i = 0; i < logs.requestLogs.length; i++) {
             if (displayType !== 'sql' || logs.requestLogs[i].isDb)
                 body +=
 '<div class="card">'+
-    '<div class="card-header">'+
-        '<a class="card-link text-overflow-dots" data-toggle="collapse" href="#collapse'+i+'">'+
+    '<div class="card-header text-overflow-dots">'+
+        '<a class="card-link" data-toggle="collapse" href="#collapse'+i+'">'+
               '<span class="' + setContextualColors(logs.requestLogs[i].logLevel) + '">' + logs.requestLogs[i].logLevel + ':&nbsp;</span>' +
                    logs.requestLogs[i].eventString + 
                 '</a>' +
@@ -214,11 +214,15 @@ var LoggingDisplay = (function($) {
                         startModal();
                     });
             $showLogsLink.removeClass('d-none');
-            $logDisplaySelect.unbind('change')
-                .bind('change',
-                    function() {
-                        fillModalBody();
-                    });
+
+            $('#all-select').on('click',
+                function() {
+                    fillModalBody('all');
+                });
+            $('#sql-select').on('click',
+                function () {
+                    fillModalBody('sql');
+                });
         },
 
         newTrace: function(traceIdentifier, numLogs) {
