@@ -28,13 +28,13 @@ namespace BookApp.HelperExtensions
             using (var scope = webHost.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var demoSettings = services.GetRequiredService<IOptions<DemoSetupOptions>>().Value;
+                var config = services.GetRequiredService<IConfiguration>();
                 var env = services.GetRequiredService<IWebHostEnvironment>();
                 var context = services.GetRequiredService<EfCoreContext>();
                 {
                     try
                     {
-                        if (demoSettings.Migrate)
+                        if (config["DemoSetup:UseInMemory"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
                         {
                             await context.Database.MigrateAsync();
                         }
@@ -43,10 +43,7 @@ namespace BookApp.HelperExtensions
                             await context.Database.EnsureCreatedAsync();
                         }
 
-                        if (demoSettings.ManuallySeed)
-                        {
-                            await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
-                        }
+                        await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
                     }
                     catch (Exception ex)
                     {
@@ -57,22 +54,6 @@ namespace BookApp.HelperExtensions
             }
 
             return webHost;
-        }
-
-        public static void RegisterDatabase(this IServiceCollection services, IConfiguration configuration)
-        {
-            var useInMemory = configuration["DemoSetup:UseInMemory"]
-                .Equals("true", StringComparison.InvariantCultureIgnoreCase);
-            if (useInMemory)
-            {
-                var aspNetAuthConnection = SetupSqliteInMemoryConnection();
-                services.AddDbContext<EfCoreContext>(options => options.UseSqlite(aspNetAuthConnection));
-            }
-            else
-            {
-                services.AddDbContext<EfCoreContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            }
         }
 
         //--------------------------------------------------------

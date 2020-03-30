@@ -7,8 +7,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BookApp.HelperExtensions;
+using DataLayer.EfCode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,11 +34,8 @@ namespace BookApp
         {
             services.AddControllersWithViews();
 
-            //This registers the correct type of database based on the appsettings' "DemoSetup" data
-            services.RegisterDatabase(Configuration);
-
-            //This gets the information on how to set up my demo database
-            services.Configure<DemoSetupOptions>(Configuration.GetSection("DemoSetup")); 
+            services.AddDbContext<EfCoreContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //I let each project handle its own registering of services with dependency injection
             services.RegisterServiceLayerDi();
