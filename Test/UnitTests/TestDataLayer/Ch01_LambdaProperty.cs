@@ -9,15 +9,23 @@ using Test.Chapter01Listings;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch01_LambdaProperty
     {
+        private ITestOutputHelper _output;
+
+        public Ch01_LambdaProperty(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
 
         [Fact]
-        public void TestPersonReadBackOkOk()
+        public void TestPersonReadBackOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter01DbContext>();
@@ -51,6 +59,27 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.Message.ShouldContain("could not be translated.");
+            }
+        }
+
+        [Fact]
+        public void TestFilterPersonViaFullPersonOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter01DbContext>();
+            using (var context = new Chapter01DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.Add(new Person { FirstName = "John", LastName = "Doe" });
+                context.SaveChanges();
+
+                //ATTEMPT
+                var query = context.Persons.Where(x => x.FirstName + x.LastName == "JohnDoe");
+                var person = query.First();
+
+                //VERIFY
+                person.ShouldNotBeNull();
+                _output.WriteLine(query.ToQueryString());
             }
         }
     }
