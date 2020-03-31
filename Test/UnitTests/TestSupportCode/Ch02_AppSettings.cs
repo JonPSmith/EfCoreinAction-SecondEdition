@@ -21,7 +21,7 @@ namespace Test.UnitTests.TestSupportCode
 
             //VERIFY
             config.GetConnectionString("UnitTestConnection")
-                .ShouldEqual("Server=(localdb)\\mssqllocaldb;Database=EfCoreInActionDb-Test;Trusted_Connection=True;MultipleActiveResultSets=true");
+                .ShouldEqual("Server=(localdb)\\mssqllocaldb;Database=EfCoreInActionDb2-Test;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
 
         [Fact]

@@ -85,6 +85,27 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void TestEagerLoadIncludeNotNeededOk()
+        {
+            //SETUP
+            var logs = new List<LogOutput>();
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log => logs.Add(log));
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                //ATTEMPT
+                var newPrices = context.Books.Include(x => x.Promotion)
+                    .Select(x => (decimal?) x.Promotion.NewPrice)
+                    .ToArray();
+
+                //VERIFY
+                newPrices.ShouldEqual(new decimal?[]{null, null, null, 219} );
+            }
+        }
+
+        [Fact]
         public void TestExplicitLoadBookOk()
         {
             //SETUP
