@@ -37,9 +37,9 @@ namespace ServiceLayer.BookServices.Concrete
                         Any(x => x.PublishedOn > DateTime.UtcNow); //#A
                     var nextYear = DateTime.UtcNow.AddYears(1).Year; //#B
                     var result = _db.Books //#C
+                        .Where(x => x.PublishedOn < DateTime.Today) //#C
                         .Select(x => x.PublishedOn.Year) //#C
                         .Distinct() //#C
-                        .Where(x => x < nextYear) //#C
                         .OrderByDescending(x => x) //#C
                         .Select(x => new DropdownTuple //#D
                         {

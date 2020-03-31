@@ -44,19 +44,17 @@ namespace DataLayer.EfCode
 * see https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db
 * 
 * Add to EfCoreInAction the following NuGet libraries
-* 1. "Microsoft.EntityFrameworkCore.Tools"  AND MOVE TO tools part of project
-*    Note: You can move the Microsoft.EntityFrameworkCore.Tools pckage to the tools part of project. 
+* 1. "Microsoft.EntityFrameworkCore.Tools" AND MOVE TO tools part of project
+*    Note: You can move the Microsoft.EntityFrameworkCore.Tools package to the tools part of project. 
 * 
 * 2. Using Package Manager Console commands
 * The steps are:
-* a) Add a second param to the AddDbContext command in startup which is
-*    b => b.MigrationsAssembly("DataLayer")
-* b) Use the PMC command
-*    Add-Migration Chapter02 -Project DataLayer -StartupProject EfCoreInAction
-* c) Use PMC command
-*    Update-database -Project DataLayer -StartupProject EfCoreInAction
+* a) Use the PMC command
+*    Add-Migration MyNamedMigration -Project DataLayer -StartupProject BookApp
+* b) Use PMC command
+*    Update-database -Project DataLayer -StartupProject BookApp
 *    
-* If you want to start afreash then:
+* If you want to start afresh then:
 * a) Delete the current database
 * b) Delete all the class in the Migration directory
 * c) follow the steps to add a migration
