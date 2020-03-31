@@ -1,0 +1,50 @@
+﻿@model ServiceLayer.OrderServices.OrderListDto
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-heading">
+            <div><span class="h4">Order @Model.OrderNumber</span> placed on @Model.DateOrderedUtc.ToString("f")</div>
+        </div>
+    </div>
+    <div class="panel-body">
+        @{
+            foreach (var lineItem in Model.LineItems)
+            {
+                <div class="row">
+                    <div class="col-xs-2">
+                        <img class="img-responsive" src="@(lineItem.ImageUrl ?? "#")">
+                    </div>
+                    <div class="col-xs-4">
+                        <h4 class="product-name">
+                            <strong>@lineItem.Title</strong>
+                        </h4>
+                        <small>by&nbsp;</small>@lineItem.AuthorsName
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="col-xs-6 text-right">
+                            <h6>
+                                <strong>
+                                    $@($"{lineItem.BookPrice:F}") <span class="text-muted">x</span>
+                                </strong>
+                            </h6>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="form-control input-sm">@lineItem.NumBooks</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="panel-footer">
+        <div class="row text-center">
+            <div class="col-xs-9">
+                <h4 class="text-right">
+                    Total <strong>$@($"{Model.LineItems.Sum(x => x.BookPrice * x.NumBooks):F}")</strong>
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+

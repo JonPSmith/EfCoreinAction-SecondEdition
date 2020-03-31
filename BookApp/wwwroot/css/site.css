@@ -71,6 +71,10 @@ html {
     vertical-align: middle;
 }
 
+hr.grayhozrline {
+    border-top: 1px solid grey;
+}
+
 /*------------------------------------------------------------------
     Extra bits for showing log - see http://stackoverflow.com/a/32351302/1434764
 */

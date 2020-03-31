@@ -1,0 +1,46 @@
+﻿@model DataLayer.EfClasses.Review
+
+<h2>Add a book review</h2>
+
+
+<form asp-controller="Admin" asp-action="AddBookReview" method="post">
+    <!-- Input and Submit elements -->
+    <input name="BookId" type="hidden" value="@Model.BookId"/>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label>Book Title</label>
+        </div>
+        <div class="col-sm-10">
+            @ViewData["BookTitle"]
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label>YourName</label>
+        </div>
+        <input asp-for="VoterName" class="form-control col-sm-5"/>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label>Grade (0 to 5)</label>
+        </div>
+        <input asp-for="NumStars" min="0" max="5" class="form-control col-sm-2"/>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label>Your comment</label>
+        </div>
+        <textarea  asp-for="Comment" class="form-control col-sm-10"></textarea>
+    </div>
+
+    <div class="form-group">
+        <div class="offset-md-2 col-md-10">
+            <button type="submit">Update</button>
+        </div>
+    </div>
+
+</form>

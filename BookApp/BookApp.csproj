@@ -15,6 +15,16 @@
 
   <ItemGroup>
     <None Include="bundleconfig.json" />
+    <None Include="Views\Admin\AddBookReview.cshtml" />
+    <None Include="Views\Admin\BookUpdated.cshtml" />
+    <None Include="Views\Admin\ChangePromotion.cshtml" />
+    <None Include="Views\Admin\ChangePubDate.cshtml" />
+    <None Include="Views\Checkout\Index.cshtml" />
+    <None Include="Views\Checkout\ListBasketPartial.cshtml" />
+    <None Include="Views\Checkout\PlaceOrder.cshtml" />
+    <None Include="Views\Orders\ConfirmOrder.cshtml" />
+    <None Include="Views\Orders\Index.cshtml" />
+    <None Include="Views\Orders\OneOrderPartial.cshtml" />
     <None Include="wwwroot\js\bundle.min.js" />
   </ItemGroup>
 

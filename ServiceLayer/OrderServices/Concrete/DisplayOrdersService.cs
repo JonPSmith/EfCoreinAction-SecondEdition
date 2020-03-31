@@ -59,6 +59,7 @@ namespace ServiceLayer.OrderServices.Concrete
                                    {
                                        BookId = lineItem.BookId,
                                        Title = lineItem.ChosenBook.Title,
+                                       ImageUrl = lineItem.ChosenBook.ImageUrl,
                                        AuthorsName = string.Join(", ",
                                         lineItem.ChosenBook.AuthorsLink
                                             .OrderBy(q => q.Order)

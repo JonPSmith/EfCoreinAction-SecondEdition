@@ -1,0 +1,18 @@
+﻿@model List<ServiceLayer.OrderServices.OrderListDto>
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="container">
+    <table class="table">
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>
+                    @Html.Partial("OneOrderPartial", order)
+                    
+                </td>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,95 @@
+﻿@model System.Collections.Immutable.ImmutableList<ServiceLayer.CheckoutServices.CheckoutItemDto>
+
+@*adapted from bootsnipp example: http://bootsnipp.com/snippets/featured/shopping-cart-panel-bs-3*@
+
+<div class="container">
+    @*I set the validation summary to show all the errors to stop any errors bing missed if the property name doesn't' match*@ 
+    @Html.ValidationSummary(false, null, new { @class = "text-danger h4" })
+    
+    @if (!Model.Any())
+    {
+        <h3>Nothing in your basket yet</h3>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <h4>Shopping Cart</h4>
+        </div>
+        <div class="col-md-4">
+            <a class="btn btn-primary btn-sm btn-block"
+               href="@Url.Action("Index", "Home")">
+                Continue shopping
+            </a>
+        </div>
+        
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+
+    @{int i = 0;
+        foreach (var lineItem in @Model)
+        {
+            <div class="row">
+                <input id="LineNumZeroStart" name="LineNumZeroStart" type="hidden" value=i>
+                <div class="col-md-2">
+                    <img class="img-fluid" src="@(lineItem.ImageUrl ?? "#")">
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        <strong>@lineItem.Title</strong>
+                    </h5>
+                    <small>by</small>&nbsp;@lineItem.AuthorsName
+                </div>
+                <div class="col-md-2 text-right">
+                    <h6>
+                        <strong>
+                            $@($"{lineItem.BookPrice:F}") <span class="text-muted">x</span>
+                        </strong>
+                    </h6>
+                </div>
+                <div class="col-md-2">
+                    <span class="form-control input-sm">@lineItem.NumBooks</span>
+                </div>
+                <div class="col-md-2">
+                    <a class="btn btn-link btn-warning"
+                       href="@Url.Action("DeleteLineItem", new {lineNum = i})">
+                        Remove
+                    </a>
+                </div>
+            </div>
+            <hr/>
+            i++;
+        }
+    }
+
+    @if (Model.Any())
+    {
+        <form action='@Url.Action("PlaceOrder")'>
+            <div class="row">
+                <div class="col-md-7">
+                    <h4>Terms and Conditions</h4>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" value="true" name="acceptTAndCs" id="iAcceptTAndCs">
+                            I understand this is a demo site and I am not really buying these books
+                            <input type="hidden" value="false" checked name="iAcceptTAndCs"/>
+                        </label>
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <h4 class="text-right">Total <strong>$@($"{Model.Sum(x => x.BookPrice * x.NumBooks):F}")</strong></h4>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success btn-block">
+                        Purchase
+                    </button>
+                </div>
+            </div>
+        </form>
+    }
+
+
+</div>
