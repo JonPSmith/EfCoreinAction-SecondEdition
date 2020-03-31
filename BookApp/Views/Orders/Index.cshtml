@@ -4,15 +4,11 @@
 }
 
 <div class="container">
-    <table class="table">
+
         @foreach (var order in Model)
         {
-            <tr>
-                <td>
-                    @Html.Partial("OneOrderPartial", order)
-                    
-                </td>
-            </tr>
+            @Html.Partial("OneOrderPartial", order)
+            <hr/>
         }
-    </table>
+
 </div>
