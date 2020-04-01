@@ -41,18 +41,19 @@ namespace DataLayer.EfCode
 /******************************************************************************
 * NOTES ON MIGRATION:
 * 
-* see https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db
+* see https://docs.microsoft.com/en-us/aspnet/core/data/ef-rp/migrations?tabs=visual-studio
 * 
-* Add to EfCoreInAction the following NuGet libraries
-* 1. "Microsoft.EntityFrameworkCore.Tools" AND MOVE TO tools part of project
-*    Note: You can move the Microsoft.EntityFrameworkCore.Tools package to the tools part of project. 
+* The following NuGet libraries must be loaded
+* 1. Add to BookApp: "Microsoft.EntityFrameworkCore.Tools"
+* 2. Add to DataLayer: "Microsoft.EntityFrameworkCore.SqlServer" (or your 
 * 
 * 2. Using Package Manager Console commands
 * The steps are:
-* a) Use the PMC command
-*    Add-Migration MyNamedMigration -Project DataLayer -StartupProject BookApp
-* b) Use PMC command
-*    Update-database -Project DataLayer -StartupProject BookApp
+* a) Make sure the default project is BookApp
+* b) Use the PMC command
+*    Add-Migration MyNamedMigration -Project DataLayer
+* c) Use PMC command
+*    Update-database
 *    
 * If you want to start afresh then:
 * a) Delete the current database
