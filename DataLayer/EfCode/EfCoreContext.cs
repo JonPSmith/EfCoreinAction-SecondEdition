@@ -45,13 +45,13 @@ namespace DataLayer.EfCode
 * 
 * The following NuGet libraries must be loaded
 * 1. Add to BookApp: "Microsoft.EntityFrameworkCore.Tools"
-* 2. Add to DataLayer: "Microsoft.EntityFrameworkCore.SqlServer" (or your 
+* 2. Add to DataLayer: "Microsoft.EntityFrameworkCore.SqlServer" (or another database provider)
 * 
 * 2. Using Package Manager Console commands
 * The steps are:
 * a) Make sure the default project is BookApp
 * b) Use the PMC command
-*    Add-Migration MyNamedMigration -Project DataLayer
+*    Add-Migration NameForMigration -Project DataLayer
 * c) Use PMC command
 *    Update-database
 *    
