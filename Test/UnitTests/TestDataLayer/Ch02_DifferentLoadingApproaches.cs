@@ -61,7 +61,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestEagerLoadBookAndReviewOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var showlog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            {
+                if (showlog)
+                    _output.WriteLine(log.Message);
+            });
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
@@ -70,6 +75,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
+                showlog = true;
                 var book = context.Books
                     .Include(r => r.Reviews) //#A
                     .First(); //#B
@@ -237,14 +243,19 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSelectLoadBookOk()
         {
             //SETUP
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var showlog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            {
+                if (showlog)
+                    _output.WriteLine(log.Message);
+            });
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
+                showlog = true;
                 var books = context.Books
                     .Select(p => new //#A
                         {
@@ -262,6 +273,7 @@ namespace Test.UnitTests.TestDataLayer
                 * *******************************************************/
 
                 //VERIFY
+                showlog = false;
                 books.First().NumReviews.ShouldEqual(0);
             }
         }
