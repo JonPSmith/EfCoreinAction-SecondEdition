@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Test.Chapter02Listings
 {
     /// <summary>
-    /// This uses injection of ILazyLoader into class to do lazy loading
+    /// This uses Microsoft.EntityFrameworkCore.Proxies and virtual to do lazy loading
     /// </summary>
-    public class Lazy1DbContext : DbContext
+    public class Lazy2DbContext : DbContext
     {
-        public Lazy1DbContext(DbContextOptions<Lazy1DbContext> options)
+        public Lazy2DbContext(DbContextOptions<Lazy2DbContext> options)
             : base(options) { }
 
-        public DbSet<BookLazy1> BookLazy1s { get; set; }
+        public DbSet<BookLazy2> BookLazy2s { get; set; }
         
     }
 }
