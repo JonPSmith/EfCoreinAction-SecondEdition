@@ -4,6 +4,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.DatabaseServices.Concrete;
@@ -18,185 +19,59 @@ namespace Test.UnitTests.TestDataLayer
 {
     public class Ch02_StringSearch
     {
+        private readonly ITestOutputHelper _output;
         public Ch02_StringSearch(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        private readonly ITestOutputHelper _output;
-
-        [Theory]
-        [InlineData("Book0001 Title", 1)]
-        [InlineData("book0001 TITLE", 0)]
-        public void TestEqualsExact(string searchString, int expectedCount)
+        [Fact]
+        public void TestSqlServerCaseInsensitive()
         {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => p.Title == searchString)
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(expectedCount);
-            }
-        }
-
-        [Theory]
-        [InlineData("Book0001 Title", 1)]
-        [InlineData("book0001 TITLE", 1)]
-        public void TestLikeExact(string searchString, int expectedCount)
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => EF.Functions.Like(p.Title, searchString))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(expectedCount);
-            }
+            var options = this.CreateUniqueClassOptions<EfCoreContext>();
+            CheckCaseSensitivity(options, "SQL Server");
         }
 
         [Fact]
-        public async Task FindBooksWithCSharpInTheirTitleContains()
+        public void TestSqliteCaseInsensitive()
         {
-            //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var appWwwrootDir =
-                    Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
-                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => p.Title.Contains("C#"))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(5);
-            }
+            CheckCaseSensitivity(options, "SQL Server");
         }
 
-        [Fact]
-        public async Task FindBooksWithCSharpInTheirTitleLike()
+        private void CheckCaseSensitivity(DbContextOptions<EfCoreContext> options, string databaseType)
         {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
-                context.Database.EnsureCreated();
-                var appWwwrootDir =
-                    Path.GetFullPath(Path.Combine(TestData.GetCallingAssemblyTopLevelDir(), @"../BookApp/wwwroot/"));
-                await context.SeedDatabaseIfNoBooksAsync(appWwwrootDir);
-
-                //ATTEMPT
-                var bookTitles = context.Books
-                    .Where(p => EF.Functions.Like(p.Title, "%C#%"))
-                    .Select(p => p.Title)
-                    .ToList();
-
-
-                //VERIFY
-                bookTitles.Count.ShouldEqual(5);
-                foreach (var title in bookTitles)
+                const string normalTitle = "Entity Framework in Action";
+                if (context.Database.EnsureCreated())
                 {
-                    _output.WriteLine(title);
+                    //new database created, so seed
+                    var book1 = new Book {Title = normalTitle};
+                    var book2 = new Book {Title = "entity FRAMEWORK in action"};
+                    context.AddRange(book1, book2);
+                    context.SaveChanges();
                 }
-            }
-        }
 
-        [Fact]
-        public void TestEndsWith()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => p.Title.EndsWith("1 Title"))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(4);
-            }
-        }
-
-        [Fact]
-        public void TestLike()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
+                void OutputResult(IQueryable<Book> query, string type)
+                {
+                    var foundCount = query.Count();
+                    var caseText = foundCount == 2 ? "INsensitive" : "sensitive";
+                    _output.WriteLine($"{type} on {databaseType} is\t case-{caseText}. SQL created is:");
+                    foreach (var line in query.ToQueryString().Split('\n').Select(x => x.Trim()))
+                    {
+                        _output.WriteLine("      " + line);
+                    }
+                }
 
                 //ATTEMPT
-                var books = context.Books
-                    .Where(p => EF.Functions.Like(p.Title, "Book00_5%"))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(4);
+                OutputResult(context.Books.Where(x => x.Title == normalTitle), "==");
+                OutputResult(context.Books.Where(x => x.Title.StartsWith("Entity")), "StartsWith");
+                OutputResult(context.Books.Where(x => x.Title.EndsWith("Action")), "EndsWith");
+                OutputResult(context.Books.Where(x => x.Title.Contains("Framework")), "Contains");
+                OutputResult(context.Books.Where(x => EF.Functions.Like(x.Title, normalTitle)), "Like");
             }
         }
 
-        [Fact]
-        public void TestLikeLowerCase()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => EF.Functions.Like(p.Title, "book00_5%"))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(4);
-            }
-        }
-
-        [Fact]
-        public void TestStartsWith()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(40);
-
-                //ATTEMPT
-                var books = context.Books
-                    .Where(p => p.Title.StartsWith("Book001"))
-                    .ToList();
-
-                //VERIFY
-                books.Count.ShouldEqual(10);
-            }
-        }
     }
 }
