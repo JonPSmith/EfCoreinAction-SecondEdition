@@ -51,11 +51,14 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 showlog = true;
                 var book = context.BookLazy1s.Single(); //#A
-                book.LazyReviews.Count().ShouldEqual(2); //#B
+                var reviews = book.LazyReviews.ToList(); //#B
                 /*********************************************************
                 #A We just load the book class
-                #B When the LazyReviews are read, then EF Core will read in the reviews
+                #B When the LazyReviews property is accessed, then EF Core will read in the reviews from the database
                 * *******************************************************/
+
+                //VERIFY
+                reviews.Count.ShouldEqual(2);
             }
         }
 
