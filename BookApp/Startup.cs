@@ -30,9 +30,13 @@ namespace BookApp
         {
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation() //This recompile a razor page if you edit it while the app is running
-                .AddJsonOptions(opts => { opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
-            services.AddRazorPages();
+                //Added this because my logs display needs the enum as a string
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
 
+            //Register a SQL Server database with EF Core
             services.AddDbContext<EfCoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
