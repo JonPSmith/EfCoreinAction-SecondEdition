@@ -1,24 +1,20 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
-using ServiceLayer.DatabaseServices.Concrete;
-using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch02_StringSearch
     {
+        private const string NormalTitle = "Entity Framework in Action";
+
         private readonly ITestOutputHelper _output;
         public Ch02_StringSearch(ITestOutputHelper output)
         {
@@ -36,18 +32,17 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSqliteCaseInsensitive()
         {
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            CheckCaseSensitivity(options, "SQL Server");
+            CheckCaseSensitivity(options, "Sqlite");
         }
 
         private void CheckCaseSensitivity(DbContextOptions<EfCoreContext> options, string databaseType)
         {
             using (var context = new EfCoreContext(options))
             {
-                const string normalTitle = "Entity Framework in Action";
                 if (context.Database.EnsureCreated())
                 {
                     //new database created, so seed
-                    var book1 = new Book {Title = normalTitle};
+                    var book1 = new Book {Title = NormalTitle};
                     var book2 = new Book {Title = "entity FRAMEWORK in action"};
                     context.AddRange(book1, book2);
                     context.SaveChanges();
@@ -65,11 +60,13 @@ namespace Test.UnitTests.TestDataLayer
                 }
 
                 //ATTEMPT
-                OutputResult(context.Books.Where(x => x.Title == normalTitle), "==");
+                OutputResult(context.Books.Where(x => x.Title == NormalTitle), "==");
+                OutputResult(context.Books.Where(x => x.Title.Equals(NormalTitle)), "Equals");
                 OutputResult(context.Books.Where(x => x.Title.StartsWith("Entity")), "StartsWith");
                 OutputResult(context.Books.Where(x => x.Title.EndsWith("Action")), "EndsWith");
                 OutputResult(context.Books.Where(x => x.Title.Contains("Framework")), "Contains");
-                OutputResult(context.Books.Where(x => EF.Functions.Like(x.Title, normalTitle)), "Like");
+                OutputResult(context.Books.Where(x => x.Title.IndexOf("Entity") == 0), "IndexOf");
+                OutputResult(context.Books.Where(x => EF.Functions.Like(x.Title, NormalTitle)), "Like");
             }
         }
 

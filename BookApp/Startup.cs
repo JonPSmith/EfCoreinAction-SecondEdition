@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
 using DataLayer.EfCode;
 using EfCoreInAction.Logger;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +29,8 @@ namespace BookApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
-                .AddRazorRuntimeCompilation();//This recompile a razor page if you edit it while the app is running
+                .AddRazorRuntimeCompilation() //This recompile a razor page if you edit it while the app is running
+                .AddJsonOptions(opts => { opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
             services.AddRazorPages();
 
             services.AddDbContext<EfCoreContext>(options =>
