@@ -26,20 +26,11 @@ namespace BookApp.HelperExtensions
             using (var scope = webHost.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var config = services.GetRequiredService<IConfiguration>();
                 var env = services.GetRequiredService<IWebHostEnvironment>();
                 var context = services.GetRequiredService<EfCoreContext>();
                 try
                 {
-                    if (config["DemoSetup:Migrate"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        await context.Database.MigrateAsync();
-                    }
-                    else
-                    {
-                        await context.Database.EnsureCreatedAsync();
-                    }
-
+                    await context.Database.MigrateAsync();
                     await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
                 }
                 catch (Exception ex)
