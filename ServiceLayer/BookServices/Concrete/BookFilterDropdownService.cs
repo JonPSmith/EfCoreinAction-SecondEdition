@@ -33,18 +33,18 @@ namespace ServiceLayer.BookServices.Concrete
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
                 case BooksFilterBy.ByPublicationYear:
-                    var comingSoon = _db.Books.                      //#A
-                        Any(x => x.PublishedOn > DateTime.UtcNow);   //#A
-                    var result = _db.Books                           //#B
-                        .Where(x => x.PublishedOn < DateTime.Today)  //#B
-                        .Select(x => x.PublishedOn.Year)             //#B
-                        .Distinct()                                  //#B
-                        .OrderByDescending(x => x)                   //#C
-                        .Select(x => new DropdownTuple               //#D
-                        {                                            //#D
-                            Value = x.ToString(),                    //#D
-                            Text = x.ToString()                      //#D
-                        }).ToList();                                 //#D
+                    var result = _db.Books                           //#A
+                        .Where(x => x.PublishedOn <= DateTime.Today) //#A
+                        .Select(x => x.PublishedOn.Year)             //#A
+                        .Distinct()                                  //#A
+                        .OrderByDescending(x => x)                   //#B
+                        .Select(x => new DropdownTuple               //#C
+                        {                                            //#C
+                            Value = x.ToString(),                    //#C
+                            Text = x.ToString()                      //#C
+                        }).ToList();                                 //#C
+                    var comingSoon = _db.Books.                      //#D
+                        Any(x => x.PublishedOn > DateTime.Today);   //#D
                     if (comingSoon)                                  //#E
                         result.Insert(0, new DropdownTuple           //#E
                         {
@@ -54,10 +54,10 @@ namespace ServiceLayer.BookServices.Concrete
 
                     return result;
                 /*****************************************************************
-                #A This returns true if there is a book in the list that is not yet published
-                #B This long command gets the year of publication by filters out the future books, select the data and uses distinct to only have one of each year,  
-                #C Orders the years, with newest year at the top
-                #D I finally use two client/server evaluations to turn the values into strings
+                #A This long command gets the year of publication by filters out the future books, select the data and uses distinct to only have one of each year
+                #B Orders the years, with newest year at the top
+                #C I finally use two client/server evaluations to turn the values into strings
+                #D This returns true if there is a book in the list that is not yet published
                 #E Finally I add a "coming soon" filter for all the future books
                  * ***************************************************************/
                 default:
