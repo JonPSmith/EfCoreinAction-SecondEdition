@@ -7,20 +7,21 @@ using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using ServiceLayer.AdminServices;
+using ServiceLayer.AdminServices.Concrete;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupport.SeedDatabase;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch03_CoreUpdate
+    public class Ch03_Update
     {
         private readonly ITestOutputHelper _output;
 
-        public Ch03_CoreUpdate(ITestOutputHelper output)
+        public Ch03_Update(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -53,46 +54,82 @@ namespace Test.UnitTests.TestDataLayer
                     .ShouldEqual(new DateTime(2058, 1, 1));       //#F
             }
         }
+        /**********************************************************
+        #E This reloads the Quantum Networking book from the database
+        #F This shows that the PublishedOn date is what we expect
+        * *******************************************************/
 
         [Fact]
-        public void UpdatePublicationDateWithLogging()
+        public void UpdatePublicationDateWithLoggingSqlServer()
         {
             //SETUP
             var showLog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            //var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            var options = this.CreateUniqueClassOptionsWithLogging<EfCoreContext>(log =>
             {
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
             using (var context = new EfCoreContext(options))
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+                if (context.Database.EnsureCreated())
+                {
+                    //Only add books if database was created
+                    context.SeedDatabaseFourBooks();
+                }
+                else
+                {
+                    //If already there then make the date different, otherwise the update doesn't work
+                    var existingBook = context.Books                         
+                        .Single(p => p.Title == "Quantum Networking");
+                    existingBook.PublishedOn = new DateTime(2057, 1, 1);
+                    context.SaveChanges();
+                }
 
                 //ATTEMPT
                 showLog = true;
-                var book = context.Books                          //#B
-                    .Single(p => p.Title == "Quantum Networking");//#B
-                book.PublishedOn = new DateTime(2058, 1, 1);      //#C     
-                context.SaveChanges();                            //#D
+                var book = context.Books                          
+                    .Single(p => p.Title == "Quantum Networking");
+                book.PublishedOn = new DateTime(2058, 1, 1);         
+                context.SaveChanges();                            
+                showLog = false;
 
                 //VERIFY
-                var bookAgain = context.Books                     //#E
-                    .Single(p => p.Title == "Quantum Networking");//#E
-                bookAgain.PublishedOn                             //#F
-                    .ShouldEqual(new DateTime(2058, 1, 1));       //#F
+                var bookAgain = context.Books                     
+                    .Single(p => p.Title == "Quantum Networking");
+                bookAgain.PublishedOn                             
+                    .ShouldEqual(new DateTime(2058, 1, 1));
 
             }
         }
-        /**********************************************************
-        #A This create a database and seeds it with four books, one of which is the book on Quantum Networking
-        #B It finds the specific book we want to update. In the case our special book on Quantum Networking
-        #C Then it changes the expected publication date to year 2058 (it was 2057)
-        #D It calls SaveChanges which includes running a method called DetectChanges. This spots that the PublishedOn property has been changed
-        #E This reloads the Quantum Networking book from the database
-        #F This shows that the PublishedOn date is what we expect
-        * *******************************************************/
 
+        [Fact]
+        public void UpdatePublicationDateDisconnected()
+        {
+            //SETUP
+            ChangePubDateDto dto;
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                var service = new ChangePubDateService(context);
+                dto = service.GetOriginal(4);
+                dto.PublishedOn = new DateTime(2058, 1, 1);
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                var service = new ChangePubDateService(context);
+
+                //ATTEMPT
+                service.UpdateBook(dto);
+
+                //VERIFY
+                var bookAgain = context.Books.Single(p => p.BookId == dto.BookId);
+                bookAgain.PublishedOn.ShouldEqual(new DateTime(2058, 1, 1));
+            }
+        }
 
         [Fact]
         public void UpdateAuthorWithLogging()

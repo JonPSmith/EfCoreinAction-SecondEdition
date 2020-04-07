@@ -65,38 +65,36 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var oneBook = 
-                    EfTestData.CreateDummyBookOneAuthor();//#A
-                context.Add(oneBook);               //#A
-                context.SaveChanges();                    //#A
+                var author = new Author {Name = "Existing Author"}; //#A
+                context.Add(author);                                //#A
+                context.SaveChanges();                              //#A
 
-                var book = new Book                     //#B
-                {                                       //#B
-                    Title = "Test Book",                //#B
-                    PublishedOn = DateTime.Today        //#B
-                };                                      //#B
-                book.AuthorsLink = new List<BookAuthor> //#C
-                {                                       //#C
-                    new BookAuthor                      //#C
-                    {                                   //#C
-                        Book = book,                    //#C
-                        Author = oneBook.AuthorsLink    //#C
-                             .First().Author            //#C
-                    }                                   //#C
-                };                                      //#C
+                var book = new Book                                 //#B
+                {                                                   //#B
+                    Title = "Test Book",                            //#B
+                    PublishedOn = DateTime.Today                    //#B
+                };                                                  //#B
+                book.AuthorsLink = new List<BookAuthor>             //#C
+                {                                                   //#C
+                    new BookAuthor                                  //#C
+                    {                                               //#C
+                        Book = book,                                //#C
+                        Author = author                             //#C
+                    }                                               //#C
+                };                                                  //#C
 
                 //ATTEMPT
-                context.Add(book);                //#D
-                context.SaveChanges();                  //#D
+                context.Add(book);                                  //#D
+                context.SaveChanges();                              //#D
                 /************************************************************
-                #A This method creates dummy books for testing. I create one dummy book with one Author and add it to the empty database
+                #A This method creates an author and adds it to the database
                 #B This creates a book in the same way as the previous example, but sets up its Author
-                #C This adds a AuthorBook linking entry, but it reads in an existing the Author from the first book
+                #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
                 #D This is the same process: add the new book to the DbContext Books property and call SaveChanges
                  * *********************************************************/
 
                 //VERIFY
-                context.Books.Count().ShouldEqual(2);   //#E
+                context.Books.Count().ShouldEqual(1);   //#E
                 context.Authors.Count().ShouldEqual(1); //#F
             }
         }
