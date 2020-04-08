@@ -87,7 +87,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(book);                                  //#D
                 context.SaveChanges();                              //#D
                 /************************************************************
-                #A This method creates an author and adds it to the database
+                #A This creates an author and saves it to the database
                 #B This creates a book in the same way as the previous example, but sets up its Author
                 #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
                 #D This is the same process: add the new book to the DbContext Books property and call SaveChanges
@@ -208,8 +208,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var oneBook =
-                    EfTestData.CreateDummyBookOneAuthor();
+                var oneBook = new Book { Title = "test" };
 
                 //ATTEMPT
                 context.Add(oneBook);
@@ -220,8 +219,36 @@ namespace Test.UnitTests.TestDataLayer
                 var ex = Assert.Throws<DbUpdateException>( () => context.SaveChanges());
 
                 //VERIFY
-                ex.Message.ShouldEqual("An error occurred while updating the entries. See the inner exception for details.");
+                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
                 state1.ShouldEqual(EntityState.Unchanged);
+                state2.ShouldEqual(EntityState.Added);
+            }
+        }
+
+        [Fact]
+        public void TestCreateBookWriteTwiceDisconnectedBad()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var oneBook = new Book {Title = "test"};
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                context.Add(oneBook);
+                context.SaveChanges();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var state1 = context.Entry(oneBook).State;
+                context.Add(oneBook);
+                var state2 = context.Entry(oneBook).State;
+                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
+                state1.ShouldEqual(EntityState.Detached);
                 state2.ShouldEqual(EntityState.Added);
             }
         }

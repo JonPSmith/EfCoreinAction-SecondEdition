@@ -75,6 +75,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 context.PriceOffers.Remove(promotion);  //#B
                 context.SaveChanges();                  //#C                  
+                showLog = false;
 
                 //VERIFY
                 context.PriceOffers.Count().ShouldEqual(numPromotions - 1);
