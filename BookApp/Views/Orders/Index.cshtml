@@ -3,12 +3,17 @@
     ViewData["Title"] = "Orders";
 }
 
+@if (!Model.Any())
+{
+    <h4>You haven't bought any books yet.</h4>
+}
+
 <div class="container">
 
-        @foreach (var order in Model)
-        {
-            @Html.Partial("OneOrderPartial", order)
-            <hr/>
-        }
+    @foreach (var order in Model)
+    {
+        @Html.Partial("OneOrderPartial", order)
+        <hr/>
+    }
 
 </div>
