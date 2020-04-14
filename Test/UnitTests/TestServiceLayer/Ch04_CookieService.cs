@@ -76,27 +76,5 @@ namespace Test.UnitTests.TestServiceLayer
             service.LineItems[1].BookId.ShouldEqual(3);
             service.LineItems[1].NumBooks.ShouldEqual((short)6);
         }
-
-        [Fact]
-        public void UpdateLineEncodeDecode()
-        {
-            //SETUP
-            var service = new CheckoutCookieService((string)null);
-            service.AddLineItem(new OrderLineItem { BookId = 1, NumBooks = 4 });
-            service.AddLineItem(new OrderLineItem { BookId = 2, NumBooks = 5 });
-            service.AddLineItem(new OrderLineItem { BookId = 3, NumBooks = 6 });
-
-            //ATTEMPT
-            service.UpdateLineItem(1, new OrderLineItem { BookId = 10, NumBooks = 11 });
-
-            //VERIFY
-            service.LineItems.Count.ShouldEqual(3);
-            service.LineItems[0].BookId.ShouldEqual(1);
-            service.LineItems[0].NumBooks.ShouldEqual((short)4);
-            service.LineItems[1].BookId.ShouldEqual(10);
-            service.LineItems[1].NumBooks.ShouldEqual((short)11);
-            service.LineItems[2].BookId.ShouldEqual(3);
-            service.LineItems[2].NumBooks.ShouldEqual((short)6);
-        }
     }
 }

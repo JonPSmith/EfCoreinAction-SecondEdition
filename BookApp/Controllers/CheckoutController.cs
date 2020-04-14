@@ -30,15 +30,29 @@ namespace EfCoreInAction.Controllers
             return View(listService.GetCheckoutList());
         }
 
-        public IActionResult Buy(OrderLineItem itemToBuy)
+        public IActionResult Buy(OrderLineItem itemToBuy) //#A
         {
-            var cookie = new BasketCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
-            var service = new CheckoutCookieService(cookie.GetValue());
-            service.AddLineItem(itemToBuy);
-            cookie.AddOrUpdateCookie(service.EncodeForCookie());
-            SetupTraceInfo();
-            return RedirectToAction("Index");
+            var cookie = new BasketCookie(      //#B
+                HttpContext.Request.Cookies,    //#B
+                HttpContext.Response.Cookies);  //#B
+            var service = new CheckoutCookieService(  //#C
+                cookie.GetValue());                   //#C
+            service.AddLineItem(itemToBuy); //#D
+            var cookieOutString = service.EncodeForCookie(); //E
+            cookie.AddOrUpdateCookie(cookieOutString); //#F
+            SetupTraceInfo(); //Remove this when shown in book listing
+            return RedirectToAction("Index"); //#G
         }
+        /*********************************************************
+        #A This action is called if a user clicks any of the  "Buy n books" dropdown buttons.
+        #B To isolate the CheckoutCookieService from the ASP.NET Core's HttpContext we have designed a BasketCookie that provides an interface that can be checked
+        #C The CheckoutCookieService is created, with the content of the current basket Cookie, or null if no basket Cookie currently exists
+        #D This method adds a new OrderLineItem entry to the CheckoutCookieService list of OrderLineItems 
+        #E This statement encodes the list of OrderLineItems into a string, ready to go out in the updated basket Cookie 
+        #F This method sets the basket cookie content to the encoded string
+        #G Finally we go to the Checkout page which shows the user the books, quantities and prices of the books they have in their basket
+         * ******************************************************/
+
 
         public IActionResult DeleteLineItem(int lineNum)
         {
