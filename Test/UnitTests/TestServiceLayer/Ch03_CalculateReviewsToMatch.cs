@@ -2,7 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using EfCoreInAction.DatabaseHelpers;
+using ServiceLayer.DatabaseServices.Concrete;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 

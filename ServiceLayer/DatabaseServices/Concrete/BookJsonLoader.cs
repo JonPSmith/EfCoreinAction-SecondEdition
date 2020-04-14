@@ -8,11 +8,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using DataLayer.EfClasses;
 using Newtonsoft.Json;
-using ServiceLayer.DatabaseServices.Concrete;
 
 [assembly: InternalsVisibleTo("test")]
 
-namespace EfCoreInAction.DatabaseHelpers
+namespace ServiceLayer.DatabaseServices.Concrete
 {
     public static class BookJsonLoader
     {

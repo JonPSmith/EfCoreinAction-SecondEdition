@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataLayer.EfCode;
-using EfCoreInAction.DatabaseHelpers;
 
 namespace ServiceLayer.DatabaseServices.Concrete
 {

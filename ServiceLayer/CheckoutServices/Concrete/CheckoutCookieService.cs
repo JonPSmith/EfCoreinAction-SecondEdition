@@ -26,7 +26,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
         }
 
         /// <summary>
-        /// Because we don't get user to log in we assign them a uniquie GUID and store it in the cookie
+        /// Because we don't get user to log in we assign them a unique GUID and store it in the cookie
         /// </summary>
         public Guid UserId { get; private set; }
 
