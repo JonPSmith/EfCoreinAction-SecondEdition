@@ -16,7 +16,7 @@ namespace ServiceLayer.OrderServices.Concrete
 {
     public class PlaceOrderServiceTransact //#A
     {
-        private readonly CheckoutCookie _checkoutCookie;
+        private readonly BasketCookie _basketCookie;
 
         private readonly RunnerTransact2WriteDb
             <PlaceOrderInDto, Part1ToPart2Dto, Order> _runner;
@@ -26,7 +26,7 @@ namespace ServiceLayer.OrderServices.Concrete
             IResponseCookies cookiesOut, 
             EfCoreContext context)
         {
-            _checkoutCookie = new CheckoutCookie(
+            _basketCookie = new BasketCookie(
                 cookiesIn, cookiesOut);
             _runner = new RunnerTransact2WriteDb  //#B
                 <PlaceOrderInDto, Part1ToPart2Dto, Order>( //#C
@@ -46,7 +46,7 @@ namespace ServiceLayer.OrderServices.Concrete
         public int PlaceOrder(bool tsAndCsAccepted)
         {
             var checkoutService = new CheckoutCookieService(
-                _checkoutCookie.GetValue());
+                _basketCookie.GetValue());
 
             var order = _runner.RunAction(
                 new PlaceOrderInDto(tsAndCsAccepted, 
@@ -57,7 +57,7 @@ namespace ServiceLayer.OrderServices.Concrete
 
             //successful so clear the cookie line items
             checkoutService.ClearAllLineItems();
-            _checkoutCookie.AddOrUpdateCookie(
+            _basketCookie.AddOrUpdateCookie(
                 checkoutService.EncodeForCookie());
 
             return order.OrderId;

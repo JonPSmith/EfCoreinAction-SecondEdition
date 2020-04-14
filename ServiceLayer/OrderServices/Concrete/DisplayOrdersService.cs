@@ -28,7 +28,7 @@ namespace ServiceLayer.OrderServices.Concrete
         /// <returns></returns>
         public List<OrderListDto> GetUsersOrders(IRequestCookieCollection cookiesIn)
         {
-            var cookie = new CheckoutCookie(cookiesIn);
+            var cookie = new BasketCookie(cookiesIn);
             var service = new CheckoutCookieService(cookie.GetValue());
 
             return SelectQuery(_context.Orders.OrderByDescending(x => x.DateOrderedUtc)

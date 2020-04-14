@@ -16,7 +16,7 @@ namespace ServiceLayer.OrderServices.Concrete
 {
     public class PlaceOrderService
     {
-        private readonly CheckoutCookie _checkoutCookie;  //#A
+        private readonly BasketCookie _basketCookie;  //#A
 
         private readonly 
             RunnerWriteDb<PlaceOrderInDto, Order> _runner;//#B
@@ -26,7 +26,7 @@ namespace ServiceLayer.OrderServices.Concrete
             IResponseCookies cookiesOut,       //#D
             EfCoreContext context)             //#D
         {
-            _checkoutCookie = new CheckoutCookie(//#E
+            _basketCookie = new BasketCookie(//#E
                 cookiesIn, cookiesOut);          //#E
             _runner = 
                 new RunnerWriteDb<PlaceOrderInDto, Order>(//#F
@@ -45,7 +45,7 @@ namespace ServiceLayer.OrderServices.Concrete
         public int PlaceOrder(bool acceptTAndCs) //#G
         {
             var checkoutService = new CheckoutCookieService(//#H
-                _checkoutCookie.GetValue());                //#H
+                _basketCookie.GetValue());                //#H
 
             var order = _runner.RunAction(       //#I
                 new PlaceOrderInDto(acceptTAndCs,//#I
@@ -56,7 +56,7 @@ namespace ServiceLayer.OrderServices.Concrete
 
             //successful so clear the cookie line items
             checkoutService.ClearAllLineItems();   //#K
-            _checkoutCookie.AddOrUpdateCookie(     //#K
+            _basketCookie.AddOrUpdateCookie(     //#K
                 checkoutService.EncodeForCookie());//#K
 
             return order.OrderId;//#L
@@ -67,7 +67,7 @@ namespace ServiceLayer.OrderServices.Concrete
     #B This is the BizRunner that I am going to use to execute the business logic. It is of Type RunnerWriteDb<TIn, TOut>
     #C This holds any errors sent back from the business logic. The caller can use these to redisplay the page and show the errors that need fixing
     #D The constructor needs access to the cookies, both in and out, and the application's DbContext
-    #E I create a CheckoutCookie using the cookie in/out access parts from ASP.NET Core
+    #E I create a BasketCookie using the cookie in/out access parts from ASP.NET Core
     #F I create the BizRunner, with the business logic, PlaceOrderAction, that I want to run. PlaceOrderAction needs PlaceOrderDbAccess when it is created
     #G This is the method I call from the ASP.NET action that is called when the user presses the Purchase button
     #H The CheckoutCookieService is a class that encodes/decodes the checkout data into a string that goes inside the checkout cookie

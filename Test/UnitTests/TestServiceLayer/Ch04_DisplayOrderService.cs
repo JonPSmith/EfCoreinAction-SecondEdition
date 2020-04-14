@@ -105,7 +105,7 @@ namespace Test.UnitTests.TestServiceLayer
                 };
                 context.Orders.Add(order);
                 context.SaveChanges();
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{userId}");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{userId}");
                 var service = new DisplayOrdersService(context);
 
                 //ATTEMPT

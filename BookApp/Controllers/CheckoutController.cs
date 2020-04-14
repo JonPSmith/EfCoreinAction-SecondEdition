@@ -32,7 +32,7 @@ namespace EfCoreInAction.Controllers
 
         public IActionResult Buy(OrderLineItem itemToBuy)
         {
-            var cookie = new CheckoutCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
+            var cookie = new BasketCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
             var service = new CheckoutCookieService(cookie.GetValue());
             service.AddLineItem(itemToBuy);
             cookie.AddOrUpdateCookie(service.EncodeForCookie());
@@ -42,7 +42,7 @@ namespace EfCoreInAction.Controllers
 
         public IActionResult DeleteLineItem(int lineNum)
         {
-            var cookie = new CheckoutCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
+            var cookie = new BasketCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
             var service = new CheckoutCookieService(cookie.GetValue());
             service.DeleteLineItem(lineNum);
             cookie.AddOrUpdateCookie(service.EncodeForCookie());

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using BizLogic.Orders;
-using Microsoft.AspNetCore.Http;
 
 namespace ServiceLayer.CheckoutServices.Concrete
 {
@@ -17,12 +16,6 @@ namespace ServiceLayer.CheckoutServices.Concrete
         public CheckoutCookieService(string cookieContent)
         {
             DecodeCookieString(cookieContent);
-        }
-
-        public CheckoutCookieService(IRequestCookieCollection cookiesIn)
-        {
-            var cookieHandler = new CheckoutCookie(cookiesIn);
-            DecodeCookieString(cookieHandler.GetValue());
         }
 
         /// <summary>

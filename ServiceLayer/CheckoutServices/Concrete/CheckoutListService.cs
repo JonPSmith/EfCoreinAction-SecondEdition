@@ -23,7 +23,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
 
         public ImmutableList<CheckoutItemDto> GetCheckoutList()
         {
-            var cookieHandler = new CheckoutCookie(_cookiesIn);
+            var cookieHandler = new BasketCookie(_cookiesIn);
             var service = new CheckoutCookieService(cookieHandler.GetValue());
 
             return GetCheckoutList(service.LineItems);

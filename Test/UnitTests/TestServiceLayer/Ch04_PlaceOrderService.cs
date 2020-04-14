@@ -28,7 +28,7 @@ namespace Test.UnitTests.TestServiceLayer
             }
             using (var context = new EfCoreContext(options))
             {
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
                 var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
 
                 //ATTEMPT
@@ -54,7 +54,7 @@ namespace Test.UnitTests.TestServiceLayer
             }
             using (var context = new EfCoreContext(options))
             {
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
                 var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
 
                 //ATTEMPT

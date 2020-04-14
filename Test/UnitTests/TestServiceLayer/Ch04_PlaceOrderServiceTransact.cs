@@ -26,7 +26,7 @@ namespace Test.UnitTests.TestServiceLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
                 var service = new PlaceOrderServiceTransact(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
 
                 //ATTEMPT
@@ -50,7 +50,7 @@ namespace Test.UnitTests.TestServiceLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
-                var mockCookieRequests = new MockHttpCookieAccess(CheckoutCookie.CheckoutCookieName, $"{Guid.NewGuid()},1,2");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
                 var service = new PlaceOrderServiceTransact(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
 
                 //ATTEMPT

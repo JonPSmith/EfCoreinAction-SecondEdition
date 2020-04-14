@@ -2,16 +2,15 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Http;
-using ServiceLayer.Utils;
 
 namespace ServiceLayer.CheckoutServices.Concrete
 {
-    public class CheckoutCookie : CookieTemplate
+    public class BasketCookie : CookieTemplate
     {
-        public const string CheckoutCookieName = "EfCoreInAction-Checkout";
+        public const string BasketCookieName = "EfCoreInAction2-Checkout";
 
-        public CheckoutCookie(IRequestCookieCollection cookiesIn, IResponseCookies cookiesOut = null) 
-            : base(CheckoutCookieName, cookiesIn, cookiesOut)
+        public BasketCookie(IRequestCookieCollection cookiesIn, IResponseCookies cookiesOut = null) 
+            : base(BasketCookieName, cookiesIn, cookiesOut)
         {
         }
 
