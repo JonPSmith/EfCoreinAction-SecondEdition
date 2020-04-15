@@ -12,7 +12,7 @@
 
     @foreach (var order in Model)
     {
-        @Html.Partial("OneOrderPartial", order)
+        <partial name="OneOrderPartial" for="@order" />
         <hr/>
     }
 

@@ -90,19 +90,5 @@ namespace BookApp.Controllers
             SetupTraceInfo();
             return View("BookUpdated", "Successfully added a review");
         }
-
-        //------------------------------------------------
-        //Amdin commands that are called from the top menu
-
-        public async Task<IActionResult> ResetDatabase([FromServices] EfCoreContext context, [FromServices] IWebHostEnvironment env)
-        {
-            Request.ThrowErrorIfNotLocal();
-
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-            var numBooks = await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
-            SetupTraceInfo();
-            return View("BookUpdated", $"Successfully reset the database and added {numBooks} books.");
-        }
     }
 }

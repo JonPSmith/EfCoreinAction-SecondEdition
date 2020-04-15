@@ -3,11 +3,11 @@
     ViewData["Title"] = "Confirm Order";
 }
 
-<div class="container">
-    <h3>Your order is confirmed</h3>
-    @Html.Partial("OneOrderPartial", @Model)
+    <div class="container">
+        <h3>Your order is confirmed</h3>
+        <partial name="OneOrderPartial" for="@Model" />
 
-    <p><strong>NOTE:</strong> This is a demo, so your order will NOT be delivered</p>
+        <p><strong>NOTE:</strong> This is a demo, so your order will NOT be delivered</p>
 
-    @Html.ActionLink("See all your orders", "Index", new {}, new { @class = "btn btn-primary" })
-</div>
+        @Html.ActionLink("See all your orders", "Index", new { }, new { @class = "btn btn-primary" })
+    </div>
