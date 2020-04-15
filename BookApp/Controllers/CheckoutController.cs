@@ -45,7 +45,7 @@ namespace EfCoreInAction.Controllers
         }
         /*********************************************************
         #A This action is called if a user clicks any of the  "Buy n books" dropdown buttons.
-        #B To isolate the CheckoutCookieService from the ASP.NET Core's HttpContext we have designed a BasketCookie that provides an interface that can be checked
+        #B To isolate the CheckoutCookieService from the ASP.NET Core's HttpContext we have designed a BasketCookie that provides an interface that can be used in a unit test
         #C The CheckoutCookieService is created, with the content of the current basket Cookie, or null if no basket Cookie currently exists
         #D This method adds a new OrderLineItem entry to the CheckoutCookieService list of OrderLineItems 
         #E This statement encodes the list of OrderLineItems into a string, ready to go out in the updated basket Cookie 

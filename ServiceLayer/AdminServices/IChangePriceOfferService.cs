@@ -9,10 +9,7 @@ namespace ServiceLayer.AdminServices
     {
         Book OrgBook { get; }
 
-        PriceOffer GetOriginal(int id)      //#A
-            ;
-
-        Book UpdateBook(PriceOffer promotion)//#D
-            ;
+        PriceOffer GetOriginal(int id);
+        void UpdateBook(PriceOffer promotion);
     }
 }

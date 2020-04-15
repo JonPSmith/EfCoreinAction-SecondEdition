@@ -64,7 +64,7 @@ namespace BookApp.Controllers
         {
             Request.ThrowErrorIfNotLocal();
 
-            var book = service.UpdateBook(dto);
+            service.UpdateBook(dto);
             SetupTraceInfo();
             return View("BookUpdated", "Successfully added/changed a promotion");
         }

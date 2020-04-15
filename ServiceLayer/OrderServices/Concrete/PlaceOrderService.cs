@@ -63,17 +63,17 @@ namespace ServiceLayer.OrderServices.Concrete
         }
     }
     /***********************************************************
-    #A This is a class that handles the checkout cookie. This is a cookie, but with a specfic name and expiry time
+    #A This is a class that handles the basket cookie. This is a cookie, but with a specific name and expiry time
     #B This is the BizRunner that I am going to use to execute the business logic. It is of Type RunnerWriteDb<TIn, TOut>
     #C This holds any errors sent back from the business logic. The caller can use these to redisplay the page and show the errors that need fixing
     #D The constructor needs access to the cookies, both in and out, and the application's DbContext
     #E I create a BasketCookie using the cookie in/out access parts from ASP.NET Core
     #F I create the BizRunner, with the business logic, PlaceOrderAction, that I want to run. PlaceOrderAction needs PlaceOrderDbAccess when it is created
     #G This is the method I call from the ASP.NET action that is called when the user presses the Purchase button
-    #H The CheckoutCookieService is a class that encodes/decodes the checkout data into a string that goes inside the checkout cookie
-    #I I am now ready to run the business logic, handing it the checkout information in the format that it needs
-    #J If the business logic has any errors then I return immediately. The checkout cookie has not been cleared so the user can try again
-    #K If I get here then the order was placed successfully. I therefore clear the checkout cookie of the order parts
+    #H The CheckoutCookieService is a class that encodes/decodes the basket data into a string that goes inside the basket cookie
+    #I I am now ready to run the business logic, handing it the basket information in the format that it needs
+    #J If the business logic has any errors then I return immediately. The basket cookie has not been cleared so the user can try again
+    #K If I get here then the order was placed successfully. I therefore clear the basket cookie of the order parts
     #L I return the OrderId, that is, the primary key of the order, which ASP.NET uses to show a confirmation page which includes the order details
      * *********************************************************/
 }
