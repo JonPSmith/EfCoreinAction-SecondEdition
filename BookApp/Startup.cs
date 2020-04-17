@@ -26,9 +26,9 @@ namespace BookApp
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services) //#A
         {
-            services.AddControllersWithViews()
+            services.AddControllersWithViews() //#B
                 .AddRazorRuntimeCompilation() //This recompile a razor page if you edit it while the app is running
                 //Added this because my logs display needs the enum as a string
                 .AddJsonOptions(opts =>
@@ -36,15 +36,24 @@ namespace BookApp
                     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            //Register a SQL Server database with EF Core
-            services.AddDbContext<EfCoreContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            var connection = Configuration                //#C
+                .GetConnectionString("DefaultConnection"); //#C
+
+            services.AddDbContext<EfCoreContext>(             //#D
+                options => options.UseSqlServer(connection)); //#D
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //I let each project handle its own registering of services with dependency injection
             services.RegisterServiceLayerDi();
         }
+        /****************************************************************
+        #A This method in the Startup class sets up services
+        #B Sets up a series of services to use with controllers and Views
+        #C You get the connection string from the appsettings.json file, which can be changed when you deploy.
+        #D Configures the application’s DbContext to use SQL Server and provide the connection         
+         ****************************************************************/
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor)
