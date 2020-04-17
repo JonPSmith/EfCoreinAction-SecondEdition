@@ -42,7 +42,7 @@ namespace BookApp
             services.AddDbContext<EfCoreContext>(             //#D
                 options => options.UseSqlServer(connection)); //#D
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpContextAccessor();
 
             //I let each project handle its own registering of services with dependency injection
             services.RegisterServiceLayerDi();
