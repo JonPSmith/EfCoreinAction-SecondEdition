@@ -2,6 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
+using BizDbAccess.AppStart;
+using BizLogic.AppStart;
 using DataLayer.EfCode;
 using EfCoreInAction.Logger;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +47,8 @@ namespace BookApp
             services.AddHttpContextAccessor();
 
             //I let each project handle its own registering of services with dependency injection
+            services.RegisterBizDbAccessDi();
+            services.RegisterBizLogicDi();
             services.RegisterServiceLayerDi();
         }
         /****************************************************************
