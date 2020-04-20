@@ -2,11 +2,11 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,7 +17,7 @@ namespace BookApp.HelperExtensions
     public static class DatabaseStartupHelpers
     {
         /// <summary>
-        /// This makes sure the database is create/updated
+        /// This makes sure the database is created/updated
         /// </summary>
         /// <param name="webHost"></param>
         /// <returns></returns>
@@ -30,13 +30,19 @@ namespace BookApp.HelperExtensions
                 var context = services.GetRequiredService<EfCoreContext>();
                 try
                 {
+                    var arePendingMigrations = context.Database.GetPendingMigrations().Any();
                     await context.Database.MigrateAsync();
-                    await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
+                    if (arePendingMigrations)
+                    {
+                        await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
+                    }
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while creating/migrating or seeding the database.");
+
+                    throw;
                 }
             }
 

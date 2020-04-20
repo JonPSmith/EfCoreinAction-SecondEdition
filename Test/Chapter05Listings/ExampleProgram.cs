@@ -13,13 +13,11 @@ namespace Test.Chapter05Listings
 {
     public class ExampleProgram
     {
-        public static async Task Main(string[] args)
+        public static async Task Main(string[] args) //#A
         {
-            var host = CreateHostBuilder(args).Build();
-            //After the setup of the services etc have been done we call code to handle 
-            host.MigrateDatabase();
-            await host.SetupDatabaseAsync();
-            await host.RunAsync();
+            var host = CreateHostBuilder(args).Build(); //#B
+            await host.MigrateDatabaseAsync(); //#C
+            await host.RunAsync(); //#D
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -32,6 +30,9 @@ namespace Test.Chapter05Listings
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
     /**********************************************************
-    #A The recommended way to run any startup code is to add it to the end of the BuildWebHost in the ASP.NET Core Program file
+    #A You change the Main method to being async so that you can use async/await commands in your SetupDatabaseAsync method
+    #B This call will run the Startup.Configure method, which sets up the DI services you need to setup/migrate your database
+    #C this is where you call your extension method to migrate your database
+    #D At the end you start the ASP.NET Core application.
     * ********************************************************/
 }

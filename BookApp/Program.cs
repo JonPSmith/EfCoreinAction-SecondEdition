@@ -14,9 +14,9 @@ namespace BookApp
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            //After the setup of the services etc have been done we call code to handle 
+            //This migrates the database and adds any seed data as required
             await host.SetupDatabaseAsync();
-            await host.RunAsync();
+            await host.RunAsync(); 
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
