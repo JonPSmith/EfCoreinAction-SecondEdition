@@ -5,8 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataLayer.EfCode;
+using ServiceLayer.DatabaseServices.Concrete;
 
-namespace ServiceLayer.DatabaseServices.Concrete
+namespace ServiceLayer.DatabaseServices
 {
     public static class SetupHelpers
     {
