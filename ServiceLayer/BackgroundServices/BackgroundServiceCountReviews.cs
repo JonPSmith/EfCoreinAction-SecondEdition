@@ -21,7 +21,8 @@ namespace ServiceLayer.BackgroundServices
         private readonly IServiceScopeFactory _scopeFactory; //#C
         private readonly ILogger<BackgroundServiceCountReviews> _logger;
 
-        public BackgroundServiceCountReviews(IServiceScopeFactory scopeFactory, //#C
+        public BackgroundServiceCountReviews(
+            IServiceScopeFactory scopeFactory, //#C
             ILogger<BackgroundServiceCountReviews> logger,
             TimeSpan periodOverride = default)
         {
@@ -35,35 +36,38 @@ namespace ServiceLayer.BackgroundServices
         protected override async Task ExecuteAsync    //#D
             (CancellationToken stoppingToken)     //#D
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested) //#E
             {
                 await DoWorkAsync(stoppingToken);
                 await Task.Delay(_period, stoppingToken);
             }
         }
-
-        private async Task DoWorkAsync(CancellationToken stoppingToken) //#E
-        {
-            using (var scope = _scopeFactory.CreateScope()) //#F
-            {
-                var context = scope.ServiceProvider        //#G
-                    .GetRequiredService<EfCoreContext>();  //#G
-                var numReviews = await context.Set<Review>() //#H
-                    .CountAsync(stoppingToken); //#H
-                _logger.LogInformation(                             //#I
-                    "Number of reviews: {numReviews}", numReviews); //#I
-            }
-        }
         /********************************************************************
         #A Inheriting the BackgroundService class means this class can run continuously in the background
-        #B This holds the delay between the logging of the  
-        #C The IServiceScopeFactory injects the DI service to create a newly created DI scope
+        #B This holds the delay between each call to the code to log the number of reviews  
+        #C The IServiceScopeFactory injects the DI service to that you use to create a new DI scope
         #D The BackgroundService class has a ExecuteAsync method you override to add your own code
-        #E This is the method that the IHostedService will call when the set period has elapsed  
-        #F This uses the ScopeProviderFactory to create a new DI scoped provider
-        #G The DbContext instance created will be different to the ASP.NET Core version, as it's in a new scope
-        #H This count of the reviews using an async method. You pass the stoppingToken to the async method because that is good practice 
-        #I Finally you log the information 
+        #E This loop repeatably calls the DoWorkAsync method, with a delay until the next call is made
          ********************************************************************/
+
+        private async Task DoWorkAsync(CancellationToken stoppingToken) //#A
+        {
+            using (var scope = _scopeFactory.CreateScope()) //#B
+            {
+                var context = scope.ServiceProvider        //#C
+                    .GetRequiredService<EfCoreContext>();  //#C
+                var numReviews = await context.Set<Review>() //#D
+                    .CountAsync(stoppingToken);                 //#D
+                _logger.LogInformation(                             //#E
+                    "Number of reviews: {numReviews}", numReviews); //#E
+            }
+        }
     }
+    /********************************************************************
+    #A This is the method that the IHostedService will call when the set period has elapsed  
+    #B This uses the ScopeProviderFactory to create a new DI scoped provider
+    #C Because of the scoped DI provider this DbContext instance created will be different to all the other instances of the DbContext
+    #D This count of the reviews using an async method. You pass the stoppingToken to the async method because that is good practice 
+    #E Finally you log the information 
+     ********************************************************************/
 }
