@@ -16,7 +16,7 @@ namespace ServiceLayer.AdminServices
     }
     /*************************************************
     #A This holds the primary key of the row we want to update. This makes finding the right entry quick and accurate
-    #B We send over the title to show the user, so that they can be clear they are altering the right book
+    #B We send over the title to show the user, so that they can be sure they are altering the right book
     #C This is the property we want to alter. We send out the current publication date and get back the changed publication date
      * ********************************************/
 }
