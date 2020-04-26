@@ -2,14 +2,10 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Globalization;
-using System.Threading.Tasks;
 using BookApp.HelperExtensions;
 using DataLayer.EfClasses;
-using DataLayer.EfCode;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.AdminServices;
-using ServiceLayer.DatabaseServices.Concrete;
 
 namespace BookApp.Controllers
 {

@@ -2,8 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using BizLogic.BasketServices;
 using BizLogic.Orders;
-using BookApp.Controllers;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.CheckoutServices.Concrete;
@@ -11,7 +11,7 @@ using ServiceLayer.OrderServices.Concrete;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace EfCoreInAction.Controllers
+namespace BookApp.Controllers
 {
     public class CheckoutController : BaseTraceController
     {

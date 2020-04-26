@@ -4,7 +4,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Logger;
 
-namespace EfCoreInAction.Controllers
+namespace BookApp.Controllers
 {
     public class LoggerController : Controller
     {

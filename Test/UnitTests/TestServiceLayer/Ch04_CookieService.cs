@@ -2,8 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using BizLogic.BasketServices;
 using BizLogic.Orders;
-using ServiceLayer.CheckoutServices.Concrete;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 

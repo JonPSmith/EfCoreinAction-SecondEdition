@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using BizDbAccess.Orders;
+using BizLogic.BasketServices;
 using BizLogic.Orders;
 using BizLogic.Orders.Concrete;
 using DataLayer.EfClasses;
@@ -21,11 +22,10 @@ namespace ServiceLayer.OrderServices.Concrete
 
         public PlaceOrderServiceWithVal(
             IRequestCookieCollection cookiesIn, 
-            IResponseCookies cookiesOut, 
+            IResponseCookies cookiesOut,
             EfCoreContext context)
         {
-            _basketCookie = new BasketCookie(
-                cookiesIn, cookiesOut);
+            _basketCookie = new BasketCookie(cookiesIn, cookiesOut);
             _runner = new RunnerWriteDbWithValidation<PlaceOrderInDto, Order>(
                 new PlaceOrderAction(
                     new PlaceOrderDbAccess(context)),

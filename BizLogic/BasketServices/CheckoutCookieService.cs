@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Text;
 using BizLogic.Orders;
 
-namespace ServiceLayer.CheckoutServices.Concrete
+namespace BizLogic.BasketServices
 {
     public class CheckoutCookieService
     {
