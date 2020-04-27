@@ -17,50 +17,49 @@ namespace ServiceLayer.OrderServices.Concrete
 {
     public class PlaceOrderService
     {
-        private readonly BasketCookie _basketCookie;  //#A
+        private readonly BasketCookie _basketCookie;        //#A
 
-        private readonly 
-            RunnerWriteDb<PlaceOrderInDto, Order> _runner;//#B
+        private readonly                                    //#B
+            RunnerWriteDb<PlaceOrderInDto, Order> _runner;  //#B
+        public IImmutableList<ValidationResult>             //#C
+            Errors => _runner.Errors;                       //#C
 
-        public PlaceOrderService(              //#D
-            IRequestCookieCollection cookiesIn,//#D 
-            IResponseCookies cookiesOut,       //#D
-            EfCoreContext context)             //#D
+        public PlaceOrderService(                           //#D
+            IRequestCookieCollection cookiesIn,             //#D 
+            IResponseCookies cookiesOut,                    //#D
+            EfCoreContext context)                          //#D
         {
-            _basketCookie = new BasketCookie(//#E
-                cookiesIn, cookiesOut);          //#E
+            _basketCookie = new BasketCookie(               //#E
+                cookiesIn, cookiesOut);                     //#E
             _runner = 
-                new RunnerWriteDb<PlaceOrderInDto, Order>(//#F
-                    new PlaceOrderAction(                 //#F
-                        new PlaceOrderDbAccess(context)), //#F
-                    context);                             //#F
+                new RunnerWriteDb<PlaceOrderInDto, Order>(  //#F
+                    new PlaceOrderAction(                   //#F
+                        new PlaceOrderDbAccess(context)),   //#F
+                    context);                               //#F
         }
-
-        public IImmutableList<ValidationResult> 
-            Errors => _runner.Errors; //#C
 
         /// <summary>
         /// This creates the order and, if successful clears the cookie
         /// </summary>
         /// <returns>Returns the OrderId, or zero if errors</returns>
-        public int PlaceOrder(bool acceptTAndCs) //#G
+        public int PlaceOrder(bool acceptTAndCs)            //#G
         {
             var checkoutService = new CheckoutCookieService(//#H
-                _basketCookie.GetValue());                //#H
+                _basketCookie.GetValue());                  //#H
 
-            var order = _runner.RunAction(       //#I
-                new PlaceOrderInDto(acceptTAndCs,//#I
-                checkoutService.UserId,          //#I
-                checkoutService.LineItems));     //#I
+            var order = _runner.RunAction(                  //#I
+                new PlaceOrderInDto(acceptTAndCs,           //#I
+                checkoutService.UserId,                     //#I
+                checkoutService.LineItems));                //#I
 
-            if (_runner.HasErrors) return 0; //#J
+            if (_runner.HasErrors) return 0;                //#J
 
             //successful so clear the cookie line items
-            checkoutService.ClearAllLineItems();   //#K
-            _basketCookie.AddOrUpdateCookie(     //#K
-                checkoutService.EncodeForCookie());//#K
+            checkoutService.ClearAllLineItems();            //#K
+            _basketCookie.AddOrUpdateCookie(                //#K
+                checkoutService.EncodeForCookie());         //#K
 
-            return order.OrderId;//#L
+            return order.OrderId;                           //#L
         }
     }
     /***********************************************************
@@ -73,7 +72,7 @@ namespace ServiceLayer.OrderServices.Concrete
     #G This is the method I call from the ASP.NET action that is called when the user presses the Purchase button
     #H The CheckoutCookieService is a class that encodes/decodes the basket data into a string that goes inside the basket cookie
     #I I am now ready to run the business logic, handing it the basket information in the format that it needs
-    #J If the business logic has any errors then I return immediately. The basket cookie has not been cleared so the user can try again
+    #J If the business logic has any errors then it returns immediately. The basket cookie has not been cleared so the user can try again
     #K If I get here then the order was placed successfully. I therefore clear the basket cookie of the order parts
     #L I return the OrderId, that is, the primary key of the order, which ASP.NET uses to show a confirmation page which includes the order details
      * *********************************************************/

@@ -1,4 +1,5 @@
 ﻿@using BookApp.HelperExtensions
+@using Microsoft.EntityFrameworkCore.Metadata.Conventions
 @model ServiceLayer.BookServices.BookListCombinedDto
 @{
     ViewData["Title"] = "Home Page";
@@ -88,7 +89,9 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePubDate" asp-route-id="@item.BookId">Change Pub Date</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePromotion" asp-route-id="@item.BookId">Add Price Promotion</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePromotion" asp-route-id="@item.BookId">
+                                @(item.PromotionPromotionalText == null ? "Add Promotion" : "Remove Promotion")
+                            </a>
                             <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
                         </div>
                     </div>

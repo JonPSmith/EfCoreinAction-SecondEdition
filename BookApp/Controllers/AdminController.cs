@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Globalization;
+using System.Linq;
 using BookApp.HelperExtensions;
 using DataLayer.EfClasses;
 using Microsoft.AspNetCore.Mvc;
@@ -54,17 +55,24 @@ namespace BookApp.Controllers
             return View(priceOffer);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ChangePromotion(PriceOffer dto, [FromServices] IChangePriceOfferService service)
+        [HttpPost]                                                 
+        [ValidateAntiForgeryToken]                                 
+        public IActionResult ChangePromotion(PriceOffer dto,       
+            [FromServices] IChangePriceOfferService service)       
         {
             Request.ThrowErrorIfNotLocal();
 
-            service.UpdateBook(dto);
+            var error =  service.AddRemoveBook(dto);               
+            if (error != null)                                     
+            {
+                ModelState.AddModelError(error.MemberNames.First(), 
+                    error.ErrorMessage);                           
+                return View(dto);                                  
+            }
             SetupTraceInfo();
-            return View("BookUpdated", "Successfully added/changed a promotion");
+            return View("BookUpdated",                             
+                "Successfully added/changed a promotion");         
         }
-
 
         public IActionResult AddBookReview(int id, [FromServices] IAddReviewService service)
         {

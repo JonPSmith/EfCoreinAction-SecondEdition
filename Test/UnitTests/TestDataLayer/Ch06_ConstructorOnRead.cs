@@ -61,12 +61,18 @@ namespace Test.UnitTests.TestDataLayer
             public string VoterName { get; set; }
             public int NumStars { get; set; }
 
-            public ReviewBadCtor1(string voterName, int unknownParam)
+            public ReviewBadCtor1( //#A
+                string voterName, 
+                int unknownParam)  //#B
             {
                 VoterName = voterName;
                 NumStars = unknownParam;
             }
         }
+        /***********************************************************
+        #A This is the only constructor in this class
+        #B This parameter's name doesn't match the name of any property in this class, so EF Core can't use it to create an instance of the class when it is reading in data
+         ***********************************************************/
 
         public class ReviewBadCtor2
         {

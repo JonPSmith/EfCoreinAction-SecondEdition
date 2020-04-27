@@ -5,6 +5,7 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace ServiceLayer.AdminServices.Concrete
 {
@@ -41,7 +42,7 @@ namespace ServiceLayer.AdminServices.Concrete
             _context.SaveChanges(); //#G
             return book; //#H
         }
-    }
+
     /*********************************************************
     #A This method forms a Review to be filled in by the user
     #B I read the book title to show to the user when they are filling in their review
@@ -52,4 +53,35 @@ namespace ServiceLayer.AdminServices.Concrete
     #G The SaveChanges uses its DetectChanges method, which sees that the Book Review property has changed. It then creates a new row in the Review table
     #H The method returns the updated book
      * ******************************************************/
+
+        public IStatusGeneric AddReviewWithChecks(Review review)              //#A
+        {
+            var status = new StatusGenericHandler();                          //#B
+            if (review.NumStars < 0 || review.NumStars > 5)                   //#C
+                status.AddError("This must be between 0 and 5.",              //#C
+                    nameof(Review.NumStars));                                 //#C
+            if (string.IsNullOrWhiteSpace(review.Comment))                    //#D
+                status.AddError("Please provide a comment with your review.", //#D
+                    nameof(Review.Comment));                                  //#D
+            if (!status.IsValid)                                             //#E
+                return status;                                                //#E
+
+            var book = _context.Books                                         //#F
+                .Include(r => r.Reviews)                                      //#F
+                .Single(k => k.BookId                                         //#F
+                             == review.BookId);                               //#F
+            book.Reviews.Add(review);                                         //#F
+            _context.SaveChanges();                                           //#F
+            return status;                                                    //#G
+        }
+        /***********************************************************
+        #A This method adds a review to a book, but it checks the data is what it expects. It returns a status which says whether it was successful, or had errors
+        #B The method uses GenericServices.StatusGeneric's status system to capture errors and return a status
+        #C This checks that the star rating is in the correct range. If it isn't then it returns an error message with the name of the property that failed.
+        #D This second check ensures the user has provided some sort of comment
+        #E If there are any errors the method returns immediately with those errors.
+        #F This is the CRUD code that adds a review to a book. This is explained in chapter 3
+        #G This returns the status, which will be valid because there aren't any errors
+         **************************************************************/
+    }
 }
