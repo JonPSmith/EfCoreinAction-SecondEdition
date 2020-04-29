@@ -1,12 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
-using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -44,10 +44,36 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 _output.WriteLine(query.ToQueryString());
+            }
+        }
+
+        [Fact]
+        public void TestIncludeSortSingle()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var newBook = new Book { Reviews = new List<Review>
+                {
+                    new Review { NumStars = 2 } , new Review { NumStars = 1 }
+                } };
+                context.Add(newBook);
+                context.SaveChanges();
+
+                //ATTEMPT
+                var query = context.Books
+                    .Include(x => x.Reviews.OrderByDescending(y => y.NumStars));
+                var books = query.ToList();
+
+                //VERIFY
+                _output.WriteLine(query.ToQueryString());
+                books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new []{1,2});
 
             }
         }
 
-        
+
     }
 }

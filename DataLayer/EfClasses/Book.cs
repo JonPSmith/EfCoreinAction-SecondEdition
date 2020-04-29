@@ -14,10 +14,6 @@ namespace DataLayer.EfClasses
         public DateTime PublishedOn { get; set; }
         public string Publisher { get; set; }
         public decimal Price { get; set; }
-
-        /// <summary>
-        ///     Holds the url to get the image of the book
-        /// </summary>
         public string ImageUrl { get; set; }
 
         public bool SoftDeleted { get; set; }
