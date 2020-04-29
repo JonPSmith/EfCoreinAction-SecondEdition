@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-preview.2.20159.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-preview.3.20181.2" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="1.1.0" />
   </ItemGroup>
 
