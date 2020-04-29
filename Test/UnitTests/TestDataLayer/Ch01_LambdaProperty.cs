@@ -3,10 +3,8 @@
 
 using System;
 using System.Linq;
-using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter01Listings;
-using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
