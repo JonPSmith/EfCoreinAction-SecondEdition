@@ -8,6 +8,7 @@ namespace Test.Chapter06Listings
     public class Chapter06Context : DbContext
     {
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<ManyTop> ManyTops { get; set; }
 
         public Chapter06Context(DbContextOptions<Chapter06Context> options)
             : base(options) { }

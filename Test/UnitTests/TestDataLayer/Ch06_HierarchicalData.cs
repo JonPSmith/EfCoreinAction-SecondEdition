@@ -109,7 +109,8 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 all.Count.ShouldEqual(11);
                 all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.All(x => x.WorksFromMe == null).ShouldBeTrue();
+                all.Count(x => x.WorksFromMe != null).ShouldEqual(5);
+                all.Count(x => x.WorksFromMe == null).ShouldEqual(6);
             }
         }
 
