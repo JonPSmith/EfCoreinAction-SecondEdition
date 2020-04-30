@@ -38,7 +38,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var book = new BookLazy1
                 {
-                    LazyReviews = new List<LazyReview>
+                    Reviews = new List<LazyReview>
                     {
                         new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
                     }
@@ -51,10 +51,10 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 showlog = true;
                 var book = context.BookLazy1s.Single(); //#A
-                var reviews = book.LazyReviews.ToList(); //#B
+                var reviews = book.Reviews.ToList(); //#B
                 /*********************************************************
-                #A We just load the book class
-                #B When the LazyReviews property is accessed, then EF Core will read in the reviews from the database
+                #A This gets an instance of the BookLazy entity class that has configured its Reviews property to use lazy loading
+                #B When the Reviews property is accessed, then EF Core will read in the reviews from the database
                 * *******************************************************/
 
                 //VERIFY
@@ -72,7 +72,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var book = new BookLazy2
                 {
-                    LazyReviews = new List<LazyReview>
+                    Reviews = new List<LazyReview>
                     {
                         new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
                     }
@@ -84,10 +84,10 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var book = context.BookLazy2s.Single(); //#A
-                book.LazyReviews.Count().ShouldEqual(2); //#B
+                book.Reviews.Count().ShouldEqual(2); //#B
                 /*********************************************************
                 #A We just load the book class
-                #B When the LazyReviews are read, then EF Core will read in the reviews
+                #B When the Reviews are read, then EF Core will read in the reviews
                 * *******************************************************/
             }
         }
