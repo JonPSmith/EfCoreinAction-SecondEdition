@@ -88,7 +88,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();                              //#D
                 /************************************************************
                 #A This creates an author and saves it to the database
-                #B This creates a book in the same way as the previous example, but sets up its Author
+                #B This creates a book in the same way as the previous example
                 #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
                 #D This is the same process: add the new book to the DbContext Books property and call SaveChanges
                  * *********************************************************/

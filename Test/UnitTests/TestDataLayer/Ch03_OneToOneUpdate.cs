@@ -44,7 +44,7 @@ namespace Test.UnitTests.TestDataLayer
                 };                                        //#C
                 context.SaveChanges();                    //#D                  
                 /**********************************************************
-                #A This finds the first book that does not have an existing promotion
+                #A Finds a book. In this example it doesn’t have an existing promotion, but it would also work if there was an existing promotion
                 #B While the include isn't needed because I am loading something without a Promotion it is good practice to include it, as you should load any any relationships if you are going to change a relationship
                 #C I add a new PriceOffer to this book
                 #D The SaveChanges method calls DetectChanges, which find that the Promotion property has changed, so it adds that entry to the PricerOffers table

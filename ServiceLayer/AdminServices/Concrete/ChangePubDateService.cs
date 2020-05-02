@@ -42,7 +42,7 @@ namespace ServiceLayer.AdminServices.Concrete
         }
     }
     /*********************************************************
-    #A This interface is needed when using this class in ASP.NET Core (see chapter 5)
+    #A This interface is needed when registering this class in DI. You use DI in chapter 5 when building the ASP.NET Core BookApp
     #B The application's DbContext is provided via a class constructor. This it the normal way of building classes that you will use as a service in ASP.NET Core
     #C This method handles the first part of the update, i.e. by getting the data from the chosen book to show to the user
     #D This is a select load query, which only returns three properties

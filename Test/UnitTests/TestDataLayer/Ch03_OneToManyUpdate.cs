@@ -171,12 +171,12 @@ namespace Test.UnitTests.TestDataLayer
                 };                                            //#C
                 context.SaveChanges();                        //#D
                 /*******************************************************
-                #A This include is important, otherwise EF Core won't know about the old reviews 
+                #A This include is important; this will create a collection with any existing reviews in it, or an empty collection if there aren't any existing reviews.  
                 #B This book I am loading has two review
                 #C I completely replace the whole collection
                 #D SaveChanges, via DetectChanges knows that a) the old collection should be deleted, b) the new collection should be written to the database
                  * ******************************************************/
-                
+
                 //VERIFY
                 var bookAgain = context.Books
                     .Include(p => p.Reviews)
