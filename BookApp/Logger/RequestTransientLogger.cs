@@ -1,18 +1,20 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ServiceLayer.Logger;
 
-namespace EfCoreInAction.Logger
+namespace BookApp.Logger
 {
     /// <summary>
     /// This logger only logs for the current request, i.e. it overwrites the log when a new request starts
     /// </summary>
     public class RequestTransientLogger : ILoggerProvider
     {
+        public const string NonHttpLogsIdentifier = "non-http-logs";
+
         private readonly Func<IHttpContextAccessor> _httpAccessor;
 
         public static LogLevel LogThisAndAbove { get; set; } = LogLevel.Information;
@@ -26,7 +28,6 @@ namespace EfCoreInAction.Logger
         {
             return new MyLogger(_httpAccessor);
         }
-
 
         public void Dispose()
         {
@@ -51,10 +52,7 @@ namespace EfCoreInAction.Logger
                 Func<TState, Exception, string> formatter)
             {
                 var currHttpContext = _httpAccessor().HttpContext;
-                if (currHttpContext == null)
-                    return; //we ignore any logs that happen outside a HttpRequest
-
-                HttpRequestLog.AddLog(currHttpContext.TraceIdentifier,
+                HttpRequestLog.AddLog(currHttpContext?.TraceIdentifier ?? NonHttpLogsIdentifier,
                     logLevel, eventId, formatter(state, exception));
             }
 

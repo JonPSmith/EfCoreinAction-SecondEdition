@@ -22,6 +22,8 @@ namespace ServiceLayer.Logger
     public class HttpRequestLog
     {
         private const int MaxKeepLogMinutes = 10;
+        private const int MaxLogsPerTraceId = 50;
+        private const int MaxLogsPerTraceIdTrimBy = 10;
 
         private static readonly ConcurrentDictionary<string, HttpRequestLog> AllHttpRequestLogs =
             new ConcurrentDictionary<string, HttpRequestLog>();
@@ -53,6 +55,11 @@ namespace ServiceLayer.Logger
         {
             var thisSessionLog = AllHttpRequestLogs.GetOrAdd(traceIdentifier,
                 x => new HttpRequestLog(traceIdentifier));
+
+            if (thisSessionLog._requestLogs.Count > MaxLogsPerTraceId)
+            {
+                thisSessionLog._requestLogs.RemoveRange(0, MaxLogsPerTraceIdTrimBy);
+            }
 
             thisSessionLog._requestLogs.Add(new LogParts(logLevel, eventId, eventString));
             thisSessionLog.LastAccessed = DateTime.UtcNow;

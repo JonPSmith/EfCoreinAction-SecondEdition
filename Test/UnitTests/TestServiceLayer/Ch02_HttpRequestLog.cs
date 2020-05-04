@@ -52,6 +52,25 @@ namespace Test.UnitTests.TestServiceLayer
         }
 
         [Fact]
+        public void TestTrimmingOfLogs() //current trim level is 50, trims by 10 - see HttpRequestLog's private constants
+        {
+            //SETUP
+            const string traceIdent = "t";
+
+            //ATTEMPT
+            for (int i = 0; i < 52; i++)
+            {
+                HttpRequestLog.AddLog(traceIdent, LogLevel.Information, 2, $"num-{i:D3}");
+            }
+
+            //VERIFY
+            var log = HttpRequestLog.GetHttpRequestLog(traceIdent);
+            log.RequestLogs.Count.ShouldEqual(42);
+            log.RequestLogs.First().EventString.ShouldEqual("num-010");
+            log.RequestLogs.Last().EventString.ShouldEqual("num-051");
+        }
+
+        [Fact]
         public void CreateEfCoreLog()
         {
             //SETUP

@@ -18,13 +18,13 @@ namespace Test.Chapter02Listings
         }
 
         private readonly ILazyLoader _lazyLoader;
-        private ICollection<LazyReview> _lazyReviews;
+        private ICollection<LazyReview> _reviews;
 
         //This is here to show how lazy loading works
         public ICollection<LazyReview> Reviews
         {
-            get => _lazyLoader.Load(this, ref _lazyReviews);
-            set => _lazyReviews = value;
+            get => _lazyLoader.Load(this, ref _reviews);
+            set => _reviews = value;
         }
     }
 }

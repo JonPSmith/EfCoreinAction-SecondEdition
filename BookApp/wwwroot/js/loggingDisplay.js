@@ -16,6 +16,7 @@ var LoggingDisplay = (function($) {
     var traceIdentLocal;
 
     var $showLogsLink = $('#show-logs');
+    var $showBgLogsLink = $('#show-bg-logs');
     var $logModal = $('#log-modal');
     var $logModalBody = $logModal.find('.modal-body');
     var $logDisplaySelect = $logModal.find('#displaySelect');
@@ -113,13 +114,19 @@ var LoggingDisplay = (function($) {
 
             setupTrace(traceIdentifier, numLogs);
 
-            //setup the events
+            //setup the main events
             $showLogsLink.unbind('click')
                 .bind('click',
                     function() {
                         startModal();
                     });
             $showLogsLink.removeClass('d-none');
+
+            $showBgLogsLink.unbind('click')
+                .bind('click',
+                    function () {
+                        getLogs('non-http-logs');
+                    });
 
             $('#all-select').on('click',
                 function() {
