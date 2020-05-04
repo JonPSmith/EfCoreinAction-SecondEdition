@@ -71,6 +71,11 @@ namespace BookApp.Controllers
          * **************************************************/
 
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
         public IActionResult About()
         {
             var isLocal = Request.IsLocal();

@@ -75,6 +75,10 @@ hr.grayhozrline {
     border-top: 1px solid grey;
 }
 
+.image-drop-shadow {
+    box-shadow: 3px 3px lightgrey;
+}
+
 /*------------------------------------------------------------------
     Extra bits for showing log - see http://stackoverflow.com/a/32351302/1434764
 */
