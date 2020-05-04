@@ -3,8 +3,11 @@
 
 using System.Diagnostics;
 using System.Linq;
+using DataLayer.EfClasses;
+using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter06Listings;
+using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -20,6 +23,42 @@ namespace Test.UnitTests.TestDataLayer
         public Ch06_AnNoTrackingAfterRead(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        [Fact]
+        public void ExampleDetachViaCreatingNewDbContext()
+        {
+            //SETUP
+
+            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            using (var context = new Chapter06Context(options))
+            {
+                context.Database.EnsureCreated();
+                context.AddManyTopWithRelationsToDb();
+            }
+
+            //ATTEMPT
+            ManyTop entityToDetach;                                 //#A
+            using (var tempContext = new Chapter06Context(options)) //#B
+            {
+                entityToDetach = tempContext.ManyTops.Single();     //#C
+                var a = tempContext.Set<Many1>()                    //#D
+                    .Where(x => x.ManyTopId == entityToDetach.Id)   //#D
+                    .ToList();                                      //#D
+                //... rest of loads left out to shorten the example
+            }                                                       //#E
+            //… further code that uses the entityToDetach variable  //#F
+            /************************************************************************
+            #A This is the variable which will hold the detached entity class with its relationships that were read in separately
+            #B Create a new instance of the application's DbContext. This must be done manually because you should not dispose of an instance that has been created by dependency injections
+            #C Read of the top level entity class
+            #D Read of the Many1 instances. Relational fixup will fill in the navigational collection in the ManyTop class which holds the loaded Many1 instances
+            #E The closing of the using block means that the tempContext is disposed, including all ist tracking data
+            #F As this point entityToDetach instance and the various data read into its navigational properties while in the using block are detached from any DbContext
+            * ********************************/
+
+            //VERIFY
+            entityToDetach.Collection1.Count.ShouldEqual(100);
         }
 
         [Theory]
@@ -103,13 +142,18 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 using (new TimeThings(_output, $"detach all tracked entities - {numCollection * 3:n0} tracked entities."))
                 {
-                    foreach (var entityEntry in context.ChangeTracker.Entries())
+                    foreach (var entityEntry in context.ChangeTracker.Entries()) //#A
                     {
-                        if (entityEntry.Entity != null)
+                        if (entityEntry.Entity != null) //#B
                         {
-                            entityEntry.State = EntityState.Detached;
+                            entityEntry.State = EntityState.Detached; //#C
                         }
                     }
+                    /********************************************
+                    #A This will iterate through each tracked EntityEntry in the current DbContext instance
+                    #B This filters out tracked entities where the entity class instance has been set to null
+                    #C This sets the state of the EntityEntry to Detached
+                     **********************************************/
                 }
 
                 //VERIFY

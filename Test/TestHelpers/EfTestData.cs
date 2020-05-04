@@ -74,10 +74,12 @@ namespace Test.TestHelpers
             return result;
         }
 
-        public static void SeedDatabaseFourBooks(this EfCoreContext context)
+        public static List<Book> SeedDatabaseFourBooks(this EfCoreContext context)
         {
-            context.Books.AddRange(CreateFourBooks());
+            var books = CreateFourBooks();
+            context.Books.AddRange(books);
             context.SaveChanges();
+            return books;
         }
 
         public static List<Book> CreateFourBooks()
