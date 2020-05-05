@@ -7,7 +7,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
 {
     public class BasketCookie : CookieTemplate
     {
-        public const string BasketCookieName = "EfCoreInAction2-Checkout";
+        public const string BasketCookieName = "EfCoreInAction2-basket";
 
         public BasketCookie(IRequestCookieCollection cookiesIn, IResponseCookies cookiesOut = null) 
             : base(BasketCookieName, cookiesIn, cookiesOut)

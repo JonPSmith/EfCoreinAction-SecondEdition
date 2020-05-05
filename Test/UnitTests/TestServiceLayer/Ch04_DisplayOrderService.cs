@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using ServiceLayer.CheckoutServices.Concrete;
 using ServiceLayer.OrderServices.Concrete;
 using Test.Mocks;
 using Test.TestHelpers;
@@ -106,11 +105,10 @@ namespace Test.UnitTests.TestServiceLayer
                 };
                 context.Orders.Add(order);
                 context.SaveChanges();
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{userId}");
                 var service = new DisplayOrdersService(context);
 
                 //ATTEMPT
-                var orders = service.GetUsersOrders(mockCookieRequests.CookiesIn);
+                var orders = service.GetUsersOrders();
 
                 //VERIFY
                 orders.Count.ShouldEqual(1);
@@ -120,6 +118,48 @@ namespace Test.UnitTests.TestServiceLayer
                 lineItems.First().BookId.ShouldEqual(1);
                 lineItems.First().BookPrice.ShouldEqual(123);
                 lineItems.First().NumBooks.ShouldEqual((short)456);
+            }
+        }
+
+        [Fact]
+        public void TestGetUsersOrdersDifferentUserIdOk()
+        {
+            //SETUP
+            var userId = Guid.NewGuid();
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                var order = new Order
+                {
+                    CustomerName = userId,
+                    LineItems = new List<LineItem>
+                    {
+                        new LineItem
+                        {
+                            BookId = 1,
+                            LineNum = 0,
+                            BookPrice = 123,
+                            NumBooks = 456
+                        }
+                    }
+                };
+                context.Orders.Add(order);
+                context.SaveChanges();
+            }
+
+            var differentUserId = Guid.NewGuid();
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(differentUserId)))
+            {
+                var service = new DisplayOrdersService(context);
+
+                //ATTEMPT
+                var orders = service.GetUsersOrders();
+
+                //VERIFY
+                orders.Count.ShouldEqual(0);
             }
         }
     }

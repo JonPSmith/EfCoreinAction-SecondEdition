@@ -11,23 +11,29 @@ namespace ServiceLayer.DataKeyServices.Concrete
 {
     public class DataKeyService : IDataKeyService
     {
-        private readonly IHttpContextAccessor _httpAccessor;
+        private readonly IHttpContextAccessor _httpAccessor; //#A
 
-        public DataKeyService(IHttpContextAccessor httpAccessor)
-        {
-            _httpAccessor = httpAccessor;
-        }
+        public DataKeyService(IHttpContextAccessor httpAccessor) //#A
+        {                                                        //#A
+            _httpAccessor = httpAccessor;                        //#A
+        }                                                        //#A
 
         public Guid GetDataKey()
         {
-            var httpContext = _httpAccessor?.HttpContext;
-            if (httpContext == null)
-                return Guid.Empty;
+            var httpContext = _httpAccessor.HttpContext;  //#B
+            if (httpContext == null)                      //#B
+                return Guid.Empty;                        //#B
 
-            var cookie = new BasketCookie(httpContext.Request.Cookies);
-            var service = new CheckoutCookieService(cookie.GetValue());
+            var cookie = new BasketCookie(httpContext.Request.Cookies); //#C
+            var service = new CheckoutCookieService(cookie.GetValue()); //#C
 
-            return service.UserId;
+            return service.UserId; //#D
         }
     }
+    /******************************************************
+    #A The IHttpContextAccessor is a way to access the current HTTP context. To use this you need to register this in Statup class using the command 'services.AddHttpContextAccessor()'
+    #B There are cases where the HTTPContext could be null, say in a background task. In this case you provide a unique key that no one has
+    #C This uses existing services to look for the basket cookie. If there is no cookie then it returns a unique key that no one has
+    #D Finally it returns the UserId from the Cookie as the DataKey
+     ******************************************************/
 }

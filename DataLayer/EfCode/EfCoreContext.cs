@@ -9,12 +9,14 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        private Guid _dataKey;
+        private readonly Guid _dataKey; //#A
 
-        public EfCoreContext(DbContextOptions<EfCoreContext> options, IDataKeyService dataKeyService = null)
+        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B
+            IDataKeyService dataKeyService = null) //#C
             : base(options)
         {
-            _dataKey = dataKeyService?.GetDataKey() ?? new ReplacementDataKeyService().GetDataKey();
+            _dataKey = dataKeyService?.GetDataKey()                     //#D
+                       ?? new ReplacementDataKeyService().GetDataKey(); //#D
         }
 
         public DbSet<Book> Books { get; set; }
@@ -22,7 +24,7 @@ namespace DataLayer.EfCode
         public DbSet<PriceOffer> PriceOffers { get; set; }
         public DbSet<Order> Orders { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        protected override void OnModelCreating(ModelBuilder modelBuilder) //#E
         {
             modelBuilder.Entity<BookAuthor>() 
                 .HasKey(x => new {x.BookId, x.AuthorId});
@@ -32,20 +34,23 @@ namespace DataLayer.EfCode
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Book>()
-                .HasQueryFilter(p => !p.SoftDeleted);
-
-            modelBuilder.Entity<Order>()
-                .HasQueryFilter(x => x.CustomerName == _dataKey);
+            modelBuilder.Entity<Book>()                            //#F
+                .HasQueryFilter(p => !p.SoftDeleted);              //#F
+                                                            
+            modelBuilder.Entity<Order>()                           //#G
+                .HasQueryFilter(x => x.CustomerName == _dataKey);  //#G
         } 
     }
-
-    /*********************************************************
-    #A The three properties link to the database tables with the same name
-    #B This constructor is how the ASP.NET creates an instance of EfCoreContext 
-    #C I need to tell EF Core about the Many-to-Many table keys. I explain this in detail in chapters 5 and 6
-    * ******************************************************/
 }
+/*********************************************************
+#A This property holds the DataKey to filter the Order entity class by
+#B This is the normal options for setting up the application's DbContext
+#C This is the DataKeyService. Note that I make this an optional parameter - that makes it much easier to use in unit tests that don't use the query filter
+#D This sets the DataKey. Note that the DataKeyService was null you use a simple replacement version that returns a unique GUID every time it is called.
+#E This is the method where you configure EF Core, and its the place where you put your query filters in
+#F This is the soft delete query filter
+#G And this is the Order, userId query filter
+* ******************************************************/
 
 /******************************************************************************
 * NOTES ON MIGRATION:

@@ -15,7 +15,6 @@ namespace ServiceLayer.OrderServices.Concrete
     {
         private readonly EfCoreContext _context;
 
-
         public DisplayOrdersService(EfCoreContext context)
         {
             _context = context;
