@@ -10,13 +10,15 @@ namespace Test.Chapter06Listings
         public DbSet<Employee> Employees { get; set; }
         public DbSet<ManyTop> ManyTops { get; set; }
 
+        public DbSet<BookNotSafe> Books { get; set; }
+
         public Chapter06Context(DbContextOptions<Chapter06Context> options)
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Employee>()
-                .HasMany<Employee>(x => x.WorksFromMe)
+                .HasMany(x => x.WorksFromMe)
                 .WithOne(x => x.Manager)
                 .HasForeignKey(x => x.ManagerEmployeeId);
         }

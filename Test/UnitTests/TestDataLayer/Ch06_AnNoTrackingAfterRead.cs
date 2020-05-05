@@ -54,7 +54,7 @@ namespace Test.UnitTests.TestDataLayer
             #C Read of the top level entity class
             #D Read of the Many1 instances. Relational fixup will fill in the navigational collection in the ManyTop class which holds the loaded Many1 instances
             #E The closing of the using block means that the tempContext is disposed, including all ist tracking data
-            #F As this point entityToDetach instance and the various data read into its navigational properties while in the using block are detached from any DbContext
+            #F As this point all the entity class instances read in while in the using block are detached from any DbContext
             * ********************************/
 
             //VERIFY
@@ -167,7 +167,7 @@ namespace Test.UnitTests.TestDataLayer
         [Theory]
         [InlineData(100)]
         [InlineData(1000)]
-        [InlineData(10000)] //Comment out because it takes 25 seconds
+        //[InlineData(10000)] //Comment out because it takes 25 seconds
         public void TestCombinedCalls(int numCollection)
         {
             TestDetachAllTrackedEntities(numCollection);
