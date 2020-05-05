@@ -16,10 +16,12 @@ namespace Test.Mocks
     public class MockBizActionWithWrite : BizActionErrors, IMockBizActionWithWrite
     {
         private readonly EfCoreContext _context;
+        private readonly Guid _userId;
 
-        public MockBizActionWithWrite(EfCoreContext context)
+        public MockBizActionWithWrite(EfCoreContext context, Guid userId)
         {
             _context = context;
+            _userId = userId;
         }
 
         public string Action(MockBizActionWithWriteModes mode)
@@ -31,7 +33,7 @@ namespace Test.Mocks
 
             var order = new Order
             {
-                CustomerName = Guid.NewGuid(),
+                CustomerName = _userId,
                 LineItems = new List<LineItem>
                 {
                     new LineItem

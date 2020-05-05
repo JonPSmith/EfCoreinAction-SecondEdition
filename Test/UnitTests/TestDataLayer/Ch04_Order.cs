@@ -7,6 +7,7 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using Test.Mocks;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -20,13 +21,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCreateOrderWithOneLineItems()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
-                var userId = Guid.NewGuid();
 
                 //ATTEMPT
                 var order = new Order
@@ -56,13 +56,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCreateOrderWithTwoLineItemsDifferentBooks()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
-                var userId = Guid.NewGuid();
 
                 //ATTEMPT
                 var order = new Order
@@ -99,13 +98,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCreateOrderWithTwoLineItemsSameBooks()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
-                var userId = Guid.NewGuid();
 
                 //ATTEMPT
                 var order = new Order
@@ -142,12 +140,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCreateTwoOrderWithOneLineItemSameBooks()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-                var userId = Guid.NewGuid();
 
                 //ATTEMPT
                 var order1 = new Order
@@ -191,12 +189,13 @@ namespace Test.UnitTests.TestDataLayer
         public void TestUpdateLineItemInOrder()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-                var userId = Guid.NewGuid();
+
                 var order = new Order
                 {
                     CustomerName = userId,
@@ -214,9 +213,9 @@ namespace Test.UnitTests.TestDataLayer
                 context.Orders.Add(order);
                 context.SaveChanges();
             }
-            
+
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 var order = context.Orders.Include(x => x.LineItems).First();
                 order.LineItems = new List<LineItem>
@@ -234,7 +233,7 @@ namespace Test.UnitTests.TestDataLayer
             }
 
             //VERIFY
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 var order = context.Orders.Include(x => x.LineItems).First();
                 order.LineItems.First().BookPrice.ShouldEqual(456);

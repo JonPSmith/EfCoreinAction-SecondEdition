@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,8 +9,13 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        public EfCoreContext(DbContextOptions<EfCoreContext> options)
-            : base(options) { }
+        private Guid _dataKey;
+
+        public EfCoreContext(DbContextOptions<EfCoreContext> options, IDataKeyService dataKeyService = null)
+            : base(options)
+        {
+            _dataKey = dataKeyService?.GetDataKey() ?? new ReplacementDataKeyService().GetDataKey();
+        }
 
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
@@ -28,6 +34,9 @@ namespace DataLayer.EfCode
 
             modelBuilder.Entity<Book>()
                 .HasQueryFilter(p => !p.SoftDeleted);
+
+            modelBuilder.Entity<Order>()
+                .HasQueryFilter(x => x.CustomerName == _dataKey);
         } 
     }
 

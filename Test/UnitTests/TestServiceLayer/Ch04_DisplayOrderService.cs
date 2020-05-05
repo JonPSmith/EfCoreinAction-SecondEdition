@@ -22,8 +22,9 @@ namespace Test.UnitTests.TestServiceLayer
         public void TestGetOrderDetailNotFound()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 var service = new DisplayOrdersService(context);
@@ -41,12 +42,12 @@ namespace Test.UnitTests.TestServiceLayer
         public void TestGetOrderDetailOk()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-                var userId = Guid.NewGuid();
 
                 var order = new Order
                 {
@@ -82,12 +83,12 @@ namespace Test.UnitTests.TestServiceLayer
         public void TestGetUsersOrdersOk()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-                var userId = Guid.NewGuid();
 
                 var order = new Order
                 {

@@ -21,7 +21,7 @@ namespace BookApp.Controllers
         {
             var listService = new DisplayOrdersService(_context);
             SetupTraceInfo();
-            return View(listService.GetUsersOrders(HttpContext.Request.Cookies));
+            return View(listService.GetUsersOrders());
         }
 
         public IActionResult ConfirmOrder(int orderId)

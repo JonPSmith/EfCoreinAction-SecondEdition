@@ -20,8 +20,9 @@ namespace Test.UnitTests.TestServiceLayer
         public void TestPlaceOrderBad()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -44,13 +45,14 @@ namespace Test.UnitTests.TestServiceLayer
         public void TestPlaceOrderOk()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
+                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{userId},1,2");
                 var service = new PlaceOrderServiceTransact(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
 
                 //ATTEMPT

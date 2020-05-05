@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DataLayer.EfCode;
@@ -22,13 +23,14 @@ namespace Test.UnitTests.TestServiceLayer
         public async Task RunActionAsync(MockBizActionWithWriteModes mode)
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
-                var action = new MockBizActionWithWriteAsync(context);
+                var action = new MockBizActionWithWriteAsync(context, userId);
                 var runner = new RunnerWriteDbWithValidationAsync<MockBizActionWithWriteModes, string>(action, context);
 
                 //ATTEMPT

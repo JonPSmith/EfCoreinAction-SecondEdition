@@ -4,12 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BizLogic.BasketServices;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Http;
 using ServiceLayer.CheckoutServices;
-using ServiceLayer.CheckoutServices.Concrete;
 
 namespace ServiceLayer.OrderServices.Concrete
 {
@@ -27,13 +25,11 @@ namespace ServiceLayer.OrderServices.Concrete
         /// This lists existing orders
         /// </summary>
         /// <returns></returns>
-        public List<OrderListDto> GetUsersOrders(IRequestCookieCollection cookiesIn)
+        public List<OrderListDto> GetUsersOrders()
         {
-            var cookie = new BasketCookie(cookiesIn);
-            var service = new CheckoutCookieService(cookie.GetValue());
 
-            return SelectQuery(_context.Orders.OrderByDescending(x => x.DateOrderedUtc)
-                               .Where(x => x.CustomerName == service.UserId)).ToList();
+            return SelectQuery(_context.Orders.OrderByDescending(x => x.DateOrderedUtc))
+                .ToList();
         }
 
 

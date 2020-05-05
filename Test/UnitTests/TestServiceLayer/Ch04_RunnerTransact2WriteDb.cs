@@ -54,8 +54,9 @@ namespace Test.UnitTests.TestServiceLayer
         public void ExampleCodeForBook()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseDummyBooks();
@@ -65,7 +66,6 @@ namespace Test.UnitTests.TestServiceLayer
                     new OrderLineItem {BookId = 2, NumBooks = 5},
                     new OrderLineItem {BookId = 3, NumBooks = 6}
                 };
-                var userId = Guid.NewGuid();
                 //ATTEMPT
 
                 var dbAccess = new PlaceOrderDbAccess(context);
@@ -87,8 +87,9 @@ namespace Test.UnitTests.TestServiceLayer
         public void RunActionThrowException()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 var action1 = new MockBizActionPart1(context);

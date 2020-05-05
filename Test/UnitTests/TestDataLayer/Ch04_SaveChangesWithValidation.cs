@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
+using Test.Mocks;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -90,8 +91,9 @@ namespace Test.UnitTests.TestDataLayer
         public void ValidateOk()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -99,7 +101,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var order = new Order
                 {
-                    CustomerName = Guid.NewGuid(),
+                    CustomerName = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -125,8 +127,9 @@ namespace Test.UnitTests.TestDataLayer
         public void ValidateLineNumNotSetBad()
         {
             //SETUP
+            var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -134,7 +137,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var order = new Order
                 {
-                    CustomerName = Guid.NewGuid(),
+                    CustomerName = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
