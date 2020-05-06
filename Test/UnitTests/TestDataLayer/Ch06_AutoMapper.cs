@@ -109,22 +109,21 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        public class BookListDtoProfile : Profile                           //#A
+        public class BookListDtoProfile : Profile                            //#A
         {
             public BookListDtoProfile()
             {
-                CreateMap<Book, BookListDto>()                              //#B
-                    .ForMember(p => p.ActualPrice,                          //#C
-                        m => m.MapFrom(s => s.Promotion == null             //#C
-                             ? s.Price : s.Promotion.NewPrice))             //#C
-                    .ForMember(p => p.AuthorsOrdered,                       //#D
-                        m => m.MapFrom(s =>                                 //#D
-                            string.Join(", ",                               //#D
-                                s.AuthorsLink.Select(x => x.Author.Name)))) //#D
-                    .ForMember(p => p.ReviewsAverageVotes,                  //#E
-                        m => m.MapFrom(s =>                                 //#E
-                            s.Reviews.Select(y =>                           //#E
-                                (double?)y.NumStars).Average()));           //#E
+                CreateMap<Book, BookListDto>()                               //#B
+                    .ForMember(p => p.ActualPrice,                           //#C
+                        m => m.MapFrom(s => s.Promotion == null              //#C
+                             ? s.Price : s.Promotion.NewPrice))              //#C
+                    .ForMember(p => p.AuthorsOrdered,                        //#D
+                        m => m.MapFrom(s => string.Join(", ",                //#D
+                                s.AuthorsLink.Select(x => x.Author.Name))))  //#D
+                    .ForMember(p => p.ReviewsAverageVotes,                   //#E
+                        m => m.MapFrom(s =>                                  //#E
+                            s.Reviews.Select(y =>                            //#E
+                                (double?)y.NumStars).Average()));            //#E
             }
         }
         /**********************************************************
