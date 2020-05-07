@@ -50,7 +50,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -91,7 +91,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem

@@ -22,7 +22,7 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -47,7 +47,7 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();

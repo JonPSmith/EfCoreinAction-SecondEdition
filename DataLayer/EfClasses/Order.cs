@@ -15,7 +15,7 @@ namespace DataLayer.EfClasses
         /// <summary>
         /// In this simple example the cookie holds a GUID for everyone that 
         /// </summary>
-        public Guid CustomerName { get; set; }
+        public Guid CustomerId { get; set; }
 
         // relationships
 

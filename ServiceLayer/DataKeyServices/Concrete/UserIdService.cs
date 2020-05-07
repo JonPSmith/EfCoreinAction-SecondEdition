@@ -9,16 +9,16 @@ using ServiceLayer.CheckoutServices.Concrete;
 
 namespace ServiceLayer.DataKeyServices.Concrete
 {
-    public class DataKeyService : IDataKeyService
+    public class UserIdService : IUserIdService
     {
         private readonly IHttpContextAccessor _httpAccessor; //#A
 
-        public DataKeyService(IHttpContextAccessor httpAccessor) //#A
+        public UserIdService(IHttpContextAccessor httpAccessor)  //#A
         {                                                        //#A
             _httpAccessor = httpAccessor;                        //#A
         }                                                        //#A
 
-        public Guid GetDataKey()
+        public Guid GetUserId()
         {
             var httpContext = _httpAccessor.HttpContext;  //#B
             if (httpContext == null)                      //#B
@@ -34,6 +34,6 @@ namespace ServiceLayer.DataKeyServices.Concrete
     #A The IHttpContextAccessor is a way to access the current HTTP context. To use this you need to register this in Statup class using the command 'services.AddHttpContextAccessor()'
     #B There are cases where the HTTPContext could be null, say in a background task. In this case you provide a unique key that no one has
     #C This uses existing services to look for the basket cookie. If there is no cookie then it returns a unique key that no one has
-    #D Finally it returns the UserId from the Cookie as the DataKey
+    #D Finally it returns the UserId from the Cookie
      ******************************************************/
 }

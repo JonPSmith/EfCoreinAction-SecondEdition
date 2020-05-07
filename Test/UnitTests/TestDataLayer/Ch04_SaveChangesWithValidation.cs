@@ -93,7 +93,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -101,7 +101,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -129,7 +129,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
@@ -137,7 +137,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem

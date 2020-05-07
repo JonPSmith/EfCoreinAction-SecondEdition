@@ -27,7 +27,7 @@ namespace BizLogic.Orders.Concrete
 
             var order = new Order                          
             {                                              
-                CustomerName = dto.UserId      
+                CustomerId = dto.UserId      
             };                                             
 
             if (!HasErrors)                                

@@ -33,7 +33,7 @@ namespace Test.Mocks
 
             var order = new Order
             {
-                CustomerName = _userId,
+                CustomerId = _userId,
                 LineItems = new List<LineItem>
                 {
                     new LineItem

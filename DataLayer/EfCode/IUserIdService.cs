@@ -5,8 +5,8 @@ using System;
 
 namespace DataLayer.EfCode
 {
-    public interface IDataKeyService
+    public interface IUserIdService
     {
-        Guid GetDataKey();
+        Guid GetUserId();
     }
 }

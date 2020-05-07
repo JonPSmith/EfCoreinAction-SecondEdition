@@ -23,7 +23,7 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 var service = new DisplayOrdersService(context);
@@ -43,14 +43,14 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -84,14 +84,14 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -127,14 +127,14 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(userId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
 
                 var order = new Order
                 {
-                    CustomerName = userId,
+                    CustomerId = userId,
                     LineItems = new List<LineItem>
                     {
                         new LineItem
@@ -151,7 +151,7 @@ namespace Test.UnitTests.TestServiceLayer
             }
 
             var differentUserId = Guid.NewGuid();
-            using (var context = new EfCoreContext(options, new FakeDataKeyService(differentUserId)))
+            using (var context = new EfCoreContext(options, new FakeUserIdService(differentUserId)))
             {
                 var service = new DisplayOrdersService(context);
 

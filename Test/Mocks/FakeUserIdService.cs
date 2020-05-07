@@ -6,16 +6,16 @@ using DataLayer.EfCode;
 
 namespace Test.Mocks
 {
-    public class FakeDataKeyService : IDataKeyService
+    public class FakeUserIdService : IUserIdService
     {
         private readonly Guid _dataKey;
 
-        public FakeDataKeyService(Guid dataKey)
+        public FakeUserIdService(Guid dataKey)
         {
             _dataKey = dataKey;
         }
 
-        public Guid GetDataKey()
+        public Guid GetUserId()
         {
             return _dataKey;
         }

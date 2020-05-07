@@ -97,7 +97,7 @@ namespace Test.UnitTests.TestBizLogic
 
             //VERIFY
             service.Errors.Any().ShouldEqual(false);
-            mockDbA.AddedOrder.CustomerName.ShouldEqual(userId);
+            mockDbA.AddedOrder.CustomerId.ShouldEqual(userId);
             mockDbA.AddedOrder.DateOrderedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-1,0);
             mockDbA.AddedOrder.LineItems.Count.ShouldEqual(lineItems.Count);
             var orderLineItems = mockDbA.AddedOrder.LineItems.ToImmutableList();

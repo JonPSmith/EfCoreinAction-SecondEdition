@@ -46,7 +46,7 @@ namespace BizLogic.Orders.Concrete
                      (dto.LineItems.Select(x => x.BookId));//#F
             var order = new Order                          //#G
             {                                              //#G
-                CustomerName = dto.UserId,                 //#G
+                CustomerId = dto.UserId,                 //#G
                 LineItems =                                //#G
                     FormLineItemsWithErrorChecking         //#G
                          (dto.LineItems, booksDict)        //#G

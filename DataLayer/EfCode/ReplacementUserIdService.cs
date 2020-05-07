@@ -5,9 +5,9 @@ using System;
 
 namespace DataLayer.EfCode
 {
-    public class ReplacementDataKeyService : IDataKeyService
+    public class ReplacementUserIdService : IUserIdService
     {
-        public Guid GetDataKey()
+        public Guid GetUserId()
         {
             return Guid.Empty;
         }

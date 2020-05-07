@@ -9,14 +9,14 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        private readonly Guid _dataKey; //#A
+        private readonly Guid _userId; //#A
 
         public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B
-            IDataKeyService dataKeyService = null) //#C
+            IUserIdService userIdService = null) //#C
             : base(options)
         {
-            _dataKey = dataKeyService?.GetDataKey()                     //#D
-                       ?? new ReplacementDataKeyService().GetDataKey(); //#D
+            _userId = userIdService?.GetUserId()                     //#D
+                       ?? new ReplacementUserIdService().GetUserId(); //#D
         }
 
         public DbSet<Book> Books { get; set; }
@@ -38,18 +38,18 @@ namespace DataLayer.EfCode
                 .HasQueryFilter(p => !p.SoftDeleted);              //#F
                                                             
             modelBuilder.Entity<Order>()                           //#G
-                .HasQueryFilter(x => x.CustomerName == _dataKey);  //#G
+                .HasQueryFilter(x => x.CustomerId == _userId);  //#G
         } 
     }
 }
 /*********************************************************
-#A This property holds the DataKey to filter the Order entity class by
+#A This property holds the UserId to filter the Order entity class by
 #B This is the normal options for setting up the application's DbContext
-#C This is the DataKeyService. Note that I make this an optional parameter - that makes it much easier to use in unit tests that don't use the query filter
-#D This sets the DataKey. Note that the DataKeyService was null you use a simple replacement version that returns a unique GUID every time it is called.
+#C This is the UserIdService. Note that I make this an optional parameter - that makes it much easier to use in unit tests that don't use the query filter
+#D This sets the UserId. Note that the UserIdService was null you use a simple replacement version that returns a unique GUID every time it is called.
 #E This is the method where you configure EF Core, and its the place where you put your query filters in
 #F This is the soft delete query filter
-#G And this is the Order, userId query filter
+#G And this is the Order query filter which matches the current UserId obtains from the cookie basket with the CustomerId in the Order entity class
 * ******************************************************/
 
 /******************************************************************************
@@ -67,7 +67,7 @@ namespace DataLayer.EfCode
 * b) Use the PMC command
 *    Add-Migration NameForMigration -Project DataLayer
 * c) Use PMC command
-*    Update-database
+*    Update-database (or migrate on startup)
 *    
 * If you want to start afresh then:
 * a) Delete the current database
