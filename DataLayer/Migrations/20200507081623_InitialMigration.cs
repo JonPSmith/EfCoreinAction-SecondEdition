@@ -11,9 +11,9 @@ namespace DataLayer.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    AuthorId = table.Column<int>(nullable: false)
+                    AuthorId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -24,15 +24,15 @@ namespace DataLayer.Migrations
                 name: "Books",
                 columns: table => new
                 {
-                    BookId = table.Column<int>(nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    PublishedOn = table.Column<DateTime>(nullable: false),
-                    Publisher = table.Column<string>(nullable: true),
-                    Price = table.Column<decimal>(nullable: false),
-                    ImageUrl = table.Column<string>(nullable: true),
-                    SoftDeleted = table.Column<bool>(nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PublishedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Publisher = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SoftDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,10 +43,10 @@ namespace DataLayer.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<int>(nullable: false)
+                    OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateOrderedUtc = table.Column<DateTime>(nullable: false),
-                    CustomerName = table.Column<Guid>(nullable: false)
+                    DateOrderedUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,9 +57,9 @@ namespace DataLayer.Migrations
                 name: "BookAuthor",
                 columns: table => new
                 {
-                    BookId = table.Column<int>(nullable: false),
-                    AuthorId = table.Column<int>(nullable: false),
-                    Order = table.Column<byte>(nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    Order = table.Column<byte>(type: "tinyint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -82,11 +82,11 @@ namespace DataLayer.Migrations
                 name: "PriceOffers",
                 columns: table => new
                 {
-                    PriceOfferId = table.Column<int>(nullable: false)
+                    PriceOfferId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NewPrice = table.Column<decimal>(nullable: false),
-                    PromotionalText = table.Column<string>(nullable: true),
-                    BookId = table.Column<int>(nullable: false)
+                    NewPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PromotionalText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -103,12 +103,12 @@ namespace DataLayer.Migrations
                 name: "Review",
                 columns: table => new
                 {
-                    ReviewId = table.Column<int>(nullable: false)
+                    ReviewId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VoterName = table.Column<string>(nullable: true),
-                    NumStars = table.Column<int>(nullable: false),
-                    Comment = table.Column<string>(nullable: true),
-                    BookId = table.Column<int>(nullable: false)
+                    VoterName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumStars = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,13 +125,13 @@ namespace DataLayer.Migrations
                 name: "LineItem",
                 columns: table => new
                 {
-                    LineItemId = table.Column<int>(nullable: false)
+                    LineItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<byte>(nullable: false),
-                    NumBooks = table.Column<short>(nullable: false),
-                    BookPrice = table.Column<decimal>(nullable: false),
-                    OrderId = table.Column<int>(nullable: false),
-                    BookId = table.Column<int>(nullable: false)
+                    LineNum = table.Column<byte>(type: "tinyint", nullable: false),
+                    NumBooks = table.Column<short>(type: "smallint", nullable: false),
+                    BookPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
