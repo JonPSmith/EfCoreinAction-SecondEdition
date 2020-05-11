@@ -15,7 +15,6 @@ namespace ServiceLayer.AppStart
                 .AsPublicImplementedInterfaces(); //#E
 
             //#F
-
         }
     }
     /****************************************************************************

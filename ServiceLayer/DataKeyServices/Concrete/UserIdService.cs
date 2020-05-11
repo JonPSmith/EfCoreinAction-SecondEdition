@@ -11,29 +11,31 @@ namespace ServiceLayer.DataKeyServices.Concrete
 {
     public class UserIdService : IUserIdService
     {
-        private readonly IHttpContextAccessor _httpAccessor; //#A
+        private readonly IHttpContextAccessor _httpAccessor;            //#A
 
-        public UserIdService(IHttpContextAccessor httpAccessor)  //#A
-        {                                                        //#A
-            _httpAccessor = httpAccessor;                        //#A
-        }                                                        //#A
+        public UserIdService(IHttpContextAccessor httpAccessor)         //#A
+        {                                                               //#A
+            _httpAccessor = httpAccessor;                               //#A
+        }                                                               //#A
 
         public Guid GetUserId()
         {
-            var httpContext = _httpAccessor.HttpContext;  //#B
-            if (httpContext == null)                      //#B
-                return Guid.Empty;                        //#B
+            var httpContext = _httpAccessor.HttpContext;                //#B
+            if (httpContext == null)                                    //#B
+                return Guid.Empty;                                      //#B
 
             var cookie = new BasketCookie(httpContext.Request.Cookies); //#C
-            var service = new CheckoutCookieService(cookie.GetValue()); //#C
+            if (!cookie.Exists())                                       //#C
+                return Guid.Empty;                                      //#C
 
-            return service.UserId; //#D
+            var service = new CheckoutCookieService(cookie.GetValue()); //#D
+            return service.UserId;                                      //#D
         }
     }
     /******************************************************
     #A The IHttpContextAccessor is a way to access the current HTTP context. To use this you need to register this in Statup class using the command 'services.AddHttpContextAccessor()'
-    #B There are cases where the HTTPContext could be null, say in a background task. In this case you provide a unique key that no one has
-    #C This uses existing services to look for the basket cookie. If there is no cookie then it returns a unique key that no one has
-    #D Finally it returns the UserId from the Cookie
+    #B There are cases where the HTTPContext could be null, say in a background task. In this case you provide an empty GUID
+    #C This uses existing services to look for the basket cookie. If there is no cookie then it returns an empty GUID
+    #D If there is a basket cookie then you create the CheckoutCookieService which extracts the UserId. This UserId it returned
      ******************************************************/
 }

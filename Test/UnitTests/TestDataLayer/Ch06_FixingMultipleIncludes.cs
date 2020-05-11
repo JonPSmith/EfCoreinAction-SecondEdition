@@ -66,7 +66,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestBookQueryWithSeparateIncludes()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            var showlog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<Chapter06Context>(log =>
+            {
+                if (showlog)
+                    _output.WriteLine(log.Message);
+            });
             using (var context = new Chapter06Context(options))
             {
                 context.Database.EnsureCreated();
