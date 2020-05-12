@@ -6,8 +6,6 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
-using ServiceLayer.BookServices.Concrete;
-using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
@@ -89,7 +87,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestDeletePriceOfferReadThenRemeoveOk()
+        public void TestDeletePriceOfferReadThenRemoveOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
