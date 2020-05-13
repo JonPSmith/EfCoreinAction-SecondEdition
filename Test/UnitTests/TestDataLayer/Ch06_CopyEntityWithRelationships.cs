@@ -44,7 +44,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(order);                                          //#F
                 context.SaveChanges();                                       //#F
                 /*************************************************************
-                #A For this test I add four books
+                #A For this test I add four books to use as test data
                 #B I create an Order with two LinItems that I want to copy
                 #C I set CustomerId to the default value so that the query filter lets me read the order back
                 #D I add the first LineNum linked to the first book
@@ -68,12 +68,12 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();                       //#G
                 /******************************************************
                 #A This is going to query the Orders table.
-                #B We want the entities read in as not tracked, that means their State will be Detached
-                #C We include the LineItems as we want to copy those too
-                #D We do NOT add .ThenInclude(x => x.ChosenBook) to the query. If we did it would copy the Book entities and that not what we want
-                #E We take the Order that we want to copy
-                #F Now we reset the primary keys (Order and LineItem) to their default value. That will tell the database to generate new primary keys 
-                #G Finally we write out the order, which then create a copy.
+                #B The AsNoTracking means the entities read in as not tracked, that means their State will be Detached
+                #C You include the LineItems as we want to copy those too
+                #D You do NOT add .ThenInclude(x => x.ChosenBook) to the query. If you did it would copy the Book entities and that not what we want
+                #E You take the Order that we want to copy
+                #F You reset the primary keys (Order and LineItem) to their default value. That will tell the database to generate new primary keys 
+                #G Finally you write out the order, which then create a copy.
                  ****************************************************/
             }
             using (var context = new EfCoreContext(sqlOptions))

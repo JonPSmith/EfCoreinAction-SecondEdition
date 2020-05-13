@@ -120,5 +120,27 @@ namespace Test.UnitTests.TestDataLayer
                 context.PriceOffers.Count().ShouldEqual(0);
             }
         }
+
+        [Fact]
+        public void TestDeleteBookMissing()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                var book = new Book    
+                {
+                    BookId = 123       
+                };
+                context.Remove(book);  
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges()); 
+
+                //VERIFY
+                ex.Message.ShouldStartWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).");
+            }
+        }
     }
 }

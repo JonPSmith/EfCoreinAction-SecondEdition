@@ -72,7 +72,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();            //#D
                 /*********************************************************
                 #A This creates a new Book
-                #B This adds a new Review to the Book
+                #B This adds a new Review to the Book's Reviews navigational property
                 #C The Add method says that the entity instance should be Added to the appropriate row, with any relationships either added or updated
                 #D The SaveChanges carries out the database update
                  *********************************************************/

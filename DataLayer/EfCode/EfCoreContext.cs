@@ -46,8 +46,8 @@ namespace DataLayer.EfCode
 #A This property holds the UserId to filter the Order entity class by
 #B This is the normal options for setting up the application's DbContext
 #C This is the UserIdService. Note that I make this an optional parameter - that makes it much easier to use in unit tests that don't use the query filter
-#D This sets the UserId. Note that the UserIdService was null you use a simple replacement version that returns a unique GUID every time it is called.
-#E This is the method where you configure EF Core, and its the place where you put your query filters in
+#D This sets the UserId. Note that the UserIdService was null you use a simple replacement version that returns the default Guid.Empty value.
+#E This is the method where you configure EF Core, and it's the place where you put your query filters in
 #F This is the soft delete query filter
 #G And this is the Order query filter which matches the current UserId obtains from the cookie basket with the CustomerId in the Order entity class
 * ******************************************************/
