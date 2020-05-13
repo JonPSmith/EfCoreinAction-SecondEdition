@@ -42,6 +42,24 @@ namespace Test.UnitTests.TestDataLayer
         #E Any assignment to a property that doesn't have a parameter is fine - EF Core will set that property after the constructor to the data read back from the database
          **************************************************************/
 
+        public class ReviewGood2
+        {
+            public int Id { get; private set; }           
+            public string VoterName { get; private set; } 
+            public int NumStars { get; set; }
+
+            public ReviewGood2(string voterName, int numStars)
+            {
+                VoterName = voterName;
+                NumStars = numStars;
+            }
+
+            public ReviewGood2(string voterName)   //EF Core uses this ctor for reads                     
+            {
+                VoterName = voterName;
+            }
+        }
+
         public class ReviewBad
         {
             public int Id { get; set; }
@@ -63,10 +81,10 @@ namespace Test.UnitTests.TestDataLayer
 
             public ReviewBadCtor1( //#A
                 string voterName, 
-                int unknownParam)  //#B
+                int starRating)  //#B
             {
                 VoterName = voterName;
-                NumStars = unknownParam;
+                NumStars = starRating;
             }
         }
         /***********************************************************
@@ -98,6 +116,7 @@ namespace Test.UnitTests.TestDataLayer
             }
 
             public DbSet<ReviewGood> ReviewGoods { get; set; }
+            public DbSet<ReviewGood2> Review2Goods { get; set; } 
             public DbSet<ReviewBad> ReviewBads { get; set; }
             public DbSet<ReviewBadCtor2> ReviewBadCtor2s { get; set; }
 
@@ -128,6 +147,29 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 entity.VoterName.ShouldEqual("John Doe");
                 entity.NumStars.ShouldEqual(-1);
+            }
+        }
+
+        [Fact]
+        public void ReadReviewsGood2WhichCtorUsed()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CtorDbContext>();
+            using (var context = new CtorDbContext(options, false))
+            {
+                context.Database.EnsureCreated();
+                var newEntity = new ReviewGood2("John Doe",1);
+                context.Add(newEntity);
+                context.SaveChanges();
+            }
+            using (var context = new CtorDbContext(options, false))
+            {
+                //ATTEMPT
+                var entity = context.Review2Goods.Single();
+
+                //VERIFY
+                entity.VoterName.ShouldEqual("John Doe");
+                entity.NumStars.ShouldEqual(1);
             }
         }
 
@@ -179,6 +221,7 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        //Has to be run on its own as it changes the DbContext configuration
         [RunnableInDebugOnly]
         public void ReadReviewBadCtor1()
         {
