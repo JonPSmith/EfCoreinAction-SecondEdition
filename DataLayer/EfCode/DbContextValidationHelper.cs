@@ -55,13 +55,14 @@ namespace DataLayer.EfCode
 
             return result; //#F
         }
+        //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
         /********************************************************************
-         #A The SaveChangesWithChecking returns a list of ValidationResults. If it is an empty collection then the data was saved. If it has errors then the data wasn't saved
-         #B SaveChangesWithChecking is an extension method, which means I can call it in the same way I call SaveChanges
-         #C I create a private method to do the validation as I need to apply this in SaveChangesWithChecking and SaveChangesWithCheckingAsync
+         #A The SaveChangesWithValidation returns a list of ValidationResults.
+         #B SaveChangesWithChecking is an extension method. 
+         #C The ExecuteValidation is used in SaveChangesWithChecking/SaveChangesWithCheckingAsync
          #D If there are errors then I return them immediately and don't call SaveChanges
          #E There aren't any errors so I am going to call SaveChanges. 
-         #F I return the empty set of errors, which tells the caller that everything is OK
+         #F This return the empty set of errors to signify there are no errors
          * *****************************************************************/
 
         private static ImmutableList<ValidationResult>
@@ -88,13 +89,14 @@ namespace DataLayer.EfCode
             }
             return result.ToImmutableList(); //#F
         }
+        //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
         /*************************************************************
-        #A I use EF Core's ChangeTracker to get access to all the entity classes it is tracking. NOte: This calls ChangeTracker.DetectChanges, which makes sure all the changes I have made are found
-        #B I filter out only those that need to be added to, or update the database
-        #C I have created a simple class that implements the IServiceProvider interface, which makes the current DbContext available in the IValidatableObject.Validate method 
-        #D The Validator.TryValidateObject is the method which handles all validation checking for me
-        #E If there are errors I add them to the list
-        #F Finally I return the list of all the errors found
+        #A This uses EF Core's ChangeTracker to get access to all the entity classes it is tracking
+        #B This filters the entities that will be added or updated in the database
+        #C This implements the IServiceProvider interface and passes the DbContext to the Validate method
+        #D The Validator.TryValidateObject is the method validates each class
+        #E Any errors are added to the list
+        #F Finally it returns the list of all the errors found. Empty if no errors
          * *********************************************************/
     }
 }

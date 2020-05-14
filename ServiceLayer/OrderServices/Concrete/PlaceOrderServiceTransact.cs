@@ -64,10 +64,11 @@ namespace ServiceLayer.OrderServices.Concrete
             return order.OrderId;
         }
     }
+    //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
     /*****************************************************
-    #A This class is a version of PlaceOrderService, but using transactions to execute the business logic in two parts
-    #B I create the BizRunner variant called RunnerTransact2WriteDb, which will handle multiple business logic inside a transaction
-    #C The BizRunner needs to know the types of the date used for: input, passing from part 1 to part 2, and output
+    #A This version of PlaceOrderService uses transactions to execute two business logic 
+    #B This BizRunner handles multiple business logic inside a transaction
+    #C The BizRunner needs the input, the class passed from Part1 to Part2 and the output
     #D The BizRunner needs the application's DbContext 
     #E This provides an instance of the first part of the business logic
     #F This provides an instance of the second part of the business logic

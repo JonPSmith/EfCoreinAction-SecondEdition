@@ -46,7 +46,7 @@ namespace BizLogic.Orders.Concrete
                      (dto.LineItems.Select(x => x.BookId));//#F
             var order = new Order                          //#G
             {                                              //#G
-                CustomerId = dto.UserId,                 //#G
+                CustomerId = dto.UserId,                   //#G
                 LineItems =                                //#G
                     FormLineItemsWithErrorChecking         //#G
                          (dto.LineItems, booksDict)        //#G
@@ -91,20 +91,21 @@ namespace BizLogic.Orders.Concrete
                     });
                 }
             }
-            return result; //#p
+            return result; //#P
         }
     }
+    //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
     /**************************************************************
-    #A The BizActionErrors class provides all the error handling that is required for the business logic
-    #B The IBizAction interface makes the business logic conform to a standard interface for business logic that has an input and an output
-    #C The PlaceOrderAction needs the companion PlaceOrderDbAccess class to handle all the database accesses
+    #A The BizActionErrors class provides error handling for the business logic
+    #B The IBizAction interface makes the business logic conform to a standard interface
+    #C The PlaceOrderAction uses PlaceOrderDbAccess class to handle database accesses
     #D This is the method that is called by the BizRunner to execute this business logic
-    #E I start with some basic validation
-    #F Now I ask the PlaceOrderDbAccess class to find all the books I need, with any optional PriceOffers
-    #G I create the Order entity class. Note the call to the private method FormLineItemsWithErrorChecking which creates the LineItems
+    #E This is some basic validation
+    #F The PlaceOrderDbAccess class finds all the bought books, with  optional PriceOffers
+    #G This creates the Order, using FormLineItemsWithErrorChecking to create the LineItems
     #H I only add the order to the database if there are no errors 
     #I If there are errors I return null, otherwise I return the order
-    #J This private method handles the creation of each LineItem entity class for each book ordered
+    #J This private method handles the creation of each LineItem for each book ordered
     #K This goes through each book type that the person has ordered
     #L I treat a book being missing as a system error, and throw an exception
     #M I calculate the price at the time of the order

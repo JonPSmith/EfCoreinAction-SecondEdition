@@ -40,14 +40,15 @@ namespace ServiceLayer.BizRunners
             return result; //#H
         }
     }
+    //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
     /*********************************************************
-    #A In this version I need my own Errors and HasErrors properties, as errors can come from two sources
-    #B This BizRunner handles business logic that conforms to the IBizAction<TIn, TOut> interface
-    #C I call RunAction in my Service Layer, or in my Presentation Layer if the data comes back in the right form
+    #A Ths version needs its own Errors/HasErrors properties, as errors come from two sources
+    #B This handles business logic that conforms to the IBizAction<TIn, TOut> interface
+    #C This method is called to execute the business logic and handle any errors
     #D It runs the business logic I gave it
-    #E Now I have to assign any errors from the business logic to my local errors list
-    #F If there aren't any errors I call SaveChangesWithChecking to execute any add, update or delete methods
-    #G I extract the error message part of the ValidationResults and assign the list to my Errors 
+    #E Any errors from the business logic are assigned to the local errors list
+    #F If there aren't any errors it calls SaveChangesWithChecking
+    #G Any validation errors are assigned the the Errors list
     #F Finally it returns the result that the business logic returned
      * ******************************************************/
 }

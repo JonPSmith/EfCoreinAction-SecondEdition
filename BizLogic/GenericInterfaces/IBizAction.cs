@@ -14,8 +14,9 @@ namespace BizLogic.GenericInterfaces
         bool HasErrors { get; }  //#B
         TOut Action(TIn dto); //#C
     }
+    //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
     /****************************************************
-    #A The BizAction has both and TIn and an TOut, which is used in the definition of the Action method
+    #A The BizAction uses the TIn and an TOut to define of the Action method
     #B This returns the error information from the business logic
     #C This is the action that the BizRunner will call
      * *************************************************/
