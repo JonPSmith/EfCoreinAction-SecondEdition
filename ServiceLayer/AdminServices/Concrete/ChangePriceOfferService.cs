@@ -44,7 +44,7 @@ namespace ServiceLayer.AdminServices.Concrete
         /// </summary>
         /// <param name="promotion"></param>
         /// <returns></returns>
-        public ValidationResult AddRemoveBook(PriceOffer promotion)//#A
+        public ValidationResult AddRemovePriceOffer(PriceOffer promotion)//#A
         {
             var book = _context.Books                              //#B
                 .Include(r => r.Promotion)                         //#B
@@ -53,7 +53,7 @@ namespace ServiceLayer.AdminServices.Concrete
 
             if (book.Promotion != null)                            //#C
             {
-                _context.Remove(promotion.PromotionalText);        //#D
+                _context.Remove(book.Promotion);        //#D
                 _context.SaveChanges();                            //#D
                 return null; //#E
             }
@@ -66,20 +66,22 @@ namespace ServiceLayer.AdminServices.Concrete
             }
 
             book.Promotion = promotion;                            //#H
-            _context.SaveChanges();                                //#H
+            _context.SaveChanges();                                //#I
 
-            return null;                                           //#I
+            return null;                                           //#J
         }
+        //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
         /*********************************************************
-        #A This method deletes a promotion if the book has one, otherwise is adds a promotion. It returns null if it was successful, or a ValidationResult class if there was an error
+        #A This method deletes a PriceOffer if present, else its adds a new PriceOffer
         #B This loads the book, with any existing promotion
-        #C If there is an existing Promotion on the book, then we need to remove that promotion
+        #C If there is an existing Promotion on the book, then it removes that promotion
         #D This deletes the PriceOffer entry that was linked to the chosen book
         #E It returns null, which means the method finished successfully 
-        #F We are going to add a promotion, and one of the business rules is that the PromotionalText must contains some text
-        #G This returns an error message, with the particular property name that was incorrect. This allows the ASP.NET Core show an error next to the input that has an error
-        #H This assigns the new PriceOffer. which was filled in by the user, to the selected book. Then it calls SaveChanges to update the database
-        #I The adding of a new price promotion was successful so the method returns null
+        #F This is a validation check - the PromotionalText must contains some text
+        #G This returns an error message, with the  property name that was incorrect. 
+        #H This assigns the new PriceOffer to the selected book. 
+        #I The SaveChanges method then updates the database
+        #J The adding of a new price promotion was successful so the method returns null
          * ******************************************************/
     }
 }

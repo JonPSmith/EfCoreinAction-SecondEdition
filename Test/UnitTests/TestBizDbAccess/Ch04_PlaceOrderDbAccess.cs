@@ -6,17 +6,30 @@ using DataLayer.EfCode;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestBizDbAccess
 {
     public class Ch04_PlaceOrderDbAccess
     {
+        private readonly ITestOutputHelper _output;
+
+        public Ch04_PlaceOrderDbAccess(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void TestCheckoutListTwoBooksSqLite()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            var showlog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            {
+                if (showlog)
+                    _output.WriteLine(log.Message);
+            });
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
@@ -25,6 +38,7 @@ namespace Test.UnitTests.TestBizDbAccess
                 var dbAccess = new PlaceOrderDbAccess(context);
 
                 //ATTEMPT
+                showlog = true;
                 var booksDict = dbAccess.FindBooksByIdsWithPriceOffers(new []{1, 4});
 
                 //VERIFY

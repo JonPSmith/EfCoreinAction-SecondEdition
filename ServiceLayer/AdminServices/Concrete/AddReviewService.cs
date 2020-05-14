@@ -74,14 +74,15 @@ namespace ServiceLayer.AdminServices.Concrete
             _context.SaveChanges();                                           //#F
             return status;                                                    //#G
         }
+        //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
         /***********************************************************
-        #A This method adds a review to a book, but it checks the data is what it expects. It returns a status which says whether it was successful, or had errors
-        #B The method uses GenericServices.StatusGeneric's status system to capture errors and return a status
-        #C This checks that the star rating is in the correct range. If it isn't then it returns an error message with the name of the property that failed.
+        #A This method adds a review to a book, with validation checks on the data
+        #B It creates a status class to hold any errors
+        #C This adds an error to the status if the star rating is in the correct range
         #D This second check ensures the user has provided some sort of comment
         #E If there are any errors the method returns immediately with those errors.
-        #F This is the CRUD code that adds a review to a book. This is explained in chapter 3
-        #G This returns the status, which will be valid because there aren't any errors
+        #F This is the CRUD code that adds a review to a book
+        #G This returns the status, which will be valid if no errors were found
          **************************************************************/
     }
 }

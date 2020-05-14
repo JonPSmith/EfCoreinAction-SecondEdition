@@ -62,7 +62,7 @@ namespace BookApp.Controllers
         {
             Request.ThrowErrorIfNotLocal();
 
-            var error =  service.AddRemoveBook(dto);               
+            var error =  service.AddRemovePriceOffer(dto);               
             if (error != null)                                     
             {
                 ModelState.AddModelError(error.MemberNames.First(), 

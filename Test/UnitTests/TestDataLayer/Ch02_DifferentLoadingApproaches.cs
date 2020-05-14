@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
-using Test.Chapter02Listings;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;

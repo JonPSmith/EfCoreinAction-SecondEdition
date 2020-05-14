@@ -11,6 +11,6 @@ namespace ServiceLayer.AdminServices
         Book OrgBook { get; }
 
         PriceOffer GetOriginal(int id);
-        ValidationResult AddRemoveBook(PriceOffer promotion);
+        ValidationResult AddRemovePriceOffer(PriceOffer promotion);
     }
 }
