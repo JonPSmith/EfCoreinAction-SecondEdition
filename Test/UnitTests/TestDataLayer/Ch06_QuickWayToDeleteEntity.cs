@@ -87,7 +87,42 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestDeletePriceOfferReadThenRemoveOk()
+        public void TestDeletePriceOfferQuicklyOk()
+        {
+            //SETUP
+            int priceOfferId;
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book = new Book
+                {
+                    Title = "Test Book",
+                    Promotion = new PriceOffer { NewPrice = 1 }
+                };
+                context.Add(book);
+                context.SaveChanges();
+                priceOfferId = book.Promotion.PriceOfferId;
+                context.Books.Count().ShouldEqual(1);
+                context.PriceOffers.Count().ShouldEqual(1);
+            }
+            //ATTEMPT
+            using (var context = new EfCoreContext(options))
+            {
+                var pOfferToDelete = new PriceOffer { PriceOfferId = priceOfferId };
+                context.RemoveRange(pOfferToDelete);
+                context.SaveChanges();
+            }
+            //VERIFY
+            using (var context = new EfCoreContext(options))
+            {
+                context.Books.Count().ShouldEqual(1);
+                context.PriceOffers.Count().ShouldEqual(0);
+            }
+        }
+
+        [Fact]
+        public void TestDeletePriceOfferRemoveNullsNavigatinalLinkOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
