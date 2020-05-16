@@ -20,9 +20,9 @@ namespace ServiceLayer.AppStart
     /****************************************************************************
     #A I create a static class to hold my extension
     #B This class is in the ServiceLayer, so I give the method a name with that Assembly name in it
-    #C The NetCore.AutoRegisterDi contains the Microsoft.Extensions.DependencyInjection library, so you can access the IServiceCollection interface
+    #C The NetCore.AutoRegisterDi library understands NET Core DI so you can access the IServiceCollection interface
     #D Calling the RegisterAssemblyPublicNonGenericClasses method without a parameter means it scans the calling assembly
     #E This method will register all the public classes with interfaces with a Transient lifetime
-    #F This is where you register any other classes/interfaces that can't be registered by the NetCore.AutoRegisterDi, e.g. generic classes
+    #F This is for hand-coded registrations that NetCore.AutoRegisterDi can't do, e.g. generic classes
      *************************************************************/
 }
