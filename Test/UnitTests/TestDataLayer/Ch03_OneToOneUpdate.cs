@@ -7,6 +7,7 @@ using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -95,7 +96,7 @@ namespace Test.UnitTests.TestDataLayer
             var options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
-                context.Database.EnsureCreated();
+                context.EnsureClean();
                 if (!context.Books.Any())
                     context.SeedDatabaseFourBooks();
 

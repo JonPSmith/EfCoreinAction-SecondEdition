@@ -6,6 +6,7 @@ using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,7 +40,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             using (var context = new EfCoreContext(options))
             {
-                if (context.Database.EnsureCreated())
+                if (SetupDatabaseTrueIfNeedsNewData(context))
                 {
                     //new database created, so seed
                     var book1 = new Book {Title = NormalTitle};
@@ -69,6 +70,18 @@ namespace Test.UnitTests.TestDataLayer
                 OutputResult(context.Books.Where(x => EF.Functions.Like(x.Title, NormalTitle)), "Like");
             }
         }
+
+        private bool SetupDatabaseTrueIfNeedsNewData(DbContext context)
+        {
+            if (context.Database.IsSqlServer())
+            {
+                context.EnsureClean();
+                return true;
+            }
+
+            return context.Database.EnsureCreated();
+        }
+
 
     }
 }

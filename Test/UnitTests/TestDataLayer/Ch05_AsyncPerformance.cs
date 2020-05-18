@@ -11,6 +11,7 @@ using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit.Abstractions;
 
 namespace Test.UnitTests.TestDataLayer
@@ -30,12 +31,9 @@ namespace Test.UnitTests.TestDataLayer
             _options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(_options))
             {
-                context.Database.EnsureCreated();
-                if (!context.Books.Any())
-                {
-                    context.Books.AddRange(EfTestData.CreateDummyBooks(1000, false, false));
-                    context.SaveChanges();
-                }
+                context.EnsureClean();
+                context.Books.AddRange(EfTestData.CreateDummyBooks(1000, false, false));
+                context.SaveChanges();
                 _firstBookId = context.Books.First().BookId;
             }
         }

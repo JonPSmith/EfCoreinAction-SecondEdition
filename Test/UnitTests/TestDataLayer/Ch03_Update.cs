@@ -11,6 +11,7 @@ using ServiceLayer.AdminServices;
 using ServiceLayer.AdminServices.Concrete;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -72,19 +73,8 @@ namespace Test.UnitTests.TestDataLayer
             });
             using (var context = new EfCoreContext(options))
             {
-                if (context.Database.EnsureCreated())
-                {
-                    //Only add books if database was created
-                    context.SeedDatabaseFourBooks();
-                }
-                else
-                {
-                    //If already there then make the date different, otherwise the update doesn't work
-                    var existingBook = context.Books                         
-                        .Single(p => p.Title == "Quantum Networking");
-                    existingBook.PublishedOn = new DateTime(2057, 1, 1);
-                    context.SaveChanges();
-                }
+                context.EnsureClean();
+                context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
                 showLog = true;
