@@ -4,8 +4,8 @@ Welcome to the Git repo that is associated with the first six chapters in the bo
 
 Other branches are:
 
-* part2, which covers part 2 of the book - chapters 7 to 11.
-* part3, which covers part 3 of the book - chapters 12 to 17.
+* Part2, which covers part 2 of the book - chapters 7 to 11.
+* Part3, which covers part 3 of the book - chapters 12 to 17.
 
 ## What you need to install
 
@@ -26,7 +26,7 @@ I have placed all the code relating to part 1 of the book, which covers the firs
 
 Once you have installed your chosen development tool, then you can run either of these applications - both are designed to create and seed any database that they use.
 
-There ase also unit tests that check what I say in the book is correct. These can aslo be useful to understand how something works. The unit tests are arranged by project, chapter and feature in the `Test.UnitTests` folder. For instance the file in `Test.UnitTests.TestDayaLayer.Ch02_LazyLoading.cs` contains examples and tests of how lazy loading works.
+Also, there are  unit tests that check what I say in the book is correct. These can be useful to understand how something works. The unit tests are arranged by project, chapter and feature in the `Test.UnitTests` folder. For instance the file in `Test.UnitTests.TestDayaLayer.Ch02_LazyLoading.cs` contains examples and tests of how lazy loading works.
 
 
 ## If you have problems with the code
