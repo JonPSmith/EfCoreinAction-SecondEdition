@@ -1,11 +1,20 @@
-# EfCoreInAction SecondEdition - part1 (master branch)
+# EfCoreInAction SecondEdition - Part2 branch
 
-Welcome to the Git repo that is associated with the first six chapters in the book Entity Framework Core in Action (second edition). This book details how to use Entity Framework Core (EF Core) to develop database access code in .NET 5 applications.
+Welcome to the Git repo that is associated with part 2, that's chapters 7 to 11, of the the book Entity Framework Core in Action (second edition). Part 2 is called "Entity Framework Core in depth", and is a reference section deaing with EF Core configuration, migrations, concurrency and the DbContext.
 
 Other branches are:
 
-* part2, which covers part 2 of the book - chapters 7 to 11.
-* part3, which covers part 3 of the book - chapters 12 to 17.
+* master, which covers part 1 of the book - chapters 1 to 6.
+* Part3, which covers part 3 of the book - chapters 12 to 17.
+
+
+## How to use this branch
+
+I have placed all the code relating to part 2 of the book, chapters 7 to 11. The  `BookApp` database is configured to make the database have the right column types.  
+
+Once you have installed your chosen development tool you can run the BookApp, which is designed to create and seed its database on startup.
+
+Also, there are  unit tests that check what I say in the book is correct. These can be useful to understand how something works. The unit tests are arranged by project, chapter and feature in the `Test.UnitTests` folder. 
 
 ## What you need to install
 
@@ -16,17 +25,6 @@ To run any of the code you need to.
 3. Currently need to have NET Core 3.1 installed for the code to work.
 
 Currently I am using EF Core 5 previews, but that will change when EF Core 5 is released.
-
-## How to use this branch
-
-I have placed all the code relating to part 1 of the book, which covers the first six chapters. The main projects you can run are:
-
-* `MyFirstEfCoreApp`, which is the console application found in chapter 1
-* `BookApp`, which is the ASP.NET Core application that I cover in chapters 2 to 6.
-
-Once you have installed your chosen development tool, then you can run either of these applications - both are designed to create and seed any database that they use.
-
-There ase also unit tests that check what I say in the book is correct. These can aslo be useful to understand how something works. The unit tests are arranged by project, chapter and feature in the `Test.UnitTests` folder. For instance the file in `Test.UnitTests.TestDayaLayer.Ch02_LazyLoading.cs` contains examples and tests of how lazy loading works.
 
 
 ## If you have problems with the code

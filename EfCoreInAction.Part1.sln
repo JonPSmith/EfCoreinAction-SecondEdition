@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFirstEfCoreApp", "MyFirstEfCoreApp\MyFirstEfCoreApp.csproj", "{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{2C541617-2312-4769-B8A9-96E7B4501AC8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\DataLayer.csproj", "{7D0D3E17-A620-4CC5-90A2-C9BCCE20BEC2}"
@@ -29,10 +27,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42042282-F7F3-48E9-A9B5-CE6A50D58EF3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C541617-2312-4769-B8A9-96E7B4501AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C541617-2312-4769-B8A9-96E7B4501AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C541617-2312-4769-B8A9-96E7B4501AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU

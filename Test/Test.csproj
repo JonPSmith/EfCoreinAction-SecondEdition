@@ -31,4 +31,12 @@
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UnitTests\TestAspNetCore\" />
+    <Folder Include="UnitTests\TestBizDbAccess\" />
+    <Folder Include="UnitTests\TestBizLogic\" />
+    <Folder Include="UnitTests\TestDataLayer\" />
+    <Folder Include="UnitTests\TestServiceLayer\" />
+  </ItemGroup>
+
 </Project>
