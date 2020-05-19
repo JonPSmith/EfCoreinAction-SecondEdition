@@ -73,7 +73,7 @@ namespace Test.UnitTests.TestDataLayer
             });
             using (var context = new EfCoreContext(options))
             {
-                context.EnsureClean();
+                context.Database.EnsureClean();
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT

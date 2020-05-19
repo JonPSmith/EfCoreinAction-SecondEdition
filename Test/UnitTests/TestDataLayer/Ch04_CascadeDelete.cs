@@ -84,7 +84,7 @@ namespace Test.UnitTests.TestDataLayer
             var options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
-                context.EnsureClean();
+                context.Database.EnsureClean();
                 context.SeedDatabaseFourBooks();
 
                 var userId = Guid.NewGuid();

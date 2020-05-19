@@ -75,7 +75,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             if (context.Database.IsSqlServer())
             {
-                context.EnsureClean();
+                context.Database.EnsureClean();
                 return true;
             }
 

@@ -31,7 +31,7 @@ namespace Test.UnitTests.TestDataLayer
             _options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(_options))
             {
-                context.EnsureClean();
+                context.Database.EnsureClean();
                 context.Books.AddRange(EfTestData.CreateDummyBooks(1000, false, false));
                 context.SaveChanges();
                 _firstBookId = context.Books.First().BookId;

@@ -96,7 +96,7 @@ namespace Test.UnitTests.TestDataLayer
             var options = this.CreateUniqueClassOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
-                context.EnsureClean();
+                context.Database.EnsureClean();
                 if (!context.Books.Any())
                     context.SeedDatabaseFourBooks();
 
