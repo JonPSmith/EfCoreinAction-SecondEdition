@@ -48,14 +48,13 @@ $"Sorry, the book '{ChosenBook.Title}' is not for sale."); //#E
                     new[] { nameof(NumBooks) });  //#F
         }
     }
-    //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
     /**********************************************************
-    #A The IValidatableObject interface adds a IValidatableObject.Validate method
-    #B This will add an error message if the LineNum property is not in range
+    #A By applying the IValidatableObject interface then the validation will call the method the interface defines
+    #B This is one of the validation DataAnnotations. The validator will show my error message if the LineNum property is not in range
     #C This is the method that the IValidatableObject interface requires me to create
-    #D This allows access the current DbContext if needed to get more information. 
-    #D Here I use the ChosenBook link to look at the date the book was published.
+    #D I can access the current DbContext that this database access is using. In this case I don't use it, but you could use it to get better error feedback information for the user
+    #D Here I use the ChosenBook link to look at the date the book was published. I can also format my own error message, which is helpful
     #E This moves the Price check out of the business logic
-    #F This tests a property so I can return that property with the error.
+    #F This tests a property in this class so I can return that property with the error.
      * *******************************************************/
 }

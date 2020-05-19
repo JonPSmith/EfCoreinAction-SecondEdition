@@ -1,26 +1,29 @@
-﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT license. See License.txt in the project root for license information.
+﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataLayer.EfClasses
 {
-    public class BookAuthor //#G
+    public class BookAuthor               
     {
-        public int BookId { get; set; } //#H
-        public int AuthorId { get; set; } //#H
-        public byte Order { get; set; } //#I
+        [Key] //#A
+        [Column(Order = 0)] //#B
+        public int BookId { get; set; }
+        [Key] //#A
+        [Column(Order = 1)]  //#B
+        public int AuthorId { get; set; } 
+        public byte Order { get; set; }   
 
         //-----------------------------
         //Relationships
 
-        public Book Book { get; set; } //#J
-        public Author Author { get; set; } //#K
+        public Book Book { get; set; }      
+        public Author Author { get; set; }  
     }
-
     /**************************************************
-    #G The BookAuthor class is the Many-to-Many linking table between the Books and Authors tables
-    #H The Primary Key is made up of the two keys of the Book and Author
-    #I The order of the Authors in a book matters, so I use this to set the right order
-    #J This is the link to the Book side of the relationship
-    #K And this links to the Author side of the relationship
+    #A The [Key] attribute tells EF Core that the property is a primary key
+    #B The [Column(Order = nn)] tells EF Core the order in which the keys should appear in the composite key. Note: the numbers are relative - I could have used 100 and 200
      * ***********************************************/
 }
