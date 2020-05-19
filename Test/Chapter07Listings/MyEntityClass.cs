@@ -29,7 +29,9 @@ namespace Test.Chapter07Listings
         public int ReadOnlyIntNotMapped { get; }
         public int ReadOnlyIntMapped { get; }
 
-        public MyEntityClass(int notMapped = 0, int mapped = 0)
+        public MyEntityClass() {}
+
+        public MyEntityClass(int notMapped, int mapped)
         {
             ReadOnlyIntNotMapped = notMapped;
             ReadOnlyIntMapped = mapped;

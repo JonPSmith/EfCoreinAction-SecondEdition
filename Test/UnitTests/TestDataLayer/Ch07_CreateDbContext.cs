@@ -4,6 +4,7 @@
 using System.Linq;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using TestSupportSchema;
 using Xunit;
 
 namespace Test.UnitTests.TestDataLayer
@@ -25,7 +26,7 @@ namespace Test.UnitTests.TestDataLayer
 
             using (var context = new EfCoreContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
             }
         }
 

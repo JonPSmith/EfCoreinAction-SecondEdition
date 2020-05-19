@@ -13,7 +13,7 @@ namespace Test.Chapter06Listings
         public string Name { get; set; }
 
         //------------------------------------------------------
-        //simple property with bakcing field
+        //simple property with backing field
 
         private string _myProperty;
 

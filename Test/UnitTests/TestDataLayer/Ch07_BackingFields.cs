@@ -48,6 +48,8 @@ namespace Test.UnitTests.TestDataLayer
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
             using (var context = new Chapter07DbContext(options))
             {
+                context.Database.EnsureCreated();
+
                 //ATTEMPT
                 var person = new Person {MyProperty = nameof(TestMyPropertySetGetOk) };
                 context.Add(person);
@@ -96,6 +98,8 @@ namespace Test.UnitTests.TestDataLayer
             //ATTEMPT
             using (var context = new Chapter07DbContext(options))
             {
+                context.Database.EnsureCreated();
+
                 var person = new Person();
                 person.SetAutoProperty(1234);
                 context.Add(person);
@@ -160,6 +164,8 @@ namespace Test.UnitTests.TestDataLayer
             //ATTEMPT
             using (var context = new Chapter07DbContext(options))
             {
+                context.Database.EnsureCreated();
+
                 var person = new Person();
                 person.SetDateOfBirth(tenYearsAgo);
                 context.Add(person);
@@ -170,7 +176,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter07DbContext(options))
             {
                 context.People.Where(x => x.PersonId == personId)
-                    .Select(x => EF.Property<DateTime>(x, "DateOfBirth"))
+                    .Select(x => EF.Property<DateTime>(x, "_dateOfBirth"))
                     .Single().ShouldEqual(tenYearsAgo);
             }
         }

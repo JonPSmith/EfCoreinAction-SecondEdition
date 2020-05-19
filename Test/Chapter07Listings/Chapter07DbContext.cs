@@ -32,11 +32,11 @@ namespace Test.Chapter07Listings
                     Database.IsSqlite() //#B
                         ? "SqliteDatabaseCol" //#C
                         : "GenericDatabaseCol"); //#C
-        /*Database provider specific command example **************************
-        #A In this case I am setting a column name, but the same would work for ToTable
-        #B Each database provider has an extension called Is<DatabaseName> that returns true if the database is of that type
-        #C Using the tests I pick a specific name for the column if its a Sqlite database, otherwise a generic name for any other database type
-        * *******************************************************************/
+            /*Database provider specific command example **************************
+            #A In this case I am setting a column name, but the same would work for ToTable
+            #B Each database provider has an extension called Is<DatabaseName> that returns true if the database is of that type
+            #C Using the tests I pick a specific name for the column if its a Sqlite database, otherwise a generic name for any other database type
+            * *******************************************************************/
 
             modelBuilder.Entity<MyEntityClass>()
                 .Property<DateTime>("UpdatedOn"); //#A
@@ -48,12 +48,12 @@ namespace Test.Chapter07Listings
                 .Property(x => x.ReadOnlyIntMapped); //#A
 
             modelBuilder.Entity<Person>()
-                .Property<DateTime>("DateOfBirth") //#A
-                .HasField("_dateOfBirth"); //#B
-        /*Backing fields ********************************************************* 
-         #A I create a 'notional' property called DateOfBirth by which I can access this propery via EF Core. This also sets the column name in the database 
-         #B Then I link it to a backing field _dateOfBirth
-         * **************************************************************************/
+                .Property<DateTime>("_dateOfBirth") //#A
+                .HasColumnName("DateOfBirth"); //#B
+            /*Backing fields ********************************************************* 
+             #A This configures a field-only property with no linked public property 
+             #B This sets the column name to "DateOfBirth"
+             * **************************************************************************/
 
             modelBuilder.Entity<IndexClass>()
                 .HasIndex(p => p.IndexNonUnique);
