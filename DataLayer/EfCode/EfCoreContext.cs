@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Reflection;
 using DataLayer.EfClasses;
 using DataLayer.EfCode.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -10,30 +11,43 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        private readonly Guid _userId;                                   
-
-        public EfCoreContext(DbContextOptions<EfCoreContext> options,    
-            IUserIdService userIdService = null)                         
-            : base(options)
+        private readonly Guid _userId;                                //#A                               
+                                                                      
+        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B  
+            IUserIdService userIdService = null)                      //#B  
+            : base(options)                                           //#B
+        {                                                             //#B
+            _userId = userIdService?.GetUserId()                      //#B  
+                       ?? new ReplacementUserIdService().GetUserId(); //#B  
+        }                                                             //#B
+                                                                      //#B
+        public DbSet<Book> Books { get; set; }                        //#C
+        public DbSet<Author> Authors { get; set; }                    //#C
+        public DbSet<PriceOffer> PriceOffers { get; set; }            //#C
+        public DbSet<Order> Orders { get; set; }                      //#C
+                                                                      
+        protected override void                                       //#D
+            OnModelCreating(ModelBuilder modelBuilder)                //#D
         {
-            _userId = userIdService?.GetUserId()                         
-                       ?? new ReplacementUserIdService().GetUserId();    
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            //modelBuilder.ApplyConfiguration(new BookConfig());        //#E
+            //modelBuilder.ApplyConfiguration(new BookAuthorConfig());  //#E
+            //modelBuilder.ApplyConfiguration(new PriceOfferConfig());  //#E
+            //modelBuilder.ApplyConfiguration(new LineItemConfig());    //#E
+                                                                      
+            modelBuilder.Entity<Order>()                              //#F
+                .HasQueryFilter(x => x.CustomerId == _userId);        //#F
         }
-
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<PriceOffer> PriceOffers { get; set; }
-        public DbSet<Order> Orders { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfiguration(new BookConfig());
-            modelBuilder.ApplyConfiguration(new BookAuthorConfig());
-            modelBuilder.ApplyConfiguration(new PriceOfferConfig());
-            modelBuilder.ApplyConfiguration(new LineItemConfig());
-            modelBuilder.ApplyConfiguration(new OrderConfig(_userId));
-        } 
     }
+    /***************************************************************
+    #A This is the UserId of the user that has bought some books
+    #B As well as setting up the DbContext options this also obtains the current UserId
+    #C These are the entity classes that your code will access
+    #D This is the method in which runs your fluent API commands
+    #E These run each of the separate configurations for each entity class that needs configuration
+    #F This Query Filter is in the OnModelCreating so that it can pick up the current UserId
+     **********************************************************/
 }
 
 
