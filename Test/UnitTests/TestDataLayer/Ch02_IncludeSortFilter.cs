@@ -48,7 +48,38 @@ namespace Test.UnitTests.TestDataLayer
         }
     }
 
-    
+    [Fact]
+    public void TestIncludeSortReviewsDisconnected()
+    {
+        //SETUP
+        var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+        using (var context = new EfCoreContext(options))
+        {
+            context.Database.EnsureCreated();
+            var newBook = new Book
+            {
+                Reviews = new List<Review>
+                {
+                    new Review {NumStars = 2}, new Review {NumStars = 1}
+                }
+            };
+            context.Add(newBook);
+            context.SaveChanges();
+        }
+        using (var context = new EfCoreContext(options))
+        {
+            //ATTEMPT
+            var query = context.Books
+            .Include(x => x.Reviews.OrderBy(y => y.NumStars));
+            var books = query.ToList();
+
+            //VERIFY
+            _output.WriteLine(query.ToQueryString());
+            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2 });
+        }
+    }
+
+
     [Fact]
     public void TestEagerLoadWithSortFilterAllOk()
     {
@@ -83,7 +114,7 @@ namespace Test.UnitTests.TestDataLayer
         }
     }
 
-        [Fact]
+    [Fact]
     public void TestIncludeSortSingle()
     {
         //SETUP
@@ -101,12 +132,14 @@ namespace Test.UnitTests.TestDataLayer
             };
             context.Add(newBook);
             context.SaveChanges();
+        }
+        using (var context = new EfCoreContext(options))
+        {
 
             //ATTEMPT
-            //BUG in EF Core release 5.3 - see https://github.com/dotnet/efcore/issues/20777
             var query = context.Books
-                .Include(x => x.AuthorsLink.OrderByDescending(y => y.Order))
-                .ThenInclude(x => x.Author);
+            .Include(x => x.AuthorsLink.OrderBy(y => y.Order))
+            .ThenInclude(x => x.Author);
             var books = query.ToList();
 
             //VERIFY
