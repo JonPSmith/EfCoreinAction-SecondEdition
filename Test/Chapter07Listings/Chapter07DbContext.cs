@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Test.Chapter06Listings;
 
 namespace Test.Chapter07Listings
@@ -20,9 +21,47 @@ namespace Test.Chapter07Listings
 
         public DbSet<IndexClass> IndexClasses { get; set; }
 
+        public DbSet<ValueConversionExample> ConversionExamples { get; set; }
+
+        public DbSet<BaseClass> BaseClasses { get; set; }
+        public DbSet<DupClass> DupClasses { get; set; }
+
         protected override void OnModelCreating
             (ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ValueConversionExample>()
+                .Property(e => e.StageViaFluent)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<ValueConversionExample>()
+                .Property(e => e.StageCanBeNull)
+                .HasConversion<string>();
+
+            var utcConverter = new ValueConverter<DateTime, DateTime>( //#A
+                toDb => toDb,                                      //#B
+                fromDb =>                                              //#C
+                    DateTime.SpecifyKind(fromDb, DateTimeKind.Utc));   //#C
+
+            modelBuilder.Entity<ValueConversionExample>()              //#D
+                .Property(e => e.DateTimeUtcUtcOnReturn)               //#D
+                .HasConversion(utcConverter);                          //#E
+            /*********************************************************
+            #A This creates a ValueConverter from DateTime to DateTime
+            #B This saves the DateTime to the database in the normal way, i.e. no conversion
+            #C On reading from the database we add the UTC setting to the DateTime
+            #D This selects the property we want to configure
+            #E And this adds the utcConverter to that property
+             **********************************************/
+            modelBuilder.Entity<ValueConversionExample>()
+                .Property(e => e.DateTimeUtcSaveAsString)
+                .HasConversion(new DateTimeToStringConverter());
+
+            modelBuilder.Entity<BaseClass>()
+                .ToTable("KeyTestTable");
+
+            modelBuilder.Entity<DupClass>()
+                .ToView("KeyTestTable");
+
             modelBuilder.Entity<MyEntityClass>()
                 .ToTable("MyTable");
 

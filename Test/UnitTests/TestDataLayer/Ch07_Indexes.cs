@@ -130,7 +130,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestCreateMulipleIndexesNullOk()
+        public void TestCreateMultipleIndexesNullOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
