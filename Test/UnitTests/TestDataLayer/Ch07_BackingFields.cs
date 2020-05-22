@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Test.Chapter06Listings;
 using Test.Chapter07Listings;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -37,7 +36,6 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
 
                 //VERIFY
-
             }
         }
 
@@ -62,19 +60,20 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        //THIS FAILS in EF Core 5, preview 4!
         [Fact]
-        public void TestUpdatedOnSetGetOk()
+        public void TestBackingFieldSetUpByDataAnnotationOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
-            var now = DateTime.UtcNow;
             int personId;
             //ATTEMPT
             using (var context = new Chapter07DbContext(options))
             {
                 context.Database.EnsureCreated();
 
-                var person = new Person { UpdatedOn =  now};
+                var person = new Person();
+                person.SetPropertyAnnotationValue("some data");
                 context.Add(person);
                 context.SaveChanges();
                 personId = person.PersonId;
@@ -82,11 +81,41 @@ namespace Test.UnitTests.TestDataLayer
             //VERIFY
             using (var context = new Chapter07DbContext(options))
             {
-                context.People.Single(x => x.PersonId == personId).UpdatedOn.ShouldEqual(now);
-                now.Kind.ShouldEqual(DateTimeKind.Utc);
+                var entity = context.People.Single(x => x.PersonId == personId);
+
+                entity.BackingFieldViaAnnotation.ShouldEqual("some data");
                 context.People.Where(x => x.PersonId == personId)
-                    .Select(x => EF.Property<DateTime>(x, "UpdatedOn"))
-                    .Single().Kind.ShouldEqual(DateTimeKind.Unspecified);
+                    .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaAnnotation)))
+                    .Single().ShouldEqual("some data");
+            }
+        }
+
+        [Fact]
+        public void TestBackingFieldSetUpByFluentApiOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
+            int personId;
+            //ATTEMPT
+            using (var context = new Chapter07DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var person = new Person();
+                person.SetPropertyFluentValue("some data");
+                context.Add(person);
+                context.SaveChanges();
+                personId = person.PersonId;
+            }
+            //VERIFY
+            using (var context = new Chapter07DbContext(options))
+            {
+                var entity = context.People.Single(x => x.PersonId == personId);
+
+                entity.BackingFieldViaFluentApi.ShouldEqual("some data");
+                context.People.Where(x => x.PersonId == personId)
+                    .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaFluentApi)))
+                    .Single().ShouldEqual("some data");
             }
         }
 
@@ -109,34 +138,6 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter07DbContext(options))
             {
                 context.People.First().AutoProperty.ShouldEqual(1234);
-            }
-        }
-
-        [Fact]
-        public void TestUpdatedOnQueryWithLogsOk()
-        {
-            //SETUP
-            var showLog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<Chapter07DbContext>(log =>
-            {
-                if (showLog)
-                    _output.WriteLine(log.ToString());
-            });
-            var now = DateTime.UtcNow;
-            int personId;
-            using (var context = new Chapter07DbContext(options))
-            {
-
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                showLog = true;
-                var person = new Person { UpdatedOn = now };
-                context.Add(person);
-                context.SaveChanges();
-                personId = person.PersonId;
-
-                var peopleByUpdate = context.People.OrderBy(x => EF.Property<DateTime>(x, "UpdatedOn")).ToList();
             }
         }
 

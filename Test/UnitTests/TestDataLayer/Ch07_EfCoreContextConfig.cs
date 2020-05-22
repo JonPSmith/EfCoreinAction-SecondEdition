@@ -6,7 +6,6 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
-using Test.Chapter06Listings;
 using Test.Chapter07Listings;
 using Test.Mocks;
 using Test.TestHelpers;

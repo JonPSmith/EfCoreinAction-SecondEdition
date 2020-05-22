@@ -4,7 +4,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Test.Chapter06Listings;
 
 namespace Test.Chapter07Listings
 {
@@ -25,6 +24,8 @@ namespace Test.Chapter07Listings
 
         public DbSet<BaseClass> BaseClasses { get; set; }
         public DbSet<DupClass> DupClasses { get; set; }
+        public DbSet<SchemaAttributeExample> SchemaAttributeExamples { get; set; }
+        public DbSet<SchemaFluentExample> SchemaFluentExamples { get; set; }
 
         protected override void OnModelCreating
             (ModelBuilder modelBuilder)
@@ -94,6 +95,11 @@ namespace Test.Chapter07Listings
              #B This sets the column name to "DateOfBirth"
              * **************************************************************************/
 
+            modelBuilder.Entity<Person>()
+                .Property(b => b.BackingFieldViaFluentApi)
+                .HasField("_fieldName2")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferProperty);
+
             modelBuilder.Entity<IndexClass>()
                 .HasIndex(p => p.IndexNonUnique);
 
@@ -101,6 +107,9 @@ namespace Test.Chapter07Listings
                 .HasIndex(p => p.IndexUnique)
                 .IsUnique()
                 .HasName("MyUniqueIndex");
+
+            modelBuilder.Entity<SchemaFluentExample>()
+                .ToTable("SchemaFluent", schema: "Schema2");
 
             modelBuilder.Entity<MyEntityClass>()
                 .Ignore(b => b.LocalString); //#A

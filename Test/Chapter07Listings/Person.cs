@@ -2,8 +2,9 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.EntityFrameworkCore;
 
-namespace Test.Chapter06Listings
+namespace Test.Chapter07Listings
 {
     public class Person
     {
@@ -23,14 +24,32 @@ namespace Test.Chapter06Listings
             set { _myProperty = value; }
         }
 
-        //----------------------------------------------------
-        //C#6 auto-property
+        //-----------------------------------------------------
+        //backing field via Data Annotations
 
-        public int AutoProperty { get; private set; }
+        private string _fieldName1;
 
-        public void SetAutoProperty(int value)
+        [BackingField(nameof(_fieldName1))]
+        public string BackingFieldViaAnnotation
         {
-            AutoProperty = value;
+            get { return _fieldName1; }
+        }
+
+        public void SetPropertyAnnotationValue(string someString)
+        {
+            _fieldName1 = someString;
+        }
+
+        //-----------------------------------------------------
+        //backing field via Fluent API
+
+        private string _fieldName2;
+
+        public string BackingFieldViaFluentApi => _fieldName2;
+
+        public void SetPropertyFluentValue(string someString)
+        {
+            _fieldName2 = someString;
         }
 
         //-----------------------------------------------------
@@ -63,19 +82,11 @@ namespace Test.Chapter06Listings
         #C I can access the person's age, but not their exact date of birth
          * **********************************************/
 
-        //--------------------------------------------------
-        //Backing field with transformation on get
+        public int AutoProperty { get; private set; }
 
-        private DateTime _updatedOn;
-
-        public DateTime UpdatedOn
+        public void SetAutoProperty(int value)
         {
-            get
-            {
-                return DateTime.SpecifyKind(
-                    _updatedOn, DateTimeKind.Utc);
-            }
-            set { _updatedOn = value; }
+            AutoProperty = value;
         }
     }
 }
