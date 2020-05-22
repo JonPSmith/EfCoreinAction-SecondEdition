@@ -60,7 +60,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 Reviews = new List<Review>
                 {
-                    new Review {NumStars = 2}, new Review {NumStars = 1}
+                    new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
                 }
             };
             context.Add(newBook);
@@ -75,7 +75,9 @@ namespace Test.UnitTests.TestDataLayer
 
             //VERIFY
             _output.WriteLine(query.ToQueryString());
-            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2 });
+            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2, 3 });
+            var hashSet = new HashSet<Review>(context.Set<Review>().ToList());
+            hashSet.Select(x => x.NumStars).ShouldEqual(new[] { 2,1,3 });
         }
     }
 
