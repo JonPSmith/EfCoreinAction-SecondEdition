@@ -2,10 +2,12 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
 using DataLayer.EfClasses;
 using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.EfCode
@@ -63,13 +65,11 @@ namespace DataLayer.EfCode
 
                 if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
                 {
-                    AddQueryFilterAutomatically(modelBuilder,
-                        entityType.ClrType, MyQueryFilterTypes.SoftDelete);
+                    AddQueryFilterAutomatically(entityType, MyQueryFilterTypes.SoftDelete);
                 }
                 if (typeof(IUserId).IsAssignableFrom(entityType.ClrType))
                 {
-                    AddQueryFilterAutomatically(modelBuilder,
-                        entityType.ClrType, MyQueryFilterTypes.UserId);
+                    AddQueryFilterAutomatically(entityType, MyQueryFilterTypes.UserId);
                 }
             }
             /**********************************************************************
@@ -93,28 +93,33 @@ namespace DataLayer.EfCode
                 .HasQueryFilter(x => x.UserId == _userId);        //#F
         }
 
+
+
         private enum MyQueryFilterTypes { SoftDelete, UserId }
 
-        private void AddQueryFilterAutomatically(ModelBuilder modelBuilder, 
-            Type entityType, MyQueryFilterTypes queryFilterType)
+        private void AddQueryFilterAutomatically(IMutableEntityType entityData, 
+            MyQueryFilterTypes queryFilterType)
         {
-            var methodName = $"Set{queryFilterType}QueryFilter";
+            var methodName = $"Get{queryFilterType}Filter";
             var methodToCall = this.GetType().GetMethod(methodName, 
                 BindingFlags.NonPublic | BindingFlags.Instance)
-                .MakeGenericMethod(entityType);
-            methodToCall.Invoke(this, new object[]{ modelBuilder});
+                .MakeGenericMethod(entityData.ClrType);
+            var filter = methodToCall.Invoke(this, new object[]{});
+            entityData.SetQueryFilter((LambdaExpression)filter);
         }
 
-        private void SetSoftDeleteQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        private LambdaExpression GetSoftDeleteFilter<TEntity>()
             where TEntity : class, ISoftDelete
         {
-            modelBuilder.Entity<TEntity>().HasQueryFilter(x => !x.SoftDeleted);
+            Expression<Func<TEntity, bool>> filter = x => !x.SoftDeleted;
+            return filter;
         }
 
-        private void SetUserIdQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        private LambdaExpression GetUserIdFilter<TEntity>()
             where TEntity : class, IUserId
         {
-            modelBuilder.Entity<TEntity>().HasQueryFilter(x => x.UserId == _userId);
+            Expression<Func<TEntity, bool>> filter = x => x.UserId == _userId;
+            return filter;
         }
 
     }
