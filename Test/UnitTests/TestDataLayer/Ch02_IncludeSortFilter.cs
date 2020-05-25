@@ -48,6 +48,36 @@ namespace Test.UnitTests.TestDataLayer
         }
     }
 
+    //See first bullet point for why the sort doesn't work https://github.com/dotnet/efcore/issues/20777#issuecomment-632101694
+    [Fact]
+    public void TestIncludeSortReviews()
+    {
+        //SETUP
+        var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+        using (var context = new EfCoreContext(options))
+        {
+            context.Database.EnsureCreated();
+            var newBook = new Book
+            {
+                Reviews = new List<Review>
+                {
+                    new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
+                }
+            };
+            context.Add(newBook);
+            context.SaveChanges();
+
+            //ATTEMPT
+            var query = context.Books
+                .Include(x => x.Reviews.OrderBy(y => y.NumStars));
+            var books = query.ToList();
+
+            //VERIFY
+            _output.WriteLine(query.ToQueryString());
+            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 2,1,3 }); //WRONG! See comment on test
+        }
+    }
+
     [Fact]
     public void TestIncludeSortReviewsDisconnected()
     {
@@ -70,19 +100,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //ATTEMPT
             var query = context.Books
-            .Include(x => x.Reviews.OrderBy(y => y.NumStars));
+                .Include(x => x.Reviews.OrderBy(y => y.NumStars));
             var books = query.ToList();
 
             //VERIFY
             _output.WriteLine(query.ToQueryString());
             books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2, 3 });
             var hashSet = new HashSet<Review>(context.Set<Review>().ToList());
-            hashSet.Select(x => x.NumStars).ShouldEqual(new[] { 2,1,3 });
+            hashSet.Select(x => x.NumStars).ShouldEqual(new[] { 2, 1, 3 });
         }
     }
 
 
-    [Fact]
+        [Fact]
     public void TestEagerLoadWithSortFilterAllOk()
     {
         //SETUP

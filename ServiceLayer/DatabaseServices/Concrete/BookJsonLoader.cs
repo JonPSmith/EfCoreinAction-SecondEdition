@@ -68,7 +68,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
         /// <param name="averageRating"></param>
         /// <param name="ratingsCount"></param>
         /// <returns></returns>
-        internal static ICollection<Review> CalculateReviewsToMatch(double averageRating, int ratingsCount)
+        internal static IList<Review> CalculateReviewsToMatch(double averageRating, int ratingsCount)
         {
             var reviews = new List<Review>();
             var currentAve = averageRating;
