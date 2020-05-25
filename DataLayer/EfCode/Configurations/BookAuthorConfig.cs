@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +26,7 @@ namespace DataLayer.EfCode.Configurations
                 .WithMany(t => t.BooksLink)       //#C
                 .HasForeignKey(pt => pt.AuthorId);//#C
         }
+
         /*Primary key settings**********************************************
         #A Here I use an anonymous object to define two (or more) properties to form a composite key. The order in which the properties appear in the anonymous object defines their order
         * ******************************************************/

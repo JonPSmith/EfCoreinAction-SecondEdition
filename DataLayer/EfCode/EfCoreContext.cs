@@ -4,31 +4,84 @@
 using System;
 using System.Reflection;
 using DataLayer.EfClasses;
-using DataLayer.EfCode.Configurations;
+using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
         private readonly Guid _userId;                                //#A                               
-                                                                      
+
         public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B  
             IUserIdService userIdService = null)                      //#B  
             : base(options)                                           //#B
         {                                                             //#B
             _userId = userIdService?.GetUserId()                      //#B  
                        ?? new ReplacementUserIdService().GetUserId(); //#B  
-        }                                                             //#B
-                                                                      //#B
+        } //#B
+
+        //#B
         public DbSet<Book> Books { get; set; }                        //#C
         public DbSet<Author> Authors { get; set; }                    //#C
         public DbSet<PriceOffer> PriceOffers { get; set; }            //#C
         public DbSet<Order> Orders { get; set; }                      //#C
-                                                                      
-        protected override void                                       //#D
-            OnModelCreating(ModelBuilder modelBuilder)                //#D
+
+        protected override void                                       //#D //#A
+            OnModelCreating(ModelBuilder modelBuilder)                //#D //#A
         {
+            //see https://github.com/aspnet/EntityFrameworkCore/issues/4711#issuecomment-535288442 for example with nullable DateTime
+            var utcConverter = new ValueConverter<DateTime, DateTime>(      //#B
+                toDb => toDb,                                               //#B
+                fromDb =>                                                   //#B
+                    DateTime.SpecifyKind(fromDb, DateTimeKind.Utc));        //#B
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes()) //#C
+            {
+                foreach (var entityProperty in entityType.GetProperties())  //#D
+                {
+                    if (entityProperty.ClrType == typeof(DateTime)          //#E
+                        && entityProperty.Name.EndsWith("Utc"))             //#E
+                    {                                                       //#E
+                        entityProperty.SetValueConverter(utcConverter);     //#E
+                    }                                                       //#E
+
+                    if (entityProperty.ClrType == typeof(decimal)           //#F
+                        && entityProperty.Name.Contains("Price"))           //#F
+                    {                                                       //#F
+                        entityProperty.SetPrecision(9);                     //#F
+                        entityProperty.SetScale(2);                         //#F
+                    }                                                       //#F
+
+                    if (entityProperty.ClrType == typeof(string)            //#G
+                        && entityProperty.Name.EndsWith("Url"))             //#G
+                    {                                                       //#G
+                        entityProperty.SetIsUnicode(true);                  //#G
+                    }                                                       //#G
+                }
+
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    AddQueryFilterAutomatically(modelBuilder,
+                        entityType.ClrType, MyQueryFilterTypes.SoftDelete);
+                }
+                if (typeof(IUserId).IsAssignableFrom(entityType.ClrType))
+                {
+                    AddQueryFilterAutomatically(modelBuilder,
+                        entityType.ClrType, MyQueryFilterTypes.UserId);
+                }
+            }
+            /**********************************************************************
+            #A The Fluent API commands are applied in the OnModelCreating method
+            #B This defines a Value Converter to set the UTC setting to the returned DateTime
+            #C This will loop through all the classes that EF Core has currently found mapped to the database
+            #D This will loop through all the properties in an entity class that are mapped to the database
+            #E This adds the UTC Value Converter to properties of type DateTime and Name ending in "Utc"
+            #F This sets the precision/scale to properties of type decimal and the Name contains in "Price"
+            #G This sets the string to ASCII on properties of type string and the Name ending in "Url"
+             ********************************************************************/
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             //modelBuilder.ApplyConfiguration(new BookConfig());        //#E
@@ -37,8 +90,31 @@ namespace DataLayer.EfCode
             //modelBuilder.ApplyConfiguration(new LineItemConfig());    //#E
                                                                       
             modelBuilder.Entity<Order>()                              //#F
-                .HasQueryFilter(x => x.CustomerId == _userId);        //#F
+                .HasQueryFilter(x => x.UserId == _userId);        //#F
         }
+
+        private enum MyQueryFilterTypes { SoftDelete, UserId }
+
+        private void AddQueryFilterAutomatically(ModelBuilder modelBuilder, 
+            Type entityType, MyQueryFilterTypes queryFilterType)
+        {
+            var methodName = $"Set{queryFilterType}QueryFilter";
+            var methodToCall = this.GetType().GetMethod(methodName);
+            methodToCall.Invoke(this, new object[]{ modelBuilder});
+        }
+
+        private void SetSoftDeleteQueryFilter<TEntity>(ModelBuilder modelBuilder)
+            where TEntity : class, ISoftDelete
+        {
+            modelBuilder.Entity<TEntity>().HasQueryFilter(x => !x.SoftDeleted);
+        }
+
+        private void SetUserIdQueryFilter<TEntity>(ModelBuilder modelBuilder)
+            where TEntity : class, IUserId
+        {
+            modelBuilder.Entity<TEntity>().HasQueryFilter(x => x.UserId == _userId);
+        }
+
     }
     /***************************************************************
     #A This is the UserId of the user that has bought some books

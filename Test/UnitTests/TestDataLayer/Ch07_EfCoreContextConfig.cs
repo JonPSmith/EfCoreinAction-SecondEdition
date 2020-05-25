@@ -54,7 +54,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options, new FakeUserIdService(userId1)))
             {
                 context.Database.EnsureCreated();
-                context.Add(new Order {CustomerId = userId1});
+                context.Add(new Order {UserId = userId1});
                 context.SaveChanges();
                 context.Orders.Count().ShouldEqual(1);
             }

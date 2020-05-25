@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,16 +11,18 @@ namespace DataLayer.EfClasses
         [Key] //#A
         [Column(Order = 0)] //#B
         public int BookId { get; set; }
+
         [Key] //#A
         [Column(Order = 1)]  //#B
-        public int AuthorId { get; set; } 
-        public byte Order { get; set; }   
+        public int AuthorId { get; set; }
+
+        public byte Order { get; set; }
 
         //-----------------------------
         //Relationships
 
-        public Book Book { get; set; }      
-        public Author Author { get; set; }  
+        public Book Book { get; set; }
+        public Author Author { get; set; }
     }
     /**************************************************
     #A The [Key] attribute tells EF Core that the property is a primary key

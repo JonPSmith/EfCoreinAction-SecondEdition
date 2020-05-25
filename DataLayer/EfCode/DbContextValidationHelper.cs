@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -89,6 +89,7 @@ namespace DataLayer.EfCode
             }
             return result.ToImmutableList(); //#F
         }
+
         //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
         /*************************************************************
         #A This uses EF Core's ChangeTracker to get access to all the entity classes it is tracking
