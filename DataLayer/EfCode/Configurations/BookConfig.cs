@@ -13,13 +13,13 @@ namespace DataLayer.EfCode.Configurations
             (EntityTypeBuilder<Book> entity)
         {
             entity.Property(p => p.PublishedOn)//#A
-                .HasColumnType("date");        
+                .HasColumnType("date");            //#A     
 
             entity.Property(p => p.Price) //#B
-                .HasColumnType("decimal(9,2)");
+                .HasPrecision(9,2);      //#B
 
             entity.Property(x => x.ImageUrl) //#C
-                .IsUnicode(false);
+                .IsUnicode(false);               //#C
 
             entity.HasIndex(x => x.PublishedOn); //#D
 
@@ -42,7 +42,7 @@ namespace DataLayer.EfCode.Configurations
     }
     /*Type/Size setting**********************************************
     #A The convention-based mapping for .NET DateTime is SQL datetime2. This command changes the SQL column type to date, which only holds the date, not time
-    #B I set a smaller precision and scale of (9,2) for the price instead of the default (18,2)
+    #B The precision of (9,2) sets a max price of 9,999,999.99 (9 digits, 2 after decimal point), which takes up the smallest size in the database
     #C The convention-based mapping for .NET string is SQL nvarchar (16 bit Unicode). This command changes the SQL column type to varchar (8 bit ASCII)
     #D I add an index to the PublishedOn property because I sort and filter on this property
     #E This sets a model-level query filter on the Book entity. By default, a query will exclude Book entites where th SoftDeleted property is true
