@@ -107,18 +107,17 @@ namespace DataLayer.EfCode
             var filter = methodToCall.Invoke(this, new object[]{});
             entityData.SetQueryFilter((LambdaExpression)filter);
         }
+        private LambdaExpression GetUserIdFilter<TEntity>()
+            where TEntity : class, IUserId
+        {
+            Expression<Func<TEntity, bool>> filter = x => x.UserId == _userId;
+            return filter;
+        }
 
         private LambdaExpression GetSoftDeleteFilter<TEntity>()
             where TEntity : class, ISoftDelete
         {
             Expression<Func<TEntity, bool>> filter = x => !x.SoftDeleted;
-            return filter;
-        }
-
-        private LambdaExpression GetUserIdFilter<TEntity>()
-            where TEntity : class, IUserId
-        {
-            Expression<Func<TEntity, bool>> filter = x => x.UserId == _userId;
             return filter;
         }
 
