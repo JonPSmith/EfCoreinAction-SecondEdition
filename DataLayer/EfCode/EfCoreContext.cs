@@ -14,7 +14,8 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        private readonly Guid _userId;                                //#A                               
+        private readonly Guid _userId;                                //#A   
+        private readonly QueryFilterAutoConfig _queryFilterAuto;
 
         public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B  
             IUserIdService userIdService = null)                      //#B  
@@ -22,6 +23,7 @@ namespace DataLayer.EfCode
         {                                                             //#B
             _userId = userIdService?.GetUserId()                      //#B  
                        ?? new ReplacementUserIdService().GetUserId(); //#B  
+            _queryFilterAuto = new QueryFilterAutoConfig(_userId);
         } //#B
 
         //#B
@@ -65,11 +67,11 @@ namespace DataLayer.EfCode
 
                 if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
                 {
-                    AddQueryFilterAutomatically(entityType, MyQueryFilterTypes.SoftDelete);
+                    _queryFilterAuto.SetQueryFilter(entityType, MyQueryFilterTypes.SoftDelete);
                 }
                 if (typeof(IUserId).IsAssignableFrom(entityType.ClrType))
                 {
-                    AddQueryFilterAutomatically(entityType, MyQueryFilterTypes.UserId);
+                    _queryFilterAuto.SetQueryFilter(entityType, MyQueryFilterTypes.UserId);
                 }
             }
             /**********************************************************************
@@ -92,35 +94,6 @@ namespace DataLayer.EfCode
             modelBuilder.Entity<Order>()                              //#F
                 .HasQueryFilter(x => x.UserId == _userId);        //#F
         }
-
-
-
-        private enum MyQueryFilterTypes { SoftDelete, UserId }
-
-        private void AddQueryFilterAutomatically(IMutableEntityType entityData, 
-            MyQueryFilterTypes queryFilterType)
-        {
-            var methodName = $"Get{queryFilterType}Filter";
-            var methodToCall = this.GetType().GetMethod(methodName, 
-                BindingFlags.NonPublic | BindingFlags.Instance)
-                .MakeGenericMethod(entityData.ClrType);
-            var filter = methodToCall.Invoke(this, new object[]{});
-            entityData.SetQueryFilter((LambdaExpression)filter);
-        }
-        private LambdaExpression GetUserIdFilter<TEntity>()
-            where TEntity : class, IUserId
-        {
-            Expression<Func<TEntity, bool>> filter = x => x.UserId == _userId;
-            return filter;
-        }
-
-        private LambdaExpression GetSoftDeleteFilter<TEntity>()
-            where TEntity : class, ISoftDelete
-        {
-            Expression<Func<TEntity, bool>> filter = x => !x.SoftDeleted;
-            return filter;
-        }
-
     }
     /***************************************************************
     #A This is the UserId of the user that has bought some books
