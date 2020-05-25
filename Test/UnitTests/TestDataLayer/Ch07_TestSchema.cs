@@ -12,11 +12,11 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class TestSchema
+    public class Ch07_TestSchema
     {
         private readonly ITestOutputHelper _output;
 
-        public TestSchema(ITestOutputHelper output)
+        public Ch07_TestSchema(ITestOutputHelper output)
         {
             _output = output;
         }

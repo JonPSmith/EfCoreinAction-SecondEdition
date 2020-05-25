@@ -99,7 +99,9 @@ namespace DataLayer.EfCode
             Type entityType, MyQueryFilterTypes queryFilterType)
         {
             var methodName = $"Set{queryFilterType}QueryFilter";
-            var methodToCall = this.GetType().GetMethod(methodName);
+            var methodToCall = this.GetType().GetMethod(methodName, 
+                BindingFlags.NonPublic | BindingFlags.Instance)
+                .MakeGenericMethod(entityType);
             methodToCall.Invoke(this, new object[]{ modelBuilder});
         }
 
