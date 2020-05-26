@@ -2,12 +2,10 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq.Expressions;
 using System.Reflection;
 using DataLayer.EfClasses;
 using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.EfCode
@@ -15,7 +13,7 @@ namespace DataLayer.EfCode
     public class EfCoreContext : DbContext
     {
         private readonly Guid _userId;                                //#A   
-        private readonly QueryFilterAutoConfig _queryFilterAuto;
+        private readonly QueryFilterAutoConfig _queryFilterAuto;      //#B
 
         public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B  
             IUserIdService userIdService = null)                      //#B  
@@ -23,8 +21,8 @@ namespace DataLayer.EfCode
         {                                                             //#B
             _userId = userIdService?.GetUserId()                      //#B  
                        ?? new ReplacementUserIdService().GetUserId(); //#B  
-            _queryFilterAuto = new QueryFilterAutoConfig(_userId);
-        } //#B
+            _queryFilterAuto = new QueryFilterAutoConfig(_userId);    //#C
+        }
 
         //#B
         public DbSet<Book> Books { get; set; }                        //#C
@@ -65,25 +63,42 @@ namespace DataLayer.EfCode
                     }                                                       //#G
                 }
 
-                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                if (typeof(ISoftDelete)                         //#F
+                    .IsAssignableFrom(entityType.ClrType))      //#F
                 {
-                    _queryFilterAuto.SetQueryFilter(entityType, MyQueryFilterTypes.SoftDelete);
+                    _queryFilterAuto.SetQueryFilter(entityType, //#G 
+                        MyQueryFilterTypes.SoftDelete);         //#G
                 }
-                if (typeof(IUserId).IsAssignableFrom(entityType.ClrType))
+                if (typeof(IUserId)                             //#H
+                    .IsAssignableFrom(entityType.ClrType))      //#H
                 {
-                    _queryFilterAuto.SetQueryFilter(entityType, MyQueryFilterTypes.UserId);
+                    _queryFilterAuto.SetQueryFilter(entityType, //#I
+                        MyQueryFilterTypes.UserId);             //#I
                 }
             }
             /**********************************************************************
+            //Listing 7.13 Automatically apply a Value Converter to a DateTime property ending in Utc
             #A The Fluent API commands are applied in the OnModelCreating method
             #B This defines a Value Converter to set the UTC setting to the returned DateTime
-            #C This will loop through all the classes that EF Core has currently found mapped to the database
-            #D This will loop through all the properties in an entity class that are mapped to the database
+            #C This loops through all the classes that EF Core has currently found mapped to the database
+            #D This loops through all the properties in an entity class that are mapped to the database
             #E This adds the UTC Value Converter to properties of type DateTime and Name ending in "Utc"
             #F This sets the precision/scale to properties of type decimal and the Name contains in "Price"
             #G This sets the string to ASCII on properties of type string and the Name ending in "Url"
              ********************************************************************/
 
+            /************************************************************************
+             //Listing 7.15 Adding code to the DbContext to automate setting up Query Filters
+            #A This is the UserId of the user that has bought some books
+            #B This holds the QueryFilterAutoConfig needed for config and at run time the filter queries
+            #C You create a new QueryFilterAutoConfig every time so that it has the current UserId
+            #D The automate code goes in the OnModelCreating method
+            #E This loops through all the classes that EF Core has currently found mapped to the database
+            #F If the class inherits the ISoftDelete interface, then is needs the SoftDelete Query Filter
+            #G This adds a Query Filter to this class, with a query suitable for SoftDelete
+            #H If the class inherits the IUserId interface, then is needs the IUserId Query Filter
+            #G This adds a Query Filter to this class, with a query suitable for UserId
+             ************************************************************************/
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             //modelBuilder.ApplyConfiguration(new BookConfig());        //#E
