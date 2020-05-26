@@ -5,7 +5,7 @@ namespace DataLayer.Migrations
 {
     public partial class Chapter07 : Migration
     {
-        //Manually edited to change drop CustomerId/add UserId to a Rename
+        //Manually edited to change drop CustomerId/add UserId to a RenameColumn
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             //changed AddColumn to RenameColumn
