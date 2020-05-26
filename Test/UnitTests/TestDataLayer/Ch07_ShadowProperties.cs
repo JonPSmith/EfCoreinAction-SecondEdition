@@ -84,7 +84,7 @@ namespace Test.UnitTests.TestDataLayer
                     context.SaveChanges(); //#F
                     /************************************************
                     #A I create an entity class
-                    #B ... and add it to the context. That means it is now tracked
+                    #B ... and add it to the context. That means it's now tracked
                     #C I then get the EntityEntry from the tracked entity data
                     #D Using the Property method I can get the shadow property with read/write access
                     #E Then I set that property to the value I want
