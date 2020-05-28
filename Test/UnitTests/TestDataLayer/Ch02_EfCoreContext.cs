@@ -66,9 +66,8 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestWriteTestDataSqliteOk()
+        public void TestWriteTestDataSqliteInMemoryOk()
         {
-            //SETUP
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
@@ -82,7 +81,8 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.Books.Count().ShouldEqual(4);
-                context.Books.Count(p => p.Title.StartsWith("Quantum")).ShouldEqual(1);
+                context.Books.Count(p => 
+                    p.Title == "Refactoring").ShouldEqual(1);
             }
         }
     }

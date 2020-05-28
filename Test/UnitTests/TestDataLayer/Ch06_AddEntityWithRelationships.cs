@@ -61,15 +61,15 @@ namespace Test.UnitTests.TestDataLayer
 
                 showlog = true;
                 //ATTEMPT
-                var book = new Book               //#A
-                {                                 //#A
-                    Title = "Test",               //#A
-                    Reviews = new List<Review>()  //#A
-                };                                //#A
-                book.Reviews.Add(                 //#B
-                    new Review { NumStars = 1 }); //#B
-                context.Add(book);                //#C
-                context.SaveChanges();            //#D
+                var book = new Book                  //#A
+                {                                    //#A
+                    Title = "Test",                  //#A
+                    Reviews = new List<Review>()     //#A
+                };                                   //#A
+                book.Reviews.Add(                    //#B
+                    new Review { NumStars = 1 });    //#B
+                context.Add(book);                   //#C
+                context.SaveChanges();               //#D
                 /*********************************************************
                 #A This creates a new Book
                 #B This adds a new Review to the Book's Reviews navigational property
