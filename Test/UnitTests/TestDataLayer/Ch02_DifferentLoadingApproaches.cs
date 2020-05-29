@@ -22,6 +22,55 @@ namespace Test.UnitTests.TestDataLayer
 
         private readonly ITestOutputHelper _output;
 
+
+        [Fact]
+        public void TestAsNoTrackingBookCountAuthorsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var books = context.Books
+                    .AsNoTracking()
+                    .Include(r => r.AuthorsLink) 
+                        .ThenInclude(r => r.Author)
+                    .ToList();
+
+                //VERIFY
+                books.SelectMany(x => x.AuthorsLink.Select(y => y.Author)).Distinct().Count().ShouldEqual(4);
+            }
+        }
+
+        [Fact]
+        public void TestBookCountAuthorsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var books = context.Books
+                    .Include(r => r.AuthorsLink)
+                        .ThenInclude(r => r.Author)
+                    .ToList();
+
+                //VERIFY
+                books.Count.ShouldEqual(4);
+                books.SelectMany(x => x.AuthorsLink.Select(y => y.Author)).Distinct().Count().ShouldEqual(3);
+            }
+        }
+
         [Fact]
         public void TestEagerLoadBookAllOk()
         {
@@ -31,7 +80,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
                 //ATTEMPT
                 var book = context.Books
                     .Include(r => r.AuthorsLink) //#A
@@ -99,7 +150,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
                 //ATTEMPT
                 var newPrices = context.Books.Include(x => x.Promotion)
                     .Select(x => (decimal?) x.Promotion.NewPrice)
@@ -119,7 +172,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
                 //ATTEMPT
                 var book = context.Books.First(); //#A
                 context.Entry(book)
@@ -161,7 +216,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
                 //ATTEMPT
                 var book = context.Books.First(); //#A
                 var numReviews = context.Entry(book) //#B
@@ -185,7 +242,7 @@ namespace Test.UnitTests.TestDataLayer
 
 
         [Fact]
-        public void TestReadJustBookTableOk()
+        public void TestReadJustBookDisconnectedOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
@@ -194,7 +251,6 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
             }
-
             using (var context = new EfCoreContext(options)
             ) //dispose first DbContext and create new one. That way the read isn't effected by the setup code
             {
@@ -222,7 +278,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
                 //ATTEMPT
                 showlog = true;
                 var books = context.Books

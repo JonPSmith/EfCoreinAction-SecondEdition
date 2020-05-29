@@ -74,6 +74,60 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        [Fact]
+        public void TestBookAuthorsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book1 = context.Books
+                    .Include(r => r.AuthorsLink)
+                        .ThenInclude(r => r.Author)
+                    .First();
+                var book2 = context.Books
+                    .Include(r => r.AuthorsLink)
+                    .Skip(1).First();
 
+                //VERIFY
+                book1.AuthorsLink.First().Author.ShouldNotBeNull();
+                book2.AuthorsLink.First().Author.ShouldNotBeNull();
+                book1.AuthorsLink.First().Author.ShouldEqual(book2.AuthorsLink.First().Author);
+            }
+        }
+
+        [Fact]
+        public void TestBookAuthorsAsNoTrackingOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book1 = context.Books
+                    .Include(r => r.AuthorsLink)
+                    .ThenInclude(r => r.Author)
+                    .First();
+                var book2 = context.Books
+                    .AsNoTracking()
+                    .Include(r => r.AuthorsLink)
+                    .Skip(1).First();
+
+                //VERIFY
+                book1.AuthorsLink.First().Author.ShouldNotBeNull();
+                book2.AuthorsLink.First().Author.ShouldBeNull();
+            }
+        }
     }
 }

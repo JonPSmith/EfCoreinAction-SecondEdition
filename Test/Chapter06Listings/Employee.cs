@@ -32,6 +32,6 @@ namespace Test.Chapter06Listings
         public int? ManagerEmployeeId { get; set; }
         public Employee Manager { get; set; }
 
-        public Collection<Employee> WorksFromMe { get; set; }
+        public IList<Employee> WorksFromMe { get; set; }
     }
 }

@@ -98,8 +98,8 @@ namespace Test.UnitTests.TestDataLayer
             }
             using (var context = new EfCoreContext(options))
             {
-                //STAGE1                                        //#A
-                var author = context.Authors.First();           //#B
+                //STAGE1                                             //#A
+                var author = context.Authors.First();                //#B
                 var bookAuthor = new BookAuthor { Author = author }; //#C
                 var book = new Book                                  //#D
                 {                                                    //#D
@@ -108,10 +108,10 @@ namespace Test.UnitTests.TestDataLayer
                 };                                                   //#D
 
                 //STAGE2
-                context.Add(book);                                  //#E
+                context.Add(book);                                   //#E
 
                 //STAGE3
-                context.SaveChanges();                              //#F
+                context.SaveChanges();                               //#F
                 /*********************************************************
                 #A Each of the three stages start with a comment 
                 #B This reads in an existing Author for the new book
