@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter02Listings;
 using TestSupport.EfHelpers;
@@ -32,13 +31,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new BookHashContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = new BookHashReview()
-                {
-                    Reviews = new HashSet<Review>()
-                    {
-                        new Review {NumStars = 5}, new Review {NumStars = 1}
-                    }
-                };
+                var book = CreateBookWithHashReviews(2);
                 context.Add(book);
                 context.SaveChanges();
             }
@@ -53,7 +46,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Theory]
-        [InlineData(100)]
         [InlineData(1000)]
         [InlineData(10000)]
         public void TestBookHashReviewQueryTimeOk(int numReviews)
@@ -63,14 +55,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new BookHashContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = new BookHashReview()
-                {
-                    Reviews = new HashSet<Review>()
-                };
-                for (int i = 0; i < numReviews; i++)
-                {
-                    book.Reviews.Add(new Review());
-                }
+                var book = CreateBookWithHashReviews(numReviews);
                 context.Add(book);
                 context.SaveChanges();
             }
@@ -94,7 +79,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Theory]
-        [InlineData(100)]
         [InlineData(1000)]
         [InlineData(10000)]
         public void TestBookListReviewQueryTimeOk(int numReviews)
@@ -104,14 +88,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = new Book()
-                {
-                    Reviews = new List<Review>()
-                };
-                for (int i = 0; i < numReviews; i++)
-                {
-                    book.Reviews.Add(new Review());
-                }
+                var book = CreateBookWithListReviews(numReviews);
                 context.Add(book);
                 context.SaveChanges();
             }
@@ -135,7 +112,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Theory]
-        [InlineData(100)]
         [InlineData(1000)]
         [InlineData(10000)]
         public void TestBookHashReviewSaveChangesTimeOk(int numReviews)
@@ -145,14 +121,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new BookHashContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = new BookHashReview()
-                {
-                    Reviews = new HashSet<Review>()
-                };
-                for (int i = 0; i < numReviews; i++)
-                {
-                    book.Reviews.Add(new Review());
-                }
+                var book = CreateBookWithHashReviews(numReviews);
                 using (new TimeThings(_output, $"ADD: BookHashReview: {numReviews} entries"))
                     context.Add(book);
                 context.SaveChanges();
@@ -169,7 +138,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Theory]
-        [InlineData(100)]
         [InlineData(1000)]
         [InlineData(10000)]
         public void TestBookListReviewSaveChangesTimeOk(int numReviews)
@@ -179,14 +147,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var book = new Book()
-                {
-                    Reviews = new List<Review>()
-                };
-                for (int i = 0; i < numReviews; i++)
-                {
-                    book.Reviews.Add(new Review());
-                }
+                var book = CreateBookWithListReviews(numReviews);
                 using (new TimeThings(_output, $"ADD BookListReview: {numReviews} entries"))
                     context.Add(book);
                 context.SaveChanges();
@@ -202,5 +163,88 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        [Theory]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        public void TestBookHashReviewSaveChangesWithAnotherBookTimeOk(int numReviews)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookHashContext>();
+            using (var context = new BookHashContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book1 = CreateBookWithHashReviews(numReviews);
+                using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
+                    context.Add(book1);
+                var book2 = CreateBookWithHashReviews(numReviews);
+                using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
+                    context.Add(book2);
+
+                using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
+                {
+                    context.SaveChanges();
+                }
+                using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
+                {
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        public void TestBookListReviewSaveChangesWithAnotherBookTimeOk(int numReviews)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book1 = CreateBookWithListReviews(numReviews);
+                using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
+                    context.Add(book1);
+                var book2 = CreateBookWithListReviews(numReviews);
+                using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
+                    context.Add(book2);
+
+                using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
+                {
+                    context.SaveChanges();
+                }
+                using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
+                {
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        private static Book CreateBookWithListReviews(int numReviews)
+        {
+            var book = new Book()
+            {
+                Reviews = new List<Review>()
+            };
+            for (int i = 0; i < numReviews; i++)
+            {
+                book.Reviews.Add(new Review());
+            }
+
+            return book;
+        }
+
+        private static BookHashReview CreateBookWithHashReviews(int numReviews)
+        {
+            var book = new BookHashReview()
+            {
+                Reviews = new HashSet<Review>()
+            };
+            for (int i = 0; i < numReviews; i++)
+            {
+                book.Reviews.Add(new Review());
+            }
+
+            return book;
+        }
     }
 }
