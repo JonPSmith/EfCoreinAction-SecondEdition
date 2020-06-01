@@ -7,6 +7,7 @@ using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -50,14 +51,14 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var showlog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            var options = this.CreateUniqueClassOptionsWithLogging<EfCoreContext>(log =>
             {
                 if (showlog)
                     _output.WriteLine(log.Message);
             });
             using (var context = new EfCoreContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 showlog = true;
                 //ATTEMPT
@@ -76,6 +77,7 @@ namespace Test.UnitTests.TestDataLayer
                 #C The Add method says that the entity instance should be Added to the appropriate row, with any relationships either added or updated
                 #D The SaveChanges carries out the database update
                  *********************************************************/
+                showlog = false;
 
                 //VERIFY
                 var bookWithReview = context.Books.Include(x => x.Reviews).Single();

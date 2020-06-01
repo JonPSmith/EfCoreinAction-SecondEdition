@@ -129,5 +129,31 @@ namespace Test.UnitTests.TestDataLayer
                 book2.AuthorsLink.First().Author.ShouldBeNull();
             }
         }
+
+        [Fact]
+        public void TestReadEachSeparately()
+        {
+            //SETUP
+            int bookId;
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+                bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.ToList();
+                var reviews = context.Set<Review>().ToList();
+                var authorsLinks = context.Set<BookAuthor>().ToList();
+                var authors = context.Authors.ToList();
+
+                //VERIFY
+                book.Last().Reviews.Count.ShouldEqual(2);
+                book.Last().AuthorsLink.Single().Author.ShouldNotBeNull();
+            }
+        }
     }
 }

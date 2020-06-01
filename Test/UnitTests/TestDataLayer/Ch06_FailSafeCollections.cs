@@ -2,8 +2,11 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
+using Microsoft.EntityFrameworkCore;
 using Test.Chapter06Listings;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -63,6 +66,32 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 
+            }
+        }
+
+        [Fact]
+        public void TestMissingIncludeReplaceListAddsToDatabaseOk()
+        {
+            //SETUP
+            int twoReviewBookId;
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                twoReviewBookId = context.SeedDatabaseFourBooks().Last().BookId;
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                var book = context.Books
+                    //missing .Include(x => x.Reviews)
+                    .Single(p => p.BookId == twoReviewBookId);
+
+                //ATTEMPT
+                book.Reviews = new List<Review>{ new Review{ NumStars = 1}};
+                context.SaveChanges();
+
+                //VERIFY
+                context.Set<Review>().Count().ShouldEqual(3);
             }
         }
 
