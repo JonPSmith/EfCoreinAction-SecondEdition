@@ -9,14 +9,16 @@ namespace Test.Chapter08Listings.EfClasses
         public string Name { get; set; }
 
         public int TicketId { get; set; } //#A
-        public Ticket Ticket { get; set; }//#B
+        public TicketOption1 TicketOption1 { get; set; }//#B
+        public TicketOption2 TicketOption2 { get; set; }//Not for listing, only for checking
+        public TicketOption3 TicketOption3 { get; set; }//Not for listing, only for checking 
 
         public OptionalTrack Optional { get; set; } //#C
         public RequiredTrack Required { get; set; } //#D
     }
     /*******************************************************
-    #A This is the foreign key for the one-to-one relationship, Ticket
-    #B This is the one-to-one navigational property that accesses the Ticket entity
+    #A This is the foreign key for the one-to-one relationship, TicketOption1
+    #B This is the one-to-one navigational property that accesses the TicketOption1 entity
     #C This is a one-to-one navigational property using a shadow property for the foreign key. By default, the foreign key is nullable, so the relationship is optional
     #D This is a one-to-one navigational property using a shadow property for the foreign key. I use Fluent API commands to say that the foreign key is NOT nullable, so the relationship is required
      * *****************************************************/

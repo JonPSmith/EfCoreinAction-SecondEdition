@@ -12,7 +12,7 @@ namespace Test.Chapter08Listings.EFCode.Configurations
         public void Configure
             (EntityTypeBuilder<Attendee> entity)
         {
-            entity.HasOne(p => p.Ticket) //#A
+            entity.HasOne(p => p.TicketOption1) //#A
                 .WithOne(p => p.Attendee)
                 .HasForeignKey<Attendee>
                     (p => p.TicketId) //#B
@@ -30,7 +30,7 @@ namespace Test.Chapter08Listings.EFCode.Configurations
         }
 
         /*******************************************************************
-        #A This sets up the one-to-one navigational relationship, Ticket, which has a foreign key defined in the Attendee class
+        #A This sets up the one-to-one navigational relationship, TicketOption1, which has a foreign key defined in the Attendee class
         #B Here I specify the property that is the foreign key. Note how I need to provide the class type, as the foreign key could be in the principal or dependent entity class
         #C This sets up the one-to-one navigational relationship, Required, which does not have a foreign key defined for it
         #D I use the HasForeignKey<T> method that takes a string, because it is a shadow property and can only be referred to via a name. Note that I use my own name.

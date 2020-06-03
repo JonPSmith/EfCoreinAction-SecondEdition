@@ -25,7 +25,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP},
+                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore}
                 };
                 context.Add(attendee);
@@ -55,7 +55,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP},
+                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore},
                     Optional = new OptionalTrack {Track = TrackNames.EfCore}
                 };
@@ -80,7 +80,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP},
+                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore}
                 };
                 context.Add(attendee);
@@ -108,7 +108,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP}
+                    TicketOption1 = new TicketOption1 ()
                 };
                 context.Add(attendee);
                 //context.SaveChanges();
@@ -134,7 +134,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP},
+                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore}
                 };
                 context.Add(attendee);
@@ -161,7 +161,7 @@ namespace Test.UnitTests.TestDataLayer
         //            var attendee = new Attendee
         //            {
         //                Name = "Person1",
-        //                Ticket = new Ticket { TicketType = Ticket.TicketTypes.VIP },
+        //                TicketOption1 = new TicketOption1 { TicketType = TicketOption1.TicketTypes.VIP },
         //                Required = new RequiredTrack { Track = TrackNames.EfCore }
         //            };
         //            context.Add(attendee);

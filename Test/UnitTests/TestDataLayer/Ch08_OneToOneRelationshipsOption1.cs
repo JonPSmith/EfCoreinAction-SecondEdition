@@ -12,38 +12,31 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch08_OneToOneRelationships
+    public class Ch08_OneToOneRelationshipsOption1
     {
-        //this fails because of issue #8137 https://github.com/aspnet/EntityFramework/issues/8137
         [Fact]
-        public void TestOption1OneToOneAddDuplicateTicketBad()
+        public void TestOption1OneToOneAddOk()
         {
             //SETUP
-            int dupticketId;
-            var options =SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
             using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var dupTicket = new Ticket {TicketType = Ticket.TicketTypes.Guest};
-                var attendee = new Attendee {Name = "Person1", Ticket = dupTicket, Required = new RequiredTrack()};
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1(),
+                    Required = new RequiredTrack()
+                };
                 context.Add(attendee);
                 context.SaveChanges();
-                dupticketId = dupTicket.TicketId;
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                var dupTicket = context.Tickets.Find(dupticketId);
-                var attendee = new Attendee { Name = "Person1", Ticket = dupTicket, Required = new RequiredTrack() };
-                context.Add(attendee);
-                //context.SaveChanges();
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
 
                 //VERIFY
-                ex.InnerException.Message.ShouldEqual(
-                    "SQLite Error 19: 'UNIQUE constraint failed: Attendees.TicketId'.");
-                //context.Tickets.Count().ShouldEqual(1);
+                context.Attendees.Count().ShouldEqual(1);
+                context.TicketOption1s.Count().ShouldEqual(1);
+                attendee.TicketOption1.ShouldNotBeNull();
             }
         }
 
@@ -58,7 +51,7 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    Ticket = new Ticket(),
+                    TicketOption1 = new TicketOption1(),
                     Required = new RequiredTrack()
                 };
                 context.Add(attendee);
@@ -70,13 +63,13 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.Attendees.Count().ShouldEqual(0);
-                context.Tickets.Count().ShouldEqual(1);
+                context.TicketOption1s.Count().ShouldEqual(1);
                 context.Set<RequiredTrack>().Count().ShouldEqual(1);
             }
         }
 
         [Fact]
-        public void TestOption1OneToOneDuplicateTicketBad()
+        public void TestOption1OneToOneDuplicateTicketOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -85,17 +78,18 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var dupTicket = new Ticket {TicketType = Ticket.TicketTypes.Guest};
+                var dupTicket = new TicketOption1();
                 var attendees = new List<Attendee>
                 {
-                    new Attendee {Name = "Person1", Ticket = dupTicket, Required = new RequiredTrack()},
-                    new Attendee {Name = "Person2", Ticket = dupTicket, Required = new RequiredTrack()},
+                    new Attendee {Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack()},
+                    new Attendee {Name = "Person2", TicketOption1 = dupTicket, Required = new RequiredTrack()},
                 };
                 context.AddRange(attendees);
                 context.SaveChanges();
 
                 //VERIFY
-                context.Tickets.Count().ShouldEqual(1);
+                context.TicketOption1s.Count().ShouldEqual(1);
+                attendees.All(x => x.Required != null).ShouldBeTrue();
             }
         }
 
@@ -118,6 +112,37 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void TestOption1OneToOneAddDuplicateTicketBad()
+        {
+            //SETUP
+            int dupticketId;
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                var dupTicket = new TicketOption1();
+                var attendee = new Attendee { Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack() };
+                context.Add(attendee);
+                context.SaveChanges();
+                dupticketId = dupTicket.TicketId;
+            }
+            using (var context = new Chapter08DbContext(options))
+            {
+                var dupTicket = context.TicketOption1s.Find(dupticketId);
+                var newAttendee = new Attendee { Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack() };
+                context.Add(newAttendee);
+                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.InnerException.Message.ShouldEqual(
+                    "SQLite Error 19: 'UNIQUE constraint failed: Attendees.TicketId'.");
+                context.TicketOption1s.Count().ShouldEqual(1);
+            }
+        }
+
+        [Fact]
         public void TestOption1OneToOneOk()
         {
             //SETUP
@@ -132,19 +157,19 @@ namespace Test.UnitTests.TestDataLayer
                     new Attendee
                     {
                         Name = "Person1",
-                        Ticket = new Ticket {TicketType = Ticket.TicketTypes.Guest},
+                        TicketOption1 = new TicketOption1(),
                         Required = new RequiredTrack()
                     },
                     new Attendee
                     {
                         Name = "Person2",
-                        Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP},
+                        TicketOption1 = new TicketOption1(),
                         Required = new RequiredTrack()
                     },
                     new Attendee
                     {
                         Name = "Person3",
-                        Ticket = new Ticket {TicketType = Ticket.TicketTypes.Guest},
+                        TicketOption1 = new TicketOption1(),
                         Required = new RequiredTrack()
                     },
                 };
@@ -152,49 +177,10 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
 
                 //VERIFY
-                context.Tickets.Count().ShouldEqual(3);
+                context.TicketOption1s.Count().ShouldEqual(3);
             }
         }
 
-        //[Fact]
-        //public void TestOption1OneToOneSqlOk()
-        //{
-        //    //SETUP
-        //    var connection = this.GetUniqueDatabaseConnectionString();
-        //    var optionsBuilder =
-        //        new DbContextOptionsBuilder<Chapter08DbContext>();
 
-        //    optionsBuilder.UseSqlServer(connection);
-        //    using (var context = new Chapter08DbContext(optionsBuilder.Options))
-        //    {
-        //            context.Database.EnsureCreated();
-        //            var orgTicketesCount = context.Tickets.Count();
-
-        //            //ATTEMPT
-        //            var attendees = new List<Attendee>
-        //            {
-        //                new Attendee
-        //                {
-        //                    Name = "Person1", Ticket = new Ticket{TicketType = Ticket.TicketTypes.Guest},
-        //                    Required = new RequiredTrack()
-        //                },
-        //                new Attendee
-        //                {
-        //                    Name = "Person2", Ticket = new Ticket {TicketType = Ticket.TicketTypes.VIP },
-        //                    Required = new RequiredTrack()
-        //                },
-        //                new Attendee
-        //                {
-        //                    Name = "Person3", Ticket = new Ticket{TicketType = Ticket.TicketTypes.Guest},
-        //                    Required = new RequiredTrack()
-        //                },
-        //            };
-        //            context.AddRange(attendees);
-        //            context.SaveChanges();
-
-        //            //VERIFY
-        //            context.Tickets.Count().ShouldEqual(orgTicketesCount + 3);
-        //    }
-        //}
     }
 }
