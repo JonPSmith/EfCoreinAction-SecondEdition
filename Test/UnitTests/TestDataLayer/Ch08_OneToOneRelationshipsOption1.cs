@@ -41,34 +41,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestOption1OneToOneDeleteOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var attendee = new Attendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
-                };
-                context.Add(attendee);
-                context.SaveChanges();
-
-                //ATTEMPT
-                context.Remove(attendee);
-                context.SaveChanges();
-
-                //VERIFY
-                context.Attendees.Count().ShouldEqual(0);
-                context.TicketOption1s.Count().ShouldEqual(1);
-                context.Set<RequiredTrack>().Count().ShouldEqual(1);
-            }
-        }
-
-        [Fact]
         public void TestOption1OneToOneDuplicateTicketOk()
         {
             //SETUP
@@ -94,6 +66,38 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void TestOption1OneToOneChangeTicketOk()
+        {
+            //SETUP
+            //var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1(),
+                    Required = new RequiredTrack()
+                };
+                context.Add(attendee);
+                context.SaveChanges();
+            }
+            using (var context = new Chapter08DbContext(options))
+            {
+                //ATTEMPT
+                var existingAttendee = context.Attendees.Single();
+                existingAttendee.TicketOption1 = new TicketOption1 { };
+                context.SaveChanges();
+
+                //VERIFY
+                context.Attendees.Count().ShouldEqual(1);
+                context.TicketOption1s.Count().ShouldEqual(2);
+            }
+        }
+
+        [Fact]
         public void TestOption1OneToOneNoTicketBad()
         {
             //SETUP
@@ -108,6 +112,60 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
+            }
+        }
+
+        [Fact]
+        public void TestOption1OneToOneDeletePrincipalOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1(),
+                    Required = new RequiredTrack()
+                };
+                context.Add(attendee);
+                context.SaveChanges();
+
+                //ATTEMPT
+                context.Remove(context.TicketOption1s.Single());
+                context.SaveChanges();
+
+                //VERIFY
+                context.TicketOption1s.Count().ShouldEqual(0);
+                context.Attendees.Count().ShouldEqual(0);
+            }
+        }
+
+        [Fact]
+        public void TestOption1OneToOneDeleteDependentOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1(),
+                    Required = new RequiredTrack()
+                };
+                context.Add(attendee);
+                context.SaveChanges();
+
+                //ATTEMPT
+                context.Remove(context.Attendees.Single());
+                context.SaveChanges();
+
+                //VERIFY
+                context.Attendees.Count().ShouldEqual(0);
+                context.TicketOption1s.Count().ShouldEqual(1);
             }
         }
 

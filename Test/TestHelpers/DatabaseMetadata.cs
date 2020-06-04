@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -14,41 +14,41 @@ namespace Test.TestHelpers
     {
         public static string GetTableName<TEntity>(this DbContext context)
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             return efType.GetTableName();
         }
 
         public static IEnumerable<IProperty> GetProperties<TEntity>(this DbContext context)
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             return efType.GetProperties();
         }
 
         public static string GetColumnName<TEntity, TProperty>(this DbContext context, TEntity source, 
             Expression<Func<TEntity, TProperty>> model) where TEntity : class
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             var propInfo = GetPropertyInfoFromLambda(model);
             return efType.FindProperty(propInfo.Name).GetColumnName();
         }
 
         public static string GetColumnName<TEntity>(this DbContext context, string propertyName) where TEntity : class
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             return efType.FindProperty(propertyName).GetColumnName();
         }
 
         public static string GetColumnStoreType<TEntity, TProperty>(this DbContext context, 
             TEntity source, Expression<Func<TEntity, TProperty>> model) where TEntity : class
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             var propInfo = GetPropertyInfoFromLambda(model);
             return efType.FindProperty(propInfo.Name).GetColumnType();
         }
 
         public static string GetColumnStoreType<TEntity>(this DbContext context, string propertyName) where TEntity : class
         {
-            var efType = context.Model.FindEntityType(typeof(TEntity).FullName);
+            var efType = context.Model.FindEntityType(typeof(TEntity));
             return efType.FindProperty(propertyName).GetColumnType();
         }
 
