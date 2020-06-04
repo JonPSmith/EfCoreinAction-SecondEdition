@@ -37,20 +37,78 @@ namespace Test.UnitTests.TestDataLayer
         public void TestDeletePrincipalCascadeOk()
         {
             //SETUP
-            using (var context = new Chapter08DbContext(SqliteInMemory.CreateOptions<Chapter08DbContext>()))
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
-                var entity = new DeletePrincipal { DependentCascade = new DeleteDependentCascade() };
+                var dependent = new DeleteDependentCascade();
+                var entity = new DeletePrincipal {DependentCascade = dependent};
                 context.Add(entity);
                 context.SaveChanges();
-
+            }
+            using (var context = new Chapter08DbContext(options))
+            {
                 //ATTEMPT
-                context.Remove(entity);
+                context.Remove(context.DeletePrincipals.Single());
                 context.SaveChanges();
 
                 //VERIFY
                 context.DeletePrincipals.Count().ShouldEqual(0);
                 context.Set<DeleteDependentCascade>().Count().ShouldEqual(0);
+            }
+        }
+
+        [Fact]
+        public void TestDeletePrincipalClientCascadeNoIncludedOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var dependent = new DeleteDependentClientCascade();
+                var entity = new DeletePrincipal {DependentClientCascade = dependent};
+                context.Add(entity);
+                context.SaveChanges();
+            }
+
+            using (var context = new Chapter08DbContext(options))
+            {
+                //ATTEMPT
+                var entity = context.DeletePrincipals.Single();
+                context.Remove(entity);
+                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
+            }
+        }
+
+        [Fact]
+        public void TestDeletePrincipalClientCascadeIncludedOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var dependent = new DeleteDependentClientCascade();
+                var entity = new DeletePrincipal { DependentClientCascade = dependent };
+                context.Add(entity);
+                context.SaveChanges();
+            }
+
+            using (var context = new Chapter08DbContext(options))
+            {
+                //ATTEMPT
+                var entity = context.DeletePrincipals
+                    .Include(x => x.DependentClientCascade).Single();
+                context.Remove(entity);
+                context.SaveChanges();
+
+                //VERIFY
+                context.DeletePrincipals.Count().ShouldEqual(0);
+                context.Set<DeleteDependentClientCascade>().Count().ShouldEqual(0);
             }
         }
 
@@ -154,19 +212,23 @@ namespace Test.UnitTests.TestDataLayer
         public void TestDeletePrincipalRestrictOk()
         {
             //SETUP
-            using (var context = new Chapter08DbContext(SqliteInMemory.CreateOptions<Chapter08DbContext>()))
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
-                var entity = new DeletePrincipal { DependentRestrict = new DeleteDependentRestrict() };
+                var entity = new DeletePrincipal {DependentRestrict = new DeleteDependentRestrict()};
                 context.Add(entity);
                 context.SaveChanges();
-
+            }
+            using (var context = new Chapter08DbContext(options))
+            {
                 //ATTEMPT
+                var entity = context.DeletePrincipals.Single();
                 context.Remove(entity);
-                var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
+                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
 
                 //VERIFY
-                ex.Message.ShouldEqual("The association between entity types 'DeletePrincipal' and 'DeleteDependentRestrict' has been severed but the foreign key for this relationship cannot be set to null. If the dependent entity should be deleted, then setup the relationship to use cascade deletes.");
+                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
             }
         }
 
@@ -174,7 +236,8 @@ namespace Test.UnitTests.TestDataLayer
         public void TestDeletePrincipalSetNullOk()
         {
             //SETUP
-            using (var context = new Chapter08DbContext(SqliteInMemory.CreateOptions<Chapter08DbContext>()))
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
                 var entity = new DeletePrincipal { DependentSetNull = new DeleteDependentSetNull() };

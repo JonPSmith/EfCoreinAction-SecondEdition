@@ -15,6 +15,10 @@ namespace Test.Chapter08Listings.EfClasses
 
         public DeleteDependentCascade DependentCascade { get; set; }
 
+        public DeleteDependentClientCascade DependentClientCascade { get; set; }
+
+        public DeleteDependentClientSetNull DependentClientSetNull { get; set; }
+
         public DeleteNonNullDefault DependentNonNullDefault { get; set; }
     }
 }

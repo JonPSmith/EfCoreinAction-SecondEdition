@@ -72,15 +72,22 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        [Fact]
-        public void TestCreateChapter07DbContextSqlServerOk()
+        [RunnableInDebugOnly]
+        public void TestCreateChapter0DbContextSqlServerOk()
         {
             //SETUP
-            var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
+            var showLog = false;
+            var options = this.CreateUniqueClassOptionsWithLogging<Chapter08DbContext>(log =>
+            {
+                if (showLog)
+                    _output.WriteLine(log.ToString());
+            });
             using (var context = new Chapter08DbContext(options))
             {
                 //ATTEMPT
-                context.Database.EnsureClean();
+                context.Database.EnsureDeleted();
+                showLog = true;
+                context.Database.EnsureCreated();
 
                 //VERIFY
             }

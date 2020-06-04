@@ -26,6 +26,16 @@ namespace Test.Chapter08Listings.EFCode.Configurations
                 .WithOne()
                 .HasForeignKey<DeleteDependentCascade>(p => p.DeletePrincipalId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(p => p.DependentClientCascade)
+                .WithOne()
+                .HasForeignKey<DeleteDependentClientCascade>(p => p.DeletePrincipalId)
+                .OnDelete(DeleteBehavior.ClientCascade);
+
+            entity.HasOne(p => p.DependentClientSetNull)
+                .WithOne()
+                .HasForeignKey<DeleteDependentClientSetNull>(p => p.DeletePrincipalId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }
