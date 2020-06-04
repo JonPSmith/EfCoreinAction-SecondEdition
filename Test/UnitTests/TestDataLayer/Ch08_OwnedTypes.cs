@@ -6,6 +6,7 @@ using System.Linq;
 using Test.Chapter08Listings.EFCode;
 using Test.Chapter08Listings.SplitOwnClasses;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -77,23 +78,48 @@ namespace Test.UnitTests.TestDataLayer
             });
             using (var context = new SplitOwnDbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 showLog = true;
                 AddOrderWithAddresses(context);
-                showLog = false;
-
-                //VERIFY
-                context.Orders.Count().ShouldEqual(1);
             }
         }
 
         [Fact]
-        public void TestCreateOrderWithoutAddressesOk()
+        public void TestReadOrderWithAddressesOk()
         {
             //SETUP
-            using (var context = new SplitOwnDbContext(SqliteInMemory.CreateOptions<SplitOwnDbContext>()))
+            var showLog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<SplitOwnDbContext>(log =>
+            {
+                if (showLog)
+                    _output.WriteLine(log.ToString());
+            });
+            using (var context = new SplitOwnDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                AddOrderWithAddresses(context);
+            }
+            using (var context = new SplitOwnDbContext(options))
+            {
+
+                //ATTEMPT
+                showLog = true;
+                var order = context.Orders.Single();
+
+                //VERIFY
+                order.DeliveryAddress.ShouldNotBeNull();
+                order.BillingAddress.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
+        public void TestCreateOrderAddressesNull()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
+            using (var context = new SplitOwnDbContext(options))
             {
                 context.Database.EnsureCreated();
 
@@ -103,11 +129,14 @@ namespace Test.UnitTests.TestDataLayer
                     OrderNumber = "123"
                 };
                 context.Add(entity);
-                var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
-
+                context.SaveChanges();
+            }
+            using (var context = new SplitOwnDbContext(options))
+            {
                 //VERIFY
-                ex.Message.StartsWith("The entity of 'OrderInfo' is sharing the table 'Orders' with 'OrderInfo.BillingAddress#Address', but there is no entity of this type with the same key value")
-                    .ShouldBeTrue();
+                var order = context.Orders.Single();
+                order.DeliveryAddress.ShouldBeNull();
+                order.BillingAddress.ShouldBeNull();
             }
         }
 
