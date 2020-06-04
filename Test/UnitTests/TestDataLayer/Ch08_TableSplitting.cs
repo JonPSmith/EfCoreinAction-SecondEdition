@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EFCode;
 using Test.Chapter08Listings.SplitOwnClasses;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -53,7 +54,7 @@ namespace Test.UnitTests.TestDataLayer
             });
             using (var context = new SplitOwnDbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 showLog = true;
@@ -67,7 +68,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestCreateBookSummaryWithoutDetailsBad()
+        public void TestCreateBookSummaryWithoutDetailsOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
@@ -82,11 +83,13 @@ namespace Test.UnitTests.TestDataLayer
                     AuthorsString = "AuthorA, AuthorB"
                 };
                 context.Add(entity);
-                var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
-
+                context.SaveChanges();
+            }
+            using (var context = new SplitOwnDbContext(options))
+            {
                 //VERIFY
-                ex.Message.StartsWith("The entity of 'BookSummary' is sharing the table 'Books' with 'BookDetail', but there is no entity of this type with the same key value ")
-                    .ShouldBeTrue();
+                var entity = context.BookSummaries.Single();
+                entity.Details.ShouldBeNull();
             }
         }
 
