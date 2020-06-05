@@ -6,12 +6,20 @@ using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch08_InverseProperty
     {
+        private readonly ITestOutputHelper _output;
+
+        public Ch08_InverseProperty(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void TestLibraryBookLibrarianAndOnLoadOk()
         {

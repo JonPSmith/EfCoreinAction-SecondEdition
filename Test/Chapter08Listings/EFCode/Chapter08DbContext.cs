@@ -5,7 +5,6 @@ using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode.Configurations;
-using Person = Test.Chapter07Listings.Person;
 
 namespace Test.Chapter08Listings.EFCode
 {
