@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
@@ -58,10 +59,7 @@ namespace Test.UnitTests.TestDataLayer
                 {
                     PaymentId = untracked.PaymentId,
                     Amount = untracked.Amount,
-                    //You MUST explictly set the discriminator
-                    //NOTE: this only works because the PaymentConfig code contains the following Fluent API command below - see EF Core issue #7510
-                    //entity.Property(p => p.PType).Metadata.AfterSaveBehavior = PropertySaveBehavior.Save;
-                    PType = PTypes.Cash //You MUST explictly set the discriminator
+                    PType = PTypes.Cash //You MUST explicitly set the discriminator
                 };
                 context.Update(changed);
                 context.SaveChanges();
@@ -124,7 +122,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestReadBackDifferentPaymentsOk()
+        public void TestReadBackDifferentPaymentsUsingOfTypeOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
