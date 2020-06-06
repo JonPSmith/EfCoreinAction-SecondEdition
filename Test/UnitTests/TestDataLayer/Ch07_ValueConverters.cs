@@ -44,6 +44,7 @@ namespace Test.UnitTests.TestDataLayer
                     StageViaAttribute = Stages.Two,
                     StageViaFluent = Stages.Two,
                     StageCanBeNull = null,
+                    EnumFlags = FlagEnum.Flag1 | FlagEnum.Flag3,
                     DateTimeUtc = utcTime,
                     DateTimeUtcUtcOnReturn = utcTime,
                     DateTimeUtcSaveAsString = utcTime
@@ -63,6 +64,7 @@ namespace Test.UnitTests.TestDataLayer
                 entityFromDb.Stage.ShouldEqual(Stages.Two);
                 entityFromDb.StageViaAttribute.ShouldEqual(Stages.Two);
                 entityFromDb.StageViaFluent.ShouldEqual(Stages.Two);
+                entityFromDb.EnumFlags.ShouldEqual(FlagEnum.Flag1 | FlagEnum.Flag3);
                 entityFromDb.DateTimeUtc.Kind.ShouldEqual(DateTimeKind.Unspecified);
                 entityFromDb.DateTimeUtcUtcOnReturn.Kind.ShouldEqual(DateTimeKind.Utc);
                 entityFromDb.DateTimeUtcSaveAsString.Kind.ShouldEqual(DateTimeKind.Unspecified);
@@ -84,6 +86,7 @@ namespace Test.UnitTests.TestDataLayer
                     Stage = Stages.Two,
                     StageViaAttribute = Stages.Two,
                     StageViaFluent = Stages.Two,
+                    EnumFlags = FlagEnum.Flag1 | FlagEnum.Flag3,
                     DateTimeUtc = utcTime,
                     DateTimeUtcUtcOnReturn = utcTime,
                     DateTimeUtcSaveAsString = utcTime
@@ -101,9 +104,44 @@ namespace Test.UnitTests.TestDataLayer
                 entityFromDb.Stage.ShouldEqual(Stages.Two);
                 entityFromDb.StageViaAttribute.ShouldEqual(Stages.Two);
                 entityFromDb.StageViaFluent.ShouldEqual(Stages.Two);
+                entityFromDb.EnumFlags.ShouldEqual(FlagEnum.Flag1 | FlagEnum.Flag3);
                 entityFromDb.DateTimeUtc.Kind.ShouldEqual(DateTimeKind.Unspecified);
                 entityFromDb.DateTimeUtcUtcOnReturn.Kind.ShouldEqual(DateTimeKind.Utc);
                 entityFromDb.DateTimeUtcSaveAsString.Kind.ShouldEqual(DateTimeKind.Unspecified);
+            }
+        }
+
+        [Fact]
+        public void TestValueConvertersCurrentValuesOk()
+        {
+            //SETUP
+            var utcTime = new DateTime(1000, DateTimeKind.Utc);
+            var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
+            using (var context = new Chapter07DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var entity = new ValueConversionExample
+                {
+                    Stage = Stages.Two,
+                    StageViaAttribute = Stages.Two,
+                    StageViaFluent = Stages.Two,
+                    EnumFlags = FlagEnum.Flag1 | FlagEnum.Flag3,
+                };
+                context.Add(entity);
+                context.SaveChanges();
+            }
+            using (var context = new Chapter07DbContext(options))
+            {
+
+                //ATTEMPT
+                var entry = context.Entry(context.ConversionExamples.Single());
+
+                //VERIFY
+                entry.Property(nameof(ValueConversionExample.Stage)).CurrentValue.ShouldEqual(Stages.Two);
+                entry.Property(nameof(ValueConversionExample.StageViaAttribute)).CurrentValue.ShouldEqual(Stages.Two);
+                entry.Property(nameof(ValueConversionExample.StageViaFluent)).CurrentValue.ShouldEqual(Stages.Two);
+                entry.Property(nameof(ValueConversionExample.EnumFlags)).CurrentValue.ShouldEqual(FlagEnum.Flag1 | FlagEnum.Flag3);
             }
         }
 

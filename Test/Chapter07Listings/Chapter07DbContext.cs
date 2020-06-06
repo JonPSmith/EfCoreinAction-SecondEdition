@@ -38,6 +38,10 @@ namespace Test.Chapter07Listings
                 .Property(e => e.StageCanBeNull)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<ValueConversionExample>()
+                .Property(e => e.EnumFlags)
+                .HasConversion<string>();
+
             var utcConverter = new ValueConverter<DateTime, DateTime>( //#A
                 toDb => toDb,                                      //#B
                 fromDb =>                                              //#C
