@@ -14,11 +14,10 @@ namespace Test.Chapter08Listings.EFCode.Configurations
         {
             entity.HasKey(p => p.BookId);
 
-            //see https://github.com/aspnet/EntityFramework/issues/6674
-            entity.Metadata //#A
-                .FindNavigation(nameof(Ch08Book.Reviews)) //#B
-                .SetPropertyAccessMode
-                    (PropertyAccessMode.Field); //#C
+            //entity.HasMany(x => x.Reviews)
+            //    .WithOne()
+            //    .Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
+
         }
 
         /******************************************************

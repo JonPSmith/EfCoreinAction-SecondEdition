@@ -32,6 +32,8 @@ namespace Test.Chapter08Listings.EFCode
 
         //Backing fields on relationships
         public DbSet<Ch08Book> Books { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+
         public DbSet<PriceOffer> PriceOffers { get; set; }
 
         //delete behavior

@@ -24,7 +24,8 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var entity = new Ch08Book
                 {
-                    Title = "Quantem Networking"
+                    Title = "Quantum Networking"
+
                 };
 
                 //ATTEMPT
@@ -34,7 +35,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 entity.Reviews.Count().ShouldEqual(0);
-                entity.CachedVotes.ShouldEqual(null);
+                entity.ReviewsAverageVotes.ShouldEqual(null);
             }
         }
 
@@ -50,13 +51,13 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var entity = new Ch08Book
                 {
-                    Title = "Quantem Networking"
+                    Title = "Quantum Networking"
                 };
 
                 //VERIFY
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Any().ShouldBeFalse();
-                entity.CachedVotes.ShouldBeNull();
+                entity.ReviewsAverageVotes.ShouldBeNull();
             }
         }
 
@@ -81,7 +82,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Count().ShouldEqual(0);
-                entity.CachedVotes.ShouldBeNull();
+                entity.ReviewsAverageVotes.ShouldBeNull();
             }
         }
 
@@ -104,7 +105,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Count().ShouldEqual(1);
-                entity.CachedVotes.ShouldEqual(5);
+                entity.ReviewsAverageVotes.ShouldEqual(5);
             }
         }
 
@@ -128,7 +129,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Count().ShouldEqual(2);
-                entity.CachedVotes.ShouldEqual(3);
+                entity.ReviewsAverageVotes.ShouldEqual(3);
             }
         }
 
@@ -156,7 +157,7 @@ namespace Test.UnitTests.TestDataLayer
                 var entity = context.Books.Include(x => x.Reviews).Single();
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Count().ShouldEqual(1);
-                entity.CachedVotes.ShouldEqual(5);
+                entity.ReviewsAverageVotes.ShouldEqual(5);
             }
         }
     }
