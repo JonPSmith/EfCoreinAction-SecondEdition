@@ -66,7 +66,8 @@ namespace Test.UnitTests.TestDataLayer
         public void TestLazyLoadBookAndReviewUsingProxiesPackageOk()
         {
             //SETUP
-            var options = CreateOptionsLazyLoadingProxies<Lazy2DbContext>();
+            var options = SqliteInMemory.CreateOptions<Lazy2DbContext>(
+                builder => builder.UseLazyLoadingProxies());
             using (var context = new Lazy2DbContext(options))
             {
                 context.Database.EnsureCreated();
@@ -92,21 +93,39 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        public static DbContextOptions<T> CreateOptionsLazyLoadingProxies<T>() where T : DbContext
+        [Fact]
+        public void TestLazyLoadCompareIncludeOk()
         {
-            //Thanks to https://www.scottbrady91.com/Entity-Framework/Entity-Framework-Core-In-Memory-Testing
-            var connectionStringBuilder =
-                new SqliteConnectionStringBuilder { DataSource = ":memory:" };
-            var connectionString = connectionStringBuilder.ToString();
-            var connection = new SqliteConnection(connectionString);
-            connection.Open();                //see https://github.com/aspnet/EntityFramework/issues/6968
+            //SETUP
+            var showLog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<Lazy2DbContext>(log =>
+            {
+                if (showLog)
+                    _output.WriteLine(log.DecodeMessage());
+            }, applyExtraOption: builder => builder.UseLazyLoadingProxies());
 
-            // create in-memory context
-            var builder = new DbContextOptionsBuilder<T>();
-            builder.UseLazyLoadingProxies()
-                .UseSqlite(connection);
-
-            return builder.Options;
+            using (var context = new Lazy2DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var book = new BookLazy2
+                {
+                    Reviews = new List<LazyReview>
+                    {
+                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
+                    }
+                };
+                context.Add(book);
+                context.SaveChanges();
+            }
+            using (var context = new Lazy2DbContext(options))
+            {
+                //ATTEMPT
+                showLog = true;
+                var book1 = context.BookLazy2s.TagWith("lazy").Single(); 
+                book1.Reviews.Count().ShouldEqual(2);
+                var book2 = context.BookLazy2s.TagWith("include").Include(x => x.Reviews).Single();
+                book2.Reviews.Count().ShouldEqual(2);
+            }
         }
     }
 }
