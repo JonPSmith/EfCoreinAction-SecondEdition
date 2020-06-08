@@ -19,7 +19,7 @@ namespace Test.Chapter08Listings.EfClasses
 
         public double? ReviewsAverageVotes { get; private set; } //#B
 
-        public IReadOnlyCollection<Review> Reviews => _reviews.ToList(); //#C
+        public IReadOnlyCollection<Review> Reviews => _reviews.ToImmutableList(); //#C
 
         public void AddReview(Review review) //#D
         {
