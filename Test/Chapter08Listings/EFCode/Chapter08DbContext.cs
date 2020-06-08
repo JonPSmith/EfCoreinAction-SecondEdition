@@ -45,7 +45,6 @@ namespace Test.Chapter08Listings.EFCode
             modelBuilder.ApplyConfiguration(new AttendeeConfig());
             modelBuilder.ApplyConfiguration(new PersonConfig());
             modelBuilder.ApplyConfiguration(new EmployeeShortFkConfig());
-            modelBuilder.ApplyConfiguration(new Ch07BookConfig());
             modelBuilder.ApplyConfiguration(new DeletePrincipalConfig());
             modelBuilder.ApplyConfiguration(new PaymentConfig()); //#C
         }
