@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DataLayer.EfClasses;
@@ -22,6 +23,22 @@ namespace Test.UnitTests.TestDataLayer
     public Ch02_IncludeSortFilter(ITestOutputHelper output)
     {
         _output = output;
+    }
+
+    //see https://github.com/dotnet/efcore/issues/20777#issuecomment-632123707 and EF Core code
+    [Fact]
+    public void TestILinkWillPassEfCoreTests()
+    {
+        //This runs a version of the code in EF Core that decides whether to use the navigational type 
+        //see https://github.com/dotnet/efcore/blob/e6674cdbc8e45ffd890ba20441230fb383087e3a/src/EFCore/Metadata/Internal/CollectionTypeFactory.cs#L26-L33
+        //var listOfT = typeof(List<>).MakeGenericType(elementType);
+        //return collectionType.IsAssignableFrom(listOfT) ? listOfT : null;
+
+        var listOfT = typeof(List<Review>);
+
+        typeof(IList<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
+        typeof(ICollection<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
+        typeof(Collection<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
     }
 
 
