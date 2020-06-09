@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +10,22 @@ using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
+using Xunit.Sdk;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch08_RelationshipBackingFields
     {
+        private readonly ITestOutputHelper _output;
+
+        public Ch08_RelationshipBackingFields(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         [Fact]
         public void TestCreateBookAddRemoveOneReviewOk()
         {
@@ -158,6 +170,62 @@ namespace Test.UnitTests.TestDataLayer
                 entity.Reviews.ShouldNotBeNull();
                 entity.Reviews.Count().ShouldEqual(1);
                 entity.ReviewsAverageVotes.ShouldEqual(5);
+            }
+        }
+
+        [Fact]
+        public void TestListPerformanceAsReadOnlyVsToImmutableList()
+        {
+            const int listSize = 1000;
+            var bigList = new List<Review>();
+            for (int i = 0; i < listSize; i++)
+            {
+                bigList.Add(new Review());
+            }
+
+            using (new TimeThings(_output, "AsReadOnly", listSize))
+            {
+                var readOnly = bigList.AsReadOnly();
+            }
+            using (new TimeThings(_output, "ToImmutableList", listSize))
+            {
+                var readOnly = bigList.ToImmutableList();
+            }
+            using (new TimeThings(_output, "AsReadOnly", listSize))
+            {
+                var readOnly = bigList.AsReadOnly();
+            }
+            using (new TimeThings(_output, "ToImmutableList", listSize))
+            {
+                var readOnly = bigList.ToImmutableList();
+            }
+        }
+
+        [Fact]
+        public void TestHasSetPerformanceAsReadOnlyVsToImmutableList()
+        {
+            const int listSize = 1000;
+            var bigList = new HashSet<Review>();
+            for (int i = 0; i < listSize; i++)
+            {
+                bigList.Add(new Review());
+            }
+
+            using (new TimeThings(_output, "AsReadOnly", listSize))
+            {
+                var readOnly = bigList.ToList().AsReadOnly();
+            }
+            using (new TimeThings(_output, "ToImmutableList", listSize))
+            {
+                var readOnly = bigList.ToImmutableList();
+            }
+            using (new TimeThings(_output, "AsReadOnly", listSize))
+            {
+                var readOnly = bigList.ToList().AsReadOnly();
+            }
+            using (new TimeThings(_output, "ToImmutableList", listSize))
+            {
+                var readOnly = bigList.ToImmutableList();
             }
         }
     }
