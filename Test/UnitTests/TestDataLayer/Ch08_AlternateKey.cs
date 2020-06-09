@@ -24,13 +24,13 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    UserId = null,
+                    Name = null,
                 };
                 var ex = Assert.Throws<InvalidOperationException>(() => context.Add(person));
 
                 //VERIFY
                 ex.Message.ShouldEqual(
-                    "Unable to track an entity of type 'Person' because alternate key property 'UserId' is null. If the alternate key is not used in a relationship, then consider using a unique index instead. Unique indexes may contain nulls, while alternate keys must not.");
+                    "Unable to track an entity of type 'Person' because alternate key property 'Name' is null. If the alternate key is not used in a relationship, then consider using a unique index instead. Unique indexes may contain nulls, while alternate keys must not.");
             }
         }
 
@@ -45,7 +45,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    UserId = "me@somewhere.com",
+                    Name = "me@somewhere.com",
                 };
                 context.Add(person);
                 context.SaveChanges();
@@ -67,7 +67,7 @@ namespace Test.UnitTests.TestDataLayer
 
                     var person = new Person
                     {
-                        UserId = "me@somewhere.com",
+                        Name = "me@somewhere.com",
                         ContactInfo = new ContactInfo { MobileNumber = "12345" }
                     };
                     context.Add(person);
@@ -96,7 +96,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    UserId = "me@somewhere.com",
+                    Name = "me@somewhere.com",
                     ContactInfo = new ContactInfo {MobileNumber = "12345"}
                 };
                 context.Add(person);
