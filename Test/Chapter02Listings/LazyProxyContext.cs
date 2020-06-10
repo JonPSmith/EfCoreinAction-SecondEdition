@@ -8,12 +8,12 @@ namespace Test.Chapter02Listings
     /// <summary>
     /// This uses Microsoft.EntityFrameworkCore.Proxies and virtual to do lazy loading
     /// </summary>
-    public class Lazy2DbContext : DbContext
+    public class LazyProxyContext : DbContext
     {
-        public Lazy2DbContext(DbContextOptions<Lazy2DbContext> options)
+        public LazyProxyContext(DbContextOptions<LazyProxyContext> options)
             : base(options) { }
 
-        public DbSet<BookLazy2> BookLazy2s { get; set; }
+        public DbSet<BookLazyProxy> Books { get; set; }
         
     }
 }

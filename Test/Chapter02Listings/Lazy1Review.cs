@@ -3,7 +3,7 @@
 
 namespace Test.Chapter02Listings
 {
-    public class LazyReview 
+    public class Lazy1Review 
     {
         public int Id { get; set; }
         public int NumStars { get; set; }

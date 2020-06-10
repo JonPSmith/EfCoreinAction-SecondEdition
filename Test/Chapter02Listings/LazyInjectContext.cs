@@ -8,12 +8,12 @@ namespace Test.Chapter02Listings
     /// <summary>
     /// This uses injection of ILazyLoader into class to do lazy loading
     /// </summary>
-    public class Lazy1DbContext : DbContext
+    public class LazyInjectContext : DbContext
     {
-        public Lazy1DbContext(DbContextOptions<Lazy1DbContext> options)
+        public LazyInjectContext(DbContextOptions<LazyInjectContext> options)
             : base(options) { }
 
         public DbSet<BookLazy1> BookLazy1s { get; set; }
-        
+        public DbSet<BookLazy2> BookLazy2s { get; set; }
     }
 }

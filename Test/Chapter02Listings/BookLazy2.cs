@@ -1,21 +1,48 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DataLayer.EfClasses;
 
 namespace Test.Chapter02Listings
 {
-    /// <summary>
-    /// This uses Microsoft.EntityFrameworkCore.Proxies and virtual to do lazy loading
-    /// </summary>
     public class BookLazy2
     {
+        public BookLazy2() { }                          
+
+        private BookLazy2(Action<object, string> lazyLoader)   
+        {
+            LazyLoader = lazyLoader; 
+        }
+        private Action<object, string> LazyLoader { get; set; }
+
+
         public int Id { get; set; }
 
-        //NOTE: all properties need to be virtual
-        public virtual PriceOffer Promotion { get; set; }
-        public virtual IList<LazyReview> Reviews { get; set; }
+        public PriceOffer Promotion { get; set; } 
 
+        private IList<Lazy2Review> _reviews;                   
+        public IList<Lazy2Review> Reviews 
+        {
+            get => LazyLoader.Load(this, ref _reviews);
+            set => _reviews = value;  
+        }
+    }
+
+    public static class PocoLoadingExtensions
+    {
+        public static TRelated Load<TRelated>(
+            this Action<object, string> loader,
+            object entity,
+            ref TRelated navigationField,
+            [CallerMemberName] string navigationName = null)
+            where TRelated : class
+        {
+            loader?.Invoke(entity, navigationName);
+
+            return navigationField;
+        }
     }
 }

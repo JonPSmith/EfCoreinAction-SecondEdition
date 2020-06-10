@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -21,8 +22,8 @@ namespace Test.Chapter02Listings
 
         public PriceOffer Promotion { get; set; }       //#C
 
-        private IList<LazyReview> _reviews;             //#D                  
-        public IList<LazyReview> Reviews                //#E
+        private IList<Lazy1Review> _reviews;             //#D                  
+        public IList<Lazy1Review> Reviews                //#E
         {
             get => _lazyLoader.Load(this, ref _reviews);//#F
             set => _reviews = value;                    //#G
