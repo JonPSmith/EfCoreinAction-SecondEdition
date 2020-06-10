@@ -3,8 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer.EfCode;
-using Microsoft.Data.Sqlite;
+using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter02Listings;
 using TestSupport.EfHelpers;
@@ -38,6 +37,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var book = new BookLazy1
                 {
+                    Promotion = new PriceOffer{ NewPrice = 5},
                     Reviews = new List<LazyReview>
                     {
                         new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
@@ -58,6 +58,7 @@ namespace Test.UnitTests.TestDataLayer
                 * *******************************************************/
 
                 //VERIFY
+                context.BookLazy1s.Select(x => x.Promotion).ShouldNotBeNull();
                 reviews.Count.ShouldEqual(2);
             }
         }

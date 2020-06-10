@@ -2,29 +2,39 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Test.Chapter02Listings
 {
     public class BookLazy1
     {
+        public BookLazy1() { }                          //#A
+
+        private BookLazy1(ILazyLoader lazyLoader)       //#B
+        {                                               //#B
+            _lazyLoader = lazyLoader;                   //#B
+        }                                               //#B
+        private readonly ILazyLoader _lazyLoader;       //#B
+
         public int Id { get; set; }
 
-        public BookLazy1() { }
+        public PriceOffer Promotion { get; set; }       //#C
 
-        private BookLazy1(ILazyLoader lazyLoader)
+        private IList<LazyReview> _reviews;             //#D                  
+        public IList<LazyReview> Reviews                //#E
         {
-            _lazyLoader = lazyLoader;
-        }
-
-        private readonly ILazyLoader _lazyLoader;
-        private IList<LazyReview> _reviews;
-
-        //This is here to show how lazy loading works
-        public IList<LazyReview> Reviews
-        {
-            get => _lazyLoader.Load(this, ref _reviews);
-            set => _reviews = value;
+            get => _lazyLoader.Load(this, ref _reviews);//#F
+            set => _reviews = value;                    //#G
         }
     }
+    /******************************************************************
+    #A You need a public constructor so that you can create this book in your code
+    #B This private constructor is used by EF Core to inject the LazyLoader
+    #C This is a normal relational link which isn't loaded via lazy loading
+    #D The actual reviews are held in a backing field (see section 8.7) 
+    #E This is the list that you the developer will access
+    #F A read of the property will trigger a lazy loading of the data (if not already loaded)
+    #G The set simply updates the backing field
+     ***************************************************************/
 }
