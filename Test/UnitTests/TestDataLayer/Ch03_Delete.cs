@@ -23,6 +23,31 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void TestLoadOnlyBookAndDelete()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books
+                    .Single(p => p.Title == "Quantum Networking");
+                context.Remove(book); 
+                context.SaveChanges();
+
+                //VERIFY
+                context.Books.Count().ShouldEqual(3);
+                context.Set<BookAuthor>().Count().ShouldEqual(3);
+                context.Set<Review>().Count().ShouldEqual(0);
+            }
+        }
+
+        [Fact]
         public void TestDeletePriceOffer()
         {
             //SETUP

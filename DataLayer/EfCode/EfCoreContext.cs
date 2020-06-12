@@ -9,14 +9,14 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext
     {
-        private readonly Guid _userId; //#A
+        private readonly Guid _userId;                                     //#A
 
-        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B
-            IUserIdService userIdService = null) //#C
+        public EfCoreContext(DbContextOptions<EfCoreContext> options,      //#B
+            IUserIdService userIdService = null)                           //#C
             : base(options)
         {
-            _userId = userIdService?.GetUserId()                     //#D
-                       ?? new ReplacementUserIdService().GetUserId(); //#D
+            _userId = userIdService?.GetUserId()                           //#D
+                       ?? new ReplacementUserIdService().GetUserId();      //#D
         }
 
         public DbSet<Book> Books { get; set; }
@@ -34,11 +34,11 @@ namespace DataLayer.EfCode
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Book>()                            //#F
-                .HasQueryFilter(p => !p.SoftDeleted);              //#F
+            modelBuilder.Entity<Book>()                                    //#F
+                .HasQueryFilter(p => !p.SoftDeleted);                      //#F
                                                             
-            modelBuilder.Entity<Order>()                           //#G
-                .HasQueryFilter(x => x.CustomerId == _userId);  //#G
+            modelBuilder.Entity<Order>()                                   //#G
+                .HasQueryFilter(x => x.CustomerId == _userId);             //#G
         } 
     }
 }

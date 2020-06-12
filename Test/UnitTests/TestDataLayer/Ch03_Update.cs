@@ -94,6 +94,38 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void UpdateTwoPropertiesWithLogging()
+        {
+            //SETUP
+            var showLog = false;
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log =>
+            {
+                if (showLog)
+                    _output.WriteLine(log.DecodeMessage());
+            });
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                //ATTEMPT
+                showLog = true;
+                var book = context.Books
+                    .Single(p => p.Title == "Quantum Networking");
+                book.Title = "New title";
+                book.PublishedOn = new DateTime(2058, 1, 1);
+                context.SaveChanges();
+                showLog = false;
+
+                //VERIFY
+                var bookAgain = context.Books
+                    .Single(p => p.Title == "New title");
+                bookAgain.PublishedOn
+                    .ShouldEqual(new DateTime(2058, 1, 1));
+            }
+        }
+
+        [Fact]
         public void UpdatePublicationDateDisconnected()
         {
             //SETUP
