@@ -197,5 +197,26 @@ namespace Test.UnitTests.TestDataLayer
                 ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).").ShouldBeTrue();
             }
         }
+
+        [Fact]
+        public void UpdateUpdatePublishedOnFromFourBooks()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                //ATTEMPT
+                var books = context.Books.ToList();
+                books.First().PublishedOn = new DateTime(2020, 1, 1);   
+                context.SaveChanges();  
+
+                //VERIFY
+                context.Books.First().PublishedOn  
+                    .ShouldEqual(new DateTime(2020, 1, 1)); 
+            }
+        }
     }
 }
