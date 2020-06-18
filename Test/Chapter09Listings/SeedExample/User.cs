@@ -11,5 +11,11 @@ namespace Test.Chapter09Listings.SeedExample
         public SimpleAddress Address { get; set; }
 
         public int ProjectId { get; set; }
+
+
+        public override string ToString()
+        {
+            return $"{nameof(UserId)}: {UserId}, {nameof(Name)}: {Name}, {Address}, {nameof(ProjectId)}: {ProjectId}";
+        }
     }
 }

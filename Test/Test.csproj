@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Chapter09Listings\SeedExample\Migrations\20200618081847_UpdateSeed.cs" />
+    <Compile Remove="Chapter09Listings\SeedExample\Migrations\20200618081847_UpdateSeed.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="EfCore.TestSupport" Version="3.2.0" />
     <PackageReference Include="EfCore.TestSupportSchema" Version="1.0.0-preview003" />

@@ -10,5 +10,10 @@ namespace Test.Chapter09Listings.SeedExample
     {
         public string Street { get; set; }
         public string City { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Street)}: {Street}, {nameof(City)}: {City}";
+        }
     }
 }
