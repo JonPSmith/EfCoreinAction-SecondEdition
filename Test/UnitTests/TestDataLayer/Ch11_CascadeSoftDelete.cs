@@ -79,6 +79,7 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+
         [Fact]
         public void TestCascadeSoftDeleteEmployeeSoftDelOk()
         {
@@ -93,7 +94,6 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
-                context.SaveChanges();
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(7);
@@ -101,6 +101,35 @@ namespace Test.UnitTests.TestDataLayer
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
                 context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
                     .ShouldEqual(new byte[]{1, 2, 2, 3,3,3,3});
+            }
+        }
+
+        [Theory]
+        [InlineData(true, 4)]
+        [InlineData(false, 7)]
+        public void TestCascadeSoftDeleteEmployeeSoftDelWithLoggingOk(bool nullNavigationalMeansNotLoaded, int selectCount)
+        {
+            //SETUP
+            var logs = new List<string>();
+            var options = SqliteInMemory.CreateOptionsWithLogging<CascadeSoftDelDbContext>(log => logs.Add(log.DecodeMessage()));
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+
+                var service = new CascadeSoftDelService(context, nullNavigationalMeansNotLoaded);
+
+                //ATTEMPT
+                logs.Clear();
+                var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
+
+                //VERIFY
+                logs.Count(x => x.Contains("SELECT \"e\".\"EmployeeSoftDelId\", ")).ShouldEqual(selectCount);
+                numSoftDeleted.ShouldEqual(7);
+                context.Employees.Count().ShouldEqual(4);
+                context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
+                context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
+                    .ShouldEqual(new byte[] { 1, 2, 2, 3, 3, 3, 3 });
             }
         }
 
@@ -119,7 +148,6 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
-                context.SaveChanges();
 
                 //VERIFY
                 preNumSoftDeleted.ShouldEqual(3);
@@ -140,17 +168,17 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
-                context.Employees.First(x => !x.WorksFromMe.Any() && x.Name.StartsWith("dev")).WorksFromMe = new List<EmployeeSoftDel>{ceo};
-                context.SaveChanges();
+                var devEntry = context.Employees.Single(x => x.Name == "dev1a");
+                devEntry.WorksFromMe = new List<EmployeeSoftDel>{ devEntry.Manager.Manager};
 
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
-                context.SaveChanges();
+                var numSoftDeleted = service.CascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
 
                 //VERIFY
-                numSoftDeleted.ShouldEqual(11);
+                numSoftDeleted.ShouldEqual(7);
+                
             }
         }
 
@@ -171,6 +199,35 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        //---------------------------------------------------------
+        //disconnected tests
+
+        [Fact]
+        public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+            }
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+
+                var service = new CascadeSoftDelService(context);
+
+                //ATTEMPT
+                var numSoftDeleted = service.CascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+
+                //VERIFY
+                numSoftDeleted.ShouldEqual(7);
+                context.Employees.Count().ShouldEqual(4);
+                context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
+                context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
+                    .ShouldEqual(new byte[] { 1, 2, 2, 3, 3, 3, 3 });
+            }
+        }
 
     }
 }

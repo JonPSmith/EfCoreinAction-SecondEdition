@@ -7,19 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ServiceLayer.SoftDeleteServices.Concrete
 {
     public class CascadeSoftDelService
     {
         private readonly DbContext _context;
+        private readonly bool _nullNavigationalMeansNotLoaded;
         private HashSet<object> _stopCircularLook;
         private int _numChanged;
 
-        public CascadeSoftDelService(DbContext context)
+        public CascadeSoftDelService(DbContext context, bool nullNavigationalMeansNotLoaded = false)
         {
             _context = context;
+            _nullNavigationalMeansNotLoaded = nullNavigationalMeansNotLoaded;
         }
 
         public int CascadeSoftDelete<TEntity>(TEntity softDeleteThisEntity)
@@ -28,6 +29,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             _stopCircularLook = new HashSet<object>();
             _numChanged = 0;
             SetCascadeSoftDelete(softDeleteThisEntity, 1);
+            _context.SaveChanges();
             return _numChanged;
         }
 
@@ -57,10 +59,16 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                 if (navigation.PropertyInfo == null)
                     throw new NotImplementedException("Currently only works with navigation links that are properties");
                 var navValue = navigation.PropertyInfo.GetValue(principalInstance);
-                if (navValue == null)
-                    return; //no relationship
                 if (navigation.IsCollection)
                 {
+                    if (_nullNavigationalMeansNotLoaded && navValue == null)
+                    {
+                        //only load if null
+                        _context.Entry(principalInstance).Collection(navigation.PropertyInfo.Name).Load();
+                        navValue = navigation.PropertyInfo.GetValue(principalInstance);
+                    }
+                    if (navValue == null)
+                        return; //no relationship
                     foreach (var entity in navValue as IEnumerable)
                     {
                         SetCascadeSoftDelete(entity, (byte)(cascadeLevel + 1));
@@ -68,6 +76,15 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                 }
                 else
                 {
+                    if (_nullNavigationalMeansNotLoaded && navValue == null)
+                    {
+                        //only load if null
+                        _context.Entry(principalInstance).Reference(navigation.PropertyInfo.Name).Load();
+                        _context.Entry(principalInstance).Collection(navigation.PropertyInfo.Name).Load();
+                        navValue = navigation.PropertyInfo.GetValue(principalInstance);
+                    }
+                    if (navValue == null)
+                        return; //no relationship
                     SetCascadeSoftDelete(navValue, (byte)(cascadeLevel + 1));
                 }
             }
