@@ -34,7 +34,7 @@ namespace Test.Chapter11Listings
 
         public override string ToString()
         {
-            return $"Name: {Name} - has {WorksFromMe?.Count ?? 0} staff.";
+            return $"Name: {Name} - has {WorksFromMe?.Count ?? 0} staff, SoftDeleteLevel: {SoftDeleteLevel}";
         }
 
         public static void ShowHierarchical(EmployeeSoftDel employee, Action<string> output, int indent = 0, HashSet<EmployeeSoftDel> stopCircularRef = null)

@@ -93,7 +93,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(7);
@@ -121,7 +121,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 logs.Clear();
-                var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
 
                 //VERIFY
                 logs.Count(x => x.Contains("SELECT \"e\".\"EmployeeSoftDelId\", ")).ShouldEqual(selectCount);
@@ -144,10 +144,10 @@ namespace Test.UnitTests.TestDataLayer
                 var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
-                var preNumSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First().WorksFromMe.First());
+                var preNumSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First().WorksFromMe.First());
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
 
                 //VERIFY
                 preNumSoftDeleted.ShouldEqual(3);
@@ -174,7 +174,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(7);
@@ -192,10 +192,40 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(new Book());
+                var numSoftDeleted = service.SetCascadeSoftDelete(new Book());
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(0);
+            }
+        }
+
+
+        //---------------------------------------------------------
+        //reset 
+
+        [Fact]
+        public void TestResetCascadeSoftDeleteEmployeeSoftDelOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+
+                var service = new CascadeSoftDelService(context);
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+                numSoftDeleted.ShouldEqual(7);
+            }
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                var service = new CascadeSoftDelService(context);
+                //ATTEMPT
+                var numUnSoftDeleted = service.ResetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+
+                //VERIFY
+                numUnSoftDeleted.ShouldEqual(7);
+                context.Employees.Count().ShouldEqual(11);
             }
         }
 
@@ -220,7 +250,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context, readEveryTime);
 
                 //ATTEMPT
-                var numSoftDeleted = service.CascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(7);
