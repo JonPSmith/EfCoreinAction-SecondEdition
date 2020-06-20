@@ -61,7 +61,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             _stopCircularLook.Add(principalInstance);  //we keep a reference to this to stop the method going in a circular loop
 
             if (TestSetReset(castToCascadeSoftDelete, cascadeLevel))
-                //If the entity shouldn't be changed then we leave this and any of it children
+                //If the entity shouldn't be changed then we leave this entity and any of it children
                 return;
 
             var principalNavs = _context.Entry(principalInstance)
@@ -97,7 +97,6 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                     if (_readEveryTime || navValue == null)
                     {
                         _context.Entry(principalInstance).Reference(navigation.PropertyInfo.Name).Load();
-                        _context.Entry(principalInstance).Collection(navigation.PropertyInfo.Name).Load();
                         navValue = navigation.PropertyInfo.GetValue(principalInstance);
                     }
                     if (navValue == null)
