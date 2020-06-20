@@ -30,7 +30,7 @@ namespace Test.Chapter11Listings
         public int? ManagerEmployeeSoftDelId { get; set; }
         public EmployeeSoftDel Manager { get; set; }
 
-        public IList<EmployeeSoftDel> WorksFromMe { get; set; }
+        public IList<EmployeeSoftDel> WorksFromMe { get; set; } 
 
         public override string ToString()
         {

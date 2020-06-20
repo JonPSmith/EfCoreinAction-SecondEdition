@@ -105,9 +105,9 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Theory]
-        [InlineData(true, 4)]
-        [InlineData(false, 7)]
-        public void TestCascadeSoftDeleteEmployeeSoftDelWithLoggingOk(bool nullNavigationalMeansNotLoaded, int selectCount)
+        [InlineData(false, 4)]
+        [InlineData(true, 7)]
+        public void TestCascadeSoftDeleteEmployeeSoftDelWithLoggingOk(bool readEveryTime, int selectCount)
         {
             //SETUP
             var logs = new List<string>();
@@ -117,7 +117,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
 
-                var service = new CascadeSoftDelService(context, nullNavigationalMeansNotLoaded);
+                var service = new CascadeSoftDelService(context, readEveryTime);
 
                 //ATTEMPT
                 logs.Clear();
@@ -202,20 +202,22 @@ namespace Test.UnitTests.TestDataLayer
         //---------------------------------------------------------
         //disconnected tests
 
-        [Fact]
-        public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk(bool readEveryTime)
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
             using (var context = new CascadeSoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+                EmployeeSoftDel.SeedEmployeeSoftDel(context);
             }
             using (var context = new CascadeSoftDelDbContext(options))
             {
 
-                var service = new CascadeSoftDelService(context);
+                var service = new CascadeSoftDelService(context, readEveryTime);
 
                 //ATTEMPT
                 var numSoftDeleted = service.CascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
@@ -224,8 +226,6 @@ namespace Test.UnitTests.TestDataLayer
                 numSoftDeleted.ShouldEqual(7);
                 context.Employees.Count().ShouldEqual(4);
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
-                context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
-                    .ShouldEqual(new byte[] { 1, 2, 2, 3, 3, 3, 3 });
             }
         }
 

@@ -13,14 +13,14 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
     public class CascadeSoftDelService
     {
         private readonly DbContext _context;
-        private readonly bool _nullNavigationalMeansNotLoaded;
+        private readonly bool _readEveryTime;
         private HashSet<object> _stopCircularLook;
         private int _numChanged;
 
-        public CascadeSoftDelService(DbContext context, bool nullNavigationalMeansNotLoaded = false)
+        public CascadeSoftDelService(DbContext context, bool readEveryTime = true)
         {
             _context = context;
-            _nullNavigationalMeansNotLoaded = nullNavigationalMeansNotLoaded;
+            _readEveryTime = readEveryTime;
         }
 
         public int CascadeSoftDelete<TEntity>(TEntity softDeleteThisEntity)
@@ -58,10 +58,12 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             {
                 if (navigation.PropertyInfo == null)
                     throw new NotImplementedException("Currently only works with navigation links that are properties");
+
+                //It loads the current navigational value so that we can limit the number of database selects if the data is already loaded
                 var navValue = navigation.PropertyInfo.GetValue(principalInstance);
                 if (navigation.IsCollection)
                 {
-                    if (_nullNavigationalMeansNotLoaded && navValue == null)
+                    if (_readEveryTime || navValue == null)
                     {
                         //only load if null
                         _context.Entry(principalInstance).Collection(navigation.PropertyInfo.Name).Load();
@@ -76,7 +78,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                 }
                 else
                 {
-                    if (_nullNavigationalMeansNotLoaded && navValue == null)
+                    if (_readEveryTime || navValue == null)
                     {
                         //only load if null
                         _context.Entry(principalInstance).Reference(navigation.PropertyInfo.Name).Load();
