@@ -8,7 +8,23 @@ namespace DataLayer.Migrations
         //Manually edited to change drop CustomerId/add UserId to a RenameColumn
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //changed AddColumn to RenameColumn
+            //Removed this ---
+            //migrationBuilder.AddColumn<Guid>(
+            //    name: "UserId",
+            //    table: "Orders",
+            //    type: "uniqueidentifier",
+            //    nullable: false,
+            //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            //And removed this too -----
+            //migrationBuilder.AddColumn<Guid>(
+            //    name: "UserId",
+            //    table: "Orders",
+            //    type: "uniqueidentifier",
+            //    nullable: false,
+            //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            //--- And added a RenameColumn
             migrationBuilder.RenameColumn(
                 name: "CustomerId",
                 table: "Orders",
@@ -43,14 +59,6 @@ namespace DataLayer.Migrations
                 nullable: false,
                 oldClrType: typeof(decimal),
                 oldType: "decimal(18,2)");
-
-            //Removed
-            //migrationBuilder.AddColumn<Guid>(
-            //    name: "UserId",
-            //    table: "Orders",
-            //    type: "uniqueidentifier",
-            //    nullable: false,
-            //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AlterColumn<decimal>(
                 name: "BookPrice",
