@@ -63,8 +63,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             if (TestSetReset(castToCascadeSoftDelete, cascadeLevel))
                 //If the entity shouldn't be changed then we leave this and any of it children
                 return;
-                
-            castToCascadeSoftDelete.SoftDeleteLevel = cascadeLevel;
+            
             _numChanged++;
 
             var principalNavs = _context.Entry(principalInstance)
