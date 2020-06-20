@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Chapter11Listings\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
