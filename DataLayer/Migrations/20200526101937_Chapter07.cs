@@ -17,12 +17,9 @@ namespace DataLayer.Migrations
             //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             //And removed this too -----
-            //migrationBuilder.AddColumn<Guid>(
-            //    name: "UserId",
-            //    table: "Orders",
-            //    type: "uniqueidentifier",
-            //    nullable: false,
-            //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+            //migrationBuilder.DropColumn(
+            //    name: "CustomerId",
+            //    table: "Orders");
 
             //--- And added a RenameColumn
             migrationBuilder.RenameColumn(
@@ -141,10 +138,24 @@ namespace DataLayer.Migrations
                 name: "IX_Books_PublishedOn",
                 table: "Books");
 
+            //Removed this ---
+            //migrationBuilder.AddColumn<Guid>(
+            //    name: "CustomerId",
+            //    table: "Orders",
+            //    type: "uniqueidentifier",
+            //    nullable: false,
+            //    defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
             //Removed this
             //migrationBuilder.DropColumn(
             //    name: "UserId",
             //    table: "Orders");
+
+            //--- And added a RenameColumn
+            migrationBuilder.RenameColumn(
+                name: "CustomerId",
+                table: "Orders",
+                newName: "UserId");
 
             migrationBuilder.AlterColumn<string>(
                 name: "VoterName",
