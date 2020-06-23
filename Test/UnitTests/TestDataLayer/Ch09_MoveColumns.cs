@@ -23,16 +23,19 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [RunnableInDebugOnly]
-        public void TestMoveColumnsSqlServerOk()
+        public void TestMoveColumnsMigrateSqlServerOk()
         {
             //SETUP
             var options = this.CreateUniqueClassOptions<MoveColumnsDbContext>();
             using (var context = new MoveColumnsDbContext(options))
             {
-                context.Database.EnsureDeleted();
+                context.Database.Migrate();
 
                 //ATTEMPT
-                context.Database.Migrate();
+                //var u1 = new User { Name = "Jill", Street = "Jill street", City = "Jill city"};
+                //var u2 = new User { Name = "Jack", Street = "Jack street", City = "Jack city" };
+                //context.AddRange(u1, u2);
+                //context.SaveChanges();
 
                 //VERIFY
             }

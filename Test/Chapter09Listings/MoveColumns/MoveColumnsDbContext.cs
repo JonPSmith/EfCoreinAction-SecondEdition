@@ -14,7 +14,7 @@ namespace Test.Chapter09Listings.MoveColumns
 
         public DbSet<User> Users { get; set; }
 
-        //public DbSet<Address> Addresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         /**********************************************************
          To create a migration I had to
