@@ -29,9 +29,10 @@ namespace Test.UnitTests.TestDataLayer
             var options = this.CreateUniqueClassOptions<MoveColumnsDbContext>();
             using (var context = new MoveColumnsDbContext(options))
             {
-                context.Database.EnsureClean();
+                context.Database.EnsureDeleted();
 
                 //ATTEMPT
+                context.Database.Migrate();
 
                 //VERIFY
             }

@@ -11,5 +11,8 @@ namespace Test.Chapter09Listings.MoveColumns
 
         public string Street { get; set; }
         public string City { get; set; }
+
+        //public int AddressId { get; set; }
+        //public Address UserAddress { get; set; }
     }
 }

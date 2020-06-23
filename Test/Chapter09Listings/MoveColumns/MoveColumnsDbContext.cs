@@ -16,14 +16,6 @@ namespace Test.Chapter09Listings.MoveColumns
 
         //public DbSet<Address> Addresses { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>().HasData(
-                new { UserId = 123, Name = "Jack", Street = "Jake Street", City = "Jack City"},
-                new { UserId = 456, Name = "Jill", Street = "Jill Street", City = "Jill City"}
-            );
-        }
-
         /**********************************************************
          To create a migration I had to
         1. Set the startup project to Test
