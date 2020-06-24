@@ -7,7 +7,7 @@ namespace Test.Chapter09Listings.AddViewCommand
 {
     public class MyView
     {
-        public int Id { get; set; }
+        public string MyString { get; set; }
 
         public DateTime MyDateTime { get; set; }
     }

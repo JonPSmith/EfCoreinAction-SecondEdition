@@ -19,7 +19,7 @@ namespace Test.Chapter09Listings.AddViewCommand
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MyEntity>().ToTable("Entities");
-            modelBuilder.Entity<MyView>().ToView("EntityFilterView");
+            modelBuilder.Entity<MyView>().ToView("EntityFilterView").HasNoKey();
         }
 
         /**********************************************************
