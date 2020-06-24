@@ -32,6 +32,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.Migrate();
 
                 //ATTEMPT
+                //This was used when the first migration was created. It adds data that needs copying in the second migration
                 //var u1 = new User { Name = "Jill", Street = "Jill street", City = "Jill city"};
                 //var u2 = new User { Name = "Jack", Street = "Jack street", City = "Jack city" };
                 //context.AddRange(u1, u2);

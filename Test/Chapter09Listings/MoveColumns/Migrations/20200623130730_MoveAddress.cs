@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Test.Chapter09Listings.MoveColumns.Migrations
 {
@@ -65,6 +66,8 @@ SET [AddressId] = (SELECT [AddressId]
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            throw new NotImplementedException("I haven't altered this migration to reverse the data copying.");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Users_Addresses_AddressId",
                 table: "Users");

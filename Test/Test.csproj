@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="UnitTests\TestDataLayer\AddViewCommand\" />
   </ItemGroup>
 
 </Project>
