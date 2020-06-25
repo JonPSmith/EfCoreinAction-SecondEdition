@@ -49,7 +49,7 @@ namespace Test.UnitTests.TestServiceLayer
             {
                 context.Database.EnsureCreated();
                 var oldBook = new Book{PublishedOn = new DateTime(2000,1,1)};
-                var futureBookThisYear = new Book { PublishedOn = DateTime.Today.AddDays(1) };
+                var futureBookThisYear = new Book { PublishedOn = DateTime.UtcNow.Date.AddDays(1) };
                 context.Books.AddRange(oldBook, futureBookThisYear);
                 context.SaveChanges();
                 var service = new BookFilterDropdownService(context);

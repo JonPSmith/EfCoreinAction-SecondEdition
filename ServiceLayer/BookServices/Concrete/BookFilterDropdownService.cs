@@ -34,7 +34,7 @@ namespace ServiceLayer.BookServices.Concrete
                     return FormVotesDropDown();
                 case BooksFilterBy.ByPublicationYear:
                     var result = _db.Books                           //#A
-                        .Where(x => x.PublishedOn <= DateTime.Today) //#A
+                        .Where(x => x.PublishedOn <= DateTime.UtcNow.Date) //#A
                         .Select(x => x.PublishedOn.Year)             //#A
                         .Distinct()                                  //#A
                         .OrderByDescending(x => x)                   //#B
@@ -54,7 +54,7 @@ namespace ServiceLayer.BookServices.Concrete
 
                     return result;
                 /*****************************************************************
-                #A This long command gets the year of publication by filters out the future books, select the data and uses distinct to only have one of each year
+                #A This long command gets the year of publication by filters out the future books, select the date and uses distinct to only have one of each year
                 #B Orders the years, with newest year at the top
                 #C I finally use two client/server evaluations to turn the values into strings
                 #D This returns true if there is a book in the list that is not yet published

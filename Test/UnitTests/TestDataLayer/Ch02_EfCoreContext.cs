@@ -85,5 +85,21 @@ namespace Test.UnitTests.TestDataLayer
                     p.Title == "Refactoring").ShouldEqual(1);
             }
         }
+
+        [Fact]
+        public void TestCreateDataSqliteInMemoryOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptionsWithLogging<EfCoreContext>(log => _output.WriteLine(log.Message));
+            using (var context = new EfCoreContext(options))
+            {
+
+                //ATTEMPT
+                context.Database.EnsureCreated();
+
+                //VERIFY
+
+            }
+        }
     }
 }
