@@ -39,7 +39,7 @@ The unit tests are all in the `Test` project and uses [xUnit](https://xunit.net/
 
 If you are using **Visual Studio**, then its Test feature via the `Test` button found on the top toolbar - see [Microsoft's VS unit test docs](https://docs.microsoft.com/en-us/visualstudio/test/unit-test-your-code).
 
-If you are using , then you use it Test feature, via the tests icon (looks like a scientific flask). VSCode needs some setting up to work with C#, but this repo has the necessary .vscode files set up to run the unit tests - see [VS Code C# docs](https://code.visualstudio.com/docs/languages/csharp) for more on using VS Code C#.
+If you are using , then you use it Test feature, via the tests icon (looks like a scientific flask). VS Code needs some setting up to work with C#, but once thats done then this repo has the necessary .vscode files set up to run the unit tests - see [VS Code C# docs](https://code.visualstudio.com/docs/languages/csharp) for more on using VS Code C#.
 
 Many of the tests use SQLite in-memory databases which just work. But some tests use SQL Server. If you are using **Visual Studio on Windows** you should install the  the  "Data storage and processing" feature. This should give you a SQL Server called localdb, which the standard unit tests use. If you need to change the SQL Server name etc. then you should change the connection string called `UnitTestConnection` in the appsettings.json file in the `Test` project.
 

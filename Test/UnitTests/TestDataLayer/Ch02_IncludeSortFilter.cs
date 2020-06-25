@@ -38,7 +38,6 @@ namespace Test.UnitTests.TestDataLayer
 
         typeof(IList<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
         typeof(ICollection<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
-        typeof(Collection<Review>).IsAssignableFrom(listOfT).ShouldBeTrue();
     }
 
 

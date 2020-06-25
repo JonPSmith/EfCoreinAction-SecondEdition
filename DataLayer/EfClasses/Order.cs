@@ -19,7 +19,7 @@ namespace DataLayer.EfClasses
 
         // relationships
 
-        public IList<LineItem> LineItems { get; set; }
+        public ICollection<LineItem> LineItems { get; set; }
 
         // Extra columns not used by EF
 

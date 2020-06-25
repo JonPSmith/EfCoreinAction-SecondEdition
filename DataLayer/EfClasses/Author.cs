@@ -13,7 +13,7 @@ namespace DataLayer.EfClasses
         //------------------------------
         //Relationships
 
-        public IList<BookAuthor>
+        public ICollection<BookAuthor>
             BooksLink { get; set; } //#F
     }
 

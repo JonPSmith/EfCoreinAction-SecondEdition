@@ -22,9 +22,9 @@ namespace DataLayer.EfClasses
         //relationships
 
         public PriceOffer Promotion { get; set; } //#C
-        public IList<Review> Reviews { get; set; } //#D
+        public ICollection<Review> Reviews { get; set; } //#D
 
-        public IList<BookAuthor>
+        public ICollection<BookAuthor>
             AuthorsLink { get; set; } //#E
     }
 
