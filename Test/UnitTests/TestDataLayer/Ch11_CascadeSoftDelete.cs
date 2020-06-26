@@ -117,11 +117,11 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
 
-                var service = new CascadeSoftDelService(context, readEveryTime);
+                var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
                 logs.Clear();
-                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First(), readEveryTime);
 
                 //VERIFY
                 logs.Count(x => x.Contains("SELECT \"e\".\"EmployeeSoftDelId\", ")).ShouldEqual(selectCount);
@@ -199,6 +199,36 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        //---------------------------------------------------------
+        //SetCascadeSoftDelete disconnected tests
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk(bool readEveryTime)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                EmployeeSoftDel.SeedEmployeeSoftDel(context);
+            }
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+
+                var service = new CascadeSoftDelService(context);
+
+                //ATTEMPT
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"), readEveryTime);
+
+                //VERIFY
+                numSoftDeleted.ShouldEqual(7);
+                context.Employees.Count().ShouldEqual(4);
+                context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
+            }
+        }
+
 
         //---------------------------------------------------------
         //reset 
@@ -254,35 +284,7 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        //---------------------------------------------------------
-        //disconnected tests
 
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk(bool readEveryTime)
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                EmployeeSoftDel.SeedEmployeeSoftDel(context);
-            }
-            using (var context = new CascadeSoftDelDbContext(options))
-            {
-
-                var service = new CascadeSoftDelService(context, readEveryTime);
-
-                //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
-
-                //VERIFY
-                numSoftDeleted.ShouldEqual(7);
-                context.Employees.Count().ShouldEqual(4);
-                context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
-            }
-        }
 
     }
 }
