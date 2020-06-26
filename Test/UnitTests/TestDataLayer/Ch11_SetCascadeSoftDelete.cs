@@ -85,6 +85,28 @@ namespace Test.UnitTests.TestDataLayer
 
 
         [Fact]
+        public void TestCascadeSoftDeleteEmployeeSoftDelInfoOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+
+                var service = new CascadeSoftDelService(context);
+
+                //ATTEMPT
+                var Info = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
+
+                //VERIFY
+                //EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
+                Info.NumFound.ShouldEqual(7 + 6);
+                Info.ToString().ShouldEqual("You have soft deleted an entity and its 12 dependents");
+            }
+        }
+
+        [Fact]
         public void TestCascadeSoftDeleteEmployeeSoftDelOk()
         {
             //SETUP
@@ -97,7 +119,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First()).NumFound;
 
                 //VERIFY
                 //EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
@@ -131,7 +153,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 logs.Clear();
-                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First(), readEveryTime);
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First(), readEveryTime).NumFound;
 
                 //VERIFY
                 logs.Count(x =>  _selectMatchRegex.IsMatch(x)).ShouldEqual(selectCount);
@@ -159,11 +181,11 @@ namespace Test.UnitTests.TestDataLayer
                 var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
-                var preNumSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First().WorksFromMe.First());
+                var preNumSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First().WorksFromMe.First()).NumFound;
                 EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
 
                 //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
+                var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First()).NumFound;
 
                 //VERIFY
                 EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
@@ -194,9 +216,9 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numInnerSoftDelete = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "ProjectManager1"));
+                var numInnerSoftDelete = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "ProjectManager1")).NumFound;
                 numInnerSoftDelete.ShouldEqual(3 + 3);
-                var numOuterSoftDelete = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+                var numOuterSoftDelete = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO")).NumFound;
 
                 //VERIFY
                 EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
@@ -230,7 +252,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO")).NumFound;
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(7+6);
@@ -248,7 +270,7 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(new Book());
+                var numSoftDeleted = service.SetCascadeSoftDelete(new Book()).NumFound;
 
                 //VERIFY
                 numSoftDeleted.ShouldEqual(0);
@@ -277,7 +299,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 logs.Clear();
-                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"), readEveryTime);
+                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"), readEveryTime).NumFound;
 
                 //VERIFY
                 logs.Count(x => _selectMatchRegex.IsMatch(x)).ShouldEqual(7+7);
