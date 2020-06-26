@@ -59,7 +59,6 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
                 {
                     if (_readEveryTime || navValue == null)
                     {
-                        //_context.Entry(principalInstance).Collection(navigation.PropertyInfo.Name).Load();
                         LoadNavigationCollection(principalInstance, navigation);
                         navValue = navigation.PropertyInfo.GetValue(principalInstance);
                     }
@@ -74,7 +73,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
                 {
                     if (_readEveryTime || navValue == null)
                     {
-                        _context.Entry(principalInstance).Reference(navigation.PropertyInfo.Name).Load();
+                        LoadNavigationSingleton(principalInstance, navigation);
                         navValue = navigation.PropertyInfo.GetValue(principalInstance);
                     }
                     if (navValue == null)
@@ -89,8 +88,8 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
             if (_set ?
                     //_set = true   If the entity has already been soft deleted , then we don't change it, nor its child relationships
                     castToCascadeSoftDelete.SoftDeleteLevel != 0
-                    //_set = false  Don't reset if it was soft deleted at a lower level
-                    : castToCascadeSoftDelete.SoftDeleteLevel < cascadeLevel)
+                    //_set = false  Don't reset if it was soft deleted value donesn't match - this stops previously deleted sub-groups being updeleted
+                    :  castToCascadeSoftDelete.SoftDeleteLevel != cascadeLevel)
                 return true; //we don't change it and we exit
 
             //Else, yes we should change it 
