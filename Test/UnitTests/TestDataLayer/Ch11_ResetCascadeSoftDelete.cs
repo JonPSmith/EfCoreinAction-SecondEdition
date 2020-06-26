@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.SoftDeleteServices.Concrete;
 using Test.Chapter11Listings;
@@ -16,7 +15,6 @@ namespace Test.UnitTests.TestDataLayer
     public class Ch11_ResetCascadeSoftDelete
     {
         private ITestOutputHelper _output;
-        private readonly Regex _selectMatchRegex = new Regex(@"SELECT "".""\.""EmployeeSoftDelId"",", RegexOptions.None);
 
         public Ch11_ResetCascadeSoftDelete(ITestOutputHelper output)
         {

@@ -32,7 +32,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
             Info = new CascadeSoftDeleteInfo(_whatDoing);
         }
 
-        public void AlterCascadeSoftDelete(object principalInstance, byte cascadeLevel)
+        public void WalkEntitiesSoftDelete(object principalInstance, byte cascadeLevel)
         {
             if (!(principalInstance is ICascadeSoftDelete castToCascadeSoftDelete && principalInstance.GetType().IsClass) || _stopCircularLook.Contains(principalInstance))
                 return; //isn't something we need to consider, or we saw it before, so it returns 
@@ -68,7 +68,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
                         return; //no relationship
                     foreach (var entity in navValue as IEnumerable)
                     {
-                        AlterCascadeSoftDelete(entity, (byte)(cascadeLevel + 1));
+                        WalkEntitiesSoftDelete(entity, (byte)(cascadeLevel + 1));
                     }
                 }
                 else
@@ -80,7 +80,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
                     }
                     if (navValue == null)
                         return; //no relationship
-                    AlterCascadeSoftDelete(navValue, (byte)(cascadeLevel + 1));
+                    WalkEntitiesSoftDelete(navValue, (byte)(cascadeLevel + 1));
                 }
             }
         }

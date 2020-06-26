@@ -26,7 +26,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             where TEntity : class
         {
             var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.SoftDelete, readEveryTime);
-            walker.AlterCascadeSoftDelete(softDeleteThisEntity, 1);
+            walker.WalkEntitiesSoftDelete(softDeleteThisEntity, 1);
             _context.SaveChanges();
             return walker.Info;
         }
@@ -36,12 +36,30 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         {
             //For reset you need to read every time because some of the collection might be soft deleted already
             var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.UnSoftDelete, true);
-            walker.AlterCascadeSoftDelete(softDeleteThisEntity, 1);
+            walker.WalkEntitiesSoftDelete(softDeleteThisEntity, 1);
             _context.SaveChanges();
             return walker.Info;
         }
 
-        
+        public CascadeSoftDeleteInfo CheckCascadeSoftDelete<TEntity>(TEntity softDeleteThisEntity)
+            where TEntity : class
+        {
+            //For reset you need to read every time because some of the collection might be soft deleted already
+            var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.CheckWhatWillDelete, true);
+            walker.WalkEntitiesSoftDelete(softDeleteThisEntity, 1);
+            return walker.Info;
+        }
+
+
+        public CascadeSoftDeleteInfo HardDeleteSoftDeletedEntries<TEntity>(TEntity hardDeleteThisEntity)
+            where TEntity : class
+        {
+            //For reset you need to read every time because some of the collection might be soft deleted already
+            var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.HardDeleteSoftDeleted, true);
+            walker.WalkEntitiesSoftDelete(hardDeleteThisEntity, 1);
+            _context.SaveChanges();
+            return walker.Info;
+        }
 
 
     }

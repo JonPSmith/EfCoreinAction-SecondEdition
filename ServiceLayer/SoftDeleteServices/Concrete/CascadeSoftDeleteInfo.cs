@@ -33,7 +33,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                 case CascadeSoftDelWhatDoing.UnSoftDelete:
                     return Message("un-soft deleted");
                 case CascadeSoftDelWhatDoing.CheckWhatWillDelete:
-                    return Message("hard delete", false);
+                    return Message("hard deleted", true);
                 case CascadeSoftDelWhatDoing.HardDeleteSoftDeleted:
                     return Message("hard deleted");
                 default:
@@ -41,17 +41,17 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             }
         }
 
-        private string Message(string what, bool done = true)
+        private string Message(string what, bool preCheck = false)
         {
-            var wereWould = done ? "were" : "would";
-            var haveWould = done ? "have" : "would";
+            var haveWould = preCheck ? "would be" : "have been" ;
             if (NumFound == 0)
-                return $"No entries {wereWould} {what}";
+                return $"No entries {haveWould} {what}";
 
+            var wereWould = preCheck ? "would" : "have";
             var dependentsSuffix = NumFound > 1
                 ? $" and its {NumFound - 1} dependents"
                 : "";
-            return $"You {haveWould} {what} an entity{dependentsSuffix}";
+            return $"You {wereWould} {what} an entity{dependentsSuffix}";
         }
     }
 }
