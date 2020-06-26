@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.SoftDeleteServices.Concrete;
@@ -14,11 +15,12 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch11_CascadeSoftDelete
+    public class Ch11_SetCascadeSoftDelete
     {
         private ITestOutputHelper _output;
+        private Regex _selectMatchRegex = new Regex(@"SELECT "".""\.""EmployeeSoftDelId"",", RegexOptions.None);
 
-        public Ch11_CascadeSoftDelete(ITestOutputHelper output)
+        public Ch11_SetCascadeSoftDelete(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -37,7 +39,8 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.Employees.Count().ShouldEqual(11);
-                EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x));
+                context.Contracts.Count().ShouldEqual(9);
+                EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
             }
         }
 
@@ -57,6 +60,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.Employees.Count().ShouldEqual(4);
+                context.Contracts.Count().ShouldEqual(3);
             }
         }
 
@@ -96,11 +100,17 @@ namespace Test.UnitTests.TestDataLayer
                 var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
 
                 //VERIFY
-                numSoftDeleted.ShouldEqual(7);
+                //EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
+                numSoftDeleted.ShouldEqual(7 + 6);
                 context.Employees.Count().ShouldEqual(4);
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
                 context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
-                    .ShouldEqual(new byte[]{1, 2, 2, 3,3,3,3});
+                    .ShouldEqual(new byte[] { 1, 2, 2, 3, 3, 3, 3 });
+                context.Contracts.Count().ShouldEqual(3);
+                context.Contracts.IgnoreQueryFilters().Count().ShouldEqual(9);
+                context.Employees.IgnoreQueryFilters().Select(x => x.Contract).Where(x => x != null)
+                    .Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
+                    .ShouldEqual(new byte[] { 2, 3, 3, 4, 4, 4 });
             }
         }
 
@@ -124,12 +134,17 @@ namespace Test.UnitTests.TestDataLayer
                 var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First(), readEveryTime);
 
                 //VERIFY
-                logs.Count(x => x.Contains("SELECT \"e\".\"EmployeeSoftDelId\", ")).ShouldEqual(selectCount);
-                numSoftDeleted.ShouldEqual(7);
+                logs.Count(x =>  _selectMatchRegex.IsMatch(x)).ShouldEqual(selectCount);
+                numSoftDeleted.ShouldEqual(7 + 6);
                 context.Employees.Count().ShouldEqual(4);
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
                 context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
                     .ShouldEqual(new byte[] { 1, 2, 2, 3, 3, 3, 3 });
+                context.Contracts.Count().ShouldEqual(3);
+                context.Contracts.IgnoreQueryFilters().Count().ShouldEqual(9);
+                context.Employees.IgnoreQueryFilters().Select(x => x.Contract).Where(x => x != null)
+                    .Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
+                    .ShouldEqual(new byte[] { 2, 3, 3, 4, 4, 4 });
             }
         }
 
@@ -150,12 +165,17 @@ namespace Test.UnitTests.TestDataLayer
                 var numSoftDeleted = service.SetCascadeSoftDelete(ceo.WorksFromMe.First());
 
                 //VERIFY
-                preNumSoftDeleted.ShouldEqual(3);
-                numSoftDeleted.ShouldEqual(4);
+                preNumSoftDeleted.ShouldEqual(3 + 3);
+                numSoftDeleted.ShouldEqual(4 + 3);
                 context.Employees.Count().ShouldEqual(4);
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
                 context.Employees.IgnoreQueryFilters().Select(x => x.SoftDeleteLevel).Where(x => x > 0).ToArray()
                     .ShouldEqual(new byte[] { 1, 1, 2, 2, 2, 3, 3 });
+                context.Contracts.Count().ShouldEqual(3);
+                context.Contracts.IgnoreQueryFilters().Count().ShouldEqual(9);
+                context.Employees.IgnoreQueryFilters().Select(x => x.Contract).Where(x => x != null)
+                    .Select(x => x.SoftDeleteLevel).Where(x => x > 0)
+                    .ToArray().ShouldEqual(new byte[] { 2, 2, 3, 3, 3, 4 });
             }
         }
 
@@ -177,7 +197,7 @@ namespace Test.UnitTests.TestDataLayer
                 var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
 
                 //VERIFY
-                numSoftDeleted.ShouldEqual(7);
+                numSoftDeleted.ShouldEqual(7+6);
                 
             }
         }
@@ -208,7 +228,8 @@ namespace Test.UnitTests.TestDataLayer
         public void TestDisconnectedCascadeSoftDeleteEmployeeSoftDelOk(bool readEveryTime)
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            var logs = new List<string>();
+            var options = SqliteInMemory.CreateOptionsWithLogging<CascadeSoftDelDbContext>(log => logs.Add(log.DecodeMessage()));
             using (var context = new CascadeSoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
@@ -216,74 +237,21 @@ namespace Test.UnitTests.TestDataLayer
             }
             using (var context = new CascadeSoftDelDbContext(options))
             {
-
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
+                logs.Clear();
                 var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"), readEveryTime);
 
                 //VERIFY
-                numSoftDeleted.ShouldEqual(7);
+                logs.Count(x => _selectMatchRegex.IsMatch(x)).ShouldEqual(7+7);
+                numSoftDeleted.ShouldEqual(7+6);
                 context.Employees.Count().ShouldEqual(4);
                 context.Employees.IgnoreQueryFilters().Count().ShouldEqual(11);
+                context.Contracts.Count().ShouldEqual(3);
+                context.Contracts.IgnoreQueryFilters().Count().ShouldEqual(9);
             }
         }
-
-
-        //---------------------------------------------------------
-        //reset 
-
-        [Fact]
-        public void TestResetCascadeSoftDeleteEmployeeSoftDelOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
-
-                var service = new CascadeSoftDelService(context);
-                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
-                numSoftDeleted.ShouldEqual(7);
-
-                //ATTEMPT
-                var numUnSoftDeleted = service.ResetCascadeSoftDelete(context.Employees.IgnoreQueryFilters().Single(x => x.Name == "CTO"));
-
-                //VERIFY
-                numUnSoftDeleted.ShouldEqual(7);
-                context.Employees.Count().ShouldEqual(11);
-            }
-        }
-
-        [Fact]
-        public void TestDisconnectedResetCascadeSoftDeleteEmployeeSoftDelOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
-
-                var service = new CascadeSoftDelService(context);
-                var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO"));
-                numSoftDeleted.ShouldEqual(7);
-            }
-
-            using (var context = new CascadeSoftDelDbContext(options))
-            {
-                var service = new CascadeSoftDelService(context);
-
-                //ATTEMPT
-                var numUnSoftDeleted = service.ResetCascadeSoftDelete(context.Employees.IgnoreQueryFilters().Single(x => x.Name == "CTO"));
-
-                //VERIFY
-                numUnSoftDeleted.ShouldEqual(7);
-                context.Employees.Count().ShouldEqual(11);
-            }
-        }
-
 
 
     }

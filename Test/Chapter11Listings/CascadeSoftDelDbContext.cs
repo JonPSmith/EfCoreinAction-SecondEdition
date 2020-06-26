@@ -11,6 +11,7 @@ namespace Test.Chapter11Listings
             : base(options) { }
 
         public DbSet<EmployeeSoftDel> Employees { get; set; }
+        public DbSet<EmployeeContract> Contracts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,14 @@ namespace Test.Chapter11Listings
                 .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<EmployeeSoftDel>()
+                .HasOne(x => x.Contract)
+                .WithOne()
+                .HasForeignKey<EmployeeContract>(x => x.EmployeeSoftDelId)
+                .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder.Entity<EmployeeSoftDel>()
+                .HasQueryFilter(x => x.SoftDeleteLevel == 0);
+            modelBuilder.Entity<EmployeeContract>()
                 .HasQueryFilter(x => x.SoftDeleteLevel == 0);
         }
     }
