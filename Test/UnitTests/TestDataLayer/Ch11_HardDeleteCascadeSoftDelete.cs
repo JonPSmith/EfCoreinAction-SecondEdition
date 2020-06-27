@@ -44,7 +44,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 info.NumFound.ShouldEqual(7 + 6);
-                info.ToString().ShouldEqual("You would hard deleted an entity and its 12 dependents");
+                info.ToString().ShouldEqual("Are you sure you want to hard delete this entity and its 12 dependents");
             }
         }
 
@@ -65,7 +65,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 info.NumFound.ShouldEqual(0);
-                info.ToString().ShouldEqual("No entries would be hard deleted");
+                info.ToString().ShouldEqual("No entries will be hard deleted");
             }
         }
 

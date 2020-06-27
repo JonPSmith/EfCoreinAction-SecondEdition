@@ -20,12 +20,20 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         public int NumFound { get; internal set; }
 
         /// <summary>
+        /// If there is an error, then this contains a error massage. Otherwise it is null
+        /// </summary>
+        public string Error { get; internal set; }
+
+        /// <summary>
         /// What service you where using
         /// </summary>
         public CascadeSoftDelWhatDoing WhatDoing { get; }
 
         public override string ToString()
         {
+            if (Error != null)
+                return Error;
+
             switch (WhatDoing)
             {
                 case CascadeSoftDelWhatDoing.SoftDelete:
@@ -33,7 +41,11 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
                 case CascadeSoftDelWhatDoing.UnSoftDelete:
                     return Message("un-soft deleted");
                 case CascadeSoftDelWhatDoing.CheckWhatWillDelete:
-                    return Message("hard deleted", true);
+                {
+                    if (NumFound == 0)
+                        return $"No entries will be hard deleted";
+                    return $"Are you sure you want to hard delete this entity{DependentsSuffix()}";
+                }
                 case CascadeSoftDelWhatDoing.HardDeleteSoftDeleted:
                     return Message("hard deleted");
                 default:
@@ -41,17 +53,21 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             }
         }
 
-        private string Message(string what, bool preCheck = false)
+        private string Message(string what)
         {
-            var haveWould = preCheck ? "would be" : "have been" ;
             if (NumFound == 0)
-                return $"No entries {haveWould} {what}";
-
-            var wereWould = preCheck ? "would" : "have";
+                return $"No entries have been {what}";
             var dependentsSuffix = NumFound > 1
                 ? $" and its {NumFound - 1} dependents"
                 : "";
-            return $"You {wereWould} {what} an entity{dependentsSuffix}";
+            return $"You have {what} an entity{DependentsSuffix()}";
+        }
+
+        private string DependentsSuffix()
+        {
+            return NumFound > 1
+                ? $" and its {NumFound - 1} dependents"
+                : "";
         }
     }
 }

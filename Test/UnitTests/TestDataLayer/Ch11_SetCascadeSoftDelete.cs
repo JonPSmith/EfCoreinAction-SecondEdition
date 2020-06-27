@@ -107,6 +107,27 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void TestCascadeSoftDeleteEmployeeSoftDelOneToOneOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
+            using (var context = new CascadeSoftDelDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+
+                var service = new CascadeSoftDelService(context);
+
+                //ATTEMPT
+                var Info = service.SetCascadeSoftDelete(ceo.WorksFromMe.First().Contract);
+
+                //VERIFY
+                Info.NumFound.ShouldEqual(0);
+                Info.ToString().ShouldEqual("???");
+            }
+        }
+
+        [Fact]
         public void TestCascadeSoftDeleteEmployeeSoftDelOk()
         {
             //SETUP
