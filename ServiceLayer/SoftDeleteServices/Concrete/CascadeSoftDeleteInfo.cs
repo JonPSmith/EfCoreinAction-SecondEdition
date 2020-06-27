@@ -8,9 +8,10 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
     public class CascadeSoftDeleteInfo
     {
 
-        public CascadeSoftDeleteInfo(CascadeSoftDelWhatDoing whatDoing)
+        public CascadeSoftDeleteInfo(CascadeSoftDelWhatDoing whatDoing, string error)
         {
             WhatDoing = whatDoing;
+            Error = error;
             NumFound = 0;
         }
 
@@ -20,14 +21,14 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         public int NumFound { get; internal set; }
 
         /// <summary>
-        /// If there is an error, then this contains a error massage. Otherwise it is null
-        /// </summary>
-        public string Error { get; internal set; }
-
-        /// <summary>
         /// What service you where using
         /// </summary>
         public CascadeSoftDelWhatDoing WhatDoing { get; }
+
+        /// <summary>
+        /// If there is an error, then this contains a error massage. Otherwise it is null
+        /// </summary>
+        public string Error { get; }
 
         public override string ToString()
         {

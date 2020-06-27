@@ -29,7 +29,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
             _whatDoing = whatDoing;
             _readEveryTime = readEveryTime;
 
-            Info = new CascadeSoftDeleteInfo(_whatDoing);
+            Info = new CascadeSoftDeleteInfo(_whatDoing, null);
         }
 
         public void WalkEntitiesSoftDelete(object principalInstance, byte cascadeLevel)

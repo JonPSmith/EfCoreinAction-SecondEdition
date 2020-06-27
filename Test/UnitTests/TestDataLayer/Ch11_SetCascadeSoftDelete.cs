@@ -123,7 +123,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 Info.NumFound.ShouldEqual(0);
-                Info.ToString().ShouldEqual("???");
+                Info.ToString().ShouldEqual("You cannot soft delete a one-to-one relationship");
             }
         }
 
