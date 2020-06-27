@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -291,10 +292,10 @@ namespace Test.UnitTests.TestDataLayer
                 var service = new CascadeSoftDelService(context);
 
                 //ATTEMPT
-                var numSoftDeleted = service.SetCascadeSoftDelete(new Book()).NumFound;
+                var ex = Assert.Throws<InvalidOperationException>(() => service.SetCascadeSoftDelete(new Book()).NumFound);
 
                 //VERIFY
-                numSoftDeleted.ShouldEqual(0);
+                ex.Message.ShouldEqual("The entity type 'Book' was not found. Ensure that the entity type has been added to the model.");
             }
         }
 
