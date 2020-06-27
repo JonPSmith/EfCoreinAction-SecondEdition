@@ -15,7 +15,7 @@ namespace Test.Chapter02Listings
 
         //NOTE: all properties need to be virtual
         public virtual PriceOffer Promotion { get; set; }
-        public virtual IList<LazyReview> Reviews { get; set; }
+        public virtual ICollection<LazyReview> Reviews { get; set; }
 
     }
 }

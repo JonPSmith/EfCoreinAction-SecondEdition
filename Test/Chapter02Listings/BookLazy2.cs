@@ -23,8 +23,8 @@ namespace Test.Chapter02Listings
 
         public PriceOffer Promotion { get; set; } 
 
-        private IList<Lazy2Review> _reviews;                   
-        public IList<Lazy2Review> Reviews 
+        private ICollection<Lazy2Review> _reviews;                   
+        public ICollection<Lazy2Review> Reviews 
         {
             get => LazyLoader.Load(this, ref _reviews);
             set => _reviews = value;  
