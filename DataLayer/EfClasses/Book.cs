@@ -31,9 +31,9 @@ namespace DataLayer.EfClasses
         //relationships
 
         public PriceOffer Promotion { get; set; }
-        public IList<Review> Reviews { get; set; }
+        public ICollection<Review> Reviews { get; set; }
 
-        public IList<BookAuthor> 
+        public ICollection<BookAuthor> 
             AuthorsLink { get; set; }
 
         public bool SoftDeleted { get; set; }
