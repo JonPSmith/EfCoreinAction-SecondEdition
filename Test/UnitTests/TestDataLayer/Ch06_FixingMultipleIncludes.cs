@@ -82,6 +82,7 @@ namespace Test.UnitTests.TestDataLayer
                 var dummy1 = context.ManyTops.ToList();
                 var dummy2 = context.ManyTops.ToList();
                 ManyTop result;
+                var id = 1;
                 using (new TimeThings(_output, "sync load - first time"))
                 {
                     result = context.ManyTops
@@ -89,7 +90,7 @@ namespace Test.UnitTests.TestDataLayer
                         .Include(x => x.Collection1)
                         .Include(x => x.Collection2)
                         .Include(x => x.Collection3)
-                        .Single();
+                        .Single(x => x.Id == id);
 
                     /*********************************************************
                     #A This will cause each Include to be loaded separately, thus stopping the multiplication problem 
