@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -85,28 +84,25 @@ namespace Test.UnitTests.TestDataLayer
                 ManyTop result;
                 using (new TimeThings(_output, "sync load - first time"))
                 {
-                    result = context.ManyTops.Single(); //#A
-                    var a = context.Set<Many1>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToList(); //#B
-                    var b = context.Set<Many2>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToList(); //#B
-                    var c = context.Set<Many3>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToList(); //#B
+                    result = context.ManyTops
+                        .AsSplitQuery() //#A
+                        .Include(x => x.Collection1)
+                        .Include(x => x.Collection2)
+                        .Include(x => x.Collection3)
+                        .Single();
 
                     /*********************************************************
-                    #A This read in the main entity class, ManyTop that the relationships link to first
-                    #B Then you read in the collections one by one. Relational fixup will fill in the navigational properties in the main entity class, ManyTop  
+                    #A This will cause each Include to be loaded separately, thus stopping the multiplication problem 
                      **********************************************************/
                 }
                 using (new TimeThings(_output, "sync load - second time"))
                 {
-                    result = context.ManyTops.Single();
-                    var loadRels = new
-                    {
-                        a = context.Set<Many1>().Where(x => x.ManyTopId == result.Id).ToList(),
-                        b = context.Set<Many2>().Where(x => x.ManyTopId == result.Id).ToList(),
-                        c = context.Set<Many3>().Where(x => x.ManyTopId == result.Id).ToList(),
-                    };
+                    result = context.ManyTops
+                        .AsSplitQuery()
+                        .Include(x => x.Collection1)
+                        .Include(x => x.Collection2)
+                        .Include(x => x.Collection3)
+                        .Single();
                 }
 
                 //VERIFY
@@ -134,13 +130,12 @@ namespace Test.UnitTests.TestDataLayer
                 ManyTop result;
                 using (new TimeThings(_output, "async load - first time"))
                 {
-                    result = context.ManyTops.Single(); //#A
-                    var a = await context.Set<Many1>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToListAsync(); //#B
-                    var b = await context.Set<Many2>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToListAsync(); //#B
-                    var c = await context.Set<Many3>()                        //#B
-                        .Where(x => x.ManyTopId == result.Id).ToListAsync(); //#B
+                    result = await context.ManyTops
+                        .AsSplitQuery()
+                        .Include(x => x.Collection1)
+                        .Include(x => x.Collection2)
+                        .Include(x => x.Collection3)
+                        .SingleAsync();
 
                     /*********************************************************
                     #A This read in the main entity class, ManyTop that the relationships link to first
@@ -149,13 +144,12 @@ namespace Test.UnitTests.TestDataLayer
                 }
                 using (new TimeThings(_output, "async load - second time"))
                 {
-                    result = context.ManyTops.Single();
-                    var loadRels = new
-                    {
-                        a = context.Set<Many1>().Where(x => x.ManyTopId == result.Id).ToList(),
-                        b = context.Set<Many2>().Where(x => x.ManyTopId == result.Id).ToList(),
-                        c = context.Set<Many3>().Where(x => x.ManyTopId == result.Id).ToList(),
-                    };
+                    result = await context.ManyTops
+                        .AsSplitQuery()
+                        .Include(x => x.Collection1)
+                        .Include(x => x.Collection2)
+                        .Include(x => x.Collection3)
+                        .SingleAsync();
                 }
 
                 //VERIFY
