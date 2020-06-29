@@ -39,13 +39,14 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 var book = context.Books                          //#A
-                    .Single(p => p.Title == "Quantum Networking");//#A
-                book.PublishedOn = new DateTime(2058, 1, 1);      //#B     
-                context.SaveChanges();                            //#C
+                    .Single(p => p.Title == "Quantum Networking");//#B
+                book.PublishedOn = new DateTime(2058, 1, 1);      //#C     
+                context.SaveChanges();                            //#D
                 /**********************************************************
-                #A This finds the specific book we want to update. In the case our special book on Quantum Networking
-                #B Then it changes the expected publication date to year 2058 (it was 2057)
-                #C It calls SaveChanges which includes running a method called DetectChanges. This spots that the PublishedOn property has been changed
+                #A Finds the specific book we want to update. In the case our special book on Quantum Networking
+                #B Single means the query will fail if there is no book of that name, or many books with that name
+                #C Changes the expected publication date to year 2058 (it was 2057)
+                #D Calls SaveChanges which includes running a method called DetectChanges. This spots that the PublishedOn property has been changed
                 * *******************************************************/
 
                 //VERIFY
