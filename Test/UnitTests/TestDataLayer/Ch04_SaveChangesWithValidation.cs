@@ -97,7 +97,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
+            }
+            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
+            {
                 //ATTEMPT
                 var order = new Order
                 {

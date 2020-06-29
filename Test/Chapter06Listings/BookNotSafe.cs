@@ -8,7 +8,7 @@ namespace Test.Chapter06Listings
     public class BookNotSafe
     {
         public int Id { get; set; }
-        public IList<ReviewNotSafe> Reviews { get; set; }
+        public ICollection<ReviewNotSafe> Reviews { get; set; }
 
         public BookNotSafe()
         {
