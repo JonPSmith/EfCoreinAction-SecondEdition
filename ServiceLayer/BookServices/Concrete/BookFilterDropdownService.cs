@@ -39,7 +39,7 @@ namespace ServiceLayer.BookServices.Concrete
                         .Select(x => x.PublishedOn.Year)     //#B
                         .Distinct()                          //#B
                         .OrderByDescending(x => x)           //#C
-                        .ToList()
+                        .ToList() //Added to fix preview 6 problem - see https://github.com/dotnet/efcore/issues/21445
                         .Select(x => new DropdownTuple       //#D
                         {                                    //#D
                             Value = x.ToString(),            //#D
