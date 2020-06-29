@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
+using ServiceLayer.BookServices;
 using ServiceLayer.BookServices.Concrete;
 using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;
@@ -36,6 +37,38 @@ namespace Test.UnitTests.TestServiceLayer
                 dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] {"2014", "2013", "2012", "2011", "2010"});
             }
         }
+
+        ////Test used in https://github.com/dotnet/efcore/issues/21445
+        //[Fact]
+        //public void TestDistinctClientVsServerEval()
+        //{
+        //    //SETUP
+        //    var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+        //    using (var context = new EfCoreContext(options))
+        //    {
+        //        context.Database.EnsureCreated();
+        //        context.Books.AddRange(
+        //            new Book { PublishedOn = new DateTime(2001, 1, 1) },
+        //            new Book { PublishedOn = new DateTime(2001, 1, 1) },
+        //            new Book{PublishedOn = new DateTime(2000,1,1)}
+        //            );
+        //        context.SaveChanges();
+                
+
+        //        //ATTEMPT
+        //        var dates = context.Books
+        //            .Select(x => x.PublishedOn.Year)
+        //            .Distinct()
+        //            .Select(x => new DropdownTuple
+        //            {
+        //                Value = x.ToString(),
+        //                Text = x.ToString()
+        //            }).ToList();
+
+        //        //VERIFY
+        //        dates.Select(x => x.Value).ToArray().ShouldEqual(new[] { "2001", "2000" });
+        //    }
+        //}
 
         [Fact]
         public void DropdownByDateExcludeBooksLaterThanCurrentTimeButInYear()
