@@ -28,16 +28,16 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCheckCascadeSoftOfPreviousDeleteInfo()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
+            var options = SqliteInMemory.CreateOptions<SoftDelDbContext>();
+            using (var context = new SoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+                var ceo = EmployeeSoftCascade.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
                 var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO")).NumFound;
                 numSoftDeleted.ShouldEqual(7 + 6);
-                EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
+                EmployeeSoftCascade.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
 
                 //ATTEMPT
                 var info = service.CheckCascadeSoftDelete(context.Employees.IgnoreQueryFilters().Single(x => x.Name == "CTO"));
@@ -52,11 +52,11 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCheckCascadeSoftDeleteNoSoftDeleteInfo()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
+            var options = SqliteInMemory.CreateOptions<SoftDelDbContext>();
+            using (var context = new SoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+                var ceo = EmployeeSoftCascade.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
 
@@ -76,16 +76,16 @@ namespace Test.UnitTests.TestDataLayer
         public void TestHardDeleteCascadeSoftOfPreviousDeleteInfo()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
+            var options = SqliteInMemory.CreateOptions<SoftDelDbContext>();
+            using (var context = new SoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+                var ceo = EmployeeSoftCascade.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
                 var numSoftDeleted = service.SetCascadeSoftDelete(context.Employees.Single(x => x.Name == "CTO")).NumFound;
                 numSoftDeleted.ShouldEqual(7 + 6);
-                EmployeeSoftDel.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
+                EmployeeSoftCascade.ShowHierarchical(ceo, x => _output.WriteLine(x), false);
 
                 //ATTEMPT
                 var info = service.HardDeleteSoftDeletedEntries(context.Employees.IgnoreQueryFilters().Single(x => x.Name == "CTO"));
@@ -101,11 +101,11 @@ namespace Test.UnitTests.TestDataLayer
         public void TestHardDeleteCascadeSoftDeleteNoSoftDeleteInfo()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<CascadeSoftDelDbContext>();
-            using (var context = new CascadeSoftDelDbContext(options))
+            var options = SqliteInMemory.CreateOptions<SoftDelDbContext>();
+            using (var context = new SoftDelDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var ceo = EmployeeSoftDel.SeedEmployeeSoftDel(context);
+                var ceo = EmployeeSoftCascade.SeedEmployeeSoftDel(context);
 
                 var service = new CascadeSoftDelService(context);
 

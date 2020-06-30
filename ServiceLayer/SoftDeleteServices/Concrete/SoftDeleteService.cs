@@ -22,7 +22,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         }
 
 
-        public bool SetSoftDelete<TEntity>(params object[] keyValues)
+        public bool SetSoftDeleteViaKeys<TEntity>(params object[] keyValues)
             where TEntity : class, ISoftDelete
         {
             var entity = _context.LoadEntityViaPrimaryKeys<TEntity>(true, keyValues);
@@ -41,6 +41,25 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             return true;
         }
 
+        public bool ResetSoftDeleteViaKeys<TEntity>(params object[] keyValues)
+            where TEntity : class, ISoftDelete
+        {
+            var entity = _context.LoadEntityViaPrimaryKeys<TEntity>(true, keyValues);
+            if (entity == null)
+            {
+                AddError("Could not find the entry you ask for.");
+                return false;
+            }
+            if (!entity.SoftDeleted)
+            {
+                AddError("Soft delete on this entry has already been set.");
+                return true;
+            }
+
+            ResetSoftDelete(entity);
+            return true;
+        }
+
 
         public void SetSoftDelete<TEntity>(TEntity softDeleteThisEntity)
             where TEntity : class, ISoftDelete
@@ -55,7 +74,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             _context.SaveChanges();
         }
 
-        public void ResetCascadeSoftDelete<TEntity>(TEntity resetSoftDeleteThisEntity)
+        public void ResetSoftDelete<TEntity>(TEntity resetSoftDeleteThisEntity)
             where TEntity : class, ISoftDelete
         {
             resetSoftDeleteThisEntity.SoftDeleted = false;

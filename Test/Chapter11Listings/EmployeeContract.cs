@@ -9,7 +9,7 @@ namespace Test.Chapter11Listings
     public class EmployeeContract : ICascadeSoftDelete
     {
         [Key]
-        public int EmployeeSoftDelId { get; set; }
+        public int EmployeeSoftCascadeId { get; set; }
 
         public string ContractText { get; set; }
 

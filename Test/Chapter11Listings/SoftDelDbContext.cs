@@ -5,32 +5,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Test.Chapter11Listings
 {
-    public class CascadeSoftDelDbContext : DbContext
+    public class SoftDelDbContext : DbContext
     {
-        public CascadeSoftDelDbContext(DbContextOptions<CascadeSoftDelDbContext> options)
+        public SoftDelDbContext(DbContextOptions<SoftDelDbContext> options)
             : base(options) { }
 
-        public DbSet<EmployeeSoftDel> Employees { get; set; }
+        public DbSet<EmployeeSoftCascade> Employees { get; set; }
         public DbSet<EmployeeContract> Contracts { get; set; }
+
+        public DbSet<BookSoftDel> Books { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EmployeeSoftDel>()
+            modelBuilder.Entity<EmployeeSoftCascade>()
                 .HasMany(x => x.WorksFromMe)
                 .WithOne(x => x.Manager)
                 .HasForeignKey(x => x.ManagerEmployeeSoftDelId)
                 .OnDelete(DeleteBehavior.ClientCascade);
 
-            modelBuilder.Entity<EmployeeSoftDel>()
+            modelBuilder.Entity<EmployeeSoftCascade>()
                 .HasOne(x => x.Contract)
                 .WithOne()
-                .HasForeignKey<EmployeeContract>(x => x.EmployeeSoftDelId)
+                .HasForeignKey<EmployeeContract>(x => x.EmployeeSoftCascadeId)
                 .OnDelete(DeleteBehavior.ClientCascade);
 
-            modelBuilder.Entity<EmployeeSoftDel>()
+            modelBuilder.Entity<EmployeeSoftCascade>()
                 .HasQueryFilter(x => x.SoftDeleteLevel == 0);
             modelBuilder.Entity<EmployeeContract>()
                 .HasQueryFilter(x => x.SoftDeleteLevel == 0);
+
+            modelBuilder.Entity<BookSoftDel>()
+                .HasQueryFilter(x => !x.SoftDeleted);
         }
     }
 }
