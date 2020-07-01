@@ -2,12 +2,13 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.SoftDeleteServices.Concrete.Internal;
 
 namespace ServiceLayer.SoftDeleteServices.Concrete
 {
-    public enum CascadeSoftDelWhatDoing { SoftDelete, UnSoftDelete, CheckWhatWillDelete, HardDeleteSoftDeleted }
+    public enum CascadeSoftDelWhatDoing { SoftDelete, ResetSoftDelete, CheckWhatWillDelete, HardDeleteSoftDeleted }
 
     public class CascadeSoftDelService
     {
@@ -24,7 +25,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         }
 
         public CascadeSoftDeleteInfo SetCascadeSoftDelete<TEntity>(TEntity softDeleteThisEntity, bool readEveryTime = true)
-            where TEntity : class
+            where TEntity : class, ICascadeSoftDelete
         {
             //If is a one-to-one entity we return an error
             var keys = _context.Entry(softDeleteThisEntity).Metadata.GetForeignKeys();
@@ -39,17 +40,25 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
         }
 
         public CascadeSoftDeleteInfo ResetCascadeSoftDelete<TEntity>(TEntity resetSoftDeleteThisEntity)
-            where TEntity : class
+            where TEntity : class, ICascadeSoftDelete
         {
+            if (resetSoftDeleteThisEntity.SoftDeleteLevel == 0)
+                return new CascadeSoftDeleteInfo(CascadeSoftDelWhatDoing.ResetSoftDelete, "This entry isn't soft deleted");
+
+            if (resetSoftDeleteThisEntity.SoftDeleteLevel > 1)
+                return new CascadeSoftDeleteInfo(CascadeSoftDelWhatDoing.ResetSoftDelete, 
+                    $"This entry was soft deleted {resetSoftDeleteThisEntity.SoftDeleteLevel - 1} " +
+                    $"level{(resetSoftDeleteThisEntity.SoftDeleteLevel > 2  ? "s" : "")} above here");
+
             //For reset you need to read every time because some of the collection might be soft deleted already
-            var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.UnSoftDelete, true);
+            var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.ResetSoftDelete, true);
             walker.WalkEntitiesSoftDelete(resetSoftDeleteThisEntity, 1);
             _context.SaveChanges();
             return walker.Info;
         }
 
         public CascadeSoftDeleteInfo CheckCascadeSoftDelete<TEntity>(TEntity checkHardDeleteThisEntity)
-            where TEntity : class
+            where TEntity : class, ICascadeSoftDelete
         {
             //For reset you need to read every time because some of the collection might be soft deleted already
             var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.CheckWhatWillDelete, true);
@@ -59,7 +68,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
 
 
         public CascadeSoftDeleteInfo HardDeleteSoftDeletedEntries<TEntity>(TEntity hardDeleteThisEntity)
-            where TEntity : class
+            where TEntity : class, ICascadeSoftDelete
         {
             //For reset you need to read every time because some of the collection might be soft deleted already
             var walker = new CascadeWalker(_context, CascadeSoftDelWhatDoing.HardDeleteSoftDeleted, true);

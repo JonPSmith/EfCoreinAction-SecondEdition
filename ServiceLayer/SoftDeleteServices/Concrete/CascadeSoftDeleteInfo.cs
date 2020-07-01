@@ -39,7 +39,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete
             {
                 case CascadeSoftDelWhatDoing.SoftDelete:
                     return Message("soft deleted");
-                case CascadeSoftDelWhatDoing.UnSoftDelete:
+                case CascadeSoftDelWhatDoing.ResetSoftDelete:
                     return Message("un-soft deleted");
                 case CascadeSoftDelWhatDoing.CheckWhatWillDelete:
                 {

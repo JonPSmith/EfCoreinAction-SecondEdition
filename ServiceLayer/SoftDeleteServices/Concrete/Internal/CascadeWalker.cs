@@ -103,7 +103,7 @@ namespace ServiceLayer.SoftDeleteServices.Concrete.Internal
                         return true;
                     castToCascadeSoftDelete.SoftDeleteLevel = cascadeLevel;
                     break;
-                case CascadeSoftDelWhatDoing.UnSoftDelete:
+                case CascadeSoftDelWhatDoing.ResetSoftDelete:
                     if (castToCascadeSoftDelete.SoftDeleteLevel != cascadeLevel)
                         //Don't reset if it was soft deleted value doesn't match -this stops previously deleted sub-groups being updeleted
                         return true;
