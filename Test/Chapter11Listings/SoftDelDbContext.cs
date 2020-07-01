@@ -15,6 +15,9 @@ namespace Test.Chapter11Listings
 
         public DbSet<BookSoftDel> Books { get; set; }
 
+        public DbSet<CompanySoftCascade> Companies { get; set; }
+        public DbSet<QuoteSoftCascade> Quotes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EmployeeSoftCascade>()
@@ -29,6 +32,7 @@ namespace Test.Chapter11Listings
                 .HasForeignKey<EmployeeContract>(x => x.EmployeeSoftCascadeId)
                 .OnDelete(DeleteBehavior.ClientCascade);
 
+
             modelBuilder.Entity<EmployeeSoftCascade>()
                 .HasQueryFilter(x => x.SoftDeleteLevel == 0);
             modelBuilder.Entity<EmployeeContract>()
@@ -36,6 +40,11 @@ namespace Test.Chapter11Listings
 
             modelBuilder.Entity<BookSoftDel>()
                 .HasQueryFilter(x => !x.SoftDeleted);
+
+            modelBuilder.Entity<CompanySoftCascade>()
+                .HasQueryFilter(x => x.SoftDeleteLevel == 0);
+            modelBuilder.Entity<QuoteSoftCascade>()
+                .HasQueryFilter(x => x.SoftDeleteLevel == 0);
         }
     }
 }
