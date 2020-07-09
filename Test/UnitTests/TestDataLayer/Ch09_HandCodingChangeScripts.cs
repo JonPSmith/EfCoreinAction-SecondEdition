@@ -1,18 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Linq;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Test.Chapter09Listings.TwoDbContexts;
-using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
@@ -26,7 +20,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void CaptureSQLCodeUsedToCreatDatabase()
+        public void CaptureSqlCodeUsedToCreateDatabase()
         {
             //SETUP
             var connection = this.GetUniqueDatabaseConnectionString(); //#A
