@@ -3,9 +3,7 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 using Test.Chapter09Listings.FiveStepMigration;
-
 using TestSupport.EfHelpers;
 using TestSupport.EfSchemeCompare;
 using TestSupportSchema;
@@ -15,11 +13,11 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch09_FiveStepMigration
+    public class Ch09_FiveStepsMigration
     {
         private readonly ITestOutputHelper _output;
 
-        public Ch09_FiveStepMigration(ITestOutputHelper output)
+        public Ch09_FiveStepsMigration(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -44,7 +42,7 @@ namespace Test.UnitTests.TestDataLayer
                 //APPLY 1st migration
                 Migration1(app1Context);
 
-                //APP2 RUNNING
+                //APP2 RUNNING while APP2 is still running
                 using (var app2Context = new App2DbContext(app2Options))
                 {
                     CheckDatabaseMatchesDbContext(app2Context,
@@ -77,7 +75,7 @@ namespace Test.UnitTests.TestDataLayer
                 userWithAddressViaView.Count.ShouldEqual(3);
                 userWithAddressViaView.All(x => x.Street != null).ShouldBeTrue();
 
-                //STAGE 4 - APP3 starting
+                //STAGE 4 - APP3 starting while APP2 is running
                 using (var app3Context = new App3DbContext(app3Options))
                 {
                     CheckDatabaseMatchesDbContext(app3Context, @"DIFFERENT: UserPart5->Property 'AddressId', nullability. Expected = NOT NULL, found = NULL
@@ -97,7 +95,7 @@ EXTRA IN DATABASE: Column 'Users', column name. Found = City");
 
                 var app3UserWithAddress = app3Context.Users.Include(x => x.Address).ToList();
                 app3UserWithAddress.Count.ShouldEqual(3);
-                app3UserWithAddress.All(x => x.Address != null).ShouldBeTrue();u
+                app3UserWithAddress.All(x => x.Address != null).ShouldBeTrue();
             }
         }
 
