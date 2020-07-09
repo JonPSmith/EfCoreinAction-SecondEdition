@@ -3,6 +3,7 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Test.Chapter09Listings.FiveStepMigration;
 
 using TestSupport.EfHelpers;
@@ -46,7 +47,8 @@ namespace Test.UnitTests.TestDataLayer
                 //APP2 RUNNING
                 using (var app2Context = new App2DbContext(app2Options))
                 {
-                    CheckDatabaseMatchesDbContext(app2Context);
+                    CheckDatabaseMatchesDbContext(app2Context,
+                        "WARNING: Database 'EfSchemaCompare does not check read-only types'. Expected = <null>, found = ReadOnlyUserWithAddress");
 
                     app2Context.Add(new UserPart2
                     {
@@ -74,13 +76,36 @@ namespace Test.UnitTests.TestDataLayer
                 var userWithAddressViaView = app2Context.ReadOnlyUserWithAddresses.ToList();
                 userWithAddressViaView.Count.ShouldEqual(3);
                 userWithAddressViaView.All(x => x.Street != null).ShouldBeTrue();
+
+                //STAGE 4 - APP3 starting
+                using (var app3Context = new App3DbContext(app3Options))
+                {
+                    CheckDatabaseMatchesDbContext(app3Context, @"DIFFERENT: UserPart5->Property 'AddressId', nullability. Expected = NOT NULL, found = NULL
+EXTRA IN DATABASE: Column 'Users', column name. Found = Street
+EXTRA IN DATABASE: Column 'Users', column name. Found = City");
+
+                    var app3UserWithAddress = app3Context.Users.Include(x => x.Address).ToList();
+                    app3UserWithAddress.Count.ShouldEqual(3);
+                    app3UserWithAddress.All(x => x.Address != null).ShouldBeTrue();
+                }
+            }
+            //STAGE 5 - only APP3 running
+            using (var app3Context = new App3DbContext(app3Options))
+            {
+                Migration3RemoveColumns(app3Context);
+                CheckDatabaseMatchesDbContext(app3Context, null);
+
+                var app3UserWithAddress = app3Context.Users.Include(x => x.Address).ToList();
+                app3UserWithAddress.Count.ShouldEqual(3);
+                app3UserWithAddress.All(x => x.Address != null).ShouldBeTrue();u
             }
         }
 
-        private void CheckDatabaseMatchesDbContext(DbContext context)
+        private void CheckDatabaseMatchesDbContext(DbContext context, string ignoreTheseErrors)
         {
             var config = new CompareEfSqlConfig();
-            config.IgnoreTheseErrors("WARNING: Database 'EfSchemaCompare does not check read-only types'. Expected = <null>, found = ReadOnlyUserWithAddress");
+            if (!string.IsNullOrWhiteSpace(ignoreTheseErrors))
+                config.IgnoreTheseErrors(ignoreTheseErrors);
             var comparer = new CompareEfSql(config);
             var hasErrors = comparer.CompareEfWithDb(context);
             hasErrors.ShouldBeFalse(comparer.GetAllErrors);
@@ -127,6 +152,20 @@ SET [AddressId] = (SELECT [AddressId]
             context.Database.ExecuteSqlRaw("ALTER TABLE [Addresses] DROP COLUMN [UserId]");
         }
 
+        private void Migration3RemoveColumns(DbContext context)
+        {
+            context.Database.ExecuteSqlRaw("DROP INDEX [IX_Users_AddressId] ON [Users]");
+            context.Database.ExecuteSqlRaw("ALTER TABLE [Users] DROP CONSTRAINT [FK_Users_Addresses_AddressId]");
+            context.Database.ExecuteSqlRaw("ALTER TABLE [Users] DROP COLUMN Street");
+            context.Database.ExecuteSqlRaw("ALTER TABLE [Users] DROP COLUMN City");
+            context.Database.ExecuteSqlRaw("ALTER TABLE [Users] ALTER COLUMN AddressId int NOT NULL");
+            context.Database.ExecuteSqlRaw("ALTER TABLE [Users] ADD CONSTRAINT [FK_Users_Addresses_AddressId] " +
+                                           "FOREIGN KEY ([AddressId]) REFERENCES [Addresses] ([AddressId]) ON DELETE CASCADE");
+            context.Database.ExecuteSqlRaw("CREATE INDEX [IX_Users_AddressId] ON [Users] ([AddressId]);");
+
+            context.Database.ExecuteSqlRaw(@"DROP VIEW [GetUserWithAddress]");
+        }
+
         [Fact]
         public void GetApp1CreateTablesOk()
         {
@@ -144,6 +183,17 @@ SET [AddressId] = (SELECT [AddressId]
             //SETUP
             var options = this.CreateUniqueClassOptionsWithLogging<App2DbContext>(log => _output.WriteLine(log.Message));
             using (var context = new App2DbContext(options))
+            {
+                context.Database.EnsureClean();
+            }
+        }
+
+        [Fact]
+        public void GetApp3CreateTablesOk()
+        {
+            //SETUP
+            var options = this.CreateUniqueClassOptionsWithLogging<App3DbContext>(log => _output.WriteLine(log.Message));
+            using (var context = new App3DbContext(options))
             {
                 context.Database.EnsureClean();
             }

@@ -13,6 +13,6 @@ namespace Test.Chapter09Listings.FiveStepMigration
         public string Name { get; set; }
 
         public int AddressId { get; set; }
-        public Address UserAddress { get; set; }
+        public Address Address { get; set; }
     }
 }
