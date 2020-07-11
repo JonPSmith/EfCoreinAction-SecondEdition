@@ -14,11 +14,11 @@ namespace DataLayer.EfCode
 
     public class QueryFilterAutoConfig                             //#B
     {
-        private readonly Guid _userId;                             //#C
+        private readonly IUserId _userIdProvider;                             //#C
 
-        public QueryFilterAutoConfig(Guid userId)                  //#C
+        public QueryFilterAutoConfig(IUserId userIdProvider)                  //#C
         {                                                          //#C
-            _userId = userId;                                      //#C
+            _userIdProvider = userIdProvider;                                      //#C
         }
 
         public void SetQueryFilter(IMutableEntityType entityData,  //#D
@@ -37,7 +37,7 @@ namespace DataLayer.EfCode
             where TEntity : class, IUserId                 //#H
         {                                                  //#H
             Expression<Func<TEntity, bool>> filter =       //#H
-                x => x.UserId == _userId;                  //#H
+                x => x.UserId == _userIdProvider.UserId;                  //#H
             return filter;                                 //#H
         }                                                  //#H
 

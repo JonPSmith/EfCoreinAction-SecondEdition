@@ -10,18 +10,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.EfCode
 {
-    public class EfCoreContext : DbContext
+    public class EfCoreContext : DbContext, IUserId                   //#A
     {
-        private readonly Guid _userId;                                //#A   
         private readonly QueryFilterAutoConfig _queryFilterAuto;      //#B
+        public Guid UserId { get; private set; }            //#C
 
-        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#B  
-            IUserIdService userIdService = null)                      //#B  
-            : base(options)                                           //#B
-        {                                                             //#B
-            _userId = userIdService?.GetUserId()                      //#B  
-                       ?? new ReplacementUserIdService().GetUserId(); //#B  
-            _queryFilterAuto = new QueryFilterAutoConfig(_userId);    //#C
+        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#D  
+            IUserIdService userIdService = null)                      //#D  
+            : base(options)                                           //#D
+        {                                                             //#D
+            UserId = userIdService?.GetUserId()                       //#D  
+                     ?? new ReplacementUserIdService().GetUserId();   //#D  
+            _queryFilterAuto = new QueryFilterAutoConfig(this);    //#E
         }
 
         //#B
@@ -30,16 +30,15 @@ namespace DataLayer.EfCode
         public DbSet<PriceOffer> PriceOffers { get; set; }            //#C
         public DbSet<Order> Orders { get; set; }                      //#C
 
-        protected override void                                       //#D //#A
-            OnModelCreating(ModelBuilder modelBuilder)                //#D //#A
+        protected override void                                       //#F //#A
+            OnModelCreating(ModelBuilder modelBuilder)                //#F //#A
         {
-            //see https://github.com/aspnet/EntityFrameworkCore/issues/4711#issuecomment-535288442 for example with nullable DateTime
             var utcConverter = new ValueConverter<DateTime, DateTime>(      //#B
                 toDb => toDb,                                               //#B
                 fromDb =>                                                   //#B
                     DateTime.SpecifyKind(fromDb, DateTimeKind.Utc));        //#B
 
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes()) //#C
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes()) //#G
             {
                 foreach (var entityProperty in entityType.GetProperties())  //#D
                 {
@@ -63,17 +62,17 @@ namespace DataLayer.EfCode
                     }                                                       //#G
                 }
 
-                if (typeof(ISoftDelete)                         //#F
-                    .IsAssignableFrom(entityType.ClrType))      //#F
-                {
-                    _queryFilterAuto.SetQueryFilter(entityType, //#G 
-                        MyQueryFilterTypes.SoftDelete);         //#G
-                }
-                if (typeof(IUserId)                             //#H
+                if (typeof(ISoftDelete)                         //#H
                     .IsAssignableFrom(entityType.ClrType))      //#H
                 {
-                    _queryFilterAuto.SetQueryFilter(entityType, //#I
-                        MyQueryFilterTypes.UserId);             //#I
+                    _queryFilterAuto.SetQueryFilter(entityType, //#I 
+                        MyQueryFilterTypes.SoftDelete);         //#I
+                }
+                if (typeof(IUserId)                             //#J
+                    .IsAssignableFrom(entityType.ClrType))      //#J
+                {
+                    _queryFilterAuto.SetQueryFilter(entityType, //#K
+                        MyQueryFilterTypes.UserId);             //#K
                 }
             }
             /**********************************************************************
@@ -89,15 +88,17 @@ namespace DataLayer.EfCode
 
             /************************************************************************
              //Listing 7.15 Adding code to the DbContext to automate setting up Query Filters
-            #A This is the UserId of the user that has bought some books
+            #A Adding the IUserId to the DbContext means 
             #B This holds the QueryFilterAutoConfig needed for config and at run time the filter queries
-            #C You create a new QueryFilterAutoConfig every time so that it has the current UserId
-            #D The automate code goes in the OnModelCreating method
-            #E This loops through all the classes that EF Core has currently found mapped to the database
-            #F If the class inherits the ISoftDelete interface, then is needs the SoftDelete Query Filter
-            #G This adds a Query Filter to this class, with a query suitable for SoftDelete
-            #H If the class inherits the IUserId interface, then is needs the IUserId Query Filter
-            #G This adds a Query Filter to this class, with a query suitable for UserId
+            #C This holds the id of the current user - make it easy to access the UserId in a query
+            #D This set up the UserId. If the userIdService is null, or it returns null for the UserId we set a replacement UserId 
+            #E You create a new QueryFilterAutoConfig, with a link to the current instance of the DbContext
+            #F The automate code goes in the OnModelCreating method
+            #G This loops through all the classes that EF Core has currently found mapped to the database
+            #H If the class inherits the ISoftDelete interface, then is needs the SoftDelete Query Filter
+            #I This adds a Query Filter to this class, with a query suitable for SoftDelete
+            #J If the class inherits the IUserId interface, then is needs the IUserId Query Filter
+            #K This adds a Query Filter to this class, with a query suitable for UserId
              ************************************************************************/
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -106,9 +107,10 @@ namespace DataLayer.EfCode
             //modelBuilder.ApplyConfiguration(new PriceOfferConfig());  //#E
             //modelBuilder.ApplyConfiguration(new LineItemConfig());    //#E
                                                                       
-            modelBuilder.Entity<Order>()                              //#F
-                .HasQueryFilter(x => x.UserId == _userId);        //#F
+            //modelBuilder.Entity<Order>()                              //#F
+            //    .HasQueryFilter(x => x.UserId == this.UserId);        //#F
         }
+
     }
     /***************************************************************
     #A This is the UserId of the user that has bought some books
