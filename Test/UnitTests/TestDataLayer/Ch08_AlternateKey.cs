@@ -24,7 +24,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    Name = null,
+                    Email = null,
                 };
                 var ex = Assert.Throws<InvalidOperationException>(() => context.Add(person));
 
@@ -45,7 +45,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    Name = "me@somewhere.com",
+                    Email = "me@somewhere.com",
                 };
                 context.Add(person);
                 context.SaveChanges();
@@ -67,7 +67,7 @@ namespace Test.UnitTests.TestDataLayer
 
                     var person = new Person
                     {
-                        Name = "me@somewhere.com",
+                        Email = "me@somewhere.com",
                         ContactInfo = new ContactInfo { MobileNumber = "12345" }
                     };
                     context.Add(person);
@@ -96,7 +96,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var person = new Person
                 {
-                    Name = "me@somewhere.com",
+                    Email = "me@somewhere.com",
                     ContactInfo = new ContactInfo {MobileNumber = "12345"}
                 };
                 context.Add(person);

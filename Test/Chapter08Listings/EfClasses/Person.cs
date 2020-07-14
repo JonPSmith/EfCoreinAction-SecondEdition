@@ -11,14 +11,11 @@ namespace Test.Chapter08Listings.EfClasses
     {
         public int PersonId { get; set; }
 
-        public string RealName { get; set; }
+        public string Name { get; set; }
 
         [MaxLength(256)]
         [Required]
-        public string Name { get; set; } //#A
-        /************************************************
-        #A This holds the ASP.NET authorization Claim called "Name", which is the person's email address and is unique 
-         * *********************************************/
+        public string Email { get; set; } //#A
 
         //------------------------------
         //relationships

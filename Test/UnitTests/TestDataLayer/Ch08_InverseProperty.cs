@@ -30,8 +30,8 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var librarian = new Person { RealName = "Librarian", Name = "librarian@somewhere.com" };
-                var reader = new Person { RealName = "OnLoanTo", Name = "reader@somewhere.com" };
+                var librarian = new Person { Name = "Librarian", Email = "librarian@somewhere.com" };
+                var reader = new Person { Name = "OnLoanTo", Email = "reader@somewhere.com" };
                 var book = new LibraryBook
                 {
                     Title = "Entity Framework in Action",
@@ -57,7 +57,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var librarian = new Person {RealName = "Librarian", Name = "libarian@somewhere.com"};
+                var librarian = new Person {Name = "Librarian", Email = "libarian@somewhere.com"};
                 var book = new LibraryBook
                 {
                     Title = "Entity Framework in Action",

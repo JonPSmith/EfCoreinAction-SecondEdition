@@ -16,7 +16,7 @@ namespace Test.Chapter08Listings.EFCode.Configurations
                 .HasOne(p => p.ContactInfo)
                 .WithOne()
                 .HasForeignKey<ContactInfo>(p => p.EmailAddress)
-                .HasPrincipalKey<Person>(c => c.Name);
+                .HasPrincipalKey<Person>(c => c.Email);
         }
     }
 }
