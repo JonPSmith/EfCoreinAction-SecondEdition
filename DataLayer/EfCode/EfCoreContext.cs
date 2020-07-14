@@ -12,7 +12,6 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext, IUserId                   //#A
     {
-        private readonly QueryFilterAutoConfig _queryFilterAuto;      //#B
         public Guid UserId { get; private set; }            //#C
 
         public EfCoreContext(DbContextOptions<EfCoreContext> options, //#D  
@@ -21,7 +20,6 @@ namespace DataLayer.EfCode
         {                                                             //#D
             UserId = userIdService?.GetUserId()                       //#D  
                      ?? new ReplacementUserIdService().GetUserId();   //#D  
-            _queryFilterAuto = new QueryFilterAutoConfig(this);    //#E
         }
 
         //#B
@@ -65,14 +63,14 @@ namespace DataLayer.EfCode
                 if (typeof(ISoftDelete)                         //#H
                     .IsAssignableFrom(entityType.ClrType))      //#H
                 {
-                    _queryFilterAuto.SetQueryFilter(entityType, //#I 
-                        MyQueryFilterTypes.SoftDelete);         //#I
+                    entityType.AddSoftDeleteQueryFilter(
+                        MyQueryFilterTypes.SoftDelete);
                 }
                 if (typeof(IUserId)                             //#J
                     .IsAssignableFrom(entityType.ClrType))      //#J
                 {
-                    _queryFilterAuto.SetQueryFilter(entityType, //#K
-                        MyQueryFilterTypes.UserId);             //#K
+                    entityType.AddSoftDeleteQueryFilter(
+                        MyQueryFilterTypes.UserId, this);
                 }
             }
             /**********************************************************************
