@@ -13,11 +13,11 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch07_HasNoKey
+    public class Ch07_ViewsAndHasNoKey
     {
         private readonly ITestOutputHelper _output;
 
-        public Ch07_HasNoKey(ITestOutputHelper output)
+        public Ch07_ViewsAndHasNoKey(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -42,6 +42,27 @@ namespace Test.UnitTests.TestDataLayer
                 _output.WriteLine(query.ToQueryString());
                 entities.Single().MyInt.ShouldEqual(123);
                 entities.Single().MyString.ShouldEqual("Hello");
+            }
+        }
+
+        [Fact]
+        public void TestToViewIsReadOnlyOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
+            using (var context = new Chapter07DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                context.Add(new BaseClass() { MyInt = 123, MyString = "Hello" });
+                context.SaveChanges();
+
+                //ATTEMPT
+                context.Add(new DupClass {Id = 22, MyInt = 456, MyString = "Goodbye"});
+                var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.Message.ShouldEqual("The entity type 'DupClass' is not mapped to a table, therefore the entities cannot be persisted to the database. Use ToTable to map it.");
             }
         }
 

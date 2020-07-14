@@ -12,14 +12,14 @@ namespace DataLayer.EfCode
 {
     public class EfCoreContext : DbContext, IUserId                   //#A
     {
-        public Guid UserId { get; private set; }            //#C
+        public Guid UserId { get; private set; }                      //#B
 
-        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#D  
-            IUserIdService userIdService = null)                      //#D  
-            : base(options)                                           //#D
-        {                                                             //#D
-            UserId = userIdService?.GetUserId()                       //#D  
-                     ?? new ReplacementUserIdService().GetUserId();   //#D  
+        public EfCoreContext(DbContextOptions<EfCoreContext> options, //#C  
+            IUserIdService userIdService = null)                      //#C  
+            : base(options)                                           //#C
+        {                                                             //#C
+            UserId = userIdService?.GetUserId()                       //#C  
+                     ?? new ReplacementUserIdService().GetUserId();   //#C  
         }
 
         //#B
@@ -28,8 +28,8 @@ namespace DataLayer.EfCode
         public DbSet<PriceOffer> PriceOffers { get; set; }            //#C
         public DbSet<Order> Orders { get; set; }                      //#C
 
-        protected override void                                       //#F //#A
-            OnModelCreating(ModelBuilder modelBuilder)                //#F //#A
+        protected override void                                       //#D //#A
+            OnModelCreating(ModelBuilder modelBuilder)                //#D //#A
         {
             var utcConverter = new ValueConverter<DateTime, DateTime>(      //#B
                 toDb => toDb,                                               //#B
@@ -60,17 +60,17 @@ namespace DataLayer.EfCode
                     }                                                       //#G
                 }
 
-                if (typeof(ISoftDelete)                         //#H
+                if (typeof(ISoftDelete)                         //#F
+                    .IsAssignableFrom(entityType.ClrType))      //#F
+                {
+                    entityType.AddSoftDeleteQueryFilter(        //#G
+                        MyQueryFilterTypes.SoftDelete);         //#G
+                }
+                if (typeof(IUserId)                             //#H
                     .IsAssignableFrom(entityType.ClrType))      //#H
                 {
-                    entityType.AddSoftDeleteQueryFilter(
-                        MyQueryFilterTypes.SoftDelete);
-                }
-                if (typeof(IUserId)                             //#J
-                    .IsAssignableFrom(entityType.ClrType))      //#J
-                {
-                    entityType.AddSoftDeleteQueryFilter(
-                        MyQueryFilterTypes.UserId, this);
+                    entityType.AddSoftDeleteQueryFilter(        //#I
+                        MyQueryFilterTypes.UserId, this);       //#I
                 }
             }
             /**********************************************************************
@@ -86,17 +86,15 @@ namespace DataLayer.EfCode
 
             /************************************************************************
              //Listing 7.15 Adding code to the DbContext to automate setting up Query Filters
-            #A Adding the IUserId to the DbContext means 
-            #B This holds the QueryFilterAutoConfig needed for config and at run time the filter queries
-            #C This holds the id of the current user - make it easy to access the UserId in a query
-            #D This set up the UserId. If the userIdService is null, or it returns null for the UserId we set a replacement UserId 
-            #E You create a new QueryFilterAutoConfig, with a link to the current instance of the DbContext
-            #F The automate code goes in the OnModelCreating method
-            #G This loops through all the classes that EF Core has currently found mapped to the database
-            #H If the class inherits the ISoftDelete interface, then is needs the SoftDelete Query Filter
-            #I This adds a Query Filter to this class, with a query suitable for SoftDelete
-            #J If the class inherits the IUserId interface, then is needs the IUserId Query Filter
-            #K This adds a Query Filter to this class, with a query suitable for UserId
+            #A Adding the IUserId to the DbContext means we can pass the DbContext to the UerId query filter 
+            #B Because the IUserId interface to the DbContext you now have a UserId property to access
+            #C This set up the UserId. If the userIdService is null, or it returns null for the UserId we set a replacement UserId 
+            #D The automate code goes in the OnModelCreating method
+            #E This loops through all the classes that EF Core has currently found mapped to the database
+            #F If the class inherits the ISoftDelete interface, then is needs the SoftDelete Query Filter
+            #G This adds a Query Filter to this class, with a query suitable for SoftDelete
+            #H If the class inherits the IUserId interface, then is needs the IUserId Query Filter
+            #I This adds the UserId Query Filter to this class - passing 'this' allows access to the current UserId
              ************************************************************************/
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 

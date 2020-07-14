@@ -27,6 +27,8 @@ namespace Test.Chapter07Listings
         public DbSet<SchemaAttributeExample> SchemaAttributeExamples { get; set; }
         public DbSet<SchemaFluentExample> SchemaFluentExamples { get; set; }
 
+        public DbSet<CollationsClass> Collations { get; set; }
+
         protected override void OnModelCreating
             (ModelBuilder modelBuilder)
         {
@@ -98,6 +100,16 @@ namespace Test.Chapter07Listings
              #A This configures a field-only property with no linked public property 
              #B This sets the column name to "DateOfBirth"
              * **************************************************************************/
+
+            modelBuilder.Entity<CollationsClass>()
+                .Property(x => x.CaseSensitiveString)
+                .UseCollation("Latin1_General_CS_AS");
+            modelBuilder.Entity<CollationsClass>()
+                .Property(x => x.CaseSensitiveStringWithIndex)
+                .UseCollation("Latin1_General_CS_AS");
+            modelBuilder.Entity<CollationsClass>()
+                .HasIndex(x => x.CaseSensitiveStringWithIndex)
+                .HasName("CaseSensitive");
 
             modelBuilder.Entity<Person>()
                 .Property(b => b.BackingFieldViaFluentApi)
