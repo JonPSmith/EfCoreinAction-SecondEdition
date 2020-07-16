@@ -12,32 +12,32 @@ namespace DataLayer.EfCode.Configurations
         public void Configure
             (EntityTypeBuilder<Book> entity)
         {
-            entity.Property(p => p.PublishedOn)//#A
-                .HasColumnType("date");            //#A     
+            entity.Property(p => p.PublishedOn)            //#A
+                .HasColumnType("date");                    //#A     
 
-            entity.Property(p => p.Price) //#B
-                .HasPrecision(9,2);      //#B
+            entity.Property(p => p.Price)                  //#B
+                .HasPrecision(9,2);                        //#B
 
-            entity.Property(x => x.ImageUrl) //#C
-                .IsUnicode(false);               //#C
+            entity.Property(x => x.ImageUrl)               //#C
+                .IsUnicode(false);                         //#C
 
-            entity.HasIndex(x => x.PublishedOn); //#D
+            entity.HasIndex(x => x.PublishedOn);           //#D
 
             //Model-level query filter
-
-            entity
-                .HasQueryFilter(p => !p.SoftDeleted); //#E
+            //Commented out because adding query filters has been automated 
+            //entity
+            //    .HasQueryFilter(p => !p.SoftDeleted);    //#E
 
             //----------------------------
             //relationships
 
-            entity.HasOne(p => p.Promotion) //#A
-                .WithOne() //#A
+            entity.HasOne(p => p.Promotion)                //#A
+                .WithOne()                                 //#A
                 .HasForeignKey<PriceOffer>(p => p.BookId); //#A
 
-            entity.HasMany(p => p.Reviews)     //#B
-                .WithOne()                     //#B
-                .HasForeignKey(p => p.BookId); //#B
+            entity.HasMany(p => p.Reviews)                 //#B
+                .WithOne()                                 //#B
+                .HasForeignKey(p => p.BookId);             //#B
         }
     }
     /*Type/Size setting**********************************************
