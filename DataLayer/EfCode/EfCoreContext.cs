@@ -56,7 +56,7 @@ namespace DataLayer.EfCode
                     if (entityProperty.ClrType == typeof(string)            //#G
                         && entityProperty.Name.EndsWith("Url"))             //#G
                     {                                                       //#G
-                        entityProperty.SetIsUnicode(true);                  //#G
+                        entityProperty.SetIsUnicode(false);                 //#G
                     }                                                       //#G
                 }
 

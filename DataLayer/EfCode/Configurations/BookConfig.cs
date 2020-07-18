@@ -15,11 +15,11 @@ namespace DataLayer.EfCode.Configurations
             entity.Property(p => p.PublishedOn)            //#A
                 .HasColumnType("date");                    //#A     
 
-            entity.Property(p => p.Price)                  //#B
-                .HasPrecision(9,2);                        //#B
+            //entity.Property(p => p.Price)                  //#B
+            //    .HasPrecision(9,2);                        //#B
 
-            entity.Property(x => x.ImageUrl)               //#C
-                .IsUnicode(false);                         //#C
+            //entity.Property(x => x.ImageUrl)               //#C
+            //    .IsUnicode(false);                         //#C
 
             entity.HasIndex(x => x.PublishedOn);           //#D
 

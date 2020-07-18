@@ -11,8 +11,9 @@ namespace DataLayer.EfCode.Configurations
     {
         public void Configure(EntityTypeBuilder<PriceOffer> entity)
         {
-            entity.Property(p => p.NewPrice)
-                .HasColumnType("decimal(9,2)");
+            //automated
+            //entity.Property(p => p.NewPrice)
+            //    .HasColumnType("decimal(9,2)");
         }
     }
 }
