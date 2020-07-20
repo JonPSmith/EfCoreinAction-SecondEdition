@@ -101,15 +101,18 @@ namespace Test.Chapter07Listings
              #B This sets the column name to "DateOfBirth"
              * **************************************************************************/
 
-            modelBuilder.Entity<CollationsClass>()
-                .Property(x => x.CaseSensitiveString)
-                .UseCollation("Latin1_General_CS_AS");
-            modelBuilder.Entity<CollationsClass>()
-                .Property(x => x.CaseSensitiveStringWithIndex)
-                .UseCollation("Latin1_General_CS_AS");
-            modelBuilder.Entity<CollationsClass>()
-                .HasIndex(x => x.CaseSensitiveStringWithIndex)
-                .HasName("CaseSensitive");
+            if(Database.IsSqlServer())
+            {
+                modelBuilder.Entity<CollationsClass>()
+                    .Property(x => x.CaseSensitiveString)
+                    .UseCollation("Latin1_General_CS_AS");
+                modelBuilder.Entity<CollationsClass>()
+                    .Property(x => x.CaseSensitiveStringWithIndex)
+                    .UseCollation("Latin1_General_CS_AS");
+                modelBuilder.Entity<CollationsClass>()
+                    .HasIndex(x => x.CaseSensitiveStringWithIndex)
+                    .HasName("CaseSensitive");
+            }
 
             modelBuilder.Entity<Person>()
                 .Property(b => b.BackingFieldViaFluentApi)

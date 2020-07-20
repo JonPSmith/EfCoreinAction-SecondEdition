@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -19,11 +21,7 @@ namespace Test.UnitTests.TestDataLayer
 
         public Ch10_ConcurrencyDisconnect()
         {
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<ConcurrencyDbContext>();
-            optionsBuilder.UseSqlServer(connection);
-            _options = optionsBuilder.Options;
+            _options = this.CreateUniqueClassOptions<ConcurrencyDbContext>();
             using (var context = new ConcurrencyDbContext(_options))
             {
                 context.Database.EnsureCreated();

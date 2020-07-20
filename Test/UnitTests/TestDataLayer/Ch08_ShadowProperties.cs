@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.EfHelpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -145,31 +146,29 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        //[Fact]
-        //public void TestShadowPropertySqlOk()
-        //{
-        //    //SETUP
-        //    var connection = this.GetUniqueDatabaseConnectionString();
-        //    var optionsBuilder =
-        //        new DbContextOptionsBuilder<Chapter08DbContext>();
+        [Fact]
+        public void TestShadowPropertySqlOk()
+        {
+            //SETUP
+            var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureClean();
 
-        //    optionsBuilder.UseSqlServer(connection);
-        //    using (var context = new Chapter08DbContext(optionsBuilder.Options))
-        //    {
-        //            context.Database.EnsureCreated();
-        //            var orgCount = context.Set<RequiredTrack>().Count();
-        //            var attendee = new Attendee
-        //            {
-        //                Name = "Person1",
-        //                TicketOption1 = new TicketOption1 { TicketType = TicketOption1.TicketTypes.VIP },
-        //                Required = new RequiredTrack { Track = TrackNames.EfCore }
-        //            };
-        //            context.Add(attendee);
-        //            context.SaveChanges();
+                //ATTEMPT
+                var orgCount = context.Set<RequiredTrack>().Count();
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1( ),
+                    Required = new RequiredTrack { Track = TrackNames.EfCore }
+                };
+                context.Add(attendee);
+                context.SaveChanges();
 
-        //            //VERIFY
-        //            context.Set<RequiredTrack>().Count().ShouldEqual(orgCount + 1);
-        //    }
-        //}
+                //VERIFY
+                context.Set<RequiredTrack>().Count().ShouldEqual(orgCount + 1);
+            }
+        }
     }
 }

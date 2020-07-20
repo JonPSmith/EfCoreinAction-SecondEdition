@@ -4,7 +4,9 @@
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -17,14 +19,10 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSequenceAddOk()
         {
             //SETUP
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10DbContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            using (var context = new Chapter10DbContext(optionsBuilder.Options))
+            var options = this.CreateUniqueClassOptions<Chapter10DbContext>();
+            using (var context = new Chapter10DbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 var entity = new Order();
@@ -40,14 +38,10 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSequenceAddTwiceOk()
         {
             //SETUP
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10DbContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            using (var context = new Chapter10DbContext(optionsBuilder.Options))
+            var options = this.CreateUniqueClassOptions<Chapter10DbContext>();
+            using (var context = new Chapter10DbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 var entity1 = new Order();

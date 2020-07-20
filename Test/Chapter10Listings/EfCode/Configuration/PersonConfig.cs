@@ -13,8 +13,8 @@ namespace Test.Chapter10Listings.EfCode.Configuration
         public void Configure
             (EntityTypeBuilder<Person> entity)
         {
-            entity.Property<DateTime>("DateOfBirth")
-                .HasField("_dateOfBirth");
+            entity.Property<DateTime>("_dateOfBirth")
+                .HasColumnName("DateOfBirth");
 
             entity.Property(p => p.YearOfBirth) //#B
                 .HasComputedColumnSql(                  //#B

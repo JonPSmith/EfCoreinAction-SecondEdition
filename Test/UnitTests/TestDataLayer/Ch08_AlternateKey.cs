@@ -30,7 +30,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.Message.ShouldEqual(
-                    "Unable to track an entity of type 'Person' because alternate key property 'Name' is null. If the alternate key is not used in a relationship, then consider using a unique index instead. Unique indexes may contain nulls, while alternate keys must not.");
+                    "Unable to track an entity of type 'Person' because alternate key property 'Email' is null. If the alternate key is not used in a relationship, then consider using a unique index instead. Unique indexes may contain nulls, while alternate keys must not.");
             }
         }
 

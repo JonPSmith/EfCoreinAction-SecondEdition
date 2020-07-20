@@ -81,8 +81,10 @@ namespace Test.UnitTests.TestDataLayer
             //VERIFY
             using (var context = new Chapter07DbContext(options))
             {
-                var entity = context.People.Single(x => x.PersonId == personId);
+                var query = context.People.Where(x => x.PersonId == personId);
+                var entity = query.Single();
 
+                _output.WriteLine(query.ToQueryString());
                 entity.BackingFieldViaAnnotation.ShouldEqual("some data");
                 context.People.Where(x => x.PersonId == personId)
                     .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaAnnotation)))

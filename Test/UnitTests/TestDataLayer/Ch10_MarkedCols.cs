@@ -5,7 +5,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -18,15 +20,10 @@ namespace Test.UnitTests.TestDataLayer
         public void TestGuidKeyNotSetOk()
         {
             //SETUP
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10DbContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            using (var context = new Chapter10DbContext(optionsBuilder.Options))
+            var options = this.CreateUniqueClassOptions<Chapter10DbContext>();
+            using (var context = new Chapter10DbContext(options))
             {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
 
@@ -43,14 +40,10 @@ namespace Test.UnitTests.TestDataLayer
         public void TestGuidKeySetOk()
         {
             //SETUP
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10DbContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            using (var context = new Chapter10DbContext(optionsBuilder.Options))
+            var options = this.CreateUniqueClassOptions<Chapter10DbContext>();
+            using (var context = new Chapter10DbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 var key = Guid.NewGuid();
@@ -67,14 +60,10 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSecondaryKeyIsSetOk()
         {
             //SETUP
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10DbContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            using (var context = new Chapter10DbContext(optionsBuilder.Options))
+            var options = this.CreateUniqueClassOptions<Chapter10DbContext>();
+            using (var context = new Chapter10DbContext(options))
             {
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
 
                 //ATTEMPT
                 var entity = new MyClass { MyClassId = Guid.NewGuid() };

@@ -28,7 +28,6 @@ namespace Test.Chapter10Listings.EfCode
                 .Configure(new OrderIdValueGenerator());
             modelBuilder.ConfigureOrder();
             modelBuilder.ApplyConfiguration(new PersonConfig());
-            //standard localdb is 2014, not 2016, so in-memory is not supported
             //modelBuilder.ApplyConfiguration(new InMemoryConfig());
 
         }

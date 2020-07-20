@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfCode;
 using Test.TestHelpers;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,12 +23,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             _output = output;
 
-            var connection = this.GetUniqueDatabaseConnectionString();
-            var optionsBuilder =
-                new DbContextOptionsBuilder<Chapter10EfCoreContext>();
-
-            optionsBuilder.UseSqlServer(connection);
-            _options = optionsBuilder.Options;
+            _options = this.CreateUniqueClassOptions<Chapter10EfCoreContext>();
             using (var context = new Chapter10EfCoreContext(_options))
             {
                 if (context.Database.EnsureCreated())
