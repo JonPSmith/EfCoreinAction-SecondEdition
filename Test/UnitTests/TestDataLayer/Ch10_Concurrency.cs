@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -17,10 +16,6 @@ namespace Test.UnitTests.TestDataLayer
 {
     public class Ch10_Concurrency
     {
-        private readonly ITestOutputHelper _output;
-
-        private readonly DbContextOptions<ConcurrencyDbContext> _options;
-
         public Ch10_Concurrency(ITestOutputHelper output)
         {
             _output = output;
@@ -42,215 +37,9 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        [Fact]
-        public void CreateConcurrencyDataAllOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                var numBooks = context.Books.Count();
+        private readonly ITestOutputHelper _output;
 
-                //ATTEMPT
-                context.Books.Add(new ConcurrencyBook
-                {
-                    Title = "Unit Test",
-                    PublishedOn = new DateTime(2014, 1, 1),
-                    Author = new ConcurrencyAuthor { Name = "Unit Test"}
-                });
-                context.SaveChanges();
-
-                //VERIFY
-                context.Books.Count().ShouldEqual(numBooks + 1);
-            }
-        }
-
-        [Fact]
-        public void UpdateBookTitleOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-
-                var firstBookId = context.Books.First().ConcurrencyBookId;
-
-                //ATTEMPT
-                var firstBook = context.Books.First(k => k.ConcurrencyBookId == firstBookId);
-                var sqlTitle = Guid.NewGuid().ToString();
-                var newDate = DateTime.Now.AddDays(100);
-                context.Database.ExecuteSqlRaw(
-                    "UPDATE dbo.Books SET Title = @p0 WHERE ConcurrencyBookId = @p1", 
-                    sqlTitle, firstBookId);
-                firstBook.PublishedOn = newDate;
-                context.SaveChanges();
-
-                //VERIFY
-                context.Entry(firstBook).Reload();
-                firstBook.Title.ShouldEqual(sqlTitle);
-                firstBook.PublishedOn.ShouldEqual(newDate);
-
-                //foreach (var log in logIt.Logs)
-                //{
-                //    _output.WriteLine(log);
-                //}
-                ////to get the logs you need to fail see https://github.com/aspnet/Tooling/issues/541
-                //Assert.True(false, "failed the test so that the logs show");
-            }
-        }
-
-        [Fact]
-        public void ThrowExceptionRowDeletedOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-
-                var firstBook = context.Books.First();
-
-                context.Database.ExecuteSqlRaw(
-                    "DELETE dbo.Books WHERE ConcurrencyBookId = @p0", 
-                    firstBook.ConcurrencyBookId);
-                firstBook.Title = Guid.NewGuid().ToString();
-
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
-                    .ShouldBeTrue();
-            }
-        }
-
-        [Fact]
-        public void ThrowExceptionOnPublishedDateChangedOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-
-                var firstBook = context.Books.First(); //#A
-
-                context.Database.ExecuteSqlRaw(
-                    "UPDATE dbo.Books SET PublishedOn = GETDATE()" + //#B
-                    " WHERE ConcurrencyBookId = @p0",                //#B
-                    firstBook.ConcurrencyBookId);                    //#B
-                firstBook.Title = Guid.NewGuid().ToString(); //#C
-                //context.SaveChanges(); //#D
-                /******************************************
-                #A I load the first book in the database as a tracked entity
-                #B I simulate another thread/application changing the PublishedOn column of the same book
-                #C I change the title in the book to cause EF Core to do an update to the book
-                #D This SaveChanges will throw an DbUpdateConcurrencyException
-                 * ***************************************/
-
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
-                    .ShouldBeTrue();
-            }
-        }
-
-        [Fact]
-        public void ThrowExceptionOnAuthorChangedOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-
-
-                var firstAuthor = context.Authors.First(); //#A
-                context.Database.ExecuteSqlRaw(      //#B
-                    "UPDATE dbo.Authors SET Name = @p0"+ //#B
-                    " WHERE ConcurrencyAuthorId = @p1",  //#B
-                    firstAuthor.Name,                    //#B
-                    firstAuthor.ConcurrencyAuthorId);    //#B
-                firstAuthor.Name = "Concurrecy Name"; //#C
-                //context.SaveChanges(); //#D
-                /******************************************
-                #A I load the first author in the database as a tracked entity
-                #B I simulate another thread/application updating the entity. In fact nothing is changed, but the timestamp
-                #C I change something in the author to cause EF Core to do an update to the book
-                #D This SaveChanges will throw an DbUpdateConcurrencyException
-                 * ***************************************/
-
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
-                    .ShouldBeTrue();
-                //foreach (var log in logIt.Logs)
-                //{
-                //    _output.WriteLine(log);
-                //}
-                ////to get the logs you need to fail see https://github.com/aspnet/Tooling/issues/541
-                //Assert.True(false, "failed the test so that the logs show");
-            }
-        }
-
-        [Fact]
-        public void HandleExceptionOnPublishedDateChangedOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var firstBook = context.Books.First(); //#A
-
-                context.Database.ExecuteSqlRaw(
-                    "UPDATE dbo.Books SET PublishedOn = GETDATE()" +  //#B
-                    " WHERE ConcurrencyBookId = @p0",                  //#B
-                    firstBook.ConcurrencyBookId);                      //#B
-                firstBook.Title = Guid.NewGuid().ToString(); //#C
-                var error = BookSaveChangesWithChecks(context);
-
-                //VERIFY
-                error.ShouldBeNull();
-            }
-            
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                var rereadBook = context.Books.First();
-                rereadBook.PublishedOn.ShouldEqual(new DateTime(2050, 5, 5));
-            }
-        }
-
-        [Fact]
-        public void ProduceErrorOnBookDeletedOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var firstBook = context.Books.First();
-
-                context.Database.ExecuteSqlRaw(
-                    "DELETE dbo.Books WHERE ConcurrencyBookId = @p0",
-                    firstBook.ConcurrencyBookId);
-                firstBook.Title = Guid.NewGuid().ToString();
-                var error = BookSaveChangesWithChecks(context);
-                //VERIFY
-                error.ShouldEqual("Unable to save changes.The book was deleted by another user.");
-            }
-        }
-
-        [Fact]
-        public void ShowGetDatabaseValuesOk()
-        {
-            //SETUP
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var firstBook = context.Books.First();
-                firstBook.Title = "New Title";
-
-                var databaseValues = (ConcurrencyBook) context.Entry(firstBook).GetDatabaseValues().ToObject();
-
-                //VERIFY
-                databaseValues.Title.ShouldNotEqual(firstBook.Title);
-            }
-        }
+        private readonly DbContextOptions<ConcurrencyDbContext> _options;
 
         private static string BookSaveChangesWithChecks //#A
             (ConcurrencyDbContext context)
@@ -323,6 +112,217 @@ namespace Test.UnitTests.TestDataLayer
             }
             return null; //#M
         }
+
+        [Fact]
+        public void CreateConcurrencyDataAllOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                var numBooks = context.Books.Count();
+
+                //ATTEMPT
+                context.Books.Add(new ConcurrencyBook
+                {
+                    Title = "Unit Test",
+                    PublishedOn = new DateTime(2014, 1, 1),
+                    Author = new ConcurrencyAuthor { Name = "Unit Test"}
+                });
+                context.SaveChanges();
+
+                //VERIFY
+                context.Books.Count().ShouldEqual(numBooks + 1);
+            }
+        }
+
+        [Fact]
+        public void HandleExceptionOnPublishedDateChangedOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var firstBook = context.Books.First(); //#A
+
+                context.Database.ExecuteSqlRaw(
+                    "UPDATE dbo.Books SET PublishedOn = GETDATE()" +  //#B
+                    " WHERE ConcurrencyBookId = @p0",                  //#B
+                    firstBook.ConcurrencyBookId);                      //#B
+                firstBook.Title = Guid.NewGuid().ToString(); //#C
+                var error = BookSaveChangesWithChecks(context);
+
+                //VERIFY
+                error.ShouldBeNull();
+            }
+            
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                var rereadBook = context.Books.First();
+                rereadBook.PublishedOn.ShouldEqual(new DateTime(2050, 5, 5));
+            }
+        }
+
+        [Fact]
+        public void ProduceErrorOnBookDeletedOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var firstBook = context.Books.First();
+
+                context.Database.ExecuteSqlRaw(
+                    "DELETE dbo.Books WHERE ConcurrencyBookId = @p0",
+                    firstBook.ConcurrencyBookId);
+                firstBook.Title = Guid.NewGuid().ToString();
+                var error = BookSaveChangesWithChecks(context);
+                //VERIFY
+                error.ShouldEqual("Unable to save changes.The book was deleted by another user.");
+            }
+        }
+
+        [Fact]
+        public void ShowGetDatabaseValuesOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var firstBook = context.Books.First();
+                firstBook.Title = "New Title";
+
+                var databaseValues = (ConcurrencyBook) context.Entry(firstBook).GetDatabaseValues().ToObject();
+
+                //VERIFY
+                databaseValues.Title.ShouldNotEqual(firstBook.Title);
+            }
+        }
+
+        [Fact]
+        public void ThrowExceptionOnAuthorChangedOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+
+
+                var firstAuthor = context.Authors.First(); //#A
+                context.Database.ExecuteSqlRaw(      //#B
+                    "UPDATE dbo.Authors SET Name = @p0"+ //#B
+                    " WHERE ConcurrencyAuthorId = @p1",  //#B
+                    firstAuthor.Name,                    //#B
+                    firstAuthor.ConcurrencyAuthorId);    //#B
+                firstAuthor.Name = "Concurrecy Name"; //#C
+                //context.SaveChanges(); //#D
+                /******************************************
+                #A I load the first author in the database as a tracked entity
+                #B I simulate another thread/application updating the entity. In fact nothing is changed, but the timestamp
+                #C I change something in the author to cause EF Core to do an update to the book
+                #D This SaveChanges will throw an DbUpdateConcurrencyException
+                 * ***************************************/
+
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
+                    .ShouldBeTrue();
+                //foreach (var log in logIt.Logs)
+                //{
+                //    _output.WriteLine(log);
+                //}
+                ////to get the logs you need to fail see https://github.com/aspnet/Tooling/issues/541
+                //Assert.True(false, "failed the test so that the logs show");
+            }
+        }
+
+        [Fact]
+        public void ThrowExceptionOnPublishedDateChangedOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+
+                var firstBook = context.Books.First(); //#A
+
+                context.Database.ExecuteSqlRaw(
+                    "UPDATE dbo.Books SET PublishedOn = GETDATE()" + //#B
+                    " WHERE ConcurrencyBookId = @p0",                //#B
+                    firstBook.ConcurrencyBookId);                    //#B
+                firstBook.Title = Guid.NewGuid().ToString(); //#C
+                //context.SaveChanges(); //#D
+                /******************************************
+                #A I load the first book in the database as a tracked entity
+                #B I simulate another thread/application changing the PublishedOn column of the same book
+                #C I change the title in the book to cause EF Core to do an update to the book
+                #D This SaveChanges will throw an DbUpdateConcurrencyException
+                 * ***************************************/
+
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
+                    .ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public void ThrowExceptionRowDeletedOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+
+                var firstBook = context.Books.First();
+
+                context.Database.ExecuteSqlRaw(
+                    "DELETE dbo.Books WHERE ConcurrencyBookId = @p0", 
+                    firstBook.ConcurrencyBookId);
+                firstBook.Title = Guid.NewGuid().ToString();
+
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
+
+                //VERIFY
+                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
+                    .ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public void UpdateBookTitleOk()
+        {
+            //SETUP
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+
+                var firstBookId = context.Books.First().ConcurrencyBookId;
+
+                //ATTEMPT
+                var firstBook = context.Books.First(k => k.ConcurrencyBookId == firstBookId);
+                var sqlTitle = Guid.NewGuid().ToString();
+                var newDate = DateTime.Now.AddDays(100);
+                context.Database.ExecuteSqlRaw(
+                    "UPDATE dbo.Books SET Title = @p0 WHERE ConcurrencyBookId = @p1", 
+                    sqlTitle, firstBookId);
+                firstBook.PublishedOn = newDate;
+                context.SaveChanges();
+
+                //VERIFY
+                context.Entry(firstBook).Reload();
+                firstBook.Title.ShouldEqual(sqlTitle);
+                firstBook.PublishedOn.ShouldEqual(newDate);
+
+                //foreach (var log in logIt.Logs)
+                //{
+                //    _output.WriteLine(log);
+                //}
+                ////to get the logs you need to fail see https://github.com/aspnet/Tooling/issues/541
+                //Assert.True(false, "failed the test so that the logs show");
+            }
+        }
+
         /***********************************************************
         #A My method takes in the application DbContext and the ChangeTracking entry from the exception's Entities property
         #B This method only handles a ConcurrecyBook, so throws an exception if the entry isn't of type Book

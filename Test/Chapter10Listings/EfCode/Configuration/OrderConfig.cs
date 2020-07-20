@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfClasses;
@@ -21,6 +21,7 @@ namespace Test.Chapter10Listings.EfCode.Configuration
                 .HasDefaultValueSql(
                     "NEXT VALUE FOR shared.OrderNumbers"); //#C
         }
+
         /**************************************************************
         #A This creates a sequence ‘OrderNumber’ in the schema ‘shared’. If no schema is provided it will use the default schema.
         #B These are optional, and allow you to control the squence start and increment. The default is start at 1 and increments by 1

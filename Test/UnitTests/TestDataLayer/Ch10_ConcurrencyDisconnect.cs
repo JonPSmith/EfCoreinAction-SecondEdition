@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -17,8 +15,6 @@ namespace Test.UnitTests.TestDataLayer
 {
     public class Ch10_ConcurrencyDisconnect
     {
-        private readonly DbContextOptions<ConcurrencyDbContext> _options;
-
         public Ch10_ConcurrencyDisconnect()
         {
             _options = this.CreateUniqueClassOptions<ConcurrencyDbContext>();
@@ -37,124 +33,41 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        private readonly DbContextOptions<ConcurrencyDbContext> _options;
+
 
         private static Employee GetJohnDoeRecord(ConcurrencyDbContext context)
         {
             return context.Employees.SingleOrDefault(p => p.Name == "John Doe");
         }
 
-        [Fact]
-        public void TestDisconnectedUpdateOk()
+        private string DiagnoseSalaryConflict( //#A
+            ConcurrencyDbContext context, 
+            EntityEntry entry)
         {
-            //SETUP
-            Employee entity;
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                entity = GetJohnDoeRecord(context);
-            }
+            var employee = entry.Entity
+                as Employee;
+            if (employee == null) //#B
+                throw new NotSupportedException(
+        "Don't know how to handle concurrency conflicts for " +
+                    entry.Metadata.Name);
 
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                context.Update(entity);
-                entity.UpdateSalary(context, 1000, 1100);
-                context.SaveChanges();
+            var databaseEntity = //#C
+                context.Employees.AsNoTracking() //#D
+                    .SingleOrDefault(p => 
+                        p.EmployeeId == employee.EmployeeId);
 
-                //VERIFY
-                GetJohnDoeRecord(context).Salary.ShouldEqual(1100);
-            }
-        }
+            if (databaseEntity == null) //#E
+                return
+        $"The Employee {employee.Name} was deleted by another user. " +
+        $"Click Add button to add back with salary of {employee.Salary}" +
+        " or Cancel to leave deleted."; //#F
 
-        [Fact]
-        public void TestDisconnectedUpdateThrowExceptionOk()
-        {
-            //SETUP
-            int johnDoeId;
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
-            }
-
-            using (var contextBoss = new ConcurrencyDbContext(_options))
-            using (var contextHr = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var jdBoss = contextBoss.Employees.Find(johnDoeId);
-                var jdHr = contextHr.Employees.Find(johnDoeId);
-                jdBoss.UpdateSalary(contextBoss, 1000, 1100);
-                contextBoss.SaveChanges();
-                jdHr.UpdateSalary(contextHr,1000,1025);
-
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => contextHr.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
-                    .ShouldBeTrue();
-            }
-        }
-
-        [Fact]
-        public void TestDisconnectedDeleteThrowExceptionOk()
-        {
-            //SETUP
-            int johnDoeId;
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
-            }
-
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var entity = context.Employees.Find(johnDoeId);
-                context.Database.ExecuteSqlRaw(
-                    "DELETE dbo.Employees WHERE EmployeeId = @p0",
-                    johnDoeId);
-                entity.UpdateSalary(context, 1000, 1100);
-
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
-                    .ShouldBeTrue();
-            }
-        }
-
-        [Fact]
-        public void TestDisconnectedUpdateDiagnoseOk()
-        {
-            //SETUP
-            int johnDoeId;
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
-            }
-
-            using (var contextBoss = new ConcurrencyDbContext(_options))
-            using (var contextHr = new ConcurrencyDbContext(_options))
-            {
-                //ATTEMPT
-                var jdBoss = contextBoss.Employees.Find(johnDoeId);
-                var jdHr = contextHr.Employees.Find(johnDoeId);
-                jdBoss.UpdateSalary(contextBoss, 1000, 1100);
-                contextBoss.SaveChanges();
-                jdHr.UpdateSalary(contextHr, 1000, 1025);
-
-                string message = null;
-                try
-                {
-                    contextHr.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    var entry = ex.Entries.Single();
-                    message = DiagnoseSalaryConflict(
-                        contextHr, entry);
-                }
-
-                //VERIFY
-                message.ShouldEqual("The Employee John Doe's salary was set to 1100 by another user. Click Update to use your new salary of 1025 or Cancel to leave the salary at 1100.");
-            }
+            return //#G
+        $"The Employee {employee.Name}'s salary was set to " +
+        $"{databaseEntity.Salary} by another user. " +
+        $"Click Update to use your new salary of {employee.Salary}" +
+        $" or Cancel to leave the salary at {databaseEntity.Salary}."; //#G
         }
 
         [Fact]
@@ -197,33 +110,112 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        private string DiagnoseSalaryConflict( //#A
-            ConcurrencyDbContext context, 
-            EntityEntry entry)
+        [Fact]
+        public void TestDisconnectedDeleteThrowExceptionOk()
         {
-            var employee = entry.Entity
-                as Employee;
-            if (employee == null) //#B
-                throw new NotSupportedException(
-        "Don't know how to handle concurrency conflicts for " +
-                    entry.Metadata.Name);
+            //SETUP
+            int johnDoeId;
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
+            }
 
-            var databaseEntity = //#C
-                context.Employees.AsNoTracking() //#D
-                    .SingleOrDefault(p => 
-                        p.EmployeeId == employee.EmployeeId);
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var entity = context.Employees.Find(johnDoeId);
+                context.Database.ExecuteSqlRaw(
+                    "DELETE dbo.Employees WHERE EmployeeId = @p0",
+                    johnDoeId);
+                entity.UpdateSalary(context, 1000, 1100);
 
-            if (databaseEntity == null) //#E
-                return
-        $"The Employee {employee.Name} was deleted by another user. " +
-        $"Click Add button to add back with salary of {employee.Salary}" +
-        " or Cancel to leave deleted."; //#F
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
 
-            return //#G
-        $"The Employee {employee.Name}'s salary was set to " +
-        $"{databaseEntity.Salary} by another user. " +
-        $"Click Update to use your new salary of {employee.Salary}" +
-        $" or Cancel to leave the salary at {databaseEntity.Salary}."; //#G
+                //VERIFY
+                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
+                    .ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public void TestDisconnectedFixDeleteOk()
+        {
+            //SETUP
+            int johnDoeId;
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
+            }
+
+            Employee disconnected = null;
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var johnDoe = context.Employees.Find(johnDoeId);
+                context.Database.ExecuteSqlRaw(
+                    "DELETE dbo.Employees WHERE EmployeeId = @p0",
+                    johnDoeId);
+                johnDoe.UpdateSalary(context, 1000, 1100);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    disconnected = johnDoe;
+                }
+            }
+
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                Employee.FixDeletedSalary(context, disconnected);
+                context.SaveChanges();
+            }
+
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //VERIFY
+                var johnDoe = GetJohnDoeRecord(context);
+                johnDoe.Salary.ShouldEqual(1100);
+            }
+        }
+
+        [Fact]
+        public void TestDisconnectedUpdateDiagnoseOk()
+        {
+            //SETUP
+            int johnDoeId;
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                johnDoeId = GetJohnDoeRecord(context).EmployeeId;
+            }
+
+            using (var contextBoss = new ConcurrencyDbContext(_options))
+            using (var contextHr = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                var jdBoss = contextBoss.Employees.Find(johnDoeId);
+                var jdHr = contextHr.Employees.Find(johnDoeId);
+                jdBoss.UpdateSalary(contextBoss, 1000, 1100);
+                contextBoss.SaveChanges();
+                jdHr.UpdateSalary(contextHr, 1000, 1025);
+
+                string message = null;
+                try
+                {
+                    contextHr.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    var entry = ex.Entries.Single();
+                    message = DiagnoseSalaryConflict(
+                        contextHr, entry);
+                }
+
+                //VERIFY
+                message.ShouldEqual("The Employee John Doe's salary was set to 1100 by another user. Click Update to use your new salary of 1025 or Cancel to leave the salary at 1100.");
+            }
         }
         /*********************************************************************
         #A This is called if there is a DbUpdateConcurrencyException. Its job is not to fix the problem, but form a useful message to show the user
@@ -283,7 +275,29 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestDisconnectedFixDeleteOk()
+        public void TestDisconnectedUpdateOk()
+        {
+            //SETUP
+            Employee entity;
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                entity = GetJohnDoeRecord(context);
+            }
+
+            using (var context = new ConcurrencyDbContext(_options))
+            {
+                //ATTEMPT
+                context.Update(entity);
+                entity.UpdateSalary(context, 1000, 1100);
+                context.SaveChanges();
+
+                //VERIFY
+                GetJohnDoeRecord(context).Salary.ShouldEqual(1100);
+            }
+        }
+
+        [Fact]
+        public void TestDisconnectedUpdateThrowExceptionOk()
         {
             //SETUP
             int johnDoeId;
@@ -292,37 +306,21 @@ namespace Test.UnitTests.TestDataLayer
                 johnDoeId = GetJohnDoeRecord(context).EmployeeId;
             }
 
-            Employee disconnected = null;
-            using (var context = new ConcurrencyDbContext(_options))
+            using (var contextBoss = new ConcurrencyDbContext(_options))
+            using (var contextHr = new ConcurrencyDbContext(_options))
             {
                 //ATTEMPT
-                var johnDoe = context.Employees.Find(johnDoeId);
-                context.Database.ExecuteSqlRaw(
-                    "DELETE dbo.Employees WHERE EmployeeId = @p0",
-                    johnDoeId);
-                johnDoe.UpdateSalary(context, 1000, 1100);
+                var jdBoss = contextBoss.Employees.Find(johnDoeId);
+                var jdHr = contextHr.Employees.Find(johnDoeId);
+                jdBoss.UpdateSalary(contextBoss, 1000, 1100);
+                contextBoss.SaveChanges();
+                jdHr.UpdateSalary(contextHr,1000,1025);
 
-                try
-                {
-                    context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    disconnected = johnDoe;
-                }
-            }
+                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => contextHr.SaveChanges());
 
-            using (var context = new ConcurrencyDbContext(_options))
-            {
-                Employee.FixDeletedSalary(context, disconnected);
-                context.SaveChanges();
-            }
-
-            using (var context = new ConcurrencyDbContext(_options))
-            {
                 //VERIFY
-                var johnDoe = GetJohnDoeRecord(context);
-                johnDoe.Salary.ShouldEqual(1100);
+                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. ")
+                    .ShouldBeTrue();
             }
         }
     }

@@ -1,12 +1,11 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfCode;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -15,10 +14,6 @@ namespace Test.UnitTests.TestDataLayer
 {
     public class Ch10_ScalarFunctionMapping
     {
-        private readonly ITestOutputHelper _output;
-
-        private readonly DbContextOptions<Chapter10EfCoreContext> _options;
-
         public Ch10_ScalarFunctionMapping(ITestOutputHelper output)
         {
             _output = output;
@@ -37,6 +32,10 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
+        private readonly ITestOutputHelper _output;
+
+        private readonly DbContextOptions<Chapter10EfCoreContext> _options;
+
         private class Dto
         {
             public int BookId { get; set; }
@@ -45,21 +44,22 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestUdfWorksOk()
+        public void TestFilterUsingUdfOk()
         {
             //SETUP
             using (var context = new Chapter10EfCoreContext(_options))
             {
+
+
                 //ATTEMPT
-                var bookAndVotesQuery = context.Books.Select(x => new Dto
-                {
-                    BookId = x.BookId,
-                    Title = x.Title,
-                    AveVotes = MyUdfMethods.AverageVotes(x.BookId)
-                });
+                var query = context.Books
+                    .Where(x => 
+                        MyUdfMethods.AverageVotes(x.BookId) >= 2.5);
+                var books = query.ToList();
 
                 //VERIFY
-                _output.WriteLine(bookAndVotesQuery.ToQueryString());
+                books.Count.ShouldEqual(6);
+                _output.WriteLine(query.ToQueryString());
             }
         }
 
@@ -85,22 +85,21 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestFilterUsingUdfOk()
+        public void TestUdfWorksOk()
         {
             //SETUP
             using (var context = new Chapter10EfCoreContext(_options))
             {
-
-
                 //ATTEMPT
-                var query = context.Books
-                    .Where(x => 
-                        MyUdfMethods.AverageVotes(x.BookId) >= 2.5);
-                var books = query.ToList();
+                var bookAndVotesQuery = context.Books.Select(x => new Dto
+                {
+                    BookId = x.BookId,
+                    Title = x.Title,
+                    AveVotes = MyUdfMethods.AverageVotes(x.BookId)
+                });
 
                 //VERIFY
-                books.Count.ShouldEqual(6);
-                _output.WriteLine(query.ToQueryString());
+                _output.WriteLine(bookAndVotesQuery.ToQueryString());
             }
         }
     }

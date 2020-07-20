@@ -1,22 +1,21 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using DataLayer.EfClasses;
-using DataLayer.EfCode.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Test.Chapter10Listings.EfCode
 {
     public class Chapter10EfCoreContext : DbContext
     {
-        public DbSet<Book> Books { get; set; }              
-        public DbSet<Author> Authors { get; set; }          
-        public DbSet<PriceOffer> PriceOffers { get; set; }  
-        public DbSet<Order> Orders { get; set; }            
-
         public Chapter10EfCoreContext(                             
             DbContextOptions<Chapter10EfCoreContext> options)      
             : base(options) {}
+
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<PriceOffer> PriceOffers { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void
             OnModelCreating(ModelBuilder modelBuilder)
@@ -29,7 +28,6 @@ namespace Test.Chapter10Listings.EfCode
                 () => MyUdfMethods.AverageVotes(default(int)))
                 .HasSchema("dbo");
         }
-
     }
 }
 

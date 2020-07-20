@@ -1,12 +1,10 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
 using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
@@ -15,7 +13,6 @@ namespace Test.UnitTests.TestDataLayer
 {
     public class Ch10_ComputedColumn
     {
-
         [Fact]
         public void TestComputedColumnAddOk()
         {
@@ -58,7 +55,5 @@ namespace Test.UnitTests.TestDataLayer
                 entity.YearOfBirth.ShouldEqual(2000);
             }
         }
-
-
     }
 }
