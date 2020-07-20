@@ -39,9 +39,4 @@
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-    <Folder Include="UnitTests\TestDataLayer\AddViewCommand\" />
-  </ItemGroup>
-
 </Project>
