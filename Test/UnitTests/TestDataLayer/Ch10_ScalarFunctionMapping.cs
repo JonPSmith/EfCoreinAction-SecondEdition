@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter10Listings.EfCode;
 using Test.TestHelpers;
@@ -70,12 +71,16 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter10EfCoreContext(_options))
             {
                 //ATTEMPT
-                var bookAndVotes = context.Books.Select(x => new Dto
+                var bookAndVotes = context.Books.Select(x => new Dto //#A
                 {
                     BookId = x.BookId,
                     Title = x.Title,
-                    AveVotes = MyUdfMethods.AverageVotes(x.BookId)
+                    AveVotes = MyUdfMethods.AverageVotes(x.BookId)  //#B
                 }).ToList();
+                /***************************************************************
+                #A This is a normal EF Core query on the Books table
+                #B This calls your scalar valued UDF using its representing method
+                 **************************************************************/
 
                 //VERIFY
                 var softAve = context.Books.Include(x => x.Reviews).OrderBy(p => p.BookId)

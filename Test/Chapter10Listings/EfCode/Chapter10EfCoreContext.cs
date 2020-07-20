@@ -23,10 +23,8 @@ namespace Test.Chapter10Listings.EfCode
             modelBuilder.Entity<BookAuthor>()
                 .HasKey(x => new { x.BookId, x.AuthorId });
 
-            //needed this to add .HasSchema - see bug https://github.com/aspnet/EntityFrameworkCore/issues/9663
             modelBuilder.HasDbFunction(
-                () => MyUdfMethods.AverageVotes(default(int)))
-                .HasSchema("dbo");
+                () => MyUdfMethods.AverageVotes(default(int)));
         }
     }
 }
