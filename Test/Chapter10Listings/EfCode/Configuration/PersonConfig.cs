@@ -22,13 +22,8 @@ namespace Test.Chapter10Listings.EfCode.Configuration
 
             entity.Property(p => p.FullName)            //#C
                 .HasComputedColumnSql(                  //#C
-                    $"[FirstName] + ' ' + [LastName]",  //#C
-                    stored: true);                       //#C
-
-            entity.Property(p => p.FullName)            //#C
-                .HasComputedColumnSql(                  //#C
-                    $"[FirstName] + ' ' + [LastName]",  //#C
-                    stored:true);                       //#C
+                    "[FirstName] + ' ' + [LastName]",   //#C
+                    stored: true);                      //#C
 
             entity.HasIndex(x => x.FullName);      //#D 
             //You can add a index to computed column if it is deterministic
