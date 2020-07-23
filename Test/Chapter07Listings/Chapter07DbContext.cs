@@ -111,7 +111,7 @@ namespace Test.Chapter07Listings
                     .UseCollation("Latin1_General_CS_AS");
                 modelBuilder.Entity<CollationsClass>()
                     .HasIndex(x => x.CaseSensitiveStringWithIndex)
-                    .HasName("CaseSensitive");
+                    .HasDatabaseName("CaseSensitive");
             }
 
             modelBuilder.Entity<Person>()
@@ -125,7 +125,7 @@ namespace Test.Chapter07Listings
             modelBuilder.Entity<IndexClass>()
                 .HasIndex(p => p.IndexUnique)
                 .IsUnique()
-                .HasName("MyUniqueIndex");
+                .HasDatabaseName("MyUniqueIndex");
 
             modelBuilder.Entity<SchemaFluentExample>()
                 .ToTable("SchemaFluent", schema: "Schema2");

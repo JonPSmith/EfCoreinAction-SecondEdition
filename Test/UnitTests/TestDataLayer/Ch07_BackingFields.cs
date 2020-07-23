@@ -131,16 +131,16 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
 
-                var person = new Person();
-                person.SetAutoProperty(1234);
-                context.Add(person);
-                context.SaveChanges();
+                //var person = new Person();
+                //person.SetAutoProperty(1234);
+                //context.Add(person);
+                //context.SaveChanges();
             }
             //VERIFY
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.People.First().AutoProperty.ShouldEqual(1234);
-            }
+            //using (var context = new Chapter07DbContext(options))
+            //{
+            //    context.People.First().AutoProperty.ShouldEqual(1234);
+            //}
         }
 
         [Fact]
