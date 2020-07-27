@@ -118,7 +118,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 context.Entry(entity).State.ShouldEqual(EntityState.Detached);
                 context.MyEntities.Count().ShouldEqual(0);
-                context.OneEntities.Count().ShouldEqual(1);
+                context.OneOptionalEntities.Count().ShouldEqual(1);
             }
         }
 
@@ -285,7 +285,7 @@ namespace Test.UnitTests.TestDataLayer
                     context.MyEntities
                     .First();
                 var oneToOne =
-                    context.OneEntities
+                    context.OneOptionalEntities
                     .First();
                 entity.OneToOneOptional = oneToOne;
                 context.Remove(entity);
