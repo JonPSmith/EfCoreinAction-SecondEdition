@@ -10,6 +10,7 @@ namespace Test.Chapter11Listings.EfCode
     {
         public DbSet<MyEntity> MyEntities { get; set; }
         public DbSet<OneEntityOptional> OneOptionalEntities { get; set; }
+        public DbSet<OneEntityRequired> OneEntityRequired { get; set; }
         public DbSet<ManyEntity> ManyEntities { get; set; }
 
         public Chapter11DbContext(

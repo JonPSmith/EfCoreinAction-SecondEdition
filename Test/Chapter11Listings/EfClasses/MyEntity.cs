@@ -13,6 +13,8 @@ namespace Test.Chapter11Listings.EfClasses
 
         public OneEntityOptional OneToOneOptional { get; set; }
 
+        public OneEntityGuidOptional OneEntityGuidOptional { get; set; }
+
         public OneEntityRequired OneEntityRequired { get; set; }
 
         //Note: I don't normally use the form of collection, but I used it so that this entity is set up the same as the NotifyOne entity
