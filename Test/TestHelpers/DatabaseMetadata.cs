@@ -55,7 +55,7 @@ namespace Test.TestHelpers
         //---------------------------------------------------
         //private methods
 
-        private static PropertyInfo GetPropertyInfoFromLambda<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> model) where TEntity : class
+        public static PropertyInfo GetPropertyInfoFromLambda<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> model) where TEntity : class
         {
             var memberEx = (MemberExpression)model.Body;
             if (memberEx == null)
