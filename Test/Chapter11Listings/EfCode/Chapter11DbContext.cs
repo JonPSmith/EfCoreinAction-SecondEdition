@@ -11,8 +11,6 @@ namespace Test.Chapter11Listings.EfCode
         public DbSet<MyEntity> MyEntities { get; set; }
         public DbSet<OneEntityOptional> OneEntities { get; set; }
         public DbSet<ManyEntity> ManyEntities { get; set; }
-        public DbSet<MyEntityGuid> MyEntityGuids { get; set; }
-        public DbSet<OneEntityOptionalGuid> OneEntityGuids { get; set; }
 
         public Chapter11DbContext(
             DbContextOptions<Chapter11DbContext> options)

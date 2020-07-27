@@ -219,11 +219,8 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(entity);
                 context.SaveChanges();
             }
-
             using (var context = new Chapter11DbContext(options))
             {
-                context.Database.EnsureCreated();
-
                 //ATTEMPT
                 var entity = context.MyEntities.Single();
                 entity.OneEntityRequired = new OneEntityRequired();
@@ -237,6 +234,33 @@ namespace Test.UnitTests.TestDataLayer
                 context.GetAllPropsNavsIsModified(entity.OneEntityRequired).ShouldEqual("");
             }
         }
+
+        [Fact]
+        public void TestRequiredWithNewOneToOneOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using (var context = new Chapter11DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var entity = new MyEntity();
+                context.Add(entity);
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
+                //ATTEMPT
+                var entity = context.MyEntities.Single();
+                entity.OneEntityRequired = new OneEntityRequired();
+                context.Remove(entity);
+                context.SaveChanges();
+
+                //VERIFY
+                context.MyEntities.Count().ShouldEqual(0);
+                context.Set<OneEntityRequired>().Count().ShouldEqual(0);
+            }
+        }
+
 
 
         [Fact]
