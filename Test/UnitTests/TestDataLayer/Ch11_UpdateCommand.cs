@@ -95,7 +95,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var oneToOne = new OneEntityGuidOptional {Id = Guid.NewGuid()};
+                var oneToOne = new OneEntityGuidOptional();
                 context.Add(oneToOne);
                 context.SaveChanges();
                 var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
@@ -118,7 +118,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var oneToOne = new OneEntityGuidOptional { Id = Guid.NewGuid() };
+                var oneToOne = new OneEntityGuidOptional( );
                 context.Add(oneToOne);
                 context.SaveChanges();
                 var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
