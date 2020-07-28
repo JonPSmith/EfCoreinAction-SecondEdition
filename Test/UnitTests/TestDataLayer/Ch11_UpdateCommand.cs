@@ -95,7 +95,10 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var entity = new MyEntity { OneEntityGuidOptional = new OneEntityGuidOptional { Id = Guid.NewGuid() } };
+                var oneToOne = new OneEntityGuidOptional {Id = Guid.NewGuid()};
+                context.Add(oneToOne);
+                context.SaveChanges();
+                var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
                 context.Update(entity);
                 context.SaveChanges();
 
@@ -115,7 +118,10 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var entity = new MyEntity { OneEntityGuidOptional = new OneEntityGuidOptional{ Id = Guid.NewGuid()} };
+                var oneToOne = new OneEntityGuidOptional { Id = Guid.NewGuid() };
+                context.Add(oneToOne);
+                context.SaveChanges();
+                var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
                 context.Update(entity);
 
                 //VERIFY
@@ -123,7 +129,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Entry(entity).State.ShouldEqual(EntityState.Added);
                 context.Entry(entity.OneEntityGuidOptional).State.ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneEntityGuidOptional");
-                context.GetAllPropsNavsIsModified(entity.OneEntityGuidOptional).ShouldEqual("MyEntityId,MyString");
+                context.GetAllPropsNavsIsModified(entity.OneEntityGuidOptional).ShouldEqual("MyEntityId");
             }
         }
 
