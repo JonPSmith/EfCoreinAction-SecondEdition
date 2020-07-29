@@ -1,8 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter11Listings.EfClasses;
+using Test.Chapter11Listings.Interfaces;
 
 namespace Test.Chapter11Listings.EfCode
 {
@@ -21,6 +25,8 @@ namespace Test.Chapter11Listings.EfCode
         public DbSet<NotifyEntity> Notify { get; set; }
         public DbSet<Notify2Entity> Notify2 { get; set; }
 
+        public DbSet<EntityAddUpdate> LoggedEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NotifyEntity>()
@@ -28,5 +34,63 @@ namespace Test.Chapter11Listings.EfCode
             modelBuilder.Entity<Notify2Entity>()
                 .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
         }
+
+        private void AddUpdateChecks()                                  //#A
+        {
+            ChangeTracker.DetectChanges();                              //#B
+            foreach (var entity in ChangeTracker.Entries()              //#C
+                .Where(e =>                                             //#C
+                    e.State == EntityState.Added ||                     //#C
+                    e.State == EntityState.Modified))                   //#C
+            {
+                var tracked = entity.Entity as ICreatedUpdated;         //#D
+                tracked?.Update(entity);                                //#E
+            }
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess) //#F
+        {
+            AddUpdateChecks();                                          //#G
+            try
+            {
+                ChangeTracker.AutoDetectChangesEnabled = false;         //#H
+                return base.SaveChanges(acceptAllChangesOnSuccess);     //#I
+            }
+            finally
+            {
+                ChangeTracker.AutoDetectChangesEnabled = true;          //#J
+            }
+        }
+        /********************************************************
+        #A This private method will be called from SaveChanges and SaveChangesAsync
+        #B It calls DetectChanges to make sure all the updates have been found
+        #C It loops through all the tracked entities that have a State of Added or Modified
+        #D If the Added/Modified entity has the ICreatedUpdated, then the tracked isn't null
+        #E So we call the Update command. In this example we don't have the UserId available
+        #F You override SaveChanges (and SaveChangesAsync - not shown)
+        #G You call the AddUpdateChecks, which contains a call to ChangeTracker.DetectChanges()
+        #H Because DetectChanges has been call we tell SaveChanges to call it again (for performance reasons)
+        #I You call the base.SaveChanges that you overrided
+        #J Finally to turn the AutoDetectChangesEnabled back on
+         *******************************************************/
+
+        public override Task<int> SaveChangesAsync(                    
+            bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+        {
+            AddUpdateChecks();
+            try
+            {
+                ChangeTracker.AutoDetectChangesEnabled = false;
+                return base.SaveChangesAsync(
+                    acceptAllChangesOnSuccess, cancellationToken);
+            }
+            finally
+            {
+                ChangeTracker.AutoDetectChangesEnabled = true;
+            }
+        }
+
+
     }
 }
