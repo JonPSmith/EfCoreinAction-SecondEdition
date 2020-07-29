@@ -8,11 +8,11 @@ namespace Test.Chapter11Listings.EfCode
 {
     public class ProxyNotifyDbContext : DbContext
     {
-        public DbSet<ProxyMyEntity> ProxyMyEntities { get; set; }
-
         public ProxyNotifyDbContext(
             DbContextOptions<ProxyNotifyDbContext> options)
             : base(options)
         { }
+
+        public DbSet<ProxyMyEntity> ProxyMyEntities { get; set; }
     }
 }

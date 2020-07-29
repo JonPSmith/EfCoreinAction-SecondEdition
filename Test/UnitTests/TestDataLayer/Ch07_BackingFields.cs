@@ -72,7 +72,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
 
-                var person = new Person();
+                var person = new Person{Name = "BackingFieldViaAnnotation test" };
                 person.SetPropertyAnnotationValue("some data");
                 context.Add(person);
                 context.SaveChanges();
@@ -86,9 +86,6 @@ namespace Test.UnitTests.TestDataLayer
 
                 _output.WriteLine(query.ToQueryString());
                 entity.BackingFieldViaAnnotation.ShouldEqual("some data");
-                context.People.Where(x => x.PersonId == personId)
-                    .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaAnnotation)))
-                    .Single().ShouldEqual("some data");
             }
         }
 

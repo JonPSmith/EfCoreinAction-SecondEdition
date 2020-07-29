@@ -11,6 +11,7 @@ using Test.Chapter11Listings.EfCode;
 using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
@@ -79,12 +80,6 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [RunnableInDebugOnly]
-        public void TestSaveChangesPerformanceMyEntity1()
-        {
-            TestSaveChangesPerformanceMyEntityOk(1);
-        }
-
-        [RunnableInDebugOnly]
         public void TestSaveChangesPerformanceMyEntity1000()
         {
             TestSaveChangesPerformanceMyEntityOk(1000);
@@ -94,6 +89,12 @@ namespace Test.UnitTests.TestDataLayer
         public void TestSaveChangesPerformanceMyEntity10000()
         {
             TestSaveChangesPerformanceMyEntityOk(10000);
+        }
+
+        [RunnableInDebugOnly]
+        public void TestSaveChangesPerformanceMyEntity100000()
+        {
+            TestSaveChangesPerformanceMyEntityOk(100000);
         }
 
         private void TestSaveChangesPerformanceMyEntityOk(int numEntities)
@@ -131,43 +132,43 @@ namespace Test.UnitTests.TestDataLayer
             }
         }
 
-        //[Theory]
-        //[InlineData(1)]
-        //[InlineData(1000)]
-        //[InlineData(10000)]
-        //public void TestSaveChangesPerformanceNotifyEntityOk(int numEntities)
-        //{
-        //    //SETUP
-        //    var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+        [Theory]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        //[InlineData(100000)]
+        public void TestSaveChangesPerformanceNotifyEntityOk(int numEntities)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
 
-        //    using (var context = new Chapter11DbContext(options))
-        //    {
-        //        context.Database.EnsureCreated();
-        //        var entities = new List<NotifyEntity>();
-        //        for (int i = 0; i < numEntities; i++)
-        //        {
-        //            var entity = new NotifyEntity();
-        //            entities.Add(entity);
-        //        }
-        //        context.AddRange(entities);
-        //        context.SaveChanges();
+            using (var context = new Chapter11DbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var entities = new List<NotifyEntity>();
+                for (int i = 0; i < numEntities; i++)
+                {
+                    var entity = new NotifyEntity();
+                    entities.Add(entity);
+                }
+                context.AddRange(entities);
+                context.SaveChanges();
 
-        //    }
-        //    using (var context = new Chapter11DbContext(options))
-        //    {
-        //        var entities = context.Notify.ToList();
-        //        entities.Count.ShouldEqual(numEntities);
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
+                var entities = context.Notify.ToList();
+                entities.Count.ShouldEqual(numEntities);
 
-        //        //ATTEMPT
-        //        var timer = new Stopwatch();
-        //        timer.Start();
-        //        context.SaveChanges();
-        //        timer.Stop();
+                //ATTEMPT
+                var timer = new Stopwatch();
+                timer.Start();
+                context.SaveChanges();
+                timer.Stop();
 
-        //        //VERIFY
-        //        _output.WriteLine("#{0:####0} entities: total time = {1:2} ms ", numEntities,
-        //            1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
-        //    }
-        //}
+                //VERIFY
+                _output.WriteLine("#{0:####0} entities: total time = {1:2} ms ", numEntities,
+                    1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
+            }
+        }
     }
 }

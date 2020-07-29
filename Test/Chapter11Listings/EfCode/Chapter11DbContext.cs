@@ -8,14 +8,25 @@ namespace Test.Chapter11Listings.EfCode
 {
     public class Chapter11DbContext : DbContext
     {
+        public Chapter11DbContext(
+            DbContextOptions<Chapter11DbContext> options)
+            : base(options)
+        { }
+
         public DbSet<MyEntity> MyEntities { get; set; }
         public DbSet<OneEntityOptional> OneOptionalEntities { get; set; }
         public DbSet<OneEntityRequired> OneEntityRequired { get; set; }
         public DbSet<ManyEntity> ManyEntities { get; set; }
 
-        public Chapter11DbContext(
-            DbContextOptions<Chapter11DbContext> options)
-            : base(options)
-        { }
+        public DbSet<NotifyEntity> Notify { get; set; }
+        public DbSet<Notify2Entity> Notify2 { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<NotifyEntity>()
+                .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+            modelBuilder.Entity<Notify2Entity>()
+                .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+        }
     }
 }
