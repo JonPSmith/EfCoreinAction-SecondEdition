@@ -81,6 +81,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(entity);
 
                 //VERIFY
+                context.Entry(entity).State.ShouldEqual(EntityState.Added);
                 logs.Count.ShouldEqual(0);
             }
         }
@@ -110,6 +111,7 @@ namespace Test.UnitTests.TestDataLayer
                 logs.Single().Args.OldState.ShouldEqual(EntityState.Added);
                 logs.Single().Args.NewState.ShouldEqual(EntityState.Unchanged);
                 logs.Single().Args.Entry.Entity.ShouldEqual(entity);
+                ((MyEntity)logs.Single().Args.Entry.Entity).Id.ShouldNotEqual(0);
             }
         }
 
@@ -146,6 +148,39 @@ namespace Test.UnitTests.TestDataLayer
                 logs.First().Args.NewState.ShouldEqual(EntityState.Modified);
                 logs.Last().Args.OldState.ShouldEqual(EntityState.Modified);
                 logs.Last().Args.NewState.ShouldEqual(EntityState.Unchanged);
+            }
+        }
+
+        [Fact]
+        public void TestRemoveStateChangedEventNoSaveChangesOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using (var context = new Chapter11DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var entity = new MyEntity { MyString = "Test" };
+                context.Add(entity);
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
+                var logs = new List<StateChangedEventLog>();
+
+                context.ChangeTracker.StateChanged += delegate (object sender, EntityStateChangedEventArgs args)
+                {
+                    logs.Add(new StateChangedEventLog(sender, args));
+                };
+
+                //ATTEMPT
+                var entity = context.MyEntities.Single();
+                context.Remove(entity);
+
+                //VERIFY
+                logs.Count.ShouldEqual(1);
+                logs.First().Args.OldState.ShouldEqual(EntityState.Unchanged);
+                logs.First().Args.NewState.ShouldEqual(EntityState.Deleted);
             }
         }
 
