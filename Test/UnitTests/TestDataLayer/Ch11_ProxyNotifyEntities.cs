@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Test.Chapter11Listings.EfClasses;
 using Test.Chapter11Listings.EfCode;
 using Test.Chapter11Listings.ProxyEfClasses;
 using Test.TestHelpers;
@@ -25,7 +24,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestUpdateStringProxyEntityOk()
+        public void TestChangingNotificationsUpdateStringOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<ProxyNotifyDbContext>(
@@ -34,7 +33,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
 
-                var entity = new ProxyMyEntity{MyString = "hello"};
+                var entity = new ProxyMyEntity { MyString = "hello" };
                 context.Add(entity);
                 context.SaveChanges();
             }
@@ -47,11 +46,12 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 context.Entry(entity).State.ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
+                context.Entry(entity).Property(nameof(ProxyMyEntity.MyString)).OriginalValue.ShouldEqual("hello");
             }
         }
 
         [Fact]
-        public void TestUpdateRelationshipProxyEntityOk()
+        public void TestChangingNotificationsUpdateRelationshipOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<ProxyNotifyDbContext>(
@@ -60,7 +60,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
 
-                var entity = new ProxyMyEntity { MyString = "hello" };
+                var entity = new ProxyMyEntity {MyString = "hello"};
                 context.Add(entity);
                 context.Add(new ProxyOptional());
                 context.SaveChanges();
@@ -75,6 +75,67 @@ namespace Test.UnitTests.TestDataLayer
                 context.Entry(entity).State.ShouldEqual(EntityState.Unchanged);
                 context.Entry(entity.ProxyOptional).State.ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity.ProxyOptional).ShouldEqual("ProxyMyEntityId");
+                context.Entry(entity).Property(nameof(ProxyMyEntity.MyString)).OriginalValue.ShouldEqual("hello");
+            }
+        }
+
+
+        [Fact]
+        public void TestChangingAndChangedNotificationsUpdateStringOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<ProxyNotifyDbContext>(
+                builder => builder.UseChangeTrackingProxies());
+            using (var context = new ProxyNotifyDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var entity = context.CreateProxy<ProxyMyEntity>();
+                context.Add(entity);
+                context.SaveChanges();
+            }
+            using (var context = new ProxyNotifyDbContext(options))
+            {
+                //ATTEMPT
+                var entity = context.ProxyMyEntities.Single();
+                entity.MyString = "goodbye";
+
+                //VERIFY
+                context.Entry(entity).State.ShouldEqual(EntityState.Modified);
+                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
+                Assert.Throws<InvalidOperationException>(() =>
+                    context.Entry(entity).Property(nameof(ProxyMyEntity.MyString)).OriginalValue.ShouldEqual("hello"));
+            }
+        }
+        
+        [Fact]
+        public void TestChangingAndChangedNotificationsUpdateRelationshipOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<ProxyNotifyDbContext>(
+                builder => builder.UseChangeTrackingProxies());
+            using (var context = new ProxyNotifyDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var entity = context.CreateProxy<ProxyMyEntity>();
+                entity.MyString = "hello";
+                context.Add(entity);
+                context.Add(context.CreateProxy<ProxyOptional>());
+                context.SaveChanges();
+            }
+            using (var context = new ProxyNotifyDbContext(options))
+            {
+                //ATTEMPT
+                var entity = context.ProxyMyEntities.Single();
+                entity.ProxyOptional = context.Set<ProxyOptional>().Single();
+
+                //VERIFY
+                context.Entry(entity).State.ShouldEqual(EntityState.Unchanged);
+                context.Entry(entity.ProxyOptional).State.ShouldEqual(EntityState.Modified);
+                context.GetAllPropsNavsIsModified(entity.ProxyOptional).ShouldEqual("ProxyMyEntityId");
+                Assert.Throws<InvalidOperationException>(() =>
+                    context.Entry(entity).Property(nameof(ProxyMyEntity.MyString)).OriginalValue.ShouldEqual("hello"));
             }
         }
 

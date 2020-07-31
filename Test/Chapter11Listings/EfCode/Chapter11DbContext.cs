@@ -5,17 +5,32 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Test.Chapter11Listings.EfClasses;
 using Test.Chapter11Listings.Interfaces;
 
 namespace Test.Chapter11Listings.EfCode
 {
-    public class Chapter11DbContext : DbContext
+    public class Chapter11DbContext : DbContext                 //#A
     {
+        private ChangeTrackerEventHandler _trackerEventHandler; //#B
+
         public Chapter11DbContext(
-            DbContextOptions<Chapter11DbContext> options)
+            DbContextOptions<Chapter11DbContext> options,
+            ILogger logger = null)                              //#C
             : base(options)
-        { }
+        {
+            if (logger != null)                                 //#D
+                _trackerEventHandler = new                      //#E
+                    ChangeTrackerEventHandler(this, logger);    //#E
+        }
+        /**************************************************************
+        #A This is your application DbContext you want to log changes from
+        #B You need an instance of the event handler class while the DbContext exists
+        #C You add a ILogger to the constructor.
+        #D If an ILogger is available then you register the handlers
+        #E This creates the event handler class, which registers the event handlers
+         ************************************************************/
 
         public DbSet<MyEntity> MyEntities { get; set; }
         public DbSet<OneEntityOptional> OneOptionalEntities { get; set; }

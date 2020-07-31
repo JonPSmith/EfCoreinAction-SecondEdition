@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter11Listings.EfClasses;
 using Test.Chapter11Listings.EfCode;
@@ -49,6 +50,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 var entity = context.Notify.First();
                 entity.MyString.ShouldEqual("Changed");
+                context.Entry(entity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
             }
         }
 
@@ -102,7 +104,8 @@ namespace Test.UnitTests.TestDataLayer
                 entity.MyString = "Changed";
 
                 //VERIFY
-                var xx = context.Entry(entity);
+                var tracked = context.ChangeTracker.Entries().Single();
+                context.Entry(entity).CurrentValues.Properties.Count.ShouldEqual(0);
                 context.NumTrackedEntities().ShouldEqual(1);
                 context.Entry(entity).State.ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
@@ -130,6 +133,7 @@ namespace Test.UnitTests.TestDataLayer
                 entity.MyString = "Changed";
 
                 //VERIFY
+                var xx = context.Entry(entity);
                 context.NumTrackedEntities().ShouldEqual(1);
                 context.GetEntityState(entity).ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
