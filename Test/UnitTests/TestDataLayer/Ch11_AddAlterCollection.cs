@@ -133,11 +133,17 @@ namespace Test.UnitTests.TestDataLayer
                 var entity = new NotifyEntity();
                 entity.Many.Add(new NotifyMany());
                 context.Add(entity);
-
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Added);
-                context.GetEntityState(entity.Many.First()).ShouldEqual(EntityState.Added);
+                var entity = context.Notify.Include(x => x.Many).First();
+
+                entity.Many.Count.ShouldEqual(1);
+                //see https://github.com/dotnet/efcore/issues/21835
+                //context.GetEntityState(entity).ShouldEqual(EntityState.Added);
+                //context.GetEntityState(entity.Many.First()).ShouldEqual(EntityState.Added);
             }
         }
 
@@ -154,18 +160,21 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
             }
 
-            //ATTEMPT
             using (var context = new Chapter11DbContext(options))
             {
+                //ATTEMPT
                 var entity = context.MyEntities.Include(x => x.Many).Single();
-                entity.Many.Add(new ManyEntity());
-
+                var many = new ManyEntity();
+                entity.Many.Add(many);
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Unchanged);
-                context.GetNavigationalIsModified(entity, x => x.Many).ShouldBeFalse();
-                context.GetEntityState(entity.Many.First()).ShouldEqual(EntityState.Added);
-           }
+                var entity = context.MyEntities.Include(x => x.Many).First();
+
+                entity.Many.Count.ShouldEqual(1);
+            }
         }
 
         [Fact]
@@ -180,18 +189,19 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(new NotifyEntity());
                 context.SaveChanges();
             }
-
-            //ATTEMPT
             using (var context = new Chapter11DbContext(options))
             {
+                //ATTEMPT
                 var entity = context.Notify.Single();
                 entity.Many.Add(new NotifyMany());
-
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Unchanged);
-                context.GetNavigationalIsModified(entity, x => x.Many).ShouldBeFalse();
-                context.GetEntityState(entity.Many.First()).ShouldEqual(EntityState.Added);
+                var entity = context.Notify.Include(x => x.Many).First();
+
+                entity.Many.Count.ShouldEqual(1);
             }
         }
     }

@@ -215,12 +215,14 @@ namespace Test.UnitTests.TestDataLayer
                 var entity = new NotifyEntity();
                 entity.OneToOne = new NotifyOne();
                 context.Add(entity);
-
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Added);
-                context.GetEntityState(entity.OneToOne).ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("");
+                var entity = context.Notify.Include(x => x.OneToOne).First();
+
+                entity.OneToOne.ShouldNotBeNull();
             }
         }
 
@@ -248,7 +250,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.GetEntityState(entity).ShouldEqual(EntityState.Unchanged);
                 context.GetEntityState(entity.OneToOneOptional).ShouldEqual(EntityState.Added);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneToOneOptional");
-           }
+            }
         }
 
         [Fact]
@@ -263,18 +265,18 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(new NotifyEntity());
                 context.SaveChanges();
             }
-
-            //ATTEMPT
             using (var context = new Chapter11DbContext(options))
             {
+                //ATTEMPT
                 var entity = context.Notify.Single();
                 entity.OneToOne = new NotifyOne();
-
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Unchanged);
-                context.GetEntityState(entity.OneToOne).ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("");
+                var entity = context.Notify.Include(x => x.OneToOne).Single();
+                entity.OneToOne.ShouldNotBeNull();
             }
         }
 

@@ -163,7 +163,6 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-
             using (var context = new Chapter11DbContext(options))
             {
                 context.Database.EnsureCreated();
@@ -171,11 +170,13 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var entity = new NotifyEntity {MyString = "Notify"};
                 context.Add(entity);
-
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(1);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("");
+                var entity = context.Notify.Single();
+                entity.MyString.ShouldEqual("Notify");
             }
         }
 
@@ -202,7 +203,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.NumTrackedEntities().ShouldEqual(1);
                 context.GetEntityState(entity).ShouldEqual(EntityState.Modified);
                 context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
-           }
+            }
         }
 
         [Fact]
@@ -217,17 +218,20 @@ namespace Test.UnitTests.TestDataLayer
                 context.Add(new NotifyEntity { MyString = "Notify" });
                 context.SaveChanges();
             }
-
-            //ATTEMPT
             using (var context = new Chapter11DbContext(options))
             {
+                //ATTEMPT
                 var entity = context.Notify.Single();
                 entity.MyString = "Changed";
+                context.SaveChanges();
+            }
+            using (var context = new Chapter11DbContext(options))
+            {
+                //VERIFY
+                var entity = context.Notify.Single();
 
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(1);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Modified);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
+                entity.MyString.ShouldEqual("Changed");
             }
         }
     }
