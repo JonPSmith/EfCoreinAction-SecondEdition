@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Test.Chapter11Listings.EfCode;
 
@@ -31,9 +32,9 @@ namespace Test.Chapter11Listings.EfClasses
             set => SetWithNotify(value, ref _oneToOne); //#B
         }
 
-        public ICollection<NotifyMany> 
+        public ObservableCollection<NotifyMany> 
             Many { get; } //#C
-            = new ObservableHashSet<NotifyMany>(); //#D
+            = new ObservableCollection<NotifyMany>(); //#D
     }
     /**************************************************************
     #A Each non-collection property must have a backing field

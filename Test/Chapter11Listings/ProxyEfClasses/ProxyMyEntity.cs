@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 namespace Test.Chapter11Listings.ProxyEfClasses
 {
     public class ProxyMyEntity
@@ -10,5 +13,7 @@ namespace Test.Chapter11Listings.ProxyEfClasses
         public virtual string MyString { get; set; }
 
         public virtual ProxyOptional ProxyOptional { get; set; }
+
+        public virtual ObservableCollection<ProxyMany> Many { get; set; } = new ObservableCollection<ProxyMany>();
     }
 }
