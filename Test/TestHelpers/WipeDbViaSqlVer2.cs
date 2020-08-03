@@ -9,22 +9,15 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Test.TestHelpers
 {
-    public class WipeDbViaSqlVer2
+    public static class WipeDbViaSqlVer2
     {
-        private readonly DbContext _context;
-        private readonly HashSet<object> _stopCircularLook;                //#A
 
-        public WipeDbViaSqlVer2(DbContext context)
-        {
-            _context = context;
-            _stopCircularLook = new HashSet<object>();
-        }
-
-        public IEnumerable<string>
+        public static IEnumerable<string>
             GetTableNamesInOrderForWipe //#A
-            ( params Type[] excludeTypes) //#B
+            (this DbContext context,
+                params Type[] excludeTypes) //#B
         {
-            var allEntities = _context.Model
+            var allEntities = context.Model
                 .GetEntityTypes()
                 .Where(x => !excludeTypes.Contains(x.ClrType))
                 .ToList(); //#C
@@ -97,13 +90,13 @@ namespace Test.TestHelpers
     #L Finally I return a collection of table names, with a optional schema, in the right order
     * ***********************************************************************/
 
-        public void WipeAllDataFromDatabase(params Type[] excludeTypes)
+        public static void WipeAllDataFromDatabase(this DbContext context, params Type[] excludeTypes)
         {
             foreach (var tableName in
-                GetTableNamesInOrderForWipe( excludeTypes))
+                context.GetTableNamesInOrderForWipe( excludeTypes))
             {
                 var commandString = $"DELETE FROM {tableName}";
-                _context.Database
+                context.Database
                     .ExecuteSqlRaw(commandString);
             }
         }

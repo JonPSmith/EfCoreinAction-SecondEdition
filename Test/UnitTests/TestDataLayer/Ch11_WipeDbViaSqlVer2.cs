@@ -75,10 +75,10 @@ namespace Test.UnitTests.TestDataLayer
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using (var context = new EfCoreContext(options))
             {
-                var wiper = new WipeDbViaSqlVer2(context);
+
 
                 //ATTEMPT
-                var tableNames = string.Join(",", wiper.GetTableNamesInOrderForWipe());
+                var tableNames = string.Join(",", context.GetTableNamesInOrderForWipe());
 
                 //VERIFY
                 tableNames.ShouldEqual("[BookAuthor],[LineItem],[PriceOffers],[Review],[Orders],[Books],[Authors]");
@@ -95,10 +95,9 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-                var wiper = new WipeDbViaSqlVer2(context);
 
                 //ATTEMPT
-                wiper.WipeAllDataFromDatabase();
+                context.WipeAllDataFromDatabase();
             }
             using (var context = new EfCoreContext(options))
             {
