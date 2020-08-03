@@ -8,12 +8,16 @@ namespace Test.Chapter11Listings.ProxyEfClasses
 {
     public class ProxyMyEntity
     {
-        public virtual int Id { get; set; }
+        public virtual int Id { get; set; }                       //#A
+        public virtual string MyString { get; set; }              //#A
+        public virtual ProxyOptional ProxyOptional { get; set; }  //#A
 
-        public virtual string MyString { get; set; }
-
-        public virtual ProxyOptional ProxyOptional { get; set; }
-
-        public virtual ObservableCollection<ProxyMany> Many { get; set; } = new ObservableCollection<ProxyMany>();
+        public virtual ObservableCollection<ProxyMany>            //#A
+            Many { get; set; }                                    //#B
+            = new ObservableCollection<ProxyMany>();              //#B
     }
+    /****************************************************************
+    #A All properties must be virtual
+    #B For navigational collection properties you need to use an Observable collection type
+     ********************************************************/
 }

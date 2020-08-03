@@ -39,7 +39,7 @@ namespace Test.Chapter11Listings.EfClasses
     /**************************************************************
     #A Each non-collection property must have a backing field
     #B If a non-collection property is changed we need to raise a PropertyChanged event, which we do via the inherited method SetWithNotify
-    #C Any collection navigational property has to be a Obvervable collection, so we need to predefine that Obvervable collection
-    #D We can use any Obvervable collection, but for performance reasons EF Core prefers ObservableHashSet<T>
+    #C Any collection navigational property has to be a Observable collection, so we need to predefine that Observable collection
+    #D We can use any Observable collection, but for performance reasons EF Core prefers ObservableHashSet<T>
      * **************************************************************/
 }
