@@ -150,7 +150,7 @@ namespace Test.UnitTests.TestDataLayer
 
             using (var context = new Chapter11DbContext(optionsBuilder.Options))
             {
-                //Cannot use context as MyExecutionStrategy is not implemented 
+                 //Cannot use context as MyExecutionStrategy is not implemented 
             }
         }
     }
