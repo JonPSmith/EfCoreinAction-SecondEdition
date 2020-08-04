@@ -14,7 +14,7 @@ namespace Test.Chapter11Listings.Interfaces
         DateTime LastUpdatedUtc { get; }  //#D
         Guid LastUpdatedBy { get; }       //#E
 
-        void Update(EntityEntry entry, Guid userId = default); //#F
+        void LogChange(EntityEntry entry, Guid userId = default); //#F
     }
     /***********************************************************
     #A Added to any entity class when the entity is added or updated.

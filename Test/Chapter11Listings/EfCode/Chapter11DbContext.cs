@@ -59,7 +59,7 @@ namespace Test.Chapter11Listings.EfCode
                     e.State == EntityState.Modified))                   //#C
             {
                 var tracked = entity.Entity as ICreatedUpdated;         //#D
-                tracked?.Update(entity);                                //#E
+                tracked?.LogChange(entity);                                //#E
             }
         }
 
@@ -81,7 +81,7 @@ namespace Test.Chapter11Listings.EfCode
         #B It calls DetectChanges to make sure all the updates have been found
         #C It loops through all the tracked entities that have a State of Added or Modified
         #D If the Added/Modified entity has the ICreatedUpdated, then the tracked isn't null
-        #E So we call the Update command. In this example we don't have the UserId available
+        #E So we call the LogChange command. In this example we don't have the UserId available
         #F You override SaveChanges (and SaveChangesAsync - not shown)
         #G You call the AddUpdateChecks, which contains a call to ChangeTracker.DetectChanges()
         #H Because DetectChanges has been call we tell SaveChanges to call it again (for performance reasons)

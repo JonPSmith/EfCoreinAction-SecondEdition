@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Test.Chapter11Listings.EfCode
 {
-    public class ChangeTrackerEventHandler      //#A                          
+    public class ChangeTrackerEventHandler                           //#A                          
     {
         private readonly ILogger _logger;
 
@@ -21,26 +21,26 @@ namespace Test.Chapter11Listings.EfCode
             context.ChangeTracker.StateChanged += StateChangeHandler;//#D
         }
 
-        private void TrackedHandler(object sender,                       //#E
-            EntityTrackedEventArgs args)                                 //#E
-        {                                                                
-            if (args.FromQuery)                                          //#F
-                return;                                                  //#F
+        private void TrackedHandler(object sender,                   //#E
+            EntityTrackedEventArgs args)                             //#E
+        {                                                            
+            if (args.FromQuery)                                      //#F
+                return;                                              //#F
 
-            var message = $"Entity: {SimpleEntity(args.Entry)}. " +      //#G
-                $"Was {args.Entry.State}";                               //#G
-            _logger.LogInformation(message);                             //#G
-        }                                                                //#G
+            var message = $"Entity: {NameAndPk(args.Entry)}. " +     //#G
+                $"Was {args.Entry.State}";                           //#G
+            _logger.LogInformation(message);                         //#G
+        }                                                            //#G
 
-        private void StateChangeHandler(object sender,                   //#H
-            EntityStateChangedEventArgs args)                            //#H
-        {                                                                //#H
-            var message = $"Entity: {SimpleEntity(args.Entry)}. " +      //#H
-                $"Was {args.OldState} and went to {args.NewState}";      //#H
-            _logger.LogInformation(message);                             //#H
-        }                                                                //#H
+        private void StateChangeHandler(object sender,               //#H
+            EntityStateChangedEventArgs args)                        //#H
+        {                                                            //#H
+            var message = $"Entity: {NameAndPk(args.Entry)}. " +     //#H
+                $"Was {args.OldState} and went to {args.NewState}";  //#H
+            _logger.LogInformation(message);                         //#H
+        }                                                            //#H
 
-        private string SimpleEntity(EntityEntry entry)
+        private string NameAndPk(EntityEntry entry)
         {
             return entry.DebugView.ShortView.Substring(0, entry.DebugView.ShortView.IndexOf('}') + 1);
         }

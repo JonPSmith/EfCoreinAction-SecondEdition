@@ -14,7 +14,7 @@ namespace Test.Chapter11Listings.EfClasses
         public Guid CreatedBy { get; private set; }         //#B
         public DateTime LastUpdatedUtc { get; private set; }//#B
         public Guid LastUpdatedBy { get; private set; }     //#B
-        public void Update(EntityEntry entry, Guid userId = default) //#C
+        public void LogChange(EntityEntry entry, Guid userId = default) //#C
         {
             if (entry.State != EntityState.Added &&         //#D
                 entry.State != EntityState.Modified)        //#D
@@ -41,12 +41,12 @@ namespace Test.Chapter11Listings.EfClasses
     }
     /**********************************************************
     #A Entity class inherits ICreatedUpdated, which means any addition/update of the entity is logged.
-    #B These properties have private setters so that only the Update method can change them.
+    #B These properties have private setters so that only the LogChange method can change them.
     #C Its job is to update the created and updated properties. It is passed the UserId if available
     #D This method only handles Added or Modified States
     #E Obtains the current time so that an add and update time will be the same on create
     #F It always sets the LastUpdatedUtc and LastUpdatedBy
     #G If its an add, then you update the WhenCreatedUtc and the CreatedBy properties
-    #H For performance reasons you turned of DetectChanges, so you manually mark the properties as modified 
+    #H For performance reasons you turned off DetectChanges, so you must manually mark the properties as modified
      *************************************************************/
 }
