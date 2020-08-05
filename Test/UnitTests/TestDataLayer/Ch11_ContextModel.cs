@@ -27,9 +27,8 @@ namespace Test.UnitTests.TestDataLayer
             (DbContext context, string foreignKeyName)                      //#A
             where TEntity : class
         {
-            var entityType = context.Model.GetEntityTypes()                 //#B
-                .SingleOrDefault(x => x.ClrType == typeof(TEntity));        //#B
-            
+            var entityType = context.Model.FindEntityType(typeof(TEntity)); //#B
+
             var fkProperty = entityType?.GetForeignKeys()                   //#C
                 .SingleOrDefault(x => x.Properties.Count == 1               //#C
                     && x.Properties.Single().Name == foreignKeyName)        //#C
