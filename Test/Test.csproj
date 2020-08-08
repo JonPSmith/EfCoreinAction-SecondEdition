@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BookApp\BookApp.csproj" />
     <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+    <ProjectReference Include="..\MyFirstEfCoreApp\MyFirstEfCoreApp.csproj" />
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 

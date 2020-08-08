@@ -1,14 +1,9 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Diagnostics;
 using System.Linq;
-using DataLayer.EfClasses;
-using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter06Listings;
-using Test.TestHelpers;
-using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
