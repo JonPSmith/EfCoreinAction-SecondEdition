@@ -137,18 +137,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 using (new TimeThings(_output, $"detach all tracked entities - {numCollection * 3:n0} tracked entities."))
                 {
-                    foreach (var entityEntry in context.ChangeTracker.Entries()) //#A
-                    {
-                        if (entityEntry.Entity != null) //#B
-                        {
-                            entityEntry.State = EntityState.Detached; //#C
-                        }
-                    }
-                    /********************************************
-                    #A This will iterate through each tracked EntityEntry in the current DbContext instance
-                    #B This filters out tracked entities where the entity class instance has been set to null
-                    #C This sets the state of the EntityEntry to Detached
-                     **********************************************/
+                    context.ChangeTracker.Clear();
                 }
 
                 //VERIFY
