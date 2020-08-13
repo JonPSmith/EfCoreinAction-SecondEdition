@@ -7,15 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Chapter09Listings\SeedExample\Migrations\20200618081847_UpdateSeed.cs" />
-    <Compile Remove="Chapter09Listings\SeedExample\Migrations\20200618081847_UpdateSeed.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="EfCore.TestSupport" Version="3.2.0" />
     <PackageReference Include="EfCore.TestSupportSchema" Version="1.0.0-preview004" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-preview.7.20365.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.0-preview.7.20365.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-preview.7.20365.15" />
@@ -35,9 +31,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookApp\BookApp.csproj" />
-    <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
-    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
+    <Folder Include="TestData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
+    <ProjectReference Include="..\BookApp.Persistance.NormalSql.Books\BookApp.Persistence.NormalSql.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Persistence.NormalSql.Orders\BookApp.Persistence.NormalSql.Orders.csproj" />
   </ItemGroup>
 
 </Project>
