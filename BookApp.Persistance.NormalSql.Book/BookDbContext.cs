@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookApp.Persistence.NormalSql.Book
 {
-    public class EfCoreContext : DbContext
+    public class BookDbContext : DbContext
     {
 
-        public EfCoreContext(DbContextOptions<EfCoreContext> options)
+        public BookDbContext(DbContextOptions<BookDbContext> options)
             : base(options)
         { }
 

@@ -19,14 +19,12 @@ namespace DataLayer.EfClasses
         public int OrderId { get; private set; }
 
         public Guid UserId { get; private set; }
-
-        public string CustomerName { get; private set; }
+        public DateTime DateOrderedUtc { get; private set; }
 
         // relationships
 
         public IEnumerable<LineItem> LineItems => _lineItems?.ToList();
 
-        public string OrderNumber => $"SO{OrderId:D6}";
 
         public static IStatusGeneric<Order> CreateOrder(Guid userId,
             IEnumerable<OrderBookDto> bookOrders)
@@ -35,6 +33,7 @@ namespace DataLayer.EfClasses
             var order = new Order
             {
                 UserId = userId,
+                DateOrderedUtc = DateTime.UtcNow
             };
 
             byte lineNum = 1;
