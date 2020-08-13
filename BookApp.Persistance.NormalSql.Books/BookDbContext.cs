@@ -3,11 +3,11 @@
 
 using System;
 using System.Reflection;
-using BookApp.Domain.Book;
+using BookApp.Domain.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BookApp.Persistence.NormalSql.Book
+namespace BookApp.Persistence.NormalSql.Books
 {
     public class BookDbContext : DbContext
     {
@@ -16,7 +16,7 @@ namespace BookApp.Persistence.NormalSql.Book
             : base(options)
         { }
 
-        public DbSet<Domain.Book.Book> Books { get; set; }                        
+        public DbSet<Book> Books { get; set; }                        
         public DbSet<Author> Authors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

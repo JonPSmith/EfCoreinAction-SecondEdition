@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Test")]
 
-namespace BookApp.Domain.Book
+namespace BookApp.Domain.Books
 {
     public class Review
     {

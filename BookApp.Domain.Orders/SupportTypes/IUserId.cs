@@ -3,10 +3,10 @@
 
 using System;
 
-namespace BookApp.Persistence.NormalSql.Order
+namespace BookApp.Domain.Orders.SupportTypes
 {
-    public interface IUserIdService
+    public interface IUserId
     {
-        Guid GetUserId();
+        Guid UserId { get; }
     }
 }

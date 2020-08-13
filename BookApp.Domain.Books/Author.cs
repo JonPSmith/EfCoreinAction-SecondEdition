@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using BookApp.Domain.Book.DomainEvents;
+using BookApp.Domain.Books.DomainEvents;
 using GenericEventRunner.DomainParts;
 
-namespace BookApp.Domain.Book
+namespace BookApp.Domain.Books
 {
     public class Author : EntityEventsBase
     {

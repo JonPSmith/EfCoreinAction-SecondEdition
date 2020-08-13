@@ -4,11 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookApp.Domain.Order;
-using DataLayer.Interfaces;
+using BookApp.Domain.Orders.SupportTypes;
 using StatusGeneric;
 
-namespace DataLayer.EfClasses
+namespace BookApp.Domain.Orders
 {
     public class Order : IUserId
     {

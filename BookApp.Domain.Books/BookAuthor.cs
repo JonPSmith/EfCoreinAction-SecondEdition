@@ -3,7 +3,7 @@
 
 using System;
 
-namespace BookApp.Domain.Book
+namespace BookApp.Domain.Books
 {
     public class BookAuthor
     {

@@ -21,13 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Domain.Book", "BookApp.Domain.Book\BookApp.Domain.Book.csproj", "{4714DDBB-58C3-403F-816B-3797A8E588B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Domain.Books", "BookApp.Domain.Books\BookApp.Domain.Books.csproj", "{4714DDBB-58C3-403F-816B-3797A8E588B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Domain.Order", "BookApp.Domain.Order\BookApp.Domain.Order.csproj", "{744EE105-41E9-48F5-85E0-8789D1D71BF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Domain.Orders", "BookApp.Domain.Orders\BookApp.Domain.Orders.csproj", "{744EE105-41E9-48F5-85E0-8789D1D71BF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Persistence.NormalSql.Book", "BookApp.Persistance.NormalSql.Book\BookApp.Persistence.NormalSql.Book.csproj", "{B8FFE24A-5CDE-49E7-8043-F61D600E8173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.NormalSql.Books", "BookApp.Persistance.NormalSql.Books\BookApp.Persistence.NormalSql.Books.csproj", "{B8FFE24A-5CDE-49E7-8043-F61D600E8173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Persistence.NormalSql.Order", "BookApp.Persistence.NormalSql.Order\BookApp.Persistence.NormalSql.Order.csproj", "{60FDFF26-869D-46E7-AFA5-51306B6467C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.NormalSql.Orders", "BookApp.Persistence.NormalSql.Orders\BookApp.Persistence.NormalSql.Orders.csproj", "{60FDFF26-869D-46E7-AFA5-51306B6467C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

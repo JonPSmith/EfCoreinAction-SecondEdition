@@ -3,7 +3,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace BookApp.Domain.Order
+namespace BookApp.Domain.Orders
 {
     //This is mapped to the real Book entity class as a View
     public class BookView

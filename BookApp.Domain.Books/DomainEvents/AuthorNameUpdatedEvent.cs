@@ -3,7 +3,7 @@
 
 using GenericEventRunner.DomainParts;
 
-namespace BookApp.Domain.Book.DomainEvents
+namespace BookApp.Domain.Books.DomainEvents
 {
     public class AuthorNameUpdatedEvent : IDomainEvent
     {

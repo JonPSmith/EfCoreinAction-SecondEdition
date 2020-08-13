@@ -3,11 +3,12 @@
 
 using System;
 using System.Reflection;
-using DataLayer.Interfaces;
+using BookApp.Domain.Orders;
+using BookApp.Domain.Orders.SupportTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BookApp.Persistence.NormalSql.Order
+namespace BookApp.Persistence.NormalSql.Orders
 {
     public class OrderDbContext : DbContext, IUserId                   
     {
@@ -21,7 +22,7 @@ namespace BookApp.Persistence.NormalSql.Order
                      ?? new ReplacementUserIdService().GetUserId();     
         }
 
-        public DbSet<DataLayer.EfClasses.Order> Orders { get; set; }                      
+        public DbSet<Order> Orders { get; set; }                      
 
         protected override void                                        
             OnModelCreating(ModelBuilder modelBuilder)                 
