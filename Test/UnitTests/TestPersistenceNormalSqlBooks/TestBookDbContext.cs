@@ -18,18 +18,16 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                context.SeedDatabaseFourBooks();
+            //ATTEMPT
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(4);
-                context.Authors.Count().ShouldEqual(3);
-                context.Set<Review>().Count().ShouldEqual(2);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(4);
+            context.Authors.Count().ShouldEqual(3);
+            context.Set<Review>().Count().ShouldEqual(2);
         }
     }
 }

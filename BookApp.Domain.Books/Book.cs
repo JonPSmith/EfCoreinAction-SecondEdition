@@ -27,6 +27,8 @@ namespace BookApp.Domain.Books
 
         private Book() { } //Needed by EF Core
 
+        public int BookId { get; private set; }
+
         [Required(AllowEmptyStrings = false)]
         public string Title { get; private set; }
 
@@ -46,7 +48,6 @@ namespace BookApp.Domain.Books
         public IEnumerable<Review> Reviews => _reviews?.ToList();
         public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
 
-        public Guid BookId { get; private set; }
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -77,7 +78,6 @@ namespace BookApp.Domain.Books
 
             var book = new Book
             {
-                BookId = Guid.NewGuid(),
                 Title = title,
                 Description = description,
                 PublishedOn = publishedOn,

@@ -26,7 +26,7 @@ namespace BookApp.Domain.Books
             Email = email;
         }
 
-        public Guid AuthorId { get;  private set; }
+        public int AuthorId { get;  private set; }
 
         [Required(AllowEmptyStrings = false)]
         [MaxLength(NameLength)]

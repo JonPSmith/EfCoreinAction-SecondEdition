@@ -22,7 +22,8 @@ namespace BookApp.Persistence.NormalSql.Orders
                      ?? new ReplacementUserIdService().GetUserId();     
         }
 
-        public DbSet<Order> Orders { get; set; }                      
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<BookView> BookViews { get; set; }
 
         protected override void                                        
             OnModelCreating(ModelBuilder modelBuilder)                 

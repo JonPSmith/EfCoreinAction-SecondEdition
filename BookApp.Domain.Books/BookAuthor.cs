@@ -16,8 +16,8 @@ namespace BookApp.Domain.Books
             Order = order;
         }
 
-        public Guid BookId { get; private set; }
-        public Guid AuthorId { get; private set; }
+        public int BookId { get; private set; }
+        public int AuthorId { get; private set; }
         public byte Order { get; private set; }
 
         //-----------------------------
