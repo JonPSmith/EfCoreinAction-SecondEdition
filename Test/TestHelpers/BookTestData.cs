@@ -109,7 +109,6 @@ namespace Test.TestHelpers
                 null,
                 new[] { martinFowler }
             ).Result;
-            book1.AuthorsOrdered = martinFowler.Name;
             books.Add(book1);
 
             var book2 = Book.CreateBook
@@ -135,7 +134,6 @@ namespace Test.TestHelpers
                 null,
                 new[] { new Author("Eric Evans", "ee@gmail.com") }
             ).Result;
-            book3.AuthorsOrdered = book3.AuthorsLink.First().Author.Name;
             books.Add(book3);
 
             var book4 = Book.CreateBook
@@ -151,11 +149,9 @@ namespace Test.TestHelpers
             book4.AuthorsOrdered = book4.AuthorsLink.First().Author.Name;
             book4.AddReview(5,
                 "I look forward to reading this book, if I am still alive!", "Jon P Smith");
-            book4.AddReview(5,
+            book4.AddReview(3,
                 "I write this book if I was still alive!", "Albert Einstein"); book4.AddPromotion(219, "Save $1 if you order 40 years ahead!");
             book4.AddPromotion(219, "Save 1$ by buying 40 years ahead");
-            book4.ReviewsAverageVotes = book4.Reviews.Average(x => x.NumStars);
-            book4.ReviewsCount = book4.Reviews.Count();
             books.Add(book4);
 
             return books;

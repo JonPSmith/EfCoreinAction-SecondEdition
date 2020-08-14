@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.NormalS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.NormalSql.Orders", "BookApp.Persistence.NormalSql.Orders\BookApp.Persistence.NormalSql.Orders.csproj", "{60FDFF26-869D-46E7-AFA5-51306B6467C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.Book.EventHandlers", "BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Book.EventHandlers.csproj", "{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{60FDFF26-869D-46E7-AFA5-51306B6467C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60FDFF26-869D-46E7-AFA5-51306B6467C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60FDFF26-869D-46E7-AFA5-51306B6467C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

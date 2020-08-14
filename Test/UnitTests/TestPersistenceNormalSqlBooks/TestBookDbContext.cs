@@ -29,26 +29,5 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
             context.Authors.Count().ShouldEqual(3);
             context.Set<Review>().Count().ShouldEqual(2);
         }
-
-        [Fact]
-        public void TestBookDbContextSeedDatabaseFourBooksFillsInCacheValuesOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using var context = new BookDbContext(options);
-            context.Database.EnsureCreated();
-
-            //ATTEMPT
-            var books = context.SeedDatabaseFourBooks();
-
-            //VERIFY
-            books.Select(x => new{ x.AuthorsOrdered, x.AuthorsLink.First().Author.Name})
-                .All(x => x.AuthorsOrdered == x.Name).ShouldBeTrue();
-            books.Select(x => new { x.ReviewsCount, x.Reviews})
-                .All(x => x.ReviewsCount == x.Reviews.Count).ShouldBeTrue();
-            books.Select(x => new { x.ReviewsAverageVotes, x.Reviews })
-                .All(x => x.ReviewsAverageVotes ==
-                          (x.Reviews.Any() ? x.Reviews.Average(y => y.NumStars) : 0.0)).ShouldBeTrue();
-        }
     }
 }

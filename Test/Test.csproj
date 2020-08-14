@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Book.EventHandlers.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.NormalSql.Books\BookApp.Persistence.NormalSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.NormalSql.Orders\BookApp.Persistence.NormalSql.Orders.csproj" />
   </ItemGroup>
