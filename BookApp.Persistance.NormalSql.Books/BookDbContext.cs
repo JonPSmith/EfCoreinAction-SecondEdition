@@ -4,6 +4,8 @@
 using System;
 using System.Reflection;
 using BookApp.Domain.Books;
+using BookApp.Domain.Books.SupportTypes;
+using BookApp.Persistence.Common;
 using GenericEventRunner.ForDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -22,35 +24,8 @@ namespace BookApp.Persistence.NormalSql.Books
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var utcConverter = new ValueConverter<DateTime, DateTime>(
-                toDb => toDb,
-                fromDb =>
-                    DateTime.SpecifyKind(fromDb, DateTimeKind.Utc));
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var entityProperty in entityType.GetProperties())
-                {
-                    if (entityProperty.ClrType == typeof(DateTime)
-                        && entityProperty.Name.EndsWith("Utc"))
-                    {
-                        entityProperty.SetValueConverter(utcConverter);
-                    }
-
-                    if (entityProperty.ClrType == typeof(decimal)
-                        && entityProperty.Name.Contains("Price"))
-                    {
-                        entityProperty.SetPrecision(9);
-                        entityProperty.SetScale(2);
-                    }
-
-                    if (entityProperty.ClrType == typeof(string)
-                        && entityProperty.Name.EndsWith("Url"))
-                    {
-                        entityProperty.SetIsUnicode(false);
-                    }
-                }
-            }
+            modelBuilder.AutoConfigureTypes();
+            modelBuilder.AutoConfigureQueryFilters<BookDbContext>(this);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

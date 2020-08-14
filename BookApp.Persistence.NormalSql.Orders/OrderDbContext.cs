@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
+using BookApp.Persistence.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -25,49 +26,12 @@ namespace BookApp.Persistence.NormalSql.Orders
         public DbSet<Order> Orders { get; set; }
         public DbSet<BookView> BookViews { get; set; }
 
-        protected override void                                        
-            OnModelCreating(ModelBuilder modelBuilder)                 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)                 
         {
-            var utcConverter = new ValueConverter<DateTime, DateTime>(      
-                toDb => toDb,                                               
-                fromDb =>                                                   
-                    DateTime.SpecifyKind(fromDb, DateTimeKind.Utc));        
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes()) 
-            {
-                foreach (var entityProperty in entityType.GetProperties())  
-                {
-                    if (entityProperty.ClrType == typeof(DateTime)          
-                        && entityProperty.Name.EndsWith("Utc"))             
-                    {                                                       
-                        entityProperty.SetValueConverter(utcConverter);     
-                    }                                                       
-
-                    if (entityProperty.ClrType == typeof(decimal)           
-                        && entityProperty.Name.Contains("Price"))           
-                    {                                                       
-                        entityProperty.SetPrecision(9);                     
-                        entityProperty.SetScale(2);                         
-                    }                                                       
-
-                    if (entityProperty.ClrType == typeof(string)            
-                        && entityProperty.Name.EndsWith("Url"))             
-                    {                                                       
-                        entityProperty.SetIsUnicode(false);                 
-                    }                                                       
-                }
-
-                if (typeof(IUserId)                             
-                    .IsAssignableFrom(entityType.ClrType))      
-                {
-                    entityType.AddSoftDeleteQueryFilter(        
-                        MyQueryFilterTypes.UserId, this);       
-                }
-            }
-
+            modelBuilder.AutoConfigureTypes();
+            modelBuilder.AutoConfigureQueryFilters<OrderDbContext>(this);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
         }
 
     }

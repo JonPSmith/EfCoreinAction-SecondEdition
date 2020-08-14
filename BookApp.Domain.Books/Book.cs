@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
+using BookApp.Domain.Books.SupportTypes;
 using GenericEventRunner.DomainParts;
 using StatusGeneric;
 
 namespace BookApp.Domain.Books
 {
-    public class Book : EntityEventsBase
+    public class Book : EntityEventsBase, ISoftDelete
     {
         public const int PromotionalTextLength = 200;
         private HashSet<BookAuthor> _authorsLink;
@@ -99,6 +100,11 @@ namespace BookApp.Domain.Books
                 status.AddError("You must have at least one Author for a book.");
 
             return status.SetResult(book);
+        }
+
+        public void AlterSoftDelete(bool softDeleted)
+        {
+            SoftDeleted = softDeleted;
         }
 
         public void UpdatePublishedOn(DateTime publishedOn)
