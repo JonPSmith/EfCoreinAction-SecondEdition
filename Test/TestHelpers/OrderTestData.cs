@@ -13,6 +13,10 @@ namespace Test.TestHelpers
 {
     public static class OrderTestData
     {
+        /// <summary>
+        /// This adds the BookDbContext tables to the OrderDbContext - that allows the sharing of the Book entity
+        /// </summary>
+        /// <param name="orderContext"></param>
         public static void BookContextEnsureCreatedOnOrderDb(this OrderDbContext orderContext)
         {
             if (!orderContext.Database.IsSqlite())
@@ -32,7 +36,11 @@ namespace Test.TestHelpers
             }
         }
 
-
+        /// <summary>
+        /// This adds the four tests books to the OrderDbContext to give you access to BookView entity used in the Order
+        /// </summary>
+        /// <param name="orderContext"></param>
+        /// <returns></returns>
         public static IEnumerable<int> SeedFourBookDdPart(this OrderDbContext orderContext)
         {
             if (!orderContext.Database.IsSqlite())

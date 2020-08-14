@@ -45,8 +45,8 @@ namespace BookApp.Domain.Books
 
         public bool SoftDeleted { get; private set; }
 
-        public IEnumerable<Review> Reviews => _reviews?.ToList();
-        public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
+        public IReadOnlyCollection<Review> Reviews => _reviews?.ToList().AsReadOnly();
+        public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList().AsReadOnly();
 
 
         //----------------------------------------------
@@ -112,6 +112,8 @@ namespace BookApp.Domain.Books
             if (_reviews == null)
                 throw new InvalidOperationException("The Reviews collection must be loaded before calling this method");
             _reviews.Add(new Review(numStars, comment, voterName));
+
+            AddEvent(new BookReviewAddedEvent(numStars, this, UpdateReviewCachedValues));
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
@@ -123,6 +125,7 @@ namespace BookApp.Domain.Books
             if (localReview == null)
                 throw new InvalidOperationException("The review with that key was not found in the book's Reviews.");
             _reviews.Remove(localReview);
+            
             AddEvent(new BookReviewRemovedEvent(localReview, this, UpdateReviewCachedValues));
         }
 

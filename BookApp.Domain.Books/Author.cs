@@ -18,8 +18,6 @@ namespace BookApp.Domain.Books
         private string _name;
         private HashSet<BookAuthor> _booksLink;
 
-        private Author() { }
-
         public Author(string name, string email)
         {
             _name = name;
