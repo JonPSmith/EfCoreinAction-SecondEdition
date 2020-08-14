@@ -1,0 +1,28 @@
+{
+  "expectedPublishDate": "2019-05-24T00:00:00-0400",
+  "hasAudio": false,
+  "authorshipDisplay": "With chapters selected by David Clinton",
+  "isbn": "9781617296628",
+  "externalId": "clinton4",
+  "lastSignificantDate": "2019-05-24T07:20:43-0400",
+  "title": "Principles of Cloud Design",
+  "seoKeywords": "",
+  "tags": [
+    "Operations & Cloud"
+  ],
+  "livebook": true,
+  "productOfferings": [
+    {
+      "price": 0.00,
+      "id": 2059,
+      "productType": "PDF"
+    }
+  ],
+  "subtitle": "",
+  "imageUrl": "book/9/bc7ecd6-4513-440d-99c0-5270be25c6ac/CloudDesign_freeeBook_hires.png",
+  "isLiveVideo": false,
+  "isLiveProject": false,
+  "id": 1210,
+  "publishedDate": "2019-05-24T00:00:00-0400",
+  "slug": "principles-of-cloud-design"
+}

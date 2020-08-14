@@ -2,9 +2,12 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using BookApp.Domain.Books.SupportTypes;
 using BookApp.Domain.Orders.SupportTypes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookApp.Persistence.Common
@@ -27,6 +30,12 @@ namespace BookApp.Persistence.Common
                         && entityProperty.Name.EndsWith("Utc"))
                     {
                         entityProperty.SetValueConverter(utcConverter);
+                    }
+
+                    if (entityProperty.ClrType == typeof(DateTime)
+                        && entityProperty.Name.EndsWith("Day"))
+                    {
+                        entityProperty.AddAnnotations((IEnumerable<IAnnotation>) new []{ new ColumnAttribute{ TypeName = "date" } });
                     }
 
                     if (entityProperty.ClrType == typeof(decimal)

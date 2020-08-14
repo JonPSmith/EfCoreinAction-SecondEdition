@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
@@ -22,6 +23,7 @@ namespace BookApp.Domain.Books
 
         //Use uninitialized backing fields - this means we can detect if the collection was loaded
         private HashSet<Review> _reviews;
+        private HashSet<BookTag> _tagsLink;
 
         //-----------------------------------------------
         //ctors
@@ -34,7 +36,9 @@ namespace BookApp.Domain.Books
         public string Title { get; private set; }
 
         public string Description { get; private set; }
-        public DateTime PublishedOn { get; set; }
+        public DateTime PublishedOnDay { get; set; }
+        public DateTime LastSignificantDay{ get; set; }
+
         public string Publisher { get; private set; }
         public decimal OrgPrice { get; private set; }
         public decimal ActualPrice { get; private set; }
@@ -46,9 +50,12 @@ namespace BookApp.Domain.Books
 
         public bool SoftDeleted { get; private set; }
 
+        //---------------------------------------
+        //relationships
+
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList().AsReadOnly();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList().AsReadOnly();
-
+        public IReadOnlyCollection<BookTag> Tags => _tagsLink?.ToList().AsReadOnly();
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -70,8 +77,9 @@ namespace BookApp.Domain.Books
         }
         //----------------------------------------------
 
-        public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOn,
-            string publisher, decimal price, string imageUrl, ICollection<Author> authors)
+        public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOnDay,
+            DateTime lastSignificantDay, string publisher, decimal price, string imageUrl, 
+            ICollection<Author> authors, ICollection<Tag> tags = null)
         {
             var status = new StatusGenericHandler<Book>();
             if (string.IsNullOrWhiteSpace(title))
@@ -81,7 +89,8 @@ namespace BookApp.Domain.Books
             {
                 Title = title,
                 Description = description,
-                PublishedOn = publishedOn,
+                PublishedOnDay = publishedOnDay,
+                LastSignificantDay = lastSignificantDay,
                 Publisher = publisher,
                 ActualPrice = price,
                 OrgPrice = price,
@@ -93,11 +102,12 @@ namespace BookApp.Domain.Books
             };
             if (authors == null)
                 throw new ArgumentNullException(nameof(authors));
-
             byte order = 0;
             book._authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(book, a, order++)));
             if (!book._authorsLink.Any())
                 status.AddError("You must have at least one Author for a book.");
+            if (tags != null)
+                book._tagsLink = new HashSet<BookTag>(tags.Select(t => new BookTag(book, t)));
 
             return status.SetResult(book);
         }
@@ -107,9 +117,9 @@ namespace BookApp.Domain.Books
             SoftDeleted = softDeleted;
         }
 
-        public void UpdatePublishedOn(DateTime publishedOn)
+        public void UpdatePublishedOnDay(DateTime publishedOn)
         {
-            PublishedOn = publishedOn;
+            PublishedOnDay = publishedOn;
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection

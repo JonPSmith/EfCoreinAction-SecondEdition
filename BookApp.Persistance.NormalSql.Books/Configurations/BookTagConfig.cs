@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BookApp.Persistence.NormalSql.Books.Configurations
 {
-    internal class BookConfig : IEntityTypeConfiguration<Book>
+    internal class BookTagConfig : IEntityTypeConfiguration<BookTag>
     {
-        public void Configure(EntityTypeBuilder<Book> entity)
+        public void Configure(EntityTypeBuilder<BookTag> entity)
         {
-            entity.HasIndex(x => x.PublishedOnDay);
+            entity.HasKey(p => new { p.BookId, p.TagId });
         }
     }
 }

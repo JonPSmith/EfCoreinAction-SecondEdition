@@ -107,7 +107,6 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
                 });
                 context.Add(status.Result);
                 context.SaveChanges();
-
             }
             using (var context = new OrderDbContext(options, new FakeUserIdService(userId2)))
             {
