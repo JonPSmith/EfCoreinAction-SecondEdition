@@ -8,6 +8,7 @@ using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
 using BookApp.Persistence.NormalSql.Books;
 using BookApp.Persistence.NormalSql.Orders;
+using Microsoft.EntityFrameworkCore;
 using Test.Mocks;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -74,6 +75,55 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             context.Orders.Count().ShouldEqual(1);
             context.Set<LineItem>().Count().ShouldEqual(2);
             context.BookViews.Count().ShouldEqual(4);
+        }
+
+        [Fact]
+        public void TestOrderDbContextUserIdQueryFilterWorkingOk()
+        {
+            //SETUP
+            var userId1 = Guid.NewGuid();
+            var options = SqliteInMemory.CreateOptions<OrderDbContext>();
+            using (var context = new OrderDbContext(options, new FakeUserIdService(userId1)))
+            {
+                context.Database.EnsureCreated();
+                var bookIds = context.SeedFourBookDdPart().ToList();
+
+                var status = Order.CreateOrder(userId1, new[]
+                {
+                    new OrderBookDto(bookIds[0], 123, 1),
+                    new OrderBookDto(bookIds[1], 456, 1),
+                });
+                context.Add(status.Result);
+                context.SaveChanges();
+            }
+            var userId2 = Guid.NewGuid();
+            using (var context = new OrderDbContext(options, new FakeUserIdService(userId2)))
+            {
+
+                //ATTEMPT
+                var status = Order.CreateOrder(userId2, new[]
+                {
+                    new OrderBookDto(context.BookViews.First().BookId, 123, 1),
+                });
+                context.Add(status.Result);
+                context.SaveChanges();
+
+            }
+            using (var context = new OrderDbContext(options, new FakeUserIdService(userId2)))
+            {
+                //VERIFY
+                var orders = context.Orders.ToList();
+                orders.Count.ShouldEqual(1);
+                orders.Single().UserId.ShouldEqual(userId2);
+            }
+            using (var context = new OrderDbContext(options, new FakeUserIdService(userId1)))
+            {
+                //VERIFY
+                var orders = context.Orders.ToList();
+                orders.Count.ShouldEqual(1);
+                orders.Single().UserId.ShouldEqual(userId1);
+            }
+
         }
     }
 }
