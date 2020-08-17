@@ -23,7 +23,7 @@ namespace BookApp.Domain.Books
 
         //Use uninitialized backing fields - this means we can detect if the collection was loaded
         private HashSet<Review> _reviews;
-        private HashSet<BookTag> _tagsLink;
+        private HashSet<Tag> _tags;
 
         //-----------------------------------------------
         //ctors
@@ -55,7 +55,7 @@ namespace BookApp.Domain.Books
 
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList().AsReadOnly();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList().AsReadOnly();
-        public IReadOnlyCollection<BookTag> Tags => _tagsLink?.ToList().AsReadOnly();
+        public IReadOnlyCollection<Tag> Tags => _tags?.ToList().AsReadOnly();
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -106,7 +106,7 @@ namespace BookApp.Domain.Books
             if (!book._authorsLink.Any())
                 status.AddError("You must have at least one Author for a book.");
             if (tags != null)
-                book._tagsLink = new HashSet<BookTag>(tags.Select(t => new BookTag(book, t)));
+                book._tags = new HashSet<Tag>(tags);
 
             return status.SetResult(book);
         }
