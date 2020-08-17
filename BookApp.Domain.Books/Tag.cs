@@ -14,7 +14,7 @@ namespace BookApp.Domain.Books
 
         [Key]
         [Required]
-        [MaxLength(100)]
+        [MaxLength(40)]
         public string TagId { get; private set; }
     }
 }

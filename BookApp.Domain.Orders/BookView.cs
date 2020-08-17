@@ -14,5 +14,7 @@ namespace BookApp.Domain.Orders
         public string Title { get; private set; }
 
         public decimal ActualPrice { get; private set; }
+
+        public string ImageUrl { get; private set; }
     }
 }

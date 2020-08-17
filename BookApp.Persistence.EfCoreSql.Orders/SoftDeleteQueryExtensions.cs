@@ -8,7 +8,7 @@ using BookApp.Domain.Orders.SupportTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BookApp.Persistence.NormalSql.Orders
+namespace BookApp.Persistence.EfCoreSql.Orders
 {
     public enum MyQueryFilterTypes { SoftDelete, UserId }       
 

@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookApp.Persistence.NormalSql.Books;
-using BookApp.Persistence.NormalSql.Orders;
+using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.EntityFrameworkCore;
 using TestSupport.EfHelpers;
 

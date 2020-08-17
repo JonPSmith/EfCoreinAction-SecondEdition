@@ -7,9 +7,8 @@ using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
 using BookApp.Persistence.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BookApp.Persistence.NormalSql.Orders
+namespace BookApp.Persistence.EfCoreSql.Orders
 {
     public class OrderDbContext : DbContext, IUserId                   
     {

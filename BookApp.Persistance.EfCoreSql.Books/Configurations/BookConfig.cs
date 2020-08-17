@@ -5,14 +5,13 @@ using BookApp.Domain.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BookApp.Persistence.NormalSql.Books.Configurations
+namespace BookApp.Persistence.EfCoreSql.Books.Configurations
 {
-    internal class BookAuthorConfig : IEntityTypeConfiguration<BookAuthor>
+    internal class BookConfig : IEntityTypeConfiguration<Book>
     {
-        public void Configure(EntityTypeBuilder<BookAuthor> entity)
+        public void Configure(EntityTypeBuilder<Book> entity)
         {
-            entity.HasKey(p => new { p.BookId, p.AuthorId });
-
+            entity.HasIndex(x => x.PublishedOn);
         }
     }
 }

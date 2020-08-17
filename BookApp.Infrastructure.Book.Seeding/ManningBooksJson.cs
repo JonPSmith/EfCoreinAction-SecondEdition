@@ -23,7 +23,7 @@ namespace BookApp.Infrastructure.Book.Seeding
         public bool isLiveVideo { get; set; }
         public bool isLiveProject { get; set; }
         public int id { get; set; }
-        public DateTime publishedDate { get; set; }
+        public DateTime? publishedDate { get; set; }
         public string slug { get; set; }
 
         public Domain.Books.Book MapToBook()

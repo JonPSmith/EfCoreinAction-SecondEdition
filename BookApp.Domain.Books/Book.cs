@@ -36,8 +36,7 @@ namespace BookApp.Domain.Books
         public string Title { get; private set; }
 
         public string Description { get; private set; }
-        public DateTime PublishedOnDay { get; set; }
-        public DateTime LastSignificantDay{ get; set; }
+        public DateTime PublishedOn { get; set; }
 
         public string Publisher { get; private set; }
         public decimal OrgPrice { get; private set; }
@@ -46,6 +45,7 @@ namespace BookApp.Domain.Books
         [MaxLength(PromotionalTextLength)]
         public string PromotionalText { get; private set; }
 
+        [MaxLength(200)]
         public string ImageUrl { get; private set; }
 
         public bool SoftDeleted { get; private set; }
@@ -78,7 +78,7 @@ namespace BookApp.Domain.Books
         //----------------------------------------------
 
         public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOnDay,
-            DateTime lastSignificantDay, string publisher, decimal price, string imageUrl, 
+            string publisher, decimal price, string imageUrl,
             ICollection<Author> authors, ICollection<Tag> tags = null)
         {
             var status = new StatusGenericHandler<Book>();
@@ -89,8 +89,7 @@ namespace BookApp.Domain.Books
             {
                 Title = title,
                 Description = description,
-                PublishedOnDay = publishedOnDay,
-                LastSignificantDay = lastSignificantDay,
+                PublishedOn = publishedOnDay,
                 Publisher = publisher,
                 ActualPrice = price,
                 OrgPrice = price,
@@ -119,7 +118,7 @@ namespace BookApp.Domain.Books
 
         public void UpdatePublishedOnDay(DateTime publishedOn)
         {
-            PublishedOnDay = publishedOn;
+            PublishedOn = publishedOn;
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection

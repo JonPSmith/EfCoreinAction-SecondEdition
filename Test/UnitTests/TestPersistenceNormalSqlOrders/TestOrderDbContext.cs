@@ -6,8 +6,7 @@ using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
-using BookApp.Persistence.NormalSql.Books;
-using BookApp.Persistence.NormalSql.Orders;
+using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.EntityFrameworkCore;
 using Test.Mocks;
 using Test.TestHelpers;
@@ -48,7 +47,10 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             context.BookContextEnsureCreatedOnOrderDb();
 
             //VERIFY
-            context.GetTableNamesInSqliteDb().ShouldEqual(new[] { "Orders", "sqlite_sequence", "LineItem", "Authors", "Books", "BookAuthor", "Review" });
+            context.GetTableNamesInSqliteDb().ShouldEqual(new[]
+            {
+                "Orders", "sqlite_sequence", "LineItem", "Authors", "Books", "Tag", "BookAuthor", "Review", "BookTag"
+            });
         }
 
 

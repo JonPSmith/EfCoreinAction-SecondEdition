@@ -4,7 +4,7 @@
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
-using BookApp.Persistence.NormalSql.Books;
+using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.DomainParts;
 using GenericEventRunner.ForHandlers;
 using StatusGeneric;

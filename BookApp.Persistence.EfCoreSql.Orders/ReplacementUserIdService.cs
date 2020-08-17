@@ -3,10 +3,13 @@
 
 using System;
 
-namespace BookApp.Persistence.NormalSql.Orders
+namespace BookApp.Persistence.EfCoreSql.Orders
 {
-    public interface IUserIdService
+    public class ReplacementUserIdService : IUserIdService
     {
-        Guid GetUserId();
+        public Guid GetUserId()
+        {
+            return Guid.Empty;
+        }
     }
 }

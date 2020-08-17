@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BookApp.Domain.Books;
-using BookApp.Persistence.NormalSql.Books;
+using BookApp.Persistence.EfCoreSql.Books;
 
 namespace Test.TestHelpers
 {
@@ -25,8 +25,7 @@ namespace Test.TestHelpers
             (
                 "Book Title",
                 "Book Description",
-                DummyBookStartDate,
-                DateTime.Today, 
+                DummyBookStartDate, 
                 "Book Publisher",
                 123,
                 null,
@@ -43,7 +42,6 @@ namespace Test.TestHelpers
                 "Book Title",
                 "Book Description",
                 DummyBookStartDate,
-                DateTime.Today,
                 "Book Publisher",
                 123,
                 null,
@@ -70,7 +68,6 @@ namespace Test.TestHelpers
                     $"Book{i:D4} Title",
                     $"Book{i:D4} Description",
                     stepByYears ? DummyBookStartDate.AddYears(i) : DummyBookStartDate.AddDays(i),
-                    DateTime.Today,
                     "Publisher",
                     (short)(i + 1),
                     $"Image{i:D4}",
@@ -107,7 +104,6 @@ namespace Test.TestHelpers
                 "Refactoring",
                 "Improving the design of existing code",
                 new DateTime(1999, 7, 8),
-                DateTime.Today,
                 null,
                 40,
                 null,
@@ -120,7 +116,6 @@ namespace Test.TestHelpers
                 "Patterns of Enterprise Application Architecture",
                 "Written in direct response to the stiff challenges",
                 new DateTime(2002, 11, 15),
-                DateTime.Today,
                 null,
                 53,
                 null,
@@ -134,7 +129,6 @@ namespace Test.TestHelpers
                 "Domain-Driven Design",
                  "Linking business needs to software design",
                  new DateTime(2003, 8, 30),
-                DateTime.Today,
                  null,
                 56,
                 null,
@@ -147,7 +141,6 @@ namespace Test.TestHelpers
                 "Quantum Networking",
                 "Entangled quantum networking provides faster-than-light data communications",
                 new DateTime(2057, 1, 1),
-                DateTime.Today,
                 "Future Published",
                 220,
                 null,

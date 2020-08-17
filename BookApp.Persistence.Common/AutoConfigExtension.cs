@@ -32,12 +32,6 @@ namespace BookApp.Persistence.Common
                         entityProperty.SetValueConverter(utcConverter);
                     }
 
-                    if (entityProperty.ClrType == typeof(DateTime)
-                        && entityProperty.Name.EndsWith("Day"))
-                    {
-                        entityProperty.AddAnnotations((IEnumerable<IAnnotation>) new []{ new ColumnAttribute{ TypeName = "date" } });
-                    }
-
                     if (entityProperty.ClrType == typeof(decimal)
                         && entityProperty.Name.Contains("Price"))
                     {

@@ -3,7 +3,7 @@
 
 using System.Linq;
 using BookApp.Domain.Books;
-using BookApp.Persistence.NormalSql.Books;
+using BookApp.Persistence.EfCoreSql.Books;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;

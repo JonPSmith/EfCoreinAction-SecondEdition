@@ -5,7 +5,7 @@ using BookApp.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BookApp.Persistence.NormalSql.Orders.Configurations
+namespace BookApp.Persistence.EfCoreSql.Orders.Configurations
 {
     internal class BookViewConfig : IEntityTypeConfiguration<BookView>
     {

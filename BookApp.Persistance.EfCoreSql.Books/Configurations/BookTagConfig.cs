@@ -5,7 +5,7 @@ using BookApp.Domain.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BookApp.Persistence.NormalSql.Books.Configurations
+namespace BookApp.Persistence.EfCoreSql.Books.Configurations
 {
     internal class BookTagConfig : IEntityTypeConfiguration<BookTag>
     {
