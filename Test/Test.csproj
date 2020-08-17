@@ -36,6 +36,11 @@
     <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Book.EventHandlers.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
+    <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 
 </Project>

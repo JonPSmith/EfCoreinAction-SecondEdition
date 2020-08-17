@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Orders;
@@ -47,10 +48,10 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             context.BookContextEnsureCreatedOnOrderDb();
 
             //VERIFY
-            context.GetTableNamesInSqliteDb().ShouldEqual(new[]
+            context.GetTableNamesInSqliteDb().OrderBy(x => x).ShouldEqual(new List<string>()
             {
-                "Orders", "sqlite_sequence", "LineItem", "Authors", "Books", "Tag", "BookAuthor", "Review", "BookTag"
-            });
+                "Authors", "BookAuthor", "Books", "BookTag", "LineItem", "Orders", "Review", "sqlite_sequence", "Tags"
+            }.OrderBy(x => x));
         }
 
 

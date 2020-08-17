@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.EfCoreS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.Books.Seeding", "BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj", "{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.DefaultSql.Books", "BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj", "{B4526D94-CB36-4B16-8021-81D4F25D3AA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4526D94-CB36-4B16-8021-81D4F25D3AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4526D94-CB36-4B16-8021-81D4F25D3AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4526D94-CB36-4B16-8021-81D4F25D3AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4526D94-CB36-4B16-8021-81D4F25D3AA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

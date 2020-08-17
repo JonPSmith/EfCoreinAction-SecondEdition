@@ -15,12 +15,12 @@ namespace BookApp.Domain.Books
 
         private Review() { }
 
-        internal Review(int numStars, string comment, string voterName, Guid bookId = default(Guid))
+        internal Review(int numStars, string comment, string voterName, int bookId = 0)
         {
             NumStars = numStars;
             Comment = comment;
             VoterName = voterName;
-            if (bookId != default(Guid))
+            if (bookId != 0)
                 BookId = bookId;
         }
 
@@ -36,7 +36,7 @@ namespace BookApp.Domain.Books
         //-----------------------------------------
         //Relationships
 
-        public Guid BookId { get; private set; }
+        public int BookId { get; private set; }
     }
 
 }

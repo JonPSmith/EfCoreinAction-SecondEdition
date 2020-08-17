@@ -90,8 +90,8 @@ namespace BookApp.Domain.Books
                 Description = description,
                 PublishedOn = publishedOn,
                 Publisher = publisher,
-                ActualPrice = price,
                 OrgPrice = price,
+                ActualPrice = price,
                 ImageUrl = imageUrl,
                 //We need to initialise the AuthorsOrdered string when the entry is created
                 AuthorsOrdered = string.Join(", ", authors.Select(x => x.Name)),

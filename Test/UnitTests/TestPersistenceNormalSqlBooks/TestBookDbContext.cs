@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
+using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -30,6 +31,25 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
             context.Books.Count().ShouldEqual(4);
             context.Authors.Count().ShouldEqual(3);
             context.Set<Review>().Count().ShouldEqual(2);
+        }
+
+        [Fact]
+        public void TestBookDbContextAddFourBooksLoadRelationshipsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            context.ChangeTracker.Clear();
+            var books = context.Books.Include(x => x.Reviews)
+                .Include(x => x.AuthorsLink).ThenInclude(x => x.Author).ToList();
+
+            //VERIFY
+            books.All(x => x.AuthorsLink.Single().Author != null).ShouldBeTrue();
+            books.Last().Reviews.Count.ShouldEqual(2);
         }
 
         [Fact]
