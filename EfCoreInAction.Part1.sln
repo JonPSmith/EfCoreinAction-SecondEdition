@@ -33,9 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.EfCoreS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.EfCoreSql.Orders", "BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj", "{5E66E7E5-15E2-498D-B5C9-013F7C7A12B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.Books.Seeding", "BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj", "{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.Books.Seeding", "BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj", "{75DFE18D-1A3E-4ADB-AC6B-CCC1DD468DDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.DefaultSql.Books", "BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj", "{B4526D94-CB36-4B16-8021-81D4F25D3AA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.DefaultSql.Books", "BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj", "{B4526D94-CB36-4B16-8021-81D4F25D3AA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
