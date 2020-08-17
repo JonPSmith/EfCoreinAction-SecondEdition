@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using System.Threading.Tasks;
 using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
@@ -18,7 +19,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Concrete
             _context = context;
         }
 
-        public IQueryable<BookListDto> SortFilterPage
+        public async Task<IQueryable<BookListDto>> SortFilterPageAsync
             (SortFilterPageOptions options)
         {
             var booksQuery = _context.Books 
@@ -28,7 +29,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Concrete
                 .FilterBooksBy(options.FilterBy, 
                     options.FilterValue); 
 
-            options.SetupRestOfDto(booksQuery); 
+            await options.SetupRestOfDtoAsync(booksQuery); 
 
             return booksQuery.Page(options.PageNum - 1, 
                 options.PageSize); 

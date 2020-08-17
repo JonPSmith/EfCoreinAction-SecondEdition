@@ -53,9 +53,9 @@ namespace BookApp.Domain.Books
         //---------------------------------------
         //relationships
 
-        public IEnumerable<Review> Reviews => _reviews?.ToList();
-        public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
-        public IEnumerable<Tag> Tags => _tags?.ToList();
+        public IReadOnlyCollection<Review> Reviews => _reviews?.ToList();
+        public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList();
+        public IReadOnlyCollection<Tag> Tags => _tags?.ToList();
 
         //----------------------------------------------
         //Extra properties filled in by events

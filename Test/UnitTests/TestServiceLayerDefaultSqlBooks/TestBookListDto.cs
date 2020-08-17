@@ -34,7 +34,6 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
             }
-
             using (var context = new BookDbContext(options))
             {
                 //ATTEMPT

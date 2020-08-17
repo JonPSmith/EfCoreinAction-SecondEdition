@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using System.Threading.Tasks;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Concrete;
@@ -38,7 +39,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
         [Theory]
         [InlineData(OrderByOptions.SimpleOrder)]
         [InlineData(OrderByOptions.ByPublicationDate)]
-        public void OrderBooksBy(OrderByOptions orderByOptions)
+        public async Task OrderBooksBy(OrderByOptions orderByOptions)
         {
             //SETUP
             var numBooks = 5;
@@ -51,7 +52,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 //ATTEMPT
                 var service = new ListBooksService(context);
                 var listOptions = new SortFilterPageOptions() { OrderByOptions = orderByOptions };
-                var dtos = service.SortFilterPage(listOptions).ToList();
+                var dtos = await (await service.SortFilterPageAsync(listOptions)).ToListAsync();
 
                 //VERIFY
                 dtos.Count.ShouldEqual(numBooks);
@@ -61,7 +62,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
         [Theory]
         [InlineData(5)]
         [InlineData(10)]
-        public void PageBooks(int pageSize)
+        public async Task PageBooks(int pageSize)
         {
             //SETUP
             var numBooks = 12;
@@ -74,7 +75,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 //ATTEMPT
                 var service = new ListBooksService(context);
                 var listOptions = new SortFilterPageOptions() { PageSize = pageSize };
-                var dtos = service.SortFilterPage(listOptions).ToList();
+                var dtos = await(await service.SortFilterPageAsync(listOptions)).ToListAsync();
 
                 //VERIFY
                 dtos.Count.ShouldEqual(pageSize);

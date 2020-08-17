@@ -3,7 +3,9 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books
 {
@@ -53,10 +55,10 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
         public string PrevCheckState { get; set; }
 
 
-        public void SetupRestOfDto<T>(IQueryable<T> query)
+        public async Task SetupRestOfDtoAsync<T>(IQueryable<T> query)
         {
             NumPages = (int) Math.Ceiling(
-                (double) query.Count() / PageSize);
+                ((double)await query.CountAsync()) / PageSize);
             PageNum = Math.Min(
                 Math.Max(1, PageNum), NumPages);
 

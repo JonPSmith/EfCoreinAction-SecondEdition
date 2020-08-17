@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
@@ -16,7 +17,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
         [Theory]
         [InlineData(BooksFilterBy.ByVotes, "Dummy", 10, 2, 2)]
         [InlineData(BooksFilterBy.ByPublicationYear, "2010", 5, 1, 3)]
-        public void SetupRestOfDto(BooksFilterBy filterBy, string filterValue, int pageSize,
+        public async Task SetupRestOfDto(BooksFilterBy filterBy, string filterValue, int pageSize,
             int expectedPageNum, int expectedNumPages)
         {
             //SETUP
@@ -35,14 +36,14 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 };
 
                 //need to do this to to setup PrevCheckState 
-                sfpDto.SetupRestOfDto(context.Books);
+                await sfpDto.SetupRestOfDtoAsync(context.Books);
 
                 //ATTEMPT
                 sfpDto.PageNum = 2;
                 sfpDto.FilterBy = filterBy;
                 sfpDto.FilterValue = filterValue;
                 sfpDto.PageSize = pageSize;
-                sfpDto.SetupRestOfDto(context.Books);
+                await sfpDto.SetupRestOfDtoAsync(context.Books);
 
                 //VERIFY
                 sfpDto.PageNum.ShouldEqual(expectedPageNum);

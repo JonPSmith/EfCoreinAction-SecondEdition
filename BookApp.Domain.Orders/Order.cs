@@ -22,7 +22,7 @@ namespace BookApp.Domain.Orders
 
         // relationships
 
-        public IReadOnlyCollection<LineItem> LineItems => _lineItems?.ToList().AsReadOnly();
+        public IReadOnlyCollection<LineItem> LineItems => _lineItems?.ToList();
 
         public static IStatusGeneric<Order> CreateOrder(Guid userId,
             IEnumerable<OrderBookDto> bookOrders)
