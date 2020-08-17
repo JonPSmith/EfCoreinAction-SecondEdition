@@ -110,6 +110,22 @@ namespace BookApp.Domain.Books
             return status.SetResult(book);
         }
 
+        public override string ToString()
+        {
+            var authors = _authorsLink?.OrderBy(x => x.Order).Select(x => x.Author.Name);
+            var authorString = authors == null
+                ? "(Cached) " + AuthorsOrdered
+                : string.Join(", ", authors);
+            var tagsString = _tags == null
+                ? ""
+                : $" Tags: " + string.Join(", ", _tags.Select(x => x.TagId));
+
+            return $"{Title}: by {authorString}. Price {ActualPrice}. Published {PublishedOn:d}{tagsString}";
+        }
+
+        //-----------------------------------------------------
+        //DDD methods
+
         public void AlterSoftDelete(bool softDeleted)
         {
             SoftDeleted = softDeleted;

@@ -85,32 +85,6 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
         }
 
         [Fact]
-        public void ReadManningBooksJsonListPriceBad()
-        {
-            //SETUP
-            var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp\\wwwroot\\seedData"));
-            var filePath = Directory.GetFiles(fileDir, "ManningBooks*.json").FirstOrDefault();
-
-            //ATTEMPT
-            var list = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(filePath));
-
-            //VERIFY
-            foreach (var json in list)
-            {
-                try
-                {
-                    var price = json.productOfferings?.Select(x => x.price).Max();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }
-        }
-
-        [Fact]
         public void ReadManningBooksJsonListAuthorsDuplicateOk()
         {
             //SETUP
