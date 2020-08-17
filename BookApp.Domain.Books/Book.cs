@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
@@ -77,7 +76,7 @@ namespace BookApp.Domain.Books
         }
         //----------------------------------------------
 
-        public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOnDay,
+        public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOn,
             string publisher, decimal price, string imageUrl,
             ICollection<Author> authors, ICollection<Tag> tags = null)
         {
@@ -89,7 +88,7 @@ namespace BookApp.Domain.Books
             {
                 Title = title,
                 Description = description,
-                PublishedOn = publishedOnDay,
+                PublishedOn = publishedOn,
                 Publisher = publisher,
                 ActualPrice = price,
                 OrgPrice = price,
