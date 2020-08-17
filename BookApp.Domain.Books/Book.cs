@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
@@ -52,9 +53,9 @@ namespace BookApp.Domain.Books
         //---------------------------------------
         //relationships
 
-        public IReadOnlyCollection<Review> Reviews => _reviews?.ToList().AsReadOnly();
-        public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList().AsReadOnly();
-        public IReadOnlyCollection<Tag> Tags => _tags?.ToList().AsReadOnly();
+        public IEnumerable<Review> Reviews => _reviews?.ToList();
+        public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
+        public IEnumerable<Tag> Tags => _tags?.ToList();
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -116,11 +117,14 @@ namespace BookApp.Domain.Books
             var authorString = authors == null
                 ? "(Cached) " + AuthorsOrdered
                 : string.Join(", ", authors);
+            var reviewsString = _reviews == null
+                ? $"(Cached) {ReviewsCount} reviews"
+                : $"{_reviews.Count()} reviews";
             var tagsString = _tags == null
                 ? ""
                 : $" Tags: " + string.Join(", ", _tags.Select(x => x.TagId));
 
-            return $"{Title}: by {authorString}. Price {ActualPrice}. Published {PublishedOn:d}{tagsString}";
+            return $"{Title}: by {authorString}. Price {ActualPrice}, {reviewsString}. Published {PublishedOn:d}{tagsString}";
         }
 
         //-----------------------------------------------------

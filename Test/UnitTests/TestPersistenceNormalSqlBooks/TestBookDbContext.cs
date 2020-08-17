@@ -49,7 +49,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
 
             //VERIFY
             books.All(x => x.AuthorsLink.Single().Author != null).ShouldBeTrue();
-            books.Last().Reviews.Count.ShouldEqual(2);
+            books.Last().Reviews.Count().ShouldEqual(2);
         }
 
         [Fact]

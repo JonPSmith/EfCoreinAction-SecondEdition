@@ -39,7 +39,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
             {
                 //ATTEMPT
                 var query = context.Books.Select(p =>
-                    p.Reviews == null || p.Reviews.Count == 0
+                   !p.Reviews.Any()
                         ? null
                         : (decimal?) p.Reviews.Select(q => q.NumStars).Average());
                 _output.WriteLine(query.ToQueryString());
@@ -64,8 +64,8 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 //ATTEMPT
                 var dtos = context.Books.Select(p => new
                 {
-                    NumReviews = p.Reviews.Count,
-                    ReviewsAverageVotes = p.Reviews.Count == 0 ? null : (double?)p.Reviews.Average(q => q.NumStars)
+                    NumReviews = p.Reviews.Count(),
+                    ReviewsAverageVotes = !p.Reviews.Any() ? null : (double?)p.Reviews.Average(q => q.NumStars)
                 }).ToList();
 
                 //VERIFY
@@ -129,10 +129,10 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                         firstBook.AuthorsLink 
                             .OrderBy(l => l.Order) 
                             .Select(a => a.Author.Name)), 
-                    ReviewsCount = firstBook.Reviews.Count, 
+                    ReviewsCount = firstBook.Reviews.Count(), 
                     //The test on there being any reviews is needed because of bug in EF Core V2.0.0, issue #9516
                     ReviewsAverageVotes = 
-                        firstBook.Reviews.Count == 0 
+                        firstBook.Reviews.Count() == 0 
                             ? null 
                             : (double?)firstBook.Reviews 
                                 .Average(q => q.NumStars) 
@@ -176,10 +176,10 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                             p.AuthorsLink
                                 .OrderBy(q => q.Order)
                                 .Select(q => q.Author.Name)));
-                var reviewsCount = context.Books.Select(p => p.Reviews.Count);
+                var reviewsCount = context.Books.Select(p => p.Reviews.Count());
                 //The test on there being any reviews is needed because of bug in EF Core V2.0.0, issue #9516
                 var reviewsAverageVotes = context.Books.Select(p =>
-                    p.Reviews.Count == 0
+                    p.Reviews.Count() == 0
                         ? null
                         : (double?)p.Reviews.Average(q => q.NumStars));
 
@@ -202,7 +202,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
             using (var context = new BookDbContext(options))
             {
                 context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+                var books = context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
                 var dtos = context.Books.MapBookToDto().OrderByDescending(x => x.BookId).ToList();
@@ -214,7 +214,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 dtos.First().ActualPrice.ShouldNotEqual(dtos.Last().Price);
                 dtos.First().AuthorsOrdered.Length.ShouldBeInRange(1, 100);
                 dtos.First().ReviewsCount.ShouldEqual(2);
-                dtos.First().ReviewsAverageVotes.ShouldEqual(5);
+                dtos.First().ReviewsAverageVotes.ShouldEqual(4);
             }
         }
 

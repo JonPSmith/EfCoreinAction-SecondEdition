@@ -23,10 +23,10 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
                     p.AuthorsLink
                         .OrderBy(q => q.Order)
                         .Select(q => q.Author.Name)),
-                ReviewsCount = p.Reviews.Count,
-                //ReviewsAverageVotes =
-                //    p.Reviews.Select(y =>
-                //        (double?)y.NumStars).Average()
+                ReviewsCount = p.Reviews.Count(),
+                ReviewsAverageVotes =
+                    p.Reviews.Select(y =>
+                        (double?)y.NumStars).Average()
             });
         }
 
