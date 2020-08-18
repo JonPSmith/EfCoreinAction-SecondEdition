@@ -4,7 +4,7 @@
 using System.Text.Json.Serialization;
 using BizDbAccess.AppStart;
 using BizLogic.AppStart;
-using BookApp.Logger;
+using BookApp.UI.Logger;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ServiceLayer.AppStart;
 
-namespace BookApp
+namespace BookApp.UI
 {
     public class Startup
     {

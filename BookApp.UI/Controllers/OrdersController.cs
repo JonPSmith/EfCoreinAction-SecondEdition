@@ -5,7 +5,7 @@ using DataLayer.EfCode;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.OrderServices.Concrete;
 
-namespace BookApp.Controllers
+namespace BookApp.UI.Controllers
 {
     public class OrdersController : BaseTraceController
     {

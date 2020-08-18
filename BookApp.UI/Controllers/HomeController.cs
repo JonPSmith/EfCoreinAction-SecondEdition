@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BookApp.HelperExtensions;
+using BookApp.UI.HelperExtensions;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using ServiceLayer.BookServices;
 using ServiceLayer.BookServices.Concrete;
 using ServiceLayer.Logger;
 
-namespace BookApp.Controllers
+namespace BookApp.UI.Controllers
 {
     public class HomeController : BaseTraceController
     {

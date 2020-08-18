@@ -3,33 +3,23 @@
 
 using System.Globalization;
 using System.Linq;
-using BookApp.HelperExtensions;
+using BookApp.UI.HelperExtensions;
 using DataLayer.EfClasses;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.AdminServices;
 
-namespace BookApp.Controllers
+namespace BookApp.UI.Controllers
 {
     public class AdminController : BaseTraceController
     {
-
-
-        public IActionResult ChangePubDate //#A
-        (int id, //#B
-            [FromServices] IChangePubDateService service) //#C
+        public IActionResult ChangePubDate(int id, [FromServices] IChangePubDateService service) 
         {
-            Request.ThrowErrorIfNotLocal(); //REMOVE THIS FOR BOOK as it isn't relevant
-            var dto = service.GetOriginal(id); //#D
-            SetupTraceInfo(); //REMOVE THIS FOR BOOK as it could be confusing
-            return View(dto); //#E
+            Request.ThrowErrorIfNotLocal(); 
+            var dto = service.GetOriginal(id); 
+            SetupTraceInfo();
+            return View(dto); 
         }
-        /**************************************************
-        #A This is the action that is called if the user clicks the Admin->Change Pub Date link
-        #B It receives the primary key of the book that the user wants to change
-        #C This is where ASP.NET DI injects the ChangePubDateService instance
-        #D Now we use the service to set up a dto to show the user
-        #E This shows the user the page that allows them to edit the publication date
-         * ************************************************/
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

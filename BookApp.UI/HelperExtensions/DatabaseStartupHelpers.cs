@@ -11,9 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ServiceLayer.DatabaseServices;
-using ServiceLayer.DatabaseServices.Concrete;
 
-namespace BookApp.HelperExtensions
+namespace BookApp.UI.HelperExtensions
 {
     public static class DatabaseStartupHelpers
     {

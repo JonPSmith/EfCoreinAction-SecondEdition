@@ -4,6 +4,7 @@
 using System.Linq;
 using BizLogic.BasketServices;
 using BizLogic.Orders;
+using BookApp.UI.Controllers;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.CheckoutServices.Concrete;
@@ -11,7 +12,7 @@ using ServiceLayer.OrderServices.Concrete;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace BookApp.Controllers
+namespace BookApp.UI.Controllers
 {
     public class CheckoutController : BaseTraceController
     {

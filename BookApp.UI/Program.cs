@@ -2,14 +2,14 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using BookApp.HelperExtensions;
+using BookApp.UI.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ServiceLayer.BackgroundServices;
 
-namespace BookApp
+namespace BookApp.UI
 {
     public class Program
     {
