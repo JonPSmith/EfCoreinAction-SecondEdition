@@ -3,14 +3,13 @@
 
 namespace BookApp.Domain.Orders.SupportTypes
 {
-    public struct OrderBookDto
+    public readonly struct OrderBookDto
     {
         public int BookId { get; }
-
         public decimal SoldPrice { get; }
         public short NumBooks { get; }
 
-        public OrderBookDto(int bookId, decimal soldPrice, short numBooks) : this()
+        public OrderBookDto(int bookId, decimal soldPrice, short numBooks)
         {
             BookId = bookId;
             SoldPrice = soldPrice;
