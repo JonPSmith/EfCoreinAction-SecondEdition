@@ -1,6 +1,6 @@
 ﻿@using Microsoft.EntityFrameworkCore.Metadata.Conventions
 @using BookApp.UI.HelperExtensions
-@model ServiceLayer.BookServices.BookListCombinedDto
+@model BookApp.ServiceLayer.DefaultSql.Books.Dtos.BookListCombinedDto
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -10,7 +10,7 @@
         <div class="col-sm-3">
             <label>Sort By</label>
             <select asp-for="SortFilterPageData.OrderByOptions" name="OrderByOptions"
-                    asp-items="Html.GetEnumSelectList<ServiceLayer.BookServices.QueryObjects.OrderByOptions>()"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.OrderByOptions>()"
                     class="form-control sort-filter-width"
                     onchange="BookList.sendForm(this)"></select>
         </div>
@@ -18,7 +18,7 @@
         <div class="col-sm-3">
             <label>Filter Type</label>
             <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
-                    asp-items="Html.GetEnumSelectList<ServiceLayer.BookServices.QueryObjects.BooksFilterBy>()"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.BooksFilterBy>()"
                     class="form-control sort-filter-width"
                     onchange="BookList.filterByHasChanged(this)"></select>
         </div>
@@ -89,11 +89,16 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePubDate" asp-route-id="@item.BookId">Change Pub Date</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePromotion" asp-route-id="@item.BookId">
-                                @(item.PromotionPromotionalText == null ? "Add Promotion" : "Remove Promotion")
-                            </a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
-                        </div>
+                            @if (item.PromotionPromotionalText == null)
+                            {
+                                <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddPromotion" asp-route-id="@item.BookId">Add Promotion</a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="RemovePromotion" asp-route-id="@item.BookId">Remove Promotion</a>
+                            }
+                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
+                            </div>
                     </div>
                 }
             </td>

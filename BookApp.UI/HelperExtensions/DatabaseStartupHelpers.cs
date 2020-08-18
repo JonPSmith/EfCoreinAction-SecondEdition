@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +34,7 @@ namespace BookApp.UI.HelperExtensions
                 {
                     await bookContext.Database.MigrateAsync();
                     await orderContext.Database.MigrateAsync();
-                    if (bookContext.Database.GetAppliedMigrations().Any())
+                    if (!bookContext.Books.Any())
                     {
                         await bookContext.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
                     }

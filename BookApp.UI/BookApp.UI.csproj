@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
+    <Content Remove="Views\Admin\RemovePromotion.cshtml" />
     <Content Remove="wwwroot\js\bundle.min.js" />
   </ItemGroup>
 
@@ -17,7 +18,8 @@
     <None Include="bundleconfig.json" />
     <None Include="Views\Admin\AddBookReview.cshtml" />
     <None Include="Views\Admin\BookUpdated.cshtml" />
-    <None Include="Views\Admin\ChangePromotion.cshtml" />
+    <None Include="Views\Admin\RemovePromotion.cshtml" />
+    <None Include="Views\Admin\AddPromotion.cshtml" />
     <None Include="Views\Admin\ChangePubDate.cshtml" />
     <None Include="Views\Checkout\Index.cshtml" />
     <None Include="Views\Checkout\ListBasketPartial.cshtml" />
@@ -48,6 +50,7 @@
     <ProjectReference Include="..\BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.LoggingServices\BookApp.Infrastructure.LoggingServices.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Orders.BizLogic\BookApp.Infrastructure.Orders.BizLogic.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Startup\BookApp.Infrastructure.Startup.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders.DbAccess\BookApp.Persistence.EfCoreSql.Orders.DbAccess.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />

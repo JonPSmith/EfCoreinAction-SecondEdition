@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Startup\BookApp.Infrastructure.Startup.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.Common\BookApp.Persistence.Common.csproj" />
   </ItemGroup>

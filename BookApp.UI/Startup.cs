@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
+using BookApp.Infrastructure.Startup;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.UI.Logger;
@@ -36,8 +37,9 @@ namespace BookApp.UI
                     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            var connection = Configuration.GetConnectionString("DefaultConnection"); 
+            var connection = Configuration.GetConnectionString("DefaultConnection");
 
+            //This registers both DbContext. Each MUST have a unique MigrationsHistoryTable for Migrations to work
             services.AddDbContext<BookDbContext>( 
                 options => options.UseSqlServer(connection, dbOptions =>
                 dbOptions.MigrationsHistoryTable("BookMigrationHistoryName")));
@@ -47,18 +49,9 @@ namespace BookApp.UI
 
             services.AddHttpContextAccessor();
 
-            //I let each project handle its own registering of services with dependency injection
-            services.RegisterBizDbAccessDi();
-            services.RegisterBizLogicDi();
-            services.RegisterServiceLayerDi();
+            //This registers all the services across all the projects in this application
+            services.RegisterServicesInAllProjects(Configuration);
         }
-        /****************************************************************
-        #A This method in the Startup class sets up services
-        #B Sets up a series of services to use with controllers and Views
-        #C You get the connection string from the appsettings.json file, which can be changed when you deploy.
-        #D Configures the application’s DbContext to use SQL Server and provide the connection         
-         ****************************************************************/
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor)
