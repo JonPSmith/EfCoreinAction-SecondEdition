@@ -140,5 +140,29 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
             book.OrgPrice.ShouldNotEqual(book.ActualPrice);
             book.PromotionalText.ShouldEqual("Save!");
         }
+
+        [Fact]
+        public async Task TestCreateBookDto()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            var utData = context.SetupSingleDtoAndEntities<CreateBookDto>();
+            var service = new CrudServicesAsync(context, utData.ConfigAndMapper);
+
+            //ATTEMPT
+            var dto = new CreateBookDto
+            {
+                Title = "New book", ImageUrl = "link", Price = 123, PublishedOn = new DateTime(2020, 1, 1), 
+                Publisher = "Test", Authors = new []{new Author("Author1", null)}
+            };
+            await service.CreateAndSaveAsync(dto);
+
+            //VERIFY
+            var book = context.Books.Single();
+            book.ToString().ShouldEqual("New book: by Author1. Price 123, 0 reviews. Published 01/01/2020");
+        }
     }
 }

@@ -37,6 +37,11 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 
         public ICollection<Author> Authors { get; set; }
 
+        public ICollection<Tag> Tags { get; set; }
+
+        //---------------------------------------------
+        //Now the other parts used in the page where you enter data
+
         public List<KeyName> AllPossibleAuthors { get; private set; }
 
         public List<int> BookAuthorIds { get; set; } = new List<int>();
