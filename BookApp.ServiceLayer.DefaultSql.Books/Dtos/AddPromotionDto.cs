@@ -8,12 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 {
-    public class AddRemovePromotionDto : ILinkToEntity<Book>
+    public class AddPromotionDto : ILinkToEntity<Book>
     {
         [HiddenInput]
         public int BookId { get; set; }
-
-        public decimal OrgPrice { get; set; }
 
         public string Title { get; set; }
 
