@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
 using BookApp.Persistence.EfCoreSql.Orders.DbAccess.Orders;
@@ -25,7 +26,7 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
         /// </summary>
         /// <param name="dto">T and Cs, UserId and line items</param>
         /// <returns>returns an Order. Will be null if there are errors</returns>
-        public IStatusGeneric<Order> Action(PlaceOrderInDto dto) 
+        public async Task<IStatusGeneric<Order>> ActionAsync(PlaceOrderInDto dto) 
         {
             var status = new StatusGenericHandler<Order>();
 
@@ -38,7 +39,7 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
                 return status.AddError("No items in your basket.");
             }                                         
 
-            var booksDict = _dbAccess.FindBooksByIds    
+            var booksDict = await _dbAccess.FindBooksByIdsAsync    
                      (dto.LineItems.Select(x => x.BookId));
             var linesStatus = FormLineItemsWithErrorChecking(dto.LineItems, booksDict);
             if (status.CombineStatuses(linesStatus).HasErrors)
@@ -49,8 +50,8 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
             if (status.CombineStatuses(orderStatus).HasErrors)
                 return status;
                 
-            _dbAccess.Add(orderStatus.Result);
-
+            await _dbAccess.AddAndSave(orderStatus.Result);
+            
             return status.SetResult(orderStatus.Result);
         }
 

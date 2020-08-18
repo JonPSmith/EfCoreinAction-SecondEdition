@@ -22,7 +22,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
         {
             //SETUP
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp\\wwwroot\\seedData"));
+            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
             //ATTEMPT
             var books = fileDir.LoadBooks("ManningBooks*.json").ToList();
@@ -40,7 +40,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             context.Database.EnsureCreated();
 
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp\\wwwroot\\seedData"));
+            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
             var books10 = fileDir.LoadBooks("ManningBooks*.json").Take(10).ToList();
 
             //ATTEMPT

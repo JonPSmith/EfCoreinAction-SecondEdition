@@ -63,7 +63,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             var options = SqliteInMemory.CreateOptions<OrderDbContext>();
             using var context = new OrderDbContext(options, new FakeUserIdService(userId));
             context.Database.EnsureCreated();
-            var bookIds = context.SeedFourBookDdPart().ToList();
+            var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
 
             //ATTEMPT
             var status = Order.CreateOrder(userId, new[]
@@ -89,7 +89,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             using (var context = new OrderDbContext(options, new FakeUserIdService(userId1)))
             {
                 context.Database.EnsureCreated();
-                var bookIds = context.SeedFourBookDdPart().ToList();
+                var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
 
                 var status = Order.CreateOrder(userId1, new[]
                 {

@@ -41,12 +41,13 @@ namespace Test.TestHelpers
         /// </summary>
         /// <param name="orderContext"></param>
         /// <returns></returns>
-        public static IEnumerable<int> SeedFourBookDdPart(this OrderDbContext orderContext)
+        public static IEnumerable<int> SeedFourBookDdPartWithOptionalDbSchemaAdd(this OrderDbContext orderContext, bool ensureCreated)
         {
             if (!orderContext.Database.IsSqlite())
                 throw new NotSupportedException("This only works on SQLite databases");
 
-            orderContext.BookContextEnsureCreatedOnOrderDb();
+            if (ensureCreated)
+                orderContext.BookContextEnsureCreatedOnOrderDb();
 
             var options = SqliteInMemory.CreateOptions<BookDbContext>(
                 builder => builder.UseSqlite(orderContext.Database.GetDbConnection()));
