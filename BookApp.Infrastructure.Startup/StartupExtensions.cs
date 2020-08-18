@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
@@ -21,6 +22,19 @@ namespace BookApp.Infrastructure.Startup
             var namespacePrefix = startAssembly.GetName().Name;
             namespacePrefix = namespacePrefix.Substring(0, namespacePrefix.IndexOf('.'));
             var allProjectAssembles = GetProjectAssemblies(startAssembly, namespacePrefix);
+            foreach (var assembly in allProjectAssembles)
+            {
+                foreach (var type in assembly.GetExportedTypes()
+                    .Where(x => x.IsClass && typeof(IRegisterOnStartup).IsAssignableFrom(x)))
+                {
+                    var method = type.GetMethod(nameof(IRegisterOnStartup.RegisterServices));
+                    if (method != null)
+                    {
+                        object classInstance = Activator.CreateInstance(type, null);
+                        method.Invoke(classInstance, new object[] {services, configuration});
+                    }
+                }
+            }
 
             return services;
         }
