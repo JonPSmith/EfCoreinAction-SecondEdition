@@ -4,11 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookApp.Domain.Books;
 using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
 using BookApp.Persistence.EfCoreSql.Orders;
-using Microsoft.EntityFrameworkCore;
 using Test.Mocks;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -106,7 +104,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
                 //ATTEMPT
                 var status = Order.CreateOrder(userId2, new[]
                 {
-                    new OrderBookDto(context.BookViews.First().BookId, 123, 1),
+                    new OrderBookDto(context.BookViews.First(), 1),
                 });
                 context.Add(status.Result);
                 context.SaveChanges();

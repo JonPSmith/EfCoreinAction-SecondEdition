@@ -4,10 +4,8 @@
 using System.Threading.Tasks;
 using BookApp.UI.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ServiceLayer.BackgroundServices;
 
 namespace BookApp.UI
 {
@@ -28,10 +26,10 @@ namespace BookApp.UI
                 {
                     logging.ClearProviders(); //Clear logging providers to improve performance
                 })
-                .ConfigureServices(services =>
-                {
-                    services.AddHostedService<BackgroundServiceCountReviews>();
-                })
+                //.ConfigureServices(services =>
+                //{
+                //    services.AddHostedService<BackgroundServiceCountReviews>();
+                //})
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

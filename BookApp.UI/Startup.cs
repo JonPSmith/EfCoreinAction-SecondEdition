@@ -2,10 +2,9 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Text.Json.Serialization;
-using BizDbAccess.AppStart;
-using BizLogic.AppStart;
+using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.UI.Logger;
-using DataLayer.EfCode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ServiceLayer.AppStart;
 
 namespace BookApp.UI
 {
@@ -38,11 +36,14 @@ namespace BookApp.UI
                     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            var connection = Configuration                //#C
-                .GetConnectionString("DefaultConnection"); //#C
+            var connection = Configuration.GetConnectionString("DefaultConnection"); 
 
-            services.AddDbContext<EfCoreContext>(             //#D
-                options => options.UseSqlServer(connection)); //#D
+            services.AddDbContext<BookDbContext>( 
+                options => options.UseSqlServer(connection, dbOptions =>
+                dbOptions.MigrationsHistoryTable("BookMigrationHistoryName")));
+            services.AddDbContext<OrderDbContext>(
+                options => options.UseSqlServer(connection, dbOptions =>
+                    dbOptions.MigrationsHistoryTable("OrderMigrationHistoryName")));
 
             services.AddHttpContextAccessor();
 

@@ -3,44 +3,38 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BookApp.Infrastructure.LoggingServices;
+using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using BookApp.ServiceLayer.DefaultSql.Books.Services;
 using BookApp.UI.HelperExtensions;
-using DataLayer.EfCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ServiceLayer.BookServices;
-using ServiceLayer.BookServices.Concrete;
-using ServiceLayer.Logger;
+
 
 namespace BookApp.UI.Controllers
 {
     public class HomeController : BaseTraceController
     {
-        private readonly EfCoreContext _context;
+        private readonly BookDbContext _context;
 
-        public HomeController(EfCoreContext context)
+        public HomeController(BookDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IActionResult> Index //#A
-            (SortFilterPageOptions options)
+        public async Task<IActionResult> Index(SortFilterPageOptions options)
         {
-            var listService =
-                new ListBooksService(_context);
+            var listService = new ListBooksService(_context);
 
-            var bookList = await listService //#B       
-                .SortFilterPage(options)
-                .ToListAsync(); //#C   
+            var bookList = await (await listService.SortFilterPageAsync(options))
+                .ToListAsync();
 
-            SetupTraceInfo(); //REMOVE THIS FOR BOOK as it could be confusing
+            SetupTraceInfo();
 
             return View(new BookListCombinedDto(options, bookList));
         }
-        /*******************************************************
-        #A I have to make the Index action method async, by using the async keyword and the returned type has to be wrapped in a generic task
-        #B I have to await the result of the ToListAsync method, which is an async command
-        #C Because my SortFilterPage method returned IQueryable<T> I can change is to async simply by replacing the .ToList() by the .ToListAsync() method 
-        * *****************************************************/
 
         /// <summary>
         /// This provides the filter search dropdown content
@@ -48,28 +42,20 @@ namespace BookApp.UI.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent //#A
-            (SortFilterPageOptions options) //#B
+        public JsonResult GetFilterSearchContent 
+            (SortFilterPageOptions options) 
         {
-            var service = new //#C
-                BookFilterDropdownService(_context); //#C
+            var service = new 
+                BookFilterDropdownService(_context); 
 
             var traceIdent = HttpContext.TraceIdentifier; //REMOVE THIS FOR BOOK as it could be confusing
 
-            return Json( //#D
+            return Json( 
                 new TraceIndentGeneric<IEnumerable<DropdownTuple>>(
                     traceIdent,
-                    service.GetFilterDropDownValues( //#E
-                        options.FilterBy))); //#E
+                    service.GetFilterDropDownValues( 
+                        options.FilterBy))); 
         }
-        /****************************************************
-        #A This method is called by the URL Home/GetFilterSearchContent
-        #B It also gets the sort, filter, page options from the URL
-        #C We create the BookFilterDropdownService using the applications's DbContext provided by ASP.NET Core
-        #D This converts normal .NET objects into JSON format to send back to the AJAX Get call
-        #E The GetFilterDropDownValues method calculates the right data needed for the chosen filter type 
-         * **************************************************/
-
 
         public IActionResult Privacy()
         {
