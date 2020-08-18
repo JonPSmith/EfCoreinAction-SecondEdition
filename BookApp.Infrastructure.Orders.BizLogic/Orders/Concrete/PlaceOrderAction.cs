@@ -26,7 +26,7 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
         /// </summary>
         /// <param name="dto">T and Cs, UserId and line items</param>
         /// <returns>returns an Order. Will be null if there are errors</returns>
-        public async Task<IStatusGeneric<Order>> ActionAsync(PlaceOrderInDto dto) 
+        public async Task<IStatusGeneric<Order>> CreateOrderAndSaveAsync(PlaceOrderInDto dto) 
         {
             var status = new StatusGenericHandler<Order>();
 

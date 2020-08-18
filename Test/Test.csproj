@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestData\**" />
+    <EmbeddedResource Remove="TestData\**" />
+    <None Remove="TestData\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="EfCore.TestSupport" Version="3.2.0" />
@@ -39,10 +45,6 @@
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders.DbAccess\BookApp.Persistence.EfCoreSql.Orders.DbAccess.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TestData\" />
   </ItemGroup>
 
 </Project>

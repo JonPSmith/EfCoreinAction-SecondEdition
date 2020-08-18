@@ -9,6 +9,6 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders
 {
     public interface IPlaceOrderAction
     {
-        Task<IStatusGeneric<Order>> ActionAsync(PlaceOrderInDto dto);
+        Task<IStatusGeneric<Order>> CreateOrderAndSaveAsync(PlaceOrderInDto dto);
     }
 }

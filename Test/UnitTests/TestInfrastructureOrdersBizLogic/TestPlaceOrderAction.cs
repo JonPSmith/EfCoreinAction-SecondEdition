@@ -39,7 +39,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
                 new OrderLineItem {BookId = 1, NumBooks = 4},
             };
             var dto = new PlaceOrderInDto(true, userId, lineItems.ToImmutableList());
-            var status = await service.ActionAsync(dto);
+            var status = await service.CreateOrderAndSaveAsync(dto);
 
             //VERIFY
             status.IsValid.ShouldBeTrue(status.GetAllErrors());
@@ -68,7 +68,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
                 new OrderLineItem {BookId = 1, NumBooks = 4},
             };
             var dto = new PlaceOrderInDto(false, userId, lineItems.ToImmutableList());
-            var status = await service.ActionAsync(dto);
+            var status = await service.CreateOrderAndSaveAsync(dto);
 
             //VERIFY
             status.IsValid.ShouldBeFalse();
@@ -88,7 +88,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
 
             //ATTEMPT
             var dto = new PlaceOrderInDto(true, userId, (new List<OrderLineItem>()).ToImmutableList());
-            var status = await service.ActionAsync(dto);
+            var status = await service.CreateOrderAndSaveAsync(dto);
 
             //VERIFY
             status.IsValid.ShouldBeFalse();
