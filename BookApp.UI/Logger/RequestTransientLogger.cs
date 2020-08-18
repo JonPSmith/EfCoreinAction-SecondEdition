@@ -2,9 +2,9 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using BookApp.Infrastructure.LoggingServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ServiceLayer.Logger;
 
 namespace BookApp.UI.Logger
 {

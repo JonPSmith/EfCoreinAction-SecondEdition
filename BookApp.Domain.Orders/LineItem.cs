@@ -11,8 +11,9 @@ namespace BookApp.Domain.Orders
         internal LineItem(OrderBookDto bookOrder, byte lineNum)
         {
             NumBooks = bookOrder.NumBooks;
-            BookId = bookOrder.BookId;
-            BookPrice = bookOrder.SoldPrice;
+            BookId = bookOrder.Book.BookId;
+            BookPrice = bookOrder.Book.ActualPrice;
+            BookView = bookOrder.Book;
             LineNum = lineNum;
         }
 
@@ -38,6 +39,8 @@ namespace BookApp.Domain.Orders
 
         public int OrderId { get; private set; }
         public int BookId { get; private set; }
+
+        public BookView BookView { get; private set; }
     }
 
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BookApp.Domain.Orders;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,7 @@ namespace Test.TestHelpers
         /// </summary>
         /// <param name="orderContext"></param>
         /// <returns></returns>
-        public static IEnumerable<int> SeedFourBookDdPartWithOptionalDbSchemaAdd(this OrderDbContext orderContext, bool ensureCreated)
+        public static IEnumerable<BookView> SeedFourBookDdPartWithOptionalDbSchemaAdd(this OrderDbContext orderContext, bool ensureCreated)
         {
             if (!orderContext.Database.IsSqlite())
                 throw new NotSupportedException("This only works on SQLite databases");
@@ -53,7 +54,7 @@ namespace Test.TestHelpers
                 builder => builder.UseSqlite(orderContext.Database.GetDbConnection()));
             using var bookContext = new BookDbContext(options);
             var books = bookContext.SeedDatabaseFourBooks();
-            return books.Select(x => x.BookId);
+            return books.Select(x => orderContext.BookViews.Single(y => y.BookId == x.BookId));
         }
     }
 }

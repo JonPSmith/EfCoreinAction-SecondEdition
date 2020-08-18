@@ -4,13 +4,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DataLayer.EfCode;
+using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ServiceLayer.DatabaseServices;
 
 namespace BookApp.UI.HelperExtensions
 {
@@ -27,14 +27,15 @@ namespace BookApp.UI.HelperExtensions
             {
                 var services = scope.ServiceProvider;
                 var env = services.GetRequiredService<IWebHostEnvironment>();
-                var context = services.GetRequiredService<EfCoreContext>();
+                var bookContext = services.GetRequiredService<BookDbContext>();
+                var orderContext = services.GetRequiredService<OrderDbContext>();
                 try
                 {
-                    var arePendingMigrations = context.Database.GetPendingMigrations().Any();
-                    await context.Database.MigrateAsync();
-                    if (arePendingMigrations)
+                    await bookContext.Database.MigrateAsync();
+                    await orderContext.Database.MigrateAsync();
+                    if (bookContext.Database.GetAppliedMigrations().Any())
                     {
-                        await context.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
+                        await bookContext.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
                     }
                 }
                 catch (Exception ex)

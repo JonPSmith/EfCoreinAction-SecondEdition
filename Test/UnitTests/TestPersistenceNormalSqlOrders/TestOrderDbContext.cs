@@ -63,13 +63,13 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             var options = SqliteInMemory.CreateOptions<OrderDbContext>();
             using var context = new OrderDbContext(options, new FakeUserIdService(userId));
             context.Database.EnsureCreated();
-            var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
+            var bookViews = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
 
             //ATTEMPT
             var status = Order.CreateOrder(userId, new[]
             {
-                new OrderBookDto(bookIds[0], 123, 1),
-                new OrderBookDto(bookIds[1], 456, 1),
+                new OrderBookDto(bookViews[0], 1),
+                new OrderBookDto(bookViews[1], 1),
             });
             context.Add(status.Result);
             context.SaveChanges();
@@ -89,12 +89,12 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             using (var context = new OrderDbContext(options, new FakeUserIdService(userId1)))
             {
                 context.Database.EnsureCreated();
-                var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
+                var bookViews = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true).ToList();
 
                 var status = Order.CreateOrder(userId1, new[]
                 {
-                    new OrderBookDto(bookIds[0], 123, 1),
-                    new OrderBookDto(bookIds[1], 456, 1),
+                    new OrderBookDto(bookViews[0], 1),
+                    new OrderBookDto(bookViews[1], 1),
                 });
                 context.Add(status.Result);
                 context.SaveChanges();

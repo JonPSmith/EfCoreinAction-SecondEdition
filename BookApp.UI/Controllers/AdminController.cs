@@ -1,88 +1,121 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Globalization;
-using System.Linq;
+using System.Threading.Tasks;
+using BookApp.Domain.Books;
+using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.UI.HelperExtensions;
-using DataLayer.EfClasses;
+using GenericServices;
+using GenericServices.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
-using ServiceLayer.AdminServices;
 
 namespace BookApp.UI.Controllers
 {
     public class AdminController : BaseTraceController
     {
-        public IActionResult ChangePubDate(int id, [FromServices] IChangePubDateService service) 
+        public async Task<IActionResult> ChangePubDate(int id, [FromServices]ICrudServicesAsync<BookDbContext> service) 
         {
             Request.ThrowErrorIfNotLocal(); 
-            var dto = service.GetOriginal(id); 
+            var dto = await service.ReadSingleAsync<ChangePubDateDto>(id); 
             SetupTraceInfo();
             return View(dto); 
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePubDate(ChangePubDateDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
+            await service.UpdateAndSaveAsync(dto);
+            SetupTraceInfo();
+            if (service.IsValid)
+                return View("BookUpdated", service.Message);
+
+            //Error state
+            service.CopyErrorsToModelState(ModelState, dto);
+            return View(dto);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ChangePubDate(ChangePubDateDto dto,
-            [FromServices] IChangePubDateService service)
+        public async Task<IActionResult> AddPromotion(AddPromotionDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
-            Request.ThrowErrorIfNotLocal();
-            service.UpdateBook(dto);
-            SetupTraceInfo(); //REMOVE THIS FOR BOOK as it could be confusing
-            return View("BookUpdated", "Successfully changed publication date");
-        }
-
-        public IActionResult ChangePromotion(int id, [FromServices] IChangePriceOfferService service)
-        {
-            Request.ThrowErrorIfNotLocal();
-
-            var priceOffer = service.GetOriginal(id);
-            ViewData["BookTitle"] = service.OrgBook.Title;
-            ViewData["OrgPrice"] = service.OrgBook.Price < 0
-                ? "Not currently for sale"
-                : service.OrgBook.Price.ToString("c", new CultureInfo("en-US"));
-            SetupTraceInfo();
-            return View(priceOffer);
-        }
-
-        [HttpPost]                                                 
-        [ValidateAntiForgeryToken]                                 
-        public IActionResult ChangePromotion(PriceOffer dto,       
-            [FromServices] IChangePriceOfferService service)       
-        {
-            Request.ThrowErrorIfNotLocal();
-
-            var error =  service.AddRemovePriceOffer(dto);               
-            if (error != null)                                     
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(error.MemberNames.First(), 
-                    error.ErrorMessage);                           
-                return View(dto);                                  
+                return View(dto);
+            }
+            await service.UpdateAndSaveAsync(dto);
+            SetupTraceInfo();
+            if (service.IsValid)
+                return View("BookUpdated", service.Message);
+
+            //Error state
+            service.CopyErrorsToModelState(ModelState, dto);
+            return View(dto);
+        }
+
+        public async Task<IActionResult> RemovePromotion(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            var dto = await service.ReadSingleAsync<RemovePromotionDto>(id);
+            if (!service.IsValid)
+            {
+                service.CopyErrorsToModelState(ModelState, dto);
             }
             SetupTraceInfo();
-            return View("BookUpdated",                             
-                "Successfully added/changed a promotion");         
-        }
-
-        public IActionResult AddBookReview(int id, [FromServices] IAddReviewService service)
-        {
-            Request.ThrowErrorIfNotLocal();
-
-            var review = service.GetBlankReview(id);
-            ViewData["BookTitle"] = service.BookTitle;
-            SetupTraceInfo();
-            return View(review);
+            return View(dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddBookReview(Review dto, [FromServices] IAddReviewService service)
+        public async Task<IActionResult> RemovePromotion(RemovePromotionDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
-            Request.ThrowErrorIfNotLocal();
-
-            var book = service.AddReviewToBook(dto);
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
+            await service.UpdateAndSaveAsync(dto, nameof(Book.RemovePromotion));
             SetupTraceInfo();
-            return View("BookUpdated", "Successfully added a review");
+            if (service.IsValid)
+                return View("BookUpdated", service.Message);
+
+            //Error state
+            service.CopyErrorsToModelState(ModelState, dto);
+            return View(dto);
         }
+
+
+        public async Task<IActionResult> AddBookReview(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            var dto = await service.ReadSingleAsync<AddReviewDto>(id);
+            if (!service.IsValid)
+            {
+                service.CopyErrorsToModelState(ModelState, dto);
+            }
+            SetupTraceInfo();
+            return View(dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddBookReview(AddReviewDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
+            await service.UpdateAndSaveAsync(dto);
+            SetupTraceInfo();
+            if (service.IsValid)
+                return View("BookUpdated", service.Message);
+
+            //Error state
+            service.CopyErrorsToModelState(ModelState, dto);
+            return View(dto);
+        }
+
     }
 }

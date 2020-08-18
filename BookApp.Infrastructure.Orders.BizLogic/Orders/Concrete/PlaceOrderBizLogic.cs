@@ -12,11 +12,11 @@ using StatusGeneric;
 
 namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
 {
-    public class PlaceOrderAction : IPlaceOrderAction
+    public class PlaceOrderBizLogic : IPlaceOrderBizLogic
     {
         private readonly IPlaceOrderDbAccess _dbAccess;
 
-        public PlaceOrderAction(IPlaceOrderDbAccess dbAccess)
+        public PlaceOrderBizLogic(IPlaceOrderDbAccess dbAccess)
         {
             _dbAccess = dbAccess;
         }
@@ -74,7 +74,7 @@ namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
                 else
                 {
                     //Valid, so add to the order
-                    result.Add(new OrderBookDto(bookView.BookId, bookView.ActualPrice, lineItem.NumBooks));
+                    result.Add(new OrderBookDto(bookView, lineItem.NumBooks));
                 }
             }
             return status.SetResult(result); 

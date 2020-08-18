@@ -7,7 +7,7 @@ using StatusGeneric;
 
 namespace BookApp.Infrastructure.Orders.BizLogic.Orders
 {
-    public interface IPlaceOrderAction
+    public interface IPlaceOrderBizLogic
     {
         Task<IStatusGeneric<Order>> CreateOrderAndSaveAsync(PlaceOrderInDto dto);
     }

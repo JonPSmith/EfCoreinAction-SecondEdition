@@ -5,14 +5,12 @@ namespace BookApp.Domain.Orders.SupportTypes
 {
     public readonly struct OrderBookDto
     {
-        public int BookId { get; }
-        public decimal SoldPrice { get; }
+        public BookView Book { get; }
         public short NumBooks { get; }
 
-        public OrderBookDto(int bookId, decimal soldPrice, short numBooks)
+        public OrderBookDto(BookView book, short numBooks)
         {
-            BookId = bookId;
-            SoldPrice = soldPrice;
+            Book = book;
             NumBooks = numBooks;
         }
     }

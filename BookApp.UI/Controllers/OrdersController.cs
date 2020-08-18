@@ -1,17 +1,17 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using DataLayer.EfCode;
+using BookApp.Persistence.EfCoreSql.Orders;
+using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices.Concrete;
 using Microsoft.AspNetCore.Mvc;
-using ServiceLayer.OrderServices.Concrete;
 
 namespace BookApp.UI.Controllers
 {
     public class OrdersController : BaseTraceController
     {
-        private readonly EfCoreContext _context;
+        private readonly OrderDbContext _context;
 
-        public OrdersController(EfCoreContext context)
+        public OrdersController(OrderDbContext context)
         {
             _context = context;
         }

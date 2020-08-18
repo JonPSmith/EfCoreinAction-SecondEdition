@@ -31,7 +31,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
 
             context.Database.EnsureCreated();
             var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true);
-            var service = new PlaceOrderAction(new PlaceOrderDbAccess(context));
+            var service = new PlaceOrderBizLogic(new PlaceOrderDbAccess(context));
 
             //ATTEMPT
             var lineItems = new List<OrderLineItem>
@@ -60,7 +60,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
             using var context = new OrderDbContext(options, new FakeUserIdService(userId));
 
             context.Database.EnsureCreated();
-            var service = new PlaceOrderAction(new PlaceOrderDbAccess(context));
+            var service = new PlaceOrderBizLogic(new PlaceOrderDbAccess(context));
 
             //ATTEMPT
             var lineItems = new List<OrderLineItem>
@@ -84,7 +84,7 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
             using var context = new OrderDbContext(options, new FakeUserIdService(userId));
 
             context.Database.EnsureCreated();
-            var service = new PlaceOrderAction(new PlaceOrderDbAccess(context));
+            var service = new PlaceOrderBizLogic(new PlaceOrderDbAccess(context));
 
             //ATTEMPT
             var dto = new PlaceOrderInDto(true, userId, (new List<OrderLineItem>()).ToImmutableList());
