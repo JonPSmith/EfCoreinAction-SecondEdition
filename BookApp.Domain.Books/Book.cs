@@ -23,7 +23,7 @@ namespace BookApp.Domain.Books
 
         //Use uninitialized backing fields - this means we can detect if the collection was loaded
         private HashSet<Review> _reviews;
-        private HashSet<Tag> _tags;
+        private HashSet<BookTag> _bookTags;
 
         //-----------------------------------------------
         //ctors
@@ -55,7 +55,7 @@ namespace BookApp.Domain.Books
 
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList();
-        public IReadOnlyCollection<Tag> Tags => _tags?.ToList();
+        public IReadOnlyCollection<BookTag> TagsLink => _bookTags?.ToList();
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -106,7 +106,7 @@ namespace BookApp.Domain.Books
             if (!book._authorsLink.Any())
                 status.AddError("You must have at least one Author for a book.");
             if (tags != null)
-                book._tags = new HashSet<Tag>(tags);
+                book._bookTags = new HashSet<BookTag>(tags.Select(t => new BookTag(book, t)));
 
             return status.SetResult(book);
         }
@@ -120,11 +120,11 @@ namespace BookApp.Domain.Books
             var reviewsString = _reviews == null
                 ? $"(Cached) {ReviewsCount} reviews"
                 : $"{_reviews.Count()} reviews";
-            var tagsString = _tags == null
-                ? ""
-                : $" Tags: " + string.Join(", ", _tags.Select(x => x.TagId));
+            //var tagsString = _bookTags == null
+            //    ? ""
+            //    : $" Tags: " + string.Join(", ", _tags.Select(x => x.TagId));
 
-            return $"{Title}: by {authorString}. Price {ActualPrice}, {reviewsString}. Published {PublishedOn:d}{tagsString}";
+            return $"{Title}: by {authorString}. Price {ActualPrice}, {reviewsString}. Published {PublishedOn:d}";
         }
 
         //-----------------------------------------------------

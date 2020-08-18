@@ -1,27 +1,30 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace BookApp.Domain.Books
 {
-    public class Tag
+    public class BookTag
     {
-        private HashSet<BookTag> _booksLink;
+        private BookTag(){} //For EF Core
 
-        public Tag(string tagId)
+        public BookTag(Book book, Tag tag)
         {
-            TagId = tagId;
+            Book = book;
+            Tag = tag;
         }
 
-        [Key]
+        public int BookId { get; private set; }
+
         [Required]
         [MaxLength(40)]
         public string TagId { get; private set; }
 
-        public IReadOnlyCollection<BookTag> BooksLink => _booksLink.ToList();
+        //-------------------------------------------
+        //relationships
+
+        public Book Book { get; private set; }
+        public Tag Tag { get; private set; }
     }
 }
