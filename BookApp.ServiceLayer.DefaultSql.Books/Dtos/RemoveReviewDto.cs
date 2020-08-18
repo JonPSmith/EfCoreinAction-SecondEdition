@@ -3,13 +3,18 @@
 
 using BookApp.Domain.Books;
 using GenericServices;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books
+namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 {
-    public class DeleteBookDto : ILinkToEntity<Book>
+    [IncludeThen(nameof(Book.Reviews))]
+    public class RemoveReviewDto: ILinkToEntity<Book>
     {
+        [HiddenInput]
         public int BookId { get; set; }
+
         public string Title { get; set; }
-        public string AuthorsOrdered { get; set; }
+
+        public int ReviewId { get; set; }
     }
 }

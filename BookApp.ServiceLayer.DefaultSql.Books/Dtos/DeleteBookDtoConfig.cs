@@ -7,7 +7,7 @@ using AutoMapper;
 using BookApp.Domain.Books;
 using GenericServices.Configuration;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books
+namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 {
     class DeleteBookDtoConfig : PerDtoConfig<DeleteBookDto, Book>
     {

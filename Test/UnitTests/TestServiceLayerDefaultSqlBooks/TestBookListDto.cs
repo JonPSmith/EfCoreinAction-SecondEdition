@@ -4,6 +4,7 @@
 using System.Linq;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;

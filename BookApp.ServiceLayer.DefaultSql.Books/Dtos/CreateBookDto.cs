@@ -9,7 +9,7 @@ using BookApp.Domain.Books;
 using GenericServices;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books
+namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 {
     public class CreateBookDto : ILinkToEntity<Book>
     {

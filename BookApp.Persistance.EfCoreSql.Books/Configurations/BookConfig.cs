@@ -12,6 +12,7 @@ namespace BookApp.Persistence.EfCoreSql.Books.Configurations
         public void Configure(EntityTypeBuilder<Book> entity)
         {
             entity.HasIndex(x => x.PublishedOn);
+            entity.HasIndex(x => x.ReviewsAverageVotes);
         }
     }
 }

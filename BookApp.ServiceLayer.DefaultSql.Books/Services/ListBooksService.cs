@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books.Concrete
+namespace BookApp.ServiceLayer.DefaultSql.Books.Services
 {
     public class ListBooksService
     {

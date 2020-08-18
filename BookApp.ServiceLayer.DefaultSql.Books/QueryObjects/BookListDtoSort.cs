@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
 {

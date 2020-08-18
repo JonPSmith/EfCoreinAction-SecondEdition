@@ -7,7 +7,7 @@ using System.Linq;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books.Concrete
+namespace BookApp.ServiceLayer.DefaultSql.Books.Services
 {
     public class BookFilterDropdownService
     {
