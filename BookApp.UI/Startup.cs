@@ -1,11 +1,17 @@
 // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Reflection;
 using System.Text.Json.Serialization;
-using BookApp.Infrastructure.Startup;
+using BookApp.Infrastructure.Book.EventHandlers.AppStart;
+using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
+using BookApp.Persistence.EfCoreSql.Orders.DbAccess.AppStart;
+using BookApp.ServiceLayer.DefaultSql.Books.AppStart;
+using BookApp.ServiceLayer.EfCoreSql.Orders.AppStart;
 using BookApp.UI.Logger;
+using GenericServices.Setup;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -50,7 +56,17 @@ namespace BookApp.UI
             services.AddHttpContextAccessor();
 
             //This registers all the services across all the projects in this application
-            services.FindExecuteRegisterOnStartupMethods(Configuration);
+            services.RegisterOrdersDbAccess(Configuration);
+            services.RegisterOrdersBizLogic(Configuration);
+            services.RegisterEventHandlers(Configuration);
+            services.RegisterServiceLayerDefaultBooks(Configuration);
+            services.RegisterServiceLayerDefaultOrders(Configuration);
+
+            //Register EfCoreGenericServices
+            services.ConfigureGenericServicesEntities(typeof(BookDbContext), typeof(OrderDbContext))
+                .ScanAssemblesForDtos(
+                    Assembly.GetAssembly(typeof(BookApp.ServiceLayer.DefaultSql.Books.Dtos.BookListDto)
+                    )).RegisterGenericServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

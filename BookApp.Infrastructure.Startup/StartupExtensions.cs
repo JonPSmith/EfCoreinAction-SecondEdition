@@ -46,7 +46,7 @@ namespace BookApp.Infrastructure.Startup
             DirectoryInfo di = new DirectoryInfo(path);
             var fileNames = di.GetFiles($"{namespacePrefix}*.dll");
 
-            return fileNames.Select(x => Assembly.LoadFrom(x.Name)).ToList();
+            return fileNames.Select(x => Assembly.Load(x.Name)).ToList();
         }
 
         //NOTE: This didn't work. It left out BookApp.Infrastructure.Book.EventHandlers and others
@@ -58,21 +58,29 @@ namespace BookApp.Infrastructure.Startup
 
             assembliesToCheck.Enqueue(callingAssembly);
 
+            bool IsAssemblyInNamespace(AssemblyName assemblyName)
+            {
+                return !loadedAssemblies.Contains(assemblyName.FullName)
+                       && assemblyName.FullName.StartsWith(namespacePrefix);
+            }
+
             while (assembliesToCheck.Any())
             {
                 var assemblyToCheck = assembliesToCheck.Dequeue();
 
                 foreach (var reference in assemblyToCheck.GetReferencedAssemblies())
                 {
-                    var namespaceName = reference.Name;
-
-                    if (!loadedAssemblies.Contains(reference.FullName)
-                    && reference.FullName.StartsWith(namespacePrefix))
+                    if (IsAssemblyInNamespace(reference))
                     {
                         var assembly = Assembly.Load(reference);
                         assembliesToCheck.Enqueue(assembly);
                         loadedAssemblies.Add(reference.FullName);
                         returnAssemblies.Add(assembly);
+
+                        foreach (var referencedAssembly in assembly.GetReferencedAssemblies().Where(IsAssemblyInNamespace))
+                        {
+                            assembliesToCheck.Enqueue(Assembly.Load(referencedAssembly));
+                        }
                     }
                 }
             }

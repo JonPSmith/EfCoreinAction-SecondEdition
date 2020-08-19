@@ -32,7 +32,7 @@ namespace Test.UnitTests.TestInfrastructureStartup
             var currAssembly = Assembly.GetAssembly(typeof(HomeController));
 
             //ATTEMPT
-            var assemblies = currAssembly.GetDirectoryAssemblies("BookApp");
+            var assemblies = currAssembly.GetProjectAssemblies("BookApp");
 
             //VERIFY
             foreach (var name in assemblies.Select(x => x.GetName().Name).OrderBy(x => x))
@@ -40,7 +40,7 @@ namespace Test.UnitTests.TestInfrastructureStartup
                 _output.WriteLine(name);
             }
 
-            assemblies.Count.ShouldBeInRange(14, 30);
+            assemblies.Count.ShouldBeInRange(12, 30);
 
         }
 
