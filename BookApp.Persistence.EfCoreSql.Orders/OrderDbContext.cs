@@ -54,7 +54,7 @@ namespace BookApp.Persistence.EfCoreSql.Orders
 * The steps are:
 * a) Make sure the default project is BookApp.Persistence.EfCoreSql.Orders
 * b) Use the PMC command
-*    Add-Migration NameForMigration
+*    Add-Migration NameForMigration -Context OrderDbContext
 * c) Use PMC command
 *    Update-database (or migrate on startup)
 *    

@@ -48,7 +48,7 @@ namespace BookApp.Persistence.EfCoreSql.Books
 * The steps are:
 * a) Make sure the default project is BookApp.Persistence.EfCoreSql.Books
 * b) Use the PMC command
-*    Add-Migration NameForMigration
+*    Add-Migration NameForMigration -Context BookDbContext
 * c) Use PMC command
 *    Update-database (or migrate on startup)
 *    
