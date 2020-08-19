@@ -19,6 +19,8 @@ namespace BookApp.Infrastructure.Startup
         public static IServiceCollection FindExecuteRegisterOnStartupMethods(
             this IServiceCollection services, IConfiguration configuration, Assembly startAssembly = null)
         {
+            throw new NotSupportedException("This doesn't work!");
+
             startAssembly ??= Assembly.GetCallingAssembly();
             var namespacePrefix = startAssembly.GetName().Name;
             namespacePrefix = namespacePrefix.Substring(0, namespacePrefix.IndexOf('.'));
