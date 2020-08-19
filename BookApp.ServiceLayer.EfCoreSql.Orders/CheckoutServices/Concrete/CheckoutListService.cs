@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BookApp.ServiceLayer.EfCoreSql.Orders.CheckoutServices.Concrete
 {
+    //NOTE: This service isn't designed to be created via DI because it takes in the IRequestCookieCollection
     public class CheckoutListService
     {
         private readonly OrderDbContext _context;

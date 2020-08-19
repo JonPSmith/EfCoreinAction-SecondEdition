@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using BookApp.Persistence.EfCoreSql.Orders;
+using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices;
 using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices.Concrete;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,26 +10,19 @@ namespace BookApp.UI.Controllers
 {
     public class OrdersController : BaseTraceController
     {
-        private readonly OrderDbContext _context;
-
-        public OrdersController(OrderDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index([FromServices] IDisplayOrdersService service)
         {
-            var listService = new DisplayOrdersService(_context);
+            var result = service.GetUsersOrders();
             SetupTraceInfo();
-            return View(listService.GetUsersOrders());
+            return View(result);
         }
 
-        public IActionResult ConfirmOrder(int orderId)
+        public IActionResult ConfirmOrder(int orderId, [FromServices] IDisplayOrdersService service)
         {
-            var detailService = new DisplayOrdersService(_context);
+            var result = service.GetOrderDetail(orderId);
             SetupTraceInfo();
-            return View(detailService.GetOrderDetail(orderId));
+            return View(result);
         }
     }
 }

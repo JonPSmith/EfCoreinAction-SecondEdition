@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -9,6 +10,7 @@ using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.Services;
 using BookApp.UI.HelperExtensions;
+using BookApp.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,7 +79,8 @@ namespace BookApp.UI.Controllers
 
         public IActionResult Error()
         {
-            return View();
+            return View(new ErrorViewModel
+                { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -38,10 +38,9 @@ namespace BookApp.UI.Controllers
             var cookie = new BasketCookie(      
                 HttpContext.Request.Cookies,    
                 HttpContext.Response.Cookies);  
-            var service = new CheckoutCookieService(  
-                cookie.GetValue());                   
+            var service = new CheckoutCookieService(cookie.GetValue());                   
             service.AddLineItem(itemToBuy); 
-            var cookieOutString = service.EncodeForCookie(); //E
+            var cookieOutString = service.EncodeForCookie();
             cookie.AddOrUpdateCookie(cookieOutString); 
             SetupTraceInfo(); //Remove this when shown in book listing
             return RedirectToAction("Index"); 

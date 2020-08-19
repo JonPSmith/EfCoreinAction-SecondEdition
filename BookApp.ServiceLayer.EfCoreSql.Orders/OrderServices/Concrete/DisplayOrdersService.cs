@@ -10,7 +10,7 @@ using BookApp.ServiceLayer.EfCoreSql.Orders.CheckoutServices;
 
 namespace BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices.Concrete
 {
-    public class DisplayOrdersService
+    public class DisplayOrdersService : IDisplayOrdersService
     {
         private readonly OrderDbContext _context;
 
