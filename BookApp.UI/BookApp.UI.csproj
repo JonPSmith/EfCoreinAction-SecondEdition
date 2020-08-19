@@ -52,6 +52,7 @@
     <ProjectReference Include="..\BookApp.Infrastructure.Orders.BizLogic\BookApp.Infrastructure.Orders.BizLogic.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Startup\BookApp.Infrastructure.Startup.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Persistence.Common\BookApp.Persistence.Common.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders.DbAccess\BookApp.Persistence.EfCoreSql.Orders.DbAccess.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />

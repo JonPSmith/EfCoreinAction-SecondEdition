@@ -40,7 +40,6 @@ namespace BookApp.Infrastructure.Startup
             return services;
         }
 
-
         internal static List<Assembly> GetDirectoryAssemblies(this Assembly callingAssembly, string namespacePrefix)
         {
             var path = Path.GetDirectoryName(callingAssembly.Location);
