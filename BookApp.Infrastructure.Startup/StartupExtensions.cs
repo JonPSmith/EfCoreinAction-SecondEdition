@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
@@ -15,22 +16,22 @@ namespace BookApp.Infrastructure.Startup
 {
     public static class StartupExtensions
     {
-        public static IServiceCollection RegisterServicesInAllProjects(
+        public static IServiceCollection FindExecuteRegisterOnStartupMethods(
             this IServiceCollection services, IConfiguration configuration, Assembly startAssembly = null)
         {
             startAssembly ??= Assembly.GetCallingAssembly();
             var namespacePrefix = startAssembly.GetName().Name;
             namespacePrefix = namespacePrefix.Substring(0, namespacePrefix.IndexOf('.'));
-            var allProjectAssembles = GetProjectAssemblies(startAssembly, namespacePrefix);
+            var allProjectAssembles = startAssembly.GetDirectoryAssemblies(namespacePrefix);
             foreach (var assembly in allProjectAssembles)
             {
                 foreach (var type in assembly.GetExportedTypes()
-                    .Where(x => x.IsClass && typeof(IRegisterOnStartup).IsAssignableFrom(x)))
+                    .Where(x => x.IsClass && !x.IsAbstract && typeof(IRegisterOnStartup).IsAssignableFrom(x)))
                 {
                     var method = type.GetMethod(nameof(IRegisterOnStartup.RegisterServices));
                     if (method != null)
                     {
-                        object classInstance = Activator.CreateInstance(type, null);
+                        object classInstance = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.Instance, null, null, null);
                         method.Invoke(classInstance, new object[] {services, configuration});
                     }
                 }
@@ -40,7 +41,17 @@ namespace BookApp.Infrastructure.Startup
         }
 
 
-        internal static List<Assembly> GetProjectAssemblies(Assembly callingAssembly, string namespacePrefix)
+        internal static List<Assembly> GetDirectoryAssemblies(this Assembly callingAssembly, string namespacePrefix)
+        {
+            var path = Path.GetDirectoryName(callingAssembly.Location);
+            DirectoryInfo di = new DirectoryInfo(path);
+            var fileNames = di.GetFiles($"{namespacePrefix}*.dll");
+
+            return fileNames.Select(x => Assembly.LoadFrom(x.Name)).ToList();
+        }
+
+        //NOTE: This didn't work. It left out BookApp.Infrastructure.Book.EventHandlers and others
+        internal static List<Assembly> GetProjectAssemblies(this Assembly callingAssembly, string namespacePrefix)
         {
             var returnAssemblies = new List<Assembly>();
             var loadedAssemblies = new HashSet<string>();
@@ -54,7 +65,9 @@ namespace BookApp.Infrastructure.Startup
 
                 foreach (var reference in assemblyToCheck.GetReferencedAssemblies())
                 {
-                    if (!loadedAssemblies.Contains(reference.FullName) 
+                    var namespaceName = reference.Name;
+
+                    if (!loadedAssemblies.Contains(reference.FullName)
                     && reference.FullName.StartsWith(namespacePrefix))
                     {
                         var assembly = Assembly.Load(reference);

@@ -50,7 +50,7 @@ namespace BookApp.UI
             services.AddHttpContextAccessor();
 
             //This registers all the services across all the projects in this application
-            services.RegisterServicesInAllProjects(Configuration);
+            services.FindExecuteRegisterOnStartupMethods(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
