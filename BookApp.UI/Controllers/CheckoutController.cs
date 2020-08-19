@@ -29,8 +29,9 @@ namespace BookApp.UI.Controllers
         public IActionResult Index()
         {
             var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
+            var result = listService.GetCheckoutList();
             SetupTraceInfo();
-            return View(listService.GetCheckoutList());
+            return View(result);
         }
 
         public IActionResult Buy(OrderLineItem itemToBuy) 
