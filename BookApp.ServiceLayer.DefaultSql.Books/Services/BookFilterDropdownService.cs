@@ -9,7 +9,7 @@ using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.Services
 {
-    public class BookFilterDropdownService
+    public class BookFilterDropdownService : IBookFilterDropdownService
     {
         private readonly BookDbContext _db;
 
@@ -32,35 +32,35 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
                     return new List<DropdownTuple>();
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
+                case BooksFilterBy.ByTags:
+                    return _db.Tags
+                        .Select(x => new DropdownTuple
+                        {
+                            Value = x.TagId,
+                            Text = x.TagId
+                        }).ToList();
                 case BooksFilterBy.ByPublicationYear:
-                    var result = _db.Books                           //#A
-                        .Where(x => x.PublishedOn <= DateTime.Today) //#A
-                        .Select(x => x.PublishedOn.Year)             //#A
-                        .Distinct()                                  //#A
-                        .OrderByDescending(x => x)                   //#B
+                    var result = _db.Books 
+                        .Where(x => x.PublishedOn <= DateTime.Today) 
+                        .Select(x => x.PublishedOn.Year)             
+                        .Distinct()                                  
+                        .OrderByDescending(x => x)                   
                         .ToList() //Added to fix preview 6 problem - see https://github.com/dotnet/efcore/issues/21445
-                        .Select(x => new DropdownTuple               //#C
-                        {                                            //#C
-                            Value = x.ToString(),                    //#C
-                            Text = x.ToString()                      //#C
-                        }).ToList();                                 //#C
-                    var comingSoon = _db.Books.                      //#D
-                        Any(x => x.PublishedOn > DateTime.Today);   //#D
-                    if (comingSoon)                                  //#E
-                        result.Insert(0, new DropdownTuple           //#E
+                        .Select(x => new DropdownTuple               
+                        {                                            
+                            Value = x.ToString(),                    
+                            Text = x.ToString()                      
+                        }).ToList();                                 
+                    var comingSoon = _db.Books.                      
+                        Any(x => x.PublishedOn > DateTime.Today);
+                    if (comingSoon)
+                        result.Insert(0, new DropdownTuple
                         {
                             Value = BookListDtoFilter.AllBooksNotPublishedString,
                             Text = BookListDtoFilter.AllBooksNotPublishedString
                         });
 
                     return result;
-                /*****************************************************************
-                #A This long command gets the year of publication by filters out the future books, select the data and uses distinct to only have one of each year
-                #B Orders the years, with newest year at the top
-                #C I finally use two client/server evaluations to turn the values into strings
-                #D This returns true if there is a book in the list that is not yet published
-                #E Finally I add a "coming soon" filter for all the future books
-                 * ***************************************************************/
                 default:
                     throw new ArgumentOutOfRangeException(nameof(filterBy), filterBy, null);
             }

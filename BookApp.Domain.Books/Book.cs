@@ -155,6 +155,7 @@ namespace BookApp.Domain.Books
             AboutAuthor = aboutAuthor;
             AboutReader = aboutReader;
             AboutTechnology = aboutTechnology;
+            WhatsInside = whatsInside;
         }
 
         public void SetManningBookUrl(string manningBookUrl)

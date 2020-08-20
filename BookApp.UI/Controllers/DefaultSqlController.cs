@@ -4,10 +4,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
-using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
-using BookApp.ServiceLayer.DefaultSql.Books.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,23 +13,21 @@ namespace BookApp.UI.Controllers
 {
     public class DefaultSqlController : BaseTraceController
     {
-        private readonly BookDbContext _context;
-
-        public DefaultSqlController(BookDbContext context)
+        public async Task<IActionResult> Index(SortFilterPageOptions options, [FromServices] IListBooksService service)
         {
-            _context = context;
-        }
-
-        public async Task<IActionResult> Index(SortFilterPageOptions options)
-        {
-            var listService = new ListBooksService(_context);
-
-            var bookList = await (await listService.SortFilterPageAsync(options))
+            var bookList = await (await service.SortFilterPageAsync(options))
                 .ToListAsync();
 
             SetupTraceInfo();
 
             return View(new BookListCombinedDto(options, bookList));
+        }
+
+        public async Task<IActionResult> Detail(int id, [FromServices] IDetailBookService service)
+        {
+            var bookDetail = await service.GetBookDetailAsync(id);
+            SetupTraceInfo();
+            return View(bookDetail);
         }
 
         /// <summary>
@@ -40,14 +36,9 @@ namespace BookApp.UI.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent
-            (SortFilterPageOptions options)
+        public JsonResult GetFilterSearchContent(SortFilterPageOptions options, [FromServices] IBookFilterDropdownService service)
         {
-            var service = new
-                BookFilterDropdownService(_context);
-
-            var traceIdent = HttpContext.TraceIdentifier; //REMOVE THIS FOR BOOK as it could be confusing
-
+            var traceIdent = HttpContext.TraceIdentifier;
             return Json(
                 new TraceIndentGeneric<IEnumerable<DropdownTuple>>(
                     traceIdent,

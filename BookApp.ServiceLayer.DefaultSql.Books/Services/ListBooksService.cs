@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.Services
 {
-    public class ListBooksService
+    public class ListBooksService : IListBooksService
     {
         private readonly BookDbContext _context;
 
