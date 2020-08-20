@@ -13,8 +13,8 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
         [Display(Name = "sort by...")] SimpleOrder = 0,
         [Display(Name = "Votes ↑")] ByVotes,
         [Display(Name = "Publication Date ↑")] ByPublicationDate,
-        [Display(Name = "OrgPrice ↓")] ByPriceLowestFirst,
-        [Display(Name = "OrgPrice ↑")] ByPriceHigestFirst
+        [Display(Name = "Price ↓")] ByPriceLowestFirst,
+        [Display(Name = "Price ↑")] ByPriceHigestFirst
     }
 
     public static class BookListDtoSort

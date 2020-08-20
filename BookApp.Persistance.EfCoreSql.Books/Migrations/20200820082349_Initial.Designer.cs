@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookApp.Persistence.EfCoreSql.Books.Migrations
 {
     [DbContext(typeof(BookDbContext))]
-    [Migration("20200819130104_Initial")]
+    [Migration("20200820082349_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,15 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("AboutAuthor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AboutReader")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AboutTechnology")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("ActualPrice")
                         .HasPrecision(9, 2)
                         .HasColumnType("decimal(9,2)");
@@ -59,6 +68,9 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EstimatedDate")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(200)
@@ -92,6 +104,9 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhatsInside")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookId");

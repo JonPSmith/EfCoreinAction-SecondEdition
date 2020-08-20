@@ -101,6 +101,7 @@ namespace BookApp.Domain.Books
             {
                 Title = title,
                 PublishedOn = publishedOn,
+                EstimatedDate = estimatedDate,
                 Publisher = publisher,
                 OrgPrice = price,
                 ActualPrice = price,

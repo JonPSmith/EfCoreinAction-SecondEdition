@@ -17,6 +17,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
                 BookId = p.BookId, 
                 Title = p.Title, 
                 PublishedOn = p.PublishedOn, 
+                EstimatedDate = p.EstimatedDate,
                 OrgPrice = p.OrgPrice, 
                 ActualPrice = p.ActualPrice, 
                 PromotionText = p.PromotionalText,
