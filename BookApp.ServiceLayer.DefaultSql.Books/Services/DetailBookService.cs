@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using Microsoft.AspNetCore.Html;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.Services
@@ -22,25 +23,25 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
         {
             return  _context.Books.Select(p => new BookDetailDto
             {
-                BookId = p.BookId,
-                Title = p.Title,
-                PublishedOn = p.PublishedOn,
-                EstimatedDate = p.EstimatedDate,
-                OrgPrice = p.OrgPrice,
-                ActualPrice = p.ActualPrice,
-                PromotionText = p.PromotionalText,
-                AuthorsOrdered = string.Join(", ",
+                BookId             = p.BookId,
+                Title              = p.Title,
+                PublishedOn        = p.PublishedOn,
+                EstimatedDate      = p.EstimatedDate,
+                OrgPrice           = p.OrgPrice,
+                ActualPrice        = p.ActualPrice,
+                PromotionText      = p.PromotionalText,
+                AuthorsOrdered     = string.Join(", ",
                     p.AuthorsLink
                         .OrderBy(q => q.Order)
-                        .Select(q => q.Author.Name)),
-                TagStrings = p.TagsLink.Select(x => x.TagId).ToArray(),
-                ImageUrl = p.ImageUrl,
-                ManningBookUrl = p.ManningBookUrl,
-                Description = p.Description,
-                AboutAuthor = p.AboutAuthor,
-                AboutReader = p.AboutReader,
-                AboutTechnology = p.AboutTechnology,
-                WhatsInside =  p.WhatsInside
+                        .Select(q  => q.Author.Name)),
+                TagStrings         = p.TagsLink.Select(x => x.TagId).ToArray(),
+                ImageUrl           = p.ImageUrl,
+                ManningBookUrl     = p.ManningBookUrl,
+                Description        = new HtmlString(p.Description),
+                AboutAuthor        = new HtmlString(p.AboutAuthor),
+                AboutReader        = new HtmlString(p.AboutReader),
+                AboutTechnology    = new HtmlString(p.AboutTechnology),
+                WhatsInside        = new HtmlString(p.WhatsInside)
             }).SingleOrDefaultAsync(x => x.BookId == bookId);
         }
     }

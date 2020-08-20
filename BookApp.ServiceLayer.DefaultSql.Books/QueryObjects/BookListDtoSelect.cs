@@ -12,25 +12,25 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
         public static IQueryable<BookListDto> 
             MapBookToDto(this IQueryable<Book> books) 
         {
-            return books.Select(p => new BookListDto
+            return books.Select(p      => new BookListDto
             {
-                BookId = p.BookId, 
-                Title = p.Title, 
-                PublishedOn = p.PublishedOn, 
-                EstimatedDate = p.EstimatedDate,
-                OrgPrice = p.OrgPrice, 
-                ActualPrice = p.ActualPrice, 
-                PromotionText = p.PromotionalText,
-                AuthorsOrdered = string.Join(", ",
+                BookId                 = p.BookId, 
+                Title                  = p.Title, 
+                PublishedOn            = p.PublishedOn, 
+                EstimatedDate          = p.EstimatedDate,
+                OrgPrice               = p.OrgPrice, 
+                ActualPrice            = p.ActualPrice, 
+                PromotionText          = p.PromotionalText,
+                AuthorsOrdered         = string.Join(", ",
                     p.AuthorsLink
-                        .OrderBy(q => q.Order)
-                        .Select(q => q.Author.Name)),
-                TagStrings = p.TagsLink.Select(x => x.TagId).ToArray(),
-                ReviewsCount = p.Reviews.Count(),
-                ReviewsAverageVotes =
+                        .OrderBy(q     => q.Order)
+                        .Select(q      => q.Author.Name)),
+                TagStrings             = p.TagsLink.Select(x => x.TagId).ToArray(),
+                ReviewsCount           = p.Reviews.Count(),
+                ReviewsAverageVotes    =
                     p.Reviews.Select(y =>
                         (double?)y.NumStars).Average(),
-                ManningBookUrl = p.ManningBookUrl
+                ManningBookUrl         = p.ManningBookUrl
             });
         }
 
