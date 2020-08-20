@@ -88,14 +88,14 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 {
                     BookId = p.BookId,
                     Title = p.Title,
-                    Price = p.ActualPrice,
+                    OrgPrice = p.ActualPrice,
                     PublishedOn = p.PublishedOn,
                 }).ToList();
 
                 //VERIFY
                 dtos.Last().BookId.ShouldNotEqual(0);
                 dtos.Last().Title.ShouldNotBeNull();
-                dtos.Last().Price.ShouldNotEqual(0);
+                dtos.Last().OrgPrice.ShouldNotEqual(0);
             }
         }
 
@@ -122,9 +122,9 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 {
                     BookId = firstBook.BookId,
                     Title = firstBook.Title,
-                    Price = firstBook.OrgPrice,
+                    OrgPrice = firstBook.OrgPrice,
                     ActualPrice = firstBook.ActualPrice,
-                    PromotionPromotionalText = firstBook.PromotionalText, 
+                    PromotionText = firstBook.PromotionalText, 
                     AuthorsOrdered = string.Join(", ", 
                         firstBook.AuthorsLink 
                             .OrderBy(l => l.Order) 
@@ -141,7 +141,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 //VERIFY
                 dto.BookId.ShouldNotEqual(0);
                 dto.Title.ShouldNotBeNull();
-                dto.Price.ShouldNotEqual(0);
+                dto.OrgPrice.ShouldNotEqual(0);
                 dto.AuthorsOrdered.ShouldNotBeNull();
                 /*********************************************************
                 #A Notice the use of ?. This returns null if Promotion is null, otherwise it returns the property
@@ -210,8 +210,8 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 //VERIFY
                 dtos.First().BookId.ShouldNotEqual(0);
                 dtos.First().Title.ShouldNotBeNull();
-                dtos.First().Price.ShouldNotEqual(0);
-                dtos.First().ActualPrice.ShouldNotEqual(dtos.Last().Price);
+                dtos.First().OrgPrice.ShouldNotEqual(0);
+                dtos.First().ActualPrice.ShouldNotEqual(dtos.Last().OrgPrice);
                 dtos.First().AuthorsOrdered.Length.ShouldBeInRange(1, 100);
                 dtos.First().ReviewsCount.ShouldEqual(2);
                 dtos.First().ReviewsAverageVotes.ShouldEqual(4);

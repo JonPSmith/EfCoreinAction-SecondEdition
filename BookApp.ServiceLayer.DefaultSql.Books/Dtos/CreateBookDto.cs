@@ -23,11 +23,10 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 
         [Required(AllowEmptyStrings = false)]
         public string Title { get; set; }
-        public string Description { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime PublishedOn { get; set; }
-
+        public bool EstimatedDate { get; set; }
         public string Publisher { get; set; }
 
         [Range(0,1000)]

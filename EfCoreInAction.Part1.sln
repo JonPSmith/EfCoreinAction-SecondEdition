@@ -43,9 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.Orde
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.LoggingServices", "BookApp.Infrastructure.LoggingServices\BookApp.Infrastructure.LoggingServices.csproj", "{8A683D41-1B98-4192-89E9-D25A90B45517}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.EfCoreSql.Orders", "BookApp.ServiceLayer.EfCoreSql.Orders\BookApp.ServiceLayer.EfCoreSql.Orders.csproj", "{50B8E651-F8E2-42CF-B9E6-13DC0373B8D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.Startup", "BookApp.Infrastructure.Startup\BookApp.Infrastructure.Startup.csproj", "{EBD60731-B912-44F6-A4E2-75E70DD32C73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.EfCoreSql.Orders", "BookApp.ServiceLayer.EfCoreSql.Orders\BookApp.ServiceLayer.EfCoreSql.Orders.csproj", "{50B8E651-F8E2-42CF-B9E6-13DC0373B8D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,10 +123,6 @@ Global
 		{50B8E651-F8E2-42CF-B9E6-13DC0373B8D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50B8E651-F8E2-42CF-B9E6-13DC0373B8D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50B8E651-F8E2-42CF-B9E6-13DC0373B8D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBD60731-B912-44F6-A4E2-75E70DD32C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBD60731-B912-44F6-A4E2-75E70DD32C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBD60731-B912-44F6-A4E2-75E70DD32C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBD60731-B912-44F6-A4E2-75E70DD32C73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

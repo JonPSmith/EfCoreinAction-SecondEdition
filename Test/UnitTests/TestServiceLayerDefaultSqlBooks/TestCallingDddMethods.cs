@@ -156,7 +156,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
             var dto = new CreateBookDto
             {
                 Title = "New book", ImageUrl = "link", Price = 123, PublishedOn = new DateTime(2020, 1, 1), 
-                Publisher = "Test", Authors = new []{new Author("Author1", null)}
+                EstimatedDate = false, Publisher = "Test", Authors = new []{new Author("Author1", null)}
             };
             await service.CreateAndSaveAsync(dto);
 

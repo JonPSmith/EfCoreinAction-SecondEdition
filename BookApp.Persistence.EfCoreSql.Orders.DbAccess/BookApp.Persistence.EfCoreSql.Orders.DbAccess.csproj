@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
-    <ProjectReference Include="..\BookApp.Infrastructure.Startup\BookApp.Infrastructure.Startup.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
   </ItemGroup>
 

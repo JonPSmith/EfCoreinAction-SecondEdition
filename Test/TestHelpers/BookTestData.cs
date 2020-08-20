@@ -24,8 +24,7 @@ namespace Test.TestHelpers
             var book = Book.CreateBook
             (
                 "Book Title",
-                "Book Description",
-                DummyBookStartDate, 
+                DummyBookStartDate, false, 
                 "Book Publisher",
                 123,
                 null,
@@ -40,8 +39,7 @@ namespace Test.TestHelpers
             var book = Book.CreateBook
             (
                 "Book Title",
-                "Book Description",
-                DummyBookStartDate,
+                DummyBookStartDate, false,
                 "Book Publisher",
                 123,
                 null,
@@ -66,8 +64,7 @@ namespace Test.TestHelpers
                 var book = Book.CreateBook
                 (
                     $"Book{i:D4} Title",
-                    $"Book{i:D4} Description",
-                    stepByYears ? DummyBookStartDate.AddYears(i) : DummyBookStartDate.AddDays(i),
+                    stepByYears ? DummyBookStartDate.AddYears(i) : DummyBookStartDate.AddDays(i), false,
                     "Publisher",
                     (short)(i + 1),
                     $"Image{i:D4}",
@@ -102,8 +99,7 @@ namespace Test.TestHelpers
             var book1 = Book.CreateBook
             (
                 "Refactoring",
-                "Improving the design of existing code",
-                new DateTime(1999, 7, 8),
+                new DateTime(1999, 7, 8), false,
                 null,
                 40,
                 null,
@@ -114,8 +110,7 @@ namespace Test.TestHelpers
             var book2 = Book.CreateBook
             (
                 "Patterns of Enterprise Application Architecture",
-                "Written in direct response to the stiff challenges",
-                new DateTime(2002, 11, 15),
+                new DateTime(2002, 11, 15), false,
                 null,
                 53,
                 null,
@@ -127,8 +122,7 @@ namespace Test.TestHelpers
             var book3 = Book.CreateBook
             (
                 "Domain-Driven Design",
-                 "Linking business needs to software design",
-                 new DateTime(2003, 8, 30),
+                 new DateTime(2003, 8, 30), false,
                  null,
                 56,
                 null,
@@ -139,8 +133,7 @@ namespace Test.TestHelpers
             var book4 = Book.CreateBook
             (
                 "Quantum Networking",
-                "Entangled quantum networking provides faster-than-light data communications",
-                new DateTime(2057, 1, 1),
+                new DateTime(2057, 1, 1), false,
                 "Future Published",
                 220,
                 null,

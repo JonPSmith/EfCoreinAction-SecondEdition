@@ -35,8 +35,8 @@ namespace BookApp.Domain.Books
         [Required(AllowEmptyStrings = false)]
         public string Title { get; private set; }
 
-        public string Description { get; private set; }
-        public DateTime PublishedOn { get; set; }
+        public DateTime PublishedOn { get; private set; }
+        public bool EstimatedDate { get; private set; }
 
         public string Publisher { get; private set; }
         public decimal OrgPrice { get; private set; }
@@ -47,6 +47,17 @@ namespace BookApp.Domain.Books
 
         [MaxLength(200)]
         public string ImageUrl { get; private set; }
+
+        //----------------------------------------------
+        //Detailed information
+
+        public string Description { get; private set; }
+        public string AboutAuthor { get; private set; }
+        public string AboutReader { get; private set; }
+        public string AboutTechnology { get; private set; }
+        public string WhatsInside { get; private set; }
+
+        //---------------------------------------------
 
         public bool SoftDeleted { get; private set; }
 
@@ -77,7 +88,8 @@ namespace BookApp.Domain.Books
         }
         //----------------------------------------------
 
-        public static IStatusGeneric<Book> CreateBook(string title, string description, DateTime publishedOn,
+        public static IStatusGeneric<Book> CreateBook(string title, DateTime publishedOn,
+            bool estimatedDate,
             string publisher, decimal price, string imageUrl,
             ICollection<Author> authors, ICollection<Tag> tags = null)
         {
@@ -88,7 +100,6 @@ namespace BookApp.Domain.Books
             var book = new Book
             {
                 Title = title,
-                Description = description,
                 PublishedOn = publishedOn,
                 Publisher = publisher,
                 OrgPrice = price,
@@ -129,6 +140,15 @@ namespace BookApp.Domain.Books
 
         //-----------------------------------------------------
         //DDD methods
+
+        public void SetBookDetails(string description, string aboutAuthor, string aboutReader, 
+            string aboutTechnology, string whatsInside)
+        {
+            Description = description;
+            AboutAuthor = aboutAuthor;
+            AboutReader = aboutReader;
+            AboutTechnology = aboutTechnology;
+        }
 
         public void AlterSoftDelete(bool softDeleted)
         {

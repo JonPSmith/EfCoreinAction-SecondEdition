@@ -17,9 +17,9 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
                 BookId = p.BookId, 
                 Title = p.Title, 
                 PublishedOn = p.PublishedOn, 
-                Price = p.OrgPrice, 
+                OrgPrice = p.OrgPrice, 
                 ActualPrice = p.ActualPrice, 
-                PromotionPromotionalText = p.PromotionalText,
+                PromotionText = p.PromotionalText,
                 AuthorsOrdered = string.Join(", ",
                     p.AuthorsLink
                         .OrderBy(q => q.Order)

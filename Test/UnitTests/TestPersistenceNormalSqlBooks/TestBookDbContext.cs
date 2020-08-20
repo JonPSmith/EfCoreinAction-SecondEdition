@@ -61,7 +61,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
             context.Database.EnsureCreated();
 
             //ATTEMPT
-            var status = Book.CreateBook("title", null, new DateTime(2020,1,1), 
+            var status = Book.CreateBook("title", new DateTime(2020,1,1), false, 
                 "Manning", 123, "imageRul", 
                 new List<Author>{new Author("author1", null)},
                 new List<Tag>{new Tag("tag1"), new Tag("tag2")});

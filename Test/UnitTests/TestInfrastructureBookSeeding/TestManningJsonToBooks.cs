@@ -25,7 +25,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
             //ATTEMPT
-            var books = fileDir.LoadBooks("ManningBooks*.json").ToList();
+            var books = fileDir.LoadBooks("ManningBooks*.json", "ManningDetails*.json").ToList();
 
             //VERIFY
             books.Count.ShouldBeInRange(700, 800);
@@ -41,7 +41,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
-            var books10 = fileDir.LoadBooks("ManningBooks*.json").Take(10).ToList();
+            var books10 = fileDir.LoadBooks("ManningBooks*.json", "ManningDetails*.json").Take(10).ToList();
 
             //ATTEMPT
             context.AddRange(books10);

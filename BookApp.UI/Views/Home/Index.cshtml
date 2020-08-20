@@ -72,10 +72,10 @@
                 </div>
                 <div>
                     <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"Price: ${item.ActualPrice:F}")</span>
-                    @if (item.PromotionPromotionalText != null)
+                    @if (item.PromotionText != null)
                     {
                         <span class="text-danger">
-                            <strong >&nbsp;<del>$@($"{item.Price:F}")</del>&nbsp;<i>@(item.PromotionPromotionalText)</i></strong>
+                            <strong >&nbsp;<del>$@($"{item.OrgPrice:F}")</del>&nbsp;<i>@(item.PromotionText)</i></strong>
                         </span>
                     }                    
                 </div>
@@ -89,7 +89,7 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePubDate" asp-route-id="@item.BookId">Change Pub Date</a>
-                            @if (item.PromotionPromotionalText == null)
+                            @if (item.PromotionText == null)
                             {
                                 <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddPromotion" asp-route-id="@item.BookId">Add Promotion</a>
                             }

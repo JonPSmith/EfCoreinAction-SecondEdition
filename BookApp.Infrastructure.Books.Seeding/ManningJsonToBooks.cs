@@ -23,15 +23,50 @@ namespace BookApp.Infrastructure.Books.Seeding
     {
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
 
-        public static IEnumerable<Book> LoadBooks(this string fileDir, string fileSearchString)
+        public static IEnumerable<Book> LoadBooks(this string fileDir, string summarySearchString, string detailSearchString)
         {
-            var filePath = GetJsonFilePath(fileDir, fileSearchString);
-            var jsonDecoded = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(filePath));
+            var summaryFilePath = GetJsonFilePath(fileDir, summarySearchString);
+            var summaryJson = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(summaryFilePath));
+            var detailFilePath = GetJsonFilePath(fileDir, detailSearchString);
+            var detailDict = JsonConvert.DeserializeObject<List<ManningDetailsJson>>(File.ReadAllText(detailFilePath))
+                .ToDictionary(x => x.productId);
 
-            var tagsNames = jsonDecoded.SelectMany(x => x.tags ?? new string[0]).Distinct();
+            var tagsNames = summaryJson.SelectMany(x => x.tags ?? new string[0]).Distinct();
             var tagDict = tagsNames.ToDictionary(x => x, y => new Tag(y));
-            var authorDict = new Dictionary<string,Author>();
-            foreach (var manningBooksJson in jsonDecoded)
+            var authorDict = NormalizeAuthorsToCommaDelimited(summaryJson);
+
+            foreach (var jsonBook in summaryJson.Where(x => x.authorshipDisplay != null))
+            {
+                var fullImageUrl = ImageUrlPrefix + jsonBook.imageUrl;
+                var publishedOn = jsonBook.publishedDate ?? jsonBook.expectedPublishDate;
+                var price = jsonBook.productOfferings.Any()
+                    ? jsonBook.productOfferings.Select(x => x.price).Max()
+                    : 100;
+                var authors = jsonBook.authorshipDisplay.Split(',')
+                    .Select(x => authorDict[x]).ToList();
+                var tags = (jsonBook.tags ?? new string[0])
+                    .Select(x => tagDict[x]).ToList();
+
+                var status = Book.CreateBook(jsonBook.title, publishedOn, jsonBook.publishedDate == null,
+                    "Manning", (decimal) price, fullImageUrl, authors, tags);
+                if (status.HasErrors)
+                    throw new InvalidOperationException( $"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
+
+                if (detailDict.ContainsKey(jsonBook.id))
+                {
+                    var summary = detailDict[jsonBook.id];
+                    status.Result.SetBookDetails(summary.description, summary.aboutAuthor, 
+                        summary.aboutReader, summary.aboutTechnology, summary.whatsInside);
+                }
+
+                yield return status.Result;
+            }
+        }
+
+        private static Dictionary<string, Author> NormalizeAuthorsToCommaDelimited(List<ManningBooksJson> summaryJson)
+        {
+            var authorDict = new Dictionary<string, Author>();
+            foreach (var manningBooksJson in summaryJson)
             {
                 var authors = manningBooksJson.NormalizeAuthorNames().ToList();
                 manningBooksJson.authorshipDisplay = authors.Any()
@@ -44,25 +79,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                 });
             }
 
-            foreach (var jsonBook in jsonDecoded.Where(x => x.authorshipDisplay != null))
-            {
-                var fullImageUrl = ImageUrlPrefix + jsonBook.imageUrl;
-                var publishedOn = jsonBook.publishedDate ?? jsonBook.expectedPublishDate;
-                var price = jsonBook.productOfferings.Any()
-                    ? jsonBook.productOfferings.Select(x => x.price).Max()
-                    : 100;
-                var authors = jsonBook.authorshipDisplay.Split(',')
-                    .Select(x => authorDict[x]).ToList();
-                var tags = (jsonBook.tags ?? new string[0])
-                    .Select(x => tagDict[x]).ToList();
-
-                var status = Book.CreateBook(jsonBook.title, null, publishedOn,
-                    "Manning", (decimal) price, fullImageUrl, authors, tags);
-                if (status.HasErrors)
-                    throw new InvalidOperationException( $"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
-
-                yield return status.Result;
-            }
+            return authorDict;
         }
 
         internal static IEnumerable<string> NormalizeAuthorNames(this ManningBooksJson json)

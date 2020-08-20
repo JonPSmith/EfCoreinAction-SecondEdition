@@ -7,28 +7,26 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 {
     public class BookListDto
     {
-        public int BookId { get; set; } //#A
+        public int BookId { get; set; } 
         public string Title { get; set; }
-        public DateTime PublishedOn { get; set; } //#B
-        public decimal Price { get; set; } //#C
+        public DateTime PublishedOn { get; set; } 
+        public bool EstimatedDate { get; set; }
+        public decimal OrgPrice { get; set; } 
 
-        public decimal
-            ActualPrice { get; set; } //#D
+        public decimal ActualPrice { get; set; } 
 
-        public string
-            PromotionPromotionalText { get; set; } //#E
+        public string PromotionText { get; set; } 
 
-        public string AuthorsOrdered { get; set; } //#F
+        public string AuthorsOrdered { get; set; } 
 
-        public int ReviewsCount { get; set; } //#G
+        public int ReviewsCount { get; set; } 
 
-        public double?
-            ReviewsAverageVotes { get; set; } //#H
+        public double? ReviewsAverageVotes { get; set; } 
 
         /******************************************************
         #A I need the Primary Key if the customer clicks the entry to buy the book
         #B While the publish date isn't shown we will want to sort by it, so we have to include it
-        #C This is the normal Price
+        #C This is the normal OrgPrice
         #D This is the selling price - either the normal price, or the promotional.NewPrice if present
         #E The promotional text to show if there is a new price
         #F An array of the authors' names in the right order
