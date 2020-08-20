@@ -75,6 +75,10 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
 
+                    b.Property<string>("ManningBookUrl")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
                     b.Property<decimal>("OrgPrice")
                         .HasPrecision(9, 2)
                         .HasColumnType("decimal(9,2)");

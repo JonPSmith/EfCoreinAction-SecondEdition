@@ -22,6 +22,7 @@ namespace BookApp.Infrastructure.Books.Seeding
     public static class ManningJsonToBooks
     {
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
+        private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
 
         public static IEnumerable<Book> LoadBooks(this string fileDir, string summarySearchString, string detailSearchString)
         {
@@ -51,6 +52,8 @@ namespace BookApp.Infrastructure.Books.Seeding
                     "Manning", (decimal) price, fullImageUrl, authors, tags);
                 if (status.HasErrors)
                     throw new InvalidOperationException( $"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
+
+                status.Result.SetManningBookUrl(string.Format(ManningUrlWithParam, jsonBook.slug));
 
                 if (detailDict.ContainsKey(jsonBook.id))
                 {

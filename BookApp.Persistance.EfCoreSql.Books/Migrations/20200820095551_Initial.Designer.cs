@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookApp.Persistence.EfCoreSql.Books.Migrations
 {
     [DbContext(typeof(BookDbContext))]
-    [Migration("20200820082349_Initial")]
+    [Migration("20200820095551_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,10 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
                         .HasMaxLength(200)
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ManningBookUrl")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<decimal>("OrgPrice")
                         .HasPrecision(9, 2)

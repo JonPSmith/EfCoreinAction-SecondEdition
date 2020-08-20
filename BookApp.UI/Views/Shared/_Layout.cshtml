@@ -24,14 +24,8 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="DefaultSql" asp-action="Index">Default SQL</a>
                     </li>
-                    <li>
-                        <a href="#" id="show-logs" class="nav-link text-dark d-none">Logs&nbsp;<span class="badge badge-pill badge-primary"></span></a>
-                    </li>
-                    <li>
-                        <a href="#" id="show-bg-logs" class="nav-link text-dark" 
-                           data-toggle="tooltip" title="This shows the logs outside the HTTP request, e.g. the background tasks.">
-                            Bg-logs&nbsp;<span class="badge badge-secondary"></span>
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Your Orders</a>
                     </li>
                     @*@if (Context.Request.IsLocal())
                     {
@@ -44,14 +38,17 @@
                             </div>
                         </li>
                     }*@
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Your Orders</a>
+                    <li>
+                        <a href="#" id="show-logs" class="nav-link text-dark d-none">Logs&nbsp;<span class="badge badge-pill badge-primary"></span></a>
+                    </li>
+                    <li>
+                        <a href="#" id="show-bg-logs" class="nav-link text-dark"
+                           data-toggle="tooltip" title="This shows the logs outside the HTTP request, e.g. the background tasks.">
+                            Bg-logs&nbsp;<span class="badge badge-secondary"></span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
                     </li>
                 </ul>
             </div>

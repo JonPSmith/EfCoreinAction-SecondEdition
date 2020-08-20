@@ -48,6 +48,12 @@ namespace BookApp.Domain.Books
         [MaxLength(200)]
         public string ImageUrl { get; private set; }
 
+
+        /// <summary>
+        /// This contains the url to get to the Manning version of the book
+        /// </summary>
+        public string ManningBookUrl { get; private set; }
+
         //----------------------------------------------
         //Detailed information
 
@@ -75,10 +81,10 @@ namespace BookApp.Domain.Books
         public string AuthorsOrdered { get; set; }
 
         [ConcurrencyCheck]
-        public int ReviewsCount { get; set; }
+        public int ReviewsCount { get; private set; }
 
         [ConcurrencyCheck]
-        public double ReviewsAverageVotes { get; set; }
+        public double ReviewsAverageVotes { get; private set; }
 
         //This is an action provided in the review add/remove event so that the review handler can update these properties
         private void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
@@ -149,6 +155,11 @@ namespace BookApp.Domain.Books
             AboutAuthor = aboutAuthor;
             AboutReader = aboutReader;
             AboutTechnology = aboutTechnology;
+        }
+
+        public void SetManningBookUrl(string manningBookUrl)
+        {
+            ManningBookUrl = manningBookUrl;
         }
 
         public void AlterSoftDelete(bool softDeleted)

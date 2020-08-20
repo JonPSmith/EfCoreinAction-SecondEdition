@@ -35,6 +35,7 @@ namespace BookApp.Persistence.EfCoreSql.Books.Migrations
                     ActualPrice = table.Column<decimal>(type: "decimal(9,2)", precision: 9, scale: 2, nullable: false),
                     PromotionalText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     ImageUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+                    ManningBookUrl = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AboutAuthor = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AboutReader = table.Column<string>(type: "nvarchar(max)", nullable: true),
