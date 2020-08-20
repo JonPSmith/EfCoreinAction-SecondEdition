@@ -15,6 +15,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Dtos
 
         public string Title { get; set; }
 
+        public decimal OrgPrice { get; set; }
         public decimal ActualPrice { get; set; }
 
         [Required(AllowEmptyStrings = false)]

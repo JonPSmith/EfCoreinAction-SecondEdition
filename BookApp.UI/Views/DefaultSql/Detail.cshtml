@@ -4,99 +4,69 @@
     ViewData["Title"] = "Detail";
 }
 
-<h1>Detail</h1>
-
-<div>
-    <h4>BookDetailDto</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.BookId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.BookId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PublishedOn)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PublishedOn)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EstimatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EstimatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OrgPrice)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OrgPrice)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ActualPrice)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ActualPrice)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PromotionText)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PromotionText)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AuthorsOrdered)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AuthorsOrdered)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ManningBookUrl)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ManningBookUrl)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Description
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AboutAuthor)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.AboutAuthor
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AboutReader)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.AboutReader
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AboutTechnology)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.AboutTechnology
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.WhatsInside)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.WhatsInside
-        </dd>
-    </dl>
-    <a href="@Model.ManningBookUrl">
-        <img src="@Model.ImageUrl" />
-    </a>
-</div>
+<table class="table">
+    <tbody>
+    <tr>
+        <td>
+            <div>
+                <a class="btn btn-light btn-sm" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@Model.BookId" asp-route-numBooks="1" role="button">Demo buy this book</a>
+                <a class="btn btn-info btn-sm" href="@Model.ManningBookUrl" role="button">See real book in Manning</a>
+            </div>
+            <br />
+            <a href="@Model.ManningBookUrl"><img src="@Model.ImageUrl" /></a>
+            <br />
+            <br />
+            <div>
+                Published on @Model.PublishedOn.ToString("d")
+                @if (Model.EstimatedDate)
+                {
+                    <small>&nbsp;(estimated)</small>
+                }
+            </div>
+            <div>
+                <strong>Tags:</strong> @string.Join(" | ", Model.TagStrings)
+            </div>
+            <div>
+                <span class="h4">@(Model.ActualPrice < 0 ? "- not for sale - " : $"Price: ${Model.ActualPrice:F}")</span>
+                @if (Model.PromotionText != null)
+                {
+                    <div class="text-danger">
+                        <strong>&nbsp;<del>$@($"{Model.OrgPrice:F}")</del>&nbsp;<i>@(Model.PromotionText)</i></strong>
+                    </div>
+                }
+            </div>
+        </td>
+        <td>
+            <h2>@Model.Title</h2>
+            <div>
+                <small>by</small>&nbsp;@Model.AuthorsOrdered
+            </div>
+            <br/>
+            <div>
+                @Model.Description
+            </div>
+            <br />
+            <h4>About the technology</h4>
+            <div>
+                @Model.AboutTechnology
+            </div>
+            <br />
+            <h4>What's inside</h4>
+            <div>
+                @Model.WhatsInside
+            </div>
+            <br />
+            <h4>About the authors</h4>
+            <div>
+                @Model.AboutAuthor
+            </div>
+            <br />
+            <h4>About the reader</h4>
+            <div>
+                @Model.AboutReader
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
 

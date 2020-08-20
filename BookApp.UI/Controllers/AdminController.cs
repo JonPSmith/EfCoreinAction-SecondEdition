@@ -40,6 +40,14 @@ namespace BookApp.UI.Controllers
             return View(dto);
         }
 
+        public async Task<IActionResult> AddPromotion(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            Request.ThrowErrorIfNotLocal();
+            var dto = await service.ReadSingleAsync<AddPromotionDto>(id);
+            SetupTraceInfo();
+            return View(dto);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPromotion(AddPromotionDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
