@@ -11,6 +11,8 @@ namespace Test.Chapter10Listings.EfCode
         public const string UdfAverageVotes =
             nameof(MyUdfMethods.AverageVotes); //#A
 
+        public const string UdfTableFunctionName = nameof(Chapter10EfCoreContext.GetBookTitleAndReviewsFiltered);
+
         public static void AddUdfToDatabase(this DbContext context)
         {
             using (var transaction = context.Database.BeginTransaction())
@@ -37,6 +39,36 @@ namespace Test.Chapter10Listings.EfCode
                     #B I use EF Core's ExecuteSqlCommand method to add the UDF into the database
                     #C The SQL code that follows adds a UDF to a SQL server database
                      * **************************************************/
+
+                    context.Database.ExecuteSqlRaw(
+                        $"IF OBJECT_ID('dbo.{UdfTableFunctionName}', N'FN') IS NOT NULL " +
+                        $"DROP FUNCTION dbo.{UdfTableFunctionName}");
+
+                    context.Database.ExecuteSqlRaw( 
+                        $"CREATE FUNCTION {UdfTableFunctionName} (@minReviews int)" +
+                        @"RETURNS @result TABLE
+                          (
+                            Title nvarchar(max) null,
+                            ReviewsCount int not null,
+                            AverageVotes float null
+                          )
+                          AS
+                          BEGIN
+						  INSERT into @result 
+                          SELECT b.Title, 
+                                 (SELECT Count(*) 
+                                    FROM Review AS r
+                                    WHERE b.bookId = r.BookId) AS ReviewsCount,
+                                 (SELECT AVG(CAST([NumStars] AS float))
+                                    FROM Review AS r
+                                    WHERE b.bookId = r.BookId) AS AverageVotes
+                          FROM Books AS b
+                          WHERE (SELECT Count(*) 
+                                    FROM Review AS r
+                                    WHERE b.bookId = r.BookId) >= @minReviews
+
+                          RETURN 
+                          END");
                     transaction.Commit();
                 }
                 catch (Exception ex)

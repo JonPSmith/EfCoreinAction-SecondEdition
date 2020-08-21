@@ -50,8 +50,6 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             using (var context = new Chapter10EfCoreContext(_options))
             {
-
-
                 //ATTEMPT
                 var query = context.Books
                     .Where(x => 
@@ -59,8 +57,8 @@ namespace Test.UnitTests.TestDataLayer
                 var books = query.ToList();
 
                 //VERIFY
-                books.Count.ShouldEqual(6);
                 _output.WriteLine(query.ToQueryString());
+                books.Count.ShouldEqual(6);
             }
         }
 
