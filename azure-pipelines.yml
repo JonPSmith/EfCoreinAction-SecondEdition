@@ -43,7 +43,9 @@ stages:
       inputs:
         command: test
         projects: '**/Test/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+        arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true' 
+        testRunTitle: EFCore2.Tests
+
 #    - task: DotNetCoreCLI@2
 #      displayName: 'Publish functional tests'
 #      inputs:
