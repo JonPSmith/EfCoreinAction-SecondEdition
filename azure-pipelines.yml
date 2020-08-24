@@ -52,5 +52,28 @@ stages:
         projects: '**/*FunctionalTests*.csproj'
         arguments: '--configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/FunctionalTests"'
         zipAfterPublish: false
-        modifyOutputPath: false          
+        modifyOutputPath: false     
+    - task: CopyFiles@2
+
+  displayName: 'Copy runsettings file'
+
+  inputs:
+
+    Contents: '**/*.runsettings'
+
+    TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests'
+
+    flattenFolders: true
+
+- task: DotNetCoreCLI@2
+
+  displayName: 'Publish webapp'
+
+  inputs:
+
+    command: publish
+
+    arguments: '--configuration $(BuildConfiguration) --output $(System.DefaultWorkingDirectory)/PublishedWebApp'
+
+    zipAfterPublish: false         
 
