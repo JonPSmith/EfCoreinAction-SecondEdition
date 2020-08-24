@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
 WORKDIR /app
 
 # Copy the published web app
-COPY /BookApp/ /app
+COPY BookApp/ /app
 
 # Run command
 ENTRYPOINT ["dotnet", "BookApp.dll"]
