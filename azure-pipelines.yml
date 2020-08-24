@@ -66,6 +66,7 @@ stages:
         arguments: '--configuration $(BuildConfiguration) --output $(System.DefaultWorkingDirectory)/PublishedWebApp'
         zipAfterPublish: false   
         buildProperties: 
+    - script: ls    
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
