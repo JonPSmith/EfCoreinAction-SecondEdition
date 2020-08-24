@@ -54,26 +54,25 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false     
     - task: CopyFiles@2
-
-  displayName: 'Copy runsettings file'
-
-  inputs:
-
-    Contents: '**/*.runsettings'
-
-    TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests'
-
-    flattenFolders: true
-
-- task: DotNetCoreCLI@2
-
-  displayName: 'Publish webapp'
-
-  inputs:
-
-    command: publish
-
-    arguments: '--configuration $(BuildConfiguration) --output $(System.DefaultWorkingDirectory)/PublishedWebApp'
-
-    zipAfterPublish: false         
+      displayName: 'Copy runsettings file'
+      inputs:
+        Contents: '**/*.runsettings'
+        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests'
+        flattenFolders: true
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish webapp'
+      inputs:
+        command: publish
+        arguments: '--configuration $(BuildConfiguration) --output $(System.DefaultWorkingDirectory)/PublishedWebApp'
+        zipAfterPublish: false   
+        buildProperties: 
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)             
 
