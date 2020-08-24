@@ -77,3 +77,26 @@ stages:
         buildContext: '$(System.DefaultWorkingDirectory)/PublishedWebApp'
         tags: '$(tag)'
 
+- stage: dev_deploy
+  jobs:
+  - deployment: dev_deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'dev-hello'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@3
+            displayName: 'Deploy Azure App Service'
+            inputs:
+              azureSubscription: 'repasowebapp - Azure'
+              appType: applinux
+              WebAppName: repasowebapp
+              DockerNamespace: '$(containerRegistry)'
+              DockerRepository: '$(imageRepository)'
+              DockerImageTag: '$(tag)'
+              WebAppUri: webAppUrl
+              TakeAppOfflineFlag: true
+              UseWebDeploy: true
+              RenameFilesFlag: true  
