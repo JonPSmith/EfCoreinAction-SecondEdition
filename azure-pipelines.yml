@@ -77,12 +77,12 @@ stages:
         buildContext: '$(System.DefaultWorkingDirectory)/PublishedWebApp'
         tags: '$(tag)'
 
-- stage: dev_deploy
+- stage: qa_deploy
   jobs:
-  - deployment: dev_deploy
+  - deployment: qa_deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'dev-hello'
+    environment: 'qa-hello'
     strategy:
       runOnce:
         deploy:
@@ -91,12 +91,35 @@ stages:
             displayName: 'Deploy Azure App Service'
             inputs:
               azureSubscription: 'repasowebapp - Azure'
-              appType: applinux
-              WebAppName: repasowebapp
+              appType: 'applinux'
+              WebAppName: 'repasowebapp'
+              DeployToSlotFlag: true
+              ResourceGroupName: 'RG_repasowebapp'
+              SlotName: 'qa'
               DockerNamespace: '$(containerRegistry)'
               DockerRepository: '$(imageRepository)'
               DockerImageTag: '$(tag)'
-              WebAppUri: webAppUrl
-              TakeAppOfflineFlag: true
-              UseWebDeploy: true
-              RenameFilesFlag: true  
+              WebAppUri: 'webAppUrl'
+
+- stage: prod_deploy
+  jobs:
+  - deployment: prod_deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'prod-hello'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@3
+            displayName: 'Deploy Azure App Service'
+            inputs:
+              azureSubscription: 'repasowebapp - Azure'
+              appType: 'applinux'
+              WebAppName: 'repasowebapp'
+              DeployToSlotFlag: true
+              ResourceGroupName: 'RG_repasowebapp'
+              DockerNamespace: '$(containerRegistry)'
+              DockerRepository: '$(imageRepository)'
+              DockerImageTag: '$(tag)'
+              WebAppUri: 'webAppUrl'
