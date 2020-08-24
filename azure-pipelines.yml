@@ -53,12 +53,21 @@ stages:
 #        arguments: '--configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/FunctionalTests"'
 #        zipAfterPublish: false
 #        modifyOutputPath: false     
-    - task: CopyFiles@2
-      displayName: 'Copy runsettings file'
-      inputs:
-        Contents: '**/*.runsettings'
-        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests'
-        flattenFolders: true
+#    - task: CopyFiles@2
+#      displayName: 'Copy runsettings file'
+#      inputs:
+#        Contents: '**/*.runsettings'
+#        TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests'
+#        flattenFolders: true
+
+- stage: Publish
+  displayName: Publish and push stage
+  jobs:  
+  - job: Publish
+    displayName: Publish
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
     - task: DotNetCoreCLI@2
       displayName: 'Publish webapp'
       inputs:
