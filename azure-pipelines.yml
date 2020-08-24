@@ -38,4 +38,19 @@ stages:
       inputs:
           projects: '**/*.csproj'
           arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '**/*UnitTests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish functional tests'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: '**/*FunctionalTests*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/FunctionalTests"'
+        zipAfterPublish: false
+        modifyOutputPath: false          
 
