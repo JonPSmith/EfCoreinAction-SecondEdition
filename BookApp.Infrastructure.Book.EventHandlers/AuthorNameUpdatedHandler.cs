@@ -20,7 +20,7 @@ namespace BookApp.Infrastructure.Book.EventHandlers
             _context = context;
         }
 
-        public IStatusGeneric Handle(EntityEventsBase callingEntity, AuthorNameUpdatedEvent domainEvent)
+        public IStatusGeneric Handle(object callingEntity, AuthorNameUpdatedEvent domainEvent)
         {
             //We go through all the books that have this author as one of its authors
             foreach (var bookWithEvents in _context.Set<BookAuthor>()

@@ -11,7 +11,7 @@ namespace BookApp.Infrastructure.Book.EventHandlers
 {
     public class ReviewRemovedHandler : IBeforeSaveEventHandler<BookReviewRemovedEvent>
     {
-        public IStatusGeneric Handle(EntityEventsBase callingEntity, BookReviewRemovedEvent domainEvent)
+        public IStatusGeneric Handle(object callingEntity, BookReviewRemovedEvent domainEvent)
         {
             //Here is the fast (delta) version of the update. Doesn't need access to the database
             var numReviews = domainEvent.Book.ReviewsCount - 1;
