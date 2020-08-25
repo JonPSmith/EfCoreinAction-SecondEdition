@@ -21,7 +21,7 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build and push stage
+  displayName: Compile stage
   jobs:  
   - job: Build
     displayName: Build
@@ -71,7 +71,7 @@ stages:
         codeCoverageTool: Cobertura  
         summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'        
 - stage: Publish
-  displayName: Publish and push stage
+  displayName: Build(image) and push stage
   jobs:  
   - job: Publish
     displayName: Publish
@@ -106,19 +106,19 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureRmWebAppDeployment@3
+          - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Azure App Service'
             inputs:
+              ConnectionType: 'AzureRM'
               azureSubscription: 'repasowebapp - Azure'
-              appType: 'applinux'
+              appType: 'webAppContainer'
               WebAppName: 'repasowebapp'
-              DeployToSlotFlag: true
+              deployToSlotOrASE: true
               ResourceGroupName: 'RG_repasowebapp'
               SlotName: 'qa'
               DockerNamespace: '$(containerRegistry)'
               DockerRepository: '$(imageRepository)'
               DockerImageTag: '$(tag)'
-              WebAppUri: 'webAppUrl'
 
 - stage: prod_deploy
   jobs:
@@ -130,15 +130,16 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureRmWebAppDeployment@3
+          - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Azure App Service'
             inputs:
+              ConnectionType: 'AzureRM'
               azureSubscription: 'repasowebapp - Azure'
-              appType: 'applinux'
+              appType: 'webAppContainer'
               WebAppName: 'repasowebapp'
-              DeployToSlotFlag: true
+              deployToSlotOrASE: true
               ResourceGroupName: 'RG_repasowebapp'
+              SlotName: 'production'
               DockerNamespace: '$(containerRegistry)'
               DockerRepository: '$(imageRepository)'
               DockerImageTag: '$(tag)'
-              WebAppUri: 'webAppUrl'
