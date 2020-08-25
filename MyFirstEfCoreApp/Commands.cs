@@ -46,7 +46,7 @@ namespace MyFirstEfCoreApp
 
                 book.Author.WebUrl = newWebUrl; //#D
                 db.SaveChanges(); //#E
-                Console.WriteLine("... SavedChanges called.");
+                Console.WriteLine("... SaveChanges called.");
             }
 
             ListAll(); //#F
