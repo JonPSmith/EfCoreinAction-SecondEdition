@@ -4,7 +4,8 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <ExcludeByFile>**/*.cshtml,</ExcludeByFile> <!-- Globbing filter -->
+          <Exclude>BookApp.Views</Exclude>
+          <ExcludeByFile>**/*.cshtml</ExcludeByFile> <!-- Globbing filter -->
         </Configuration>
       </DataCollector>
     </DataCollectors>
