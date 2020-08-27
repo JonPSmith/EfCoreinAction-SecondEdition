@@ -10,6 +10,7 @@ namespace Test.Chapter12Listings.Events
     {
         public LocationChangedEvent(Location location, string newState)
         {
+            Location = location;
             NewState = newState;
         }
 

@@ -93,7 +93,7 @@ namespace Test.UnitTests.Chapter12Tests
         }
 
         [Fact]
-        public void TestNewQuoteWithLocationGetsMaxSalesTaxOk()
+        public void TestNewQuoteWithLocationGetCorrectSalesTaxOk()
         {
             //SETUP
             var context = SetupDependencyInjectionAndGetDbContext();
@@ -108,7 +108,29 @@ namespace Test.UnitTests.Chapter12Tests
             quote.SalesTaxPercent.ShouldEqual(0.05);
         }
 
+        [Fact]
+        public void TestChangeLocationEffectsQuotesLinkedOk()
+        {
+            //SETUP
+            var context = SetupDependencyInjectionAndGetDbContext();
+            context.Database.EnsureCreated();
 
+            var locations = context.Locations.ToList();
+            var quote1Loc0 = new Quote(locations[0]);
+            var quote2Loc0 = new Quote(locations[0]);
+            var quote3Loc1 = new Quote(locations[1]);
+            context.AddRange(quote1Loc0, quote2Loc0, quote3Loc1);
+            context.SaveChanges();
+
+            //ATTEMPT
+            locations.First().State = "004";
+            context.SaveChanges();
+
+            //VERIFY
+            quote1Loc0.SalesTaxPercent.ShouldEqual(0.04);
+            quote2Loc0.SalesTaxPercent.ShouldEqual(0.04);
+            quote3Loc1.SalesTaxPercent.ShouldEqual(0.05);
+        }
 
         private static EventsDbContext SetupDependencyInjectionAndGetDbContext()
         {
