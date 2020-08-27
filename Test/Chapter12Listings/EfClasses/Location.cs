@@ -21,7 +21,7 @@ namespace Test.Chapter12Listings.EfClasses
             set
             {
                 if (value != _state)
-                    AddEvent(new LocationChangedEvent(this, value));
+                    AddEvent(new LocationChangedEvent(this));
                 _state = value;
             } 
         }

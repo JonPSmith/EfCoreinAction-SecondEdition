@@ -50,12 +50,12 @@ namespace Test.UnitTests.Chapter12Tests
 
             //ATTEMPT
             var location = context.Locations.First();
-            location.AddEvent(new LocationChangedEvent(location, "Test"));
+            location.State = "Test";
 
             //VERIFY
             var foundEvent = location.GetEventsThenClear().Single();
             foundEvent.ShouldBeType<LocationChangedEvent>();
-            ((LocationChangedEvent)foundEvent).NewState.ShouldEqual("Test");
+            ((LocationChangedEvent)foundEvent).Location.State.ShouldEqual("Test");
             location.GetEventsThenClear().Count.ShouldEqual(0);
         }
 

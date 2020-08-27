@@ -6,15 +6,17 @@ using Test.Chapter12Listings.EventInterfacesEtc;
 
 namespace Test.Chapter12Listings.Events
 {
-    public class LocationChangedEvent : IDomainEvent
+    public class LocationChangedEvent : IDomainEvent   //#A
     {
-        public LocationChangedEvent(Location location, string newState)
+        public LocationChangedEvent(Location location)
         {
             Location = location;
-            NewState = newState;
         }
 
-        public Location Location { get; }
-        public string NewState { get; }
+        public Location Location { get; }               //#B
     }
+    /*****************************************************
+    #A The event class must inherit the IDomainEvent
+    #B The event handler needs Location to be able to do the Quote updates
+     ***************************************************/
 }
