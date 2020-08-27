@@ -12,7 +12,9 @@ namespace Test.Chapter12Listings.EfCode
     {
         private readonly IEventRunner _eventRunner;
 
-        public EventsDbContext(DbContextOptions<EventsDbContext> options, IEventRunner eventRunner = null)
+        public EventsDbContext(
+            DbContextOptions<EventsDbContext> options,
+            IEventRunner eventRunner = null)
             : base(options)
         {
             _eventRunner = eventRunner;
