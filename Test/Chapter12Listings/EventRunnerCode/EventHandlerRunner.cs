@@ -28,7 +28,7 @@ namespace Test.Chapter12Listings.EventRunnerCode
         }                                                     //#D
     }
     /****************************************************
-    #A By defining a non-generic class+method you can cast the created generic instance to an non-generic version
+    #A By defining a non-generic method you can run the generic event handler
     #B This uses the EventHandlerRunner<T> to define the type of the EventHandlerRunner
     #C The EventHandlerRunner class is created with an instance of the event handler to run
     #D Now to the method the abstract class defined.
