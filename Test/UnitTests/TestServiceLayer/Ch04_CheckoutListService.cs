@@ -35,7 +35,7 @@ namespace Test.UnitTests.TestServiceLayer
 
                 //VERIFY
                 list.Count.ShouldEqual(1);
-                list.First().BookPrice.ShouldEqual(219);
+                list.First().BookPrice.ShouldEqual(235);
             }
         }
 
