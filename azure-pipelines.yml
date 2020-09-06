@@ -39,11 +39,11 @@ stages:
           projects: '**/*.csproj'
           arguments: '--configuration $(BuildConfiguration)'
 - stage: Test
-  displayName: Test stage
-  condition: eq(variables.runTest, true)
+  displayName: Test stage  
   jobs:  
   - job: Test
     displayName: Test
+    condition: eq(variables.runTest, true)
     pool:
       vmImage: $(vmImageName)
     steps:          
