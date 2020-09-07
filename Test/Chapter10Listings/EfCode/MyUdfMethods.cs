@@ -7,10 +7,9 @@ namespace Test.Chapter10Listings.EfCode
 {
     public class MyUdfMethods
     {
-        public static double? AverageVotes(int id) 
+        public static double? AverageVotes(int id)
         {
-            throw new NotImplementedException(
-                "Called in Client vs. Server evaluation.");
+            return null;
         }
     }
 }
