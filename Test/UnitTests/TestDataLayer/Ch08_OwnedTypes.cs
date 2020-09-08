@@ -161,12 +161,15 @@ namespace Test.UnitTests.TestDataLayer
                 showLog = true;
                 AddUserWithHomeAddresses(context);
                 showLog = false;
-
+            }
+            using (var context = new SplitOwnDbContext(options))
+            {
                 //VERIFY
                 context.Users.Count().ShouldEqual(1);
             }
         }
 
+        //SEE https://github.com/dotnet/efcore/issues/22444 BUG
         [Fact]
         public void TestCreateUserWithAddressReadBackFindOk()
         {
