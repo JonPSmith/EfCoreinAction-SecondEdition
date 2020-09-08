@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using DataLayer.EfClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Test.Chapter10Listings.EfClasses;
@@ -63,55 +64,72 @@ namespace Test.UnitTests.TestDataLayer
         #A This method is called after the Book entity has been updated in some way 
         #B I call SaveChanges within a try...catch so that I can catch a DbUpdateConcurrencyException if it occurs
         #C I catch the DbUpdateConcurrencyException and put in my code to handle it
-        #D We only expect one concurrency conflict entry - if there are more it will throw and exception on the use of Single
+        #D In this case you know only one Book will be updated. In other cases you might need to handle multiple entities.
         #E I call my HandleBookConcurrency method, which returns null if the error was handled, or an error message if it wasn't handled
         #F If the conflict was handled then I need to call SaveChanges to update the Book
         #G I return the error message, or null if there was no error
          * **********************************************************/
 
-        private static string HandleBookConcurrency( //#A
-            ConcurrencyDbContext context, 
+        private static string HandleBookConcurrency(                 //#A
+            DbContext context, 
             EntityEntry entry)
         {
             var book = entry.Entity 
                 as ConcurrencyBook;
-            if (book == null) //#B
+            if (book == null)                                        //#B
                 throw new NotSupportedException(
         "Don't know how to handle concurrency conflicts for " +
                     entry.Metadata.Name);
 
-            var databaseEntity =                   //#C
-                context.Books.AsNoTracking()       //#D
+            var whatTheDatabaseHasNow =                              //#C
+                context.Set<ConcurrencyBook>().AsNoTracking()        //#D
                     .SingleOrDefault(p => p.ConcurrencyBookId
                         == book.ConcurrencyBookId);
-            if (databaseEntity == null) //#E
+            if (whatTheDatabaseHasNow == null)                       //#E
                 return "Unable to save changes.The book was deleted by another user.";
 
-            var version2Entity = context.Entry(databaseEntity); //#F
+            var someoneElsesData =                                   //#F
+                context.Entry(whatTheDatabaseHasNow);                //#F
 
             foreach (var property in entry.Metadata.GetProperties()) //#G
             {
-                var version1_original = entry               //#H
-                    .Property(property.Name).OriginalValue; //#H
-                var version2_someoneElse = version2Entity  //#I
-                    .Property(property.Name).CurrentValue; //#I
-                var version3_whatIWanted = entry          //#J
-                    .Property(property.Name).CurrentValue;//#J
+                var theOriginalValue = entry                        //#H
+                    .Property(property.Name).OriginalValue;          //#H
+                var someoneElseValue = someoneElsesData          //#I
+                    .Property(property.Name).CurrentValue;           //#I
+                var whatIWantedItToBe = entry                      //#J
+                    .Property(property.Name).CurrentValue;           //#J
 
                 // TODO: Logic to decide which value should be written to database
-                if (property.Name ==                           //#K
-                    nameof(ConcurrencyBook.PublishedOn))        //#K
-                {                                              //#K
-                    entry.Property(property.Name).CurrentValue //#K
-                        = new DateTime(2050, 5, 5);            //#K
-                }                                              //#K
+                if (property.Name ==                                 //#K
+                    nameof(ConcurrencyBook.PublishedOn))             //#K
+                {
+                    entry.Property(property.Name).CurrentValue =     //#K
+                    //… your code to pick which PublishedOn to use   //#K
+                        new DateTime(2050, 5, 5); //!!!!!! leave out
+                }                                                    //#K
 
-                entry.Property(property.Name).OriginalValue = //#L
-                    version2Entity.Property(property.Name) //#L
-                        .CurrentValue; //#L
+                entry.Property(property.Name).OriginalValue =        //#L
+                    someoneElsesData.Property(property.Name)         //#L
+                        .CurrentValue;                               //#L
             }
-            return null; //#M
+            return null;                                             //#M
         }
+        /******************************************************************
+        #A Takes in the application’s DbContext and the ChangeTracking entry from the exception’s Entities property.
+        #B Handles only ConcurrencyBook, so throws an exception if the entry isn’t of type Book
+        #C You want to get the data that someone else wrote into the database after your read. 
+        #D Entity must be read as NoTracking; otherwise, it’ll interfere with the same entity you’re trying to write.
+        #E Concurrency conflict method doesn't handle the case where the book was deleted, so it returns a user-friendly error message.
+        #F You get the TEntity version of the entity, which has all the tracking information.
+        #G You go through all the properties in the book entity to reset the Original values so that the exception doesn't happen again.
+        #H Holds the version of the property at the time you did the tracked read of the book.
+        #I Holds the version of the property as written to the database by someone else.
+        #J Holds the version of the property that you wanted to set it to in your update.
+        #K Here you set the OriginalValue to the value that someone else set it to. This handles using concurrency tokens or a timestamp.
+        #L Business logic to handle PublishedOn: either set to your value, or the other person's value, or throw exception.
+        #M You return null to say you handled this concurrency issue.
+         *****************************************************************/
 
         [Fact]
         public void CreateConcurrencyDataAllOk()
