@@ -24,7 +24,7 @@ namespace Test.Chapter10Listings.EfCode
         public IQueryable<TableFunctionOutput>                //#A
             GetBookTitleAndReviewsFiltered(int minReviews)    //#A
         {
-            return CreateQuery(() =>                  //#B
+            return FromExpression(() =>                  //#B
                 GetBookTitleAndReviewsFiltered(minReviews));  //#C
         }
         /************************************************************
@@ -44,6 +44,7 @@ namespace Test.Chapter10Listings.EfCode
 
             //modelBuilder.HasDbFunction(typeof(Chapter10EfCoreContext).GetMethod(nameof(GetBookTitleAndReviewsFiltered)));
 
+            modelBuilder.Entity<TableFunctionOutput>().HasNoKey();
             modelBuilder.HasDbFunction(() => GetBookTitleAndReviewsFiltered(default(int)));
         }
     }
