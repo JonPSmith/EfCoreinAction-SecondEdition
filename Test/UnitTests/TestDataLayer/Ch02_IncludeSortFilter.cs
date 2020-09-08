@@ -2,9 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
@@ -196,39 +194,38 @@ namespace Test.UnitTests.TestDataLayer
         }
     }
 
-    //This isn't supported yet
-    //public void TestThenIncludeSortSingle()
-    //{
-    //    //SETUP
-    //    var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-    //    using (var context = new EfCoreContext(options))
-    //    {
-    //        context.Database.EnsureCreated();
-    //        var newBook = new Book
-    //        {
-    //            AuthorsLink = new List<BookAuthor>
-    //            {
-    //                new BookAuthor {Author = new Author {Name = "Author2"}, Order = 2},
-    //                new BookAuthor {Author = new Author {Name = "Author1"}, Order = 1},
-    //            }
-    //        };
-    //        context.Add(newBook);
-    //        context.SaveChanges();
+    [Fact]
+    public void TestThenIncludeSortSingle()
+    {
+        //SETUP
+        var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+        using (var context = new EfCoreContext(options))
+        {
+            context.Database.EnsureCreated();
+            var newBook = new Book
+            {
+                AuthorsLink = new List<BookAuthor>
+            {
+                new BookAuthor {Author = new Author {Name = "Author2"}, Order = 2},
+                new BookAuthor {Author = new Author {Name = "Author1"}, Order = 1},
+            }
+            };
+            context.Add(newBook);
+            context.SaveChanges();
 
-    //        //ATTEMPT
-    //        //BUG in EF Core release 5.3 - see https://github.com/dotnet/efcore/issues/20777
-    //        var query = context.Books
-    //            .Include(x => x.AuthorsLink)
-    //                .ThenInclude(x => x.Author.OrderBy(y => y.Name));
-    //        var books = query.ToList();
+            //ATTEMPT
+            var query = context.Books
+                .Include(book => book.AuthorsLink)//.OrderBy(y => y.Order))
+                    .ThenInclude(bookAuthor => bookAuthor.OrderBy(y => y.Author.Name));
+            var books = query.ToList();
 
-    //        //VERIFY
-    //        _output.WriteLine(query.ToQueryString());
-    //        books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] { "Author1", "Author2" });
-    //    }
-    //}
+            //VERIFY
+            _output.WriteLine(query.ToQueryString());
+            books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] { "Author1", "Author2" });
+        }
+    }
 
-        [Fact]
+    [Fact]
     public void TestIncludeFilterSingle()
     {
         //SETUP
