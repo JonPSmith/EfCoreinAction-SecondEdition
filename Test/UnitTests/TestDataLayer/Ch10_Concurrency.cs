@@ -88,14 +88,14 @@ namespace Test.UnitTests.TestDataLayer
             if (whatTheDatabaseHasNow == null)                       //#E
                 return "Unable to save changes.The book was deleted by another user.";
 
-            var someoneElsesData =                                   //#F
+            var otherUserData =                                   //#F
                 context.Entry(whatTheDatabaseHasNow);                //#F
 
             foreach (var property in entry.Metadata.GetProperties()) //#G
             {
                 var theOriginalValue = entry                        //#H
                     .Property(property.Name).OriginalValue;          //#H
-                var someoneElseValue = someoneElsesData          //#I
+                var otherUserValue = otherUserData          //#I
                     .Property(property.Name).CurrentValue;           //#I
                 var whatIWantedItToBe = entry                      //#J
                     .Property(property.Name).CurrentValue;           //#J
@@ -110,7 +110,7 @@ namespace Test.UnitTests.TestDataLayer
                 }                                                    //#K
 
                 entry.Property(property.Name).OriginalValue =        //#L
-                    someoneElsesData.Property(property.Name)         //#L
+                    otherUserData.Property(property.Name)         //#L
                         .CurrentValue;                               //#L
             }
             return null;                                             //#M
@@ -121,13 +121,13 @@ namespace Test.UnitTests.TestDataLayer
         #C You want to get the data that someone else wrote into the database after your read. 
         #D Entity must be read as NoTracking; otherwise, it’ll interfere with the same entity you’re trying to write.
         #E Concurrency conflict method doesn't handle the case where the book was deleted, so it returns a user-friendly error message.
-        #F You get the TEntity version of the entity, which has all the tracking information.
+        #F You get the EntityEntry<T> version of the entity, which has all the tracking information.
         #G You go through all the properties in the book entity to reset the Original values so that the exception doesn't happen again.
         #H Holds the version of the property at the time you did the tracked read of the book.
         #I Holds the version of the property as written to the database by someone else.
         #J Holds the version of the property that you wanted to set it to in your update.
-        #K Here you set the OriginalValue to the value that someone else set it to. This handles using concurrency tokens or a timestamp.
-        #L Business logic to handle PublishedOn: either set to your value, or the other person's value, or throw exception.
+        #K Business logic to handle PublishedOn: either set to your value, or the other person's value, or throw exception.
+        #l Here you set the OriginalValue to the value that someone else set it to. This works for concurrency tokens or a timestamp.
         #M You return null to say you handled this concurrency issue.
          *****************************************************************/
 
