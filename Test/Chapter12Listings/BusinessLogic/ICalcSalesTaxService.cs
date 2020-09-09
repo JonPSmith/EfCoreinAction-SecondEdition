@@ -3,7 +3,7 @@
 
 namespace Test.Chapter12Listings.BusinessLogic
 {
-    public interface IFindSalesTaxService
+    public interface ICalcSalesTaxService
     {
         double GetSalesTax(string state);
     }

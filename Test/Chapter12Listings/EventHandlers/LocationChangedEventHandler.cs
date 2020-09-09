@@ -14,11 +14,11 @@ namespace Test.Chapter12Listings.EventHandlers
     {
         private readonly EventsDbContext _context;       //#C
         private readonly                                 //#C
-            IFindSalesTaxService _taxLookupService;      //#C
+            ICalcSalesTaxService _taxLookupService;      //#C
 
         public LocationChangedEventHandler(              //#D
             EventsDbContext context,                     //#D
-            IFindSalesTaxService taxLookupService)       //#D
+            ICalcSalesTaxService taxLookupService)       //#D
         {                                                //#D
             _context = context;                          //#D
             _taxLookupService = taxLookupService;        //#D

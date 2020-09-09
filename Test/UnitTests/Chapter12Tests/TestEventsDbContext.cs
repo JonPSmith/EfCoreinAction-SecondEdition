@@ -2,7 +2,10 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using System.Reflection;
 using BookApp.Domain.Books;
+using GenericEventRunner.ForHandlers;
+using GenericEventRunner.ForSetup;
 using Microsoft.Extensions.DependencyInjection;
 using Test.Chapter12Listings.BusinessLogic;
 using Test.Chapter12Listings.EfClasses;
@@ -132,15 +135,48 @@ namespace Test.UnitTests.Chapter12Tests
             quote3Loc1.SalesTaxPercent.ShouldEqual(0.05);
         }
 
+        [Fact]
+        public void TestRegisterEventRunnerAndHandlersOk()
+        {
+            //SETUP
+            var services = new ServiceCollection();
+
+            //ATTEMPT
+            services.RegisterEventRunnerAndHandlers(
+                Assembly.GetAssembly(typeof(LocationChangedEventHandler)));
+
+            //VERIFY
+            services.Contains(new ServiceDescriptor(typeof(IEventRunner),
+                typeof(EventRunner),
+                ServiceLifetime.Scoped), new ServiceDescriptorCompare()).ShouldBeTrue();
+            services.Contains(new ServiceDescriptor(typeof(IEventHandler<LocationChangedEvent>),
+                typeof(LocationChangedEventHandler),
+                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
+            services.Contains(new ServiceDescriptor(typeof(IEventHandler<LocationChangedEvent>),
+                typeof(LocationChangedEventHandler),
+                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
+        }
+
         private static EventsDbContext SetupDependencyInjectionAndGetDbContext()
         {
             var services = new ServiceCollection();
             services.AddSingleton(SqliteInMemory.CreateOptions<EventsDbContext>());
             services.AddScoped<EventsDbContext>();
-            services.AddScoped<IEventRunner, EventRunner>();
-            services.AddTransient<IEventHandler<LocationChangedEvent>, LocationChangedEventHandler>();
-            services.AddTransient<IEventHandler<QuoteLocationChangedEvent>, QuoteLocationChangedEventHandler>();
-            services.AddTransient<IFindSalesTaxService, FindSalesTaxService>();
+
+            services.AddScoped<IEventRunner, EventRunner>();                //#A
+
+            services.AddTransient<IEventHandler<LocationChangedEvent>,      //#B
+                    LocationChangedEventHandler>();                         //#B
+            services.AddTransient<IEventHandler<QuoteLocationChangedEvent>, //#B
+                QuoteLocationChangedEventHandler>();                        //#B
+
+            services.AddTransient<ICalcSalesTaxService,                     //#C
+                CalcSalesTaxService>();                                     //#C
+            /********************************************************************
+            #A Register the Event Runner which will be injected into your application's DbContext
+            #B Registering all of your event handlers
+            #C You need to register any services that your event handlers use
+             *****************************************************************/
 
             var serviceProvider = services.BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<EventsDbContext>();

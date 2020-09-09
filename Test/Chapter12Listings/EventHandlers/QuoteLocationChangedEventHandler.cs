@@ -9,9 +9,9 @@ namespace Test.Chapter12Listings.EventHandlers
 {
     public class QuoteLocationChangedEventHandler : IEventHandler<QuoteLocationChangedEvent>
     {
-        private readonly IFindSalesTaxService _taxLookupService;
+        private readonly ICalcSalesTaxService _taxLookupService;
 
-        public QuoteLocationChangedEventHandler(IFindSalesTaxService taxLookupService)
+        public QuoteLocationChangedEventHandler(ICalcSalesTaxService taxLookupService)
         {
             _taxLookupService = taxLookupService;
         }

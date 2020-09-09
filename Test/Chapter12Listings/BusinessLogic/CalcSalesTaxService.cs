@@ -7,11 +7,11 @@ using Test.Chapter12Listings.EfCode;
 
 namespace Test.Chapter12Listings.BusinessLogic
 {
-    public class FindSalesTaxService : IFindSalesTaxService
+    public class CalcSalesTaxService : ICalcSalesTaxService
     {
         private readonly EventsDbContext _context;
 
-        public FindSalesTaxService(EventsDbContext context)
+        public CalcSalesTaxService(EventsDbContext context)
         {
             _context = context;
         }
