@@ -44,8 +44,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
                         .Where(x => x.PublishedOn <= DateTime.Today) 
                         .Select(x => x.PublishedOn.Year)             
                         .Distinct()                                  
-                        .OrderByDescending(x => x)                   
-                        .ToList() //Added to fix preview 6 problem - see https://github.com/dotnet/efcore/issues/21445
+                        .OrderByDescending(x => x)
                         .Select(x => new DropdownTuple               
                         {                                            
                             Value = x.ToString(),                    
