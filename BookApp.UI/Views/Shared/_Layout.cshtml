@@ -19,14 +19,21 @@
             <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Info</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="DefaultSql" asp-action="Index">Default SQL</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="DefaultSql" asp-action="Index">SQL (default)</a>
                     </li>
+                    @*<li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">SQL (Dapper)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">SQL (cached)</a>
+                    </li>*@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Your Orders</a>
                     </li>
+
                     @*@if (Context.Request.IsLocal())
                     {
                         <li class="dropdown nav-link text-dark">

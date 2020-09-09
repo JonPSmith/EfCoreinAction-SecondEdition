@@ -9,9 +9,9 @@ namespace Test.Chapter12Listings.BusinessLogic
 {
     public class CalcSalesTaxService : ICalcSalesTaxService
     {
-        private readonly EventsDbContext _context;
+        private readonly DomainEventsDbContext _context;
 
-        public CalcSalesTaxService(EventsDbContext context)
+        public CalcSalesTaxService(DomainEventsDbContext context)
         {
             _context = context;
         }

@@ -12,12 +12,12 @@ namespace Test.Chapter12Listings.EventHandlers
     public class LocationChangedEventHandler             //#A
         : IEventHandler<LocationChangedEvent>            //#B
     {
-        private readonly EventsDbContext _context;       //#C
+        private readonly DomainEventsDbContext _context;       //#C
         private readonly                                 //#C
             ICalcSalesTaxService _taxLookupService;      //#C
 
         public LocationChangedEventHandler(              //#D
-            EventsDbContext context,                     //#D
+            DomainEventsDbContext context,                     //#D
             ICalcSalesTaxService taxLookupService)       //#D
         {                                                //#D
             _context = context;                          //#D

@@ -7,12 +7,12 @@ using Test.Chapter12Listings.EventInterfacesEtc;
 
 namespace Test.Chapter12Listings.EfCode
 {
-    public class EventsDbContext : DbContext
+    public class DomainEventsDbContext : DbContext
     {
         private readonly IEventRunner _eventRunner;           //#A           
 
-        public EventsDbContext(                               //#B
-            DbContextOptions<EventsDbContext> options,        //#B
+        public DomainEventsDbContext(                         //#B
+            DbContextOptions<DomainEventsDbContext> options,  //#B
             IEventRunner eventRunner = null)                  //#B
             : base(options)
         {

@@ -26,8 +26,8 @@ namespace Test.UnitTests.Chapter12Tests
         public void TestEventsDbContextSeededOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EventsDbContext>();
-            using var context = new EventsDbContext(options);
+            var options = SqliteInMemory.CreateOptions<DomainEventsDbContext>();
+            using var context = new DomainEventsDbContext(options);
 
             //ATTEMPT
             context.Database.EnsureCreated();
@@ -47,8 +47,8 @@ namespace Test.UnitTests.Chapter12Tests
         public void TestAddEventManuallyOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EventsDbContext>();
-            using var context = new EventsDbContext(options);
+            var options = SqliteInMemory.CreateOptions<DomainEventsDbContext>();
+            using var context = new DomainEventsDbContext(options);
             context.Database.EnsureCreated();
 
             //ATTEMPT
@@ -66,8 +66,8 @@ namespace Test.UnitTests.Chapter12Tests
         public void TestNewQuoteCreatesEventOk()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<EventsDbContext>();
-            using var context = new EventsDbContext(options);
+            var options = SqliteInMemory.CreateOptions<DomainEventsDbContext>();
+            using var context = new DomainEventsDbContext(options);
             context.Database.EnsureCreated();
 
             //ATTEMPT
@@ -157,11 +157,11 @@ namespace Test.UnitTests.Chapter12Tests
                 ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
         }
 
-        private static EventsDbContext SetupDependencyInjectionAndGetDbContext()
+        private static DomainEventsDbContext SetupDependencyInjectionAndGetDbContext()
         {
             var services = new ServiceCollection();
-            services.AddSingleton(SqliteInMemory.CreateOptions<EventsDbContext>());
-            services.AddScoped<EventsDbContext>();
+            services.AddSingleton(SqliteInMemory.CreateOptions<DomainEventsDbContext>());
+            services.AddScoped<DomainEventsDbContext>();
 
             services.AddScoped<IEventRunner, EventRunner>();                //#A
 
@@ -179,7 +179,7 @@ namespace Test.UnitTests.Chapter12Tests
              *****************************************************************/
 
             var serviceProvider = services.BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<EventsDbContext>();
+            var context = serviceProvider.GetRequiredService<DomainEventsDbContext>();
             return context;
         }
     }
