@@ -8,6 +8,6 @@ namespace Test.Chapter12Listings.BusinessLogic
 {
     public interface IWarehouseService
     {
-        void CheckProductsInStock(List<Order> orders);
+        List<string> AllocateOrderAndDispatch(Order order);
     }
 }

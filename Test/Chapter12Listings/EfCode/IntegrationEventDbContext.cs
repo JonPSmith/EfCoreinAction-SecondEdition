@@ -34,11 +34,19 @@ namespace Test.Chapter12Listings.EfCode
                 .ToList();
             if (!newOrders.Any() || _warehouseService == null)
                 return base.SaveChanges(acceptAllChangesOnSuccess);
+            if (newOrders.Count > 1)
+                throw new Exception("Can only process one Order at a time");
 
             using(var transaction = Database.BeginTransaction())
             {
                 var result = base.SaveChanges(acceptAllChangesOnSuccess);
-                _warehouseService.CheckProductsInStock(newOrders);
+                var errors = _warehouseService
+                    .AllocateOrderAndDispatch(newOrders.Single());
+                if (errors.Any())
+                {
+                    throw new OutOfStockException(string.Join('.', errors));
+                }
+
                 transaction.Commit();
                 return result;
             }
