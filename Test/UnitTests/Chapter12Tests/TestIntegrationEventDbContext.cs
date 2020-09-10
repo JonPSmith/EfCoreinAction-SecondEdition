@@ -21,7 +21,7 @@ namespace Test.UnitTests.Chapter12Tests
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<IntegrationEventDbContext>();
-            using var context = new IntegrationEventDbContext(options);
+            using var context = new IntegrationEventDbContext(options, new DummyWarehouseService());
 
             //ATTEMPT
             context.Database.EnsureCreated();
@@ -33,11 +33,11 @@ namespace Test.UnitTests.Chapter12Tests
         [Theory]
         [InlineData(false,1)]
         [InlineData(true, 3)]
-        public void TestAddOrderNoWarehouseCheckOk(bool failInWarehouse, int lineCount)
+        public void TestAddOrderDummyWarehouseCheckOk(bool failInWarehouse, int lineCount)
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<IntegrationEventDbContext>();
-            using var context = new IntegrationEventDbContext(options);
+            using var context = new IntegrationEventDbContext(options, new DummyWarehouseService());
             context.Database.EnsureCreated();
 
             //ATTEMPT

@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter12Listings.BusinessLogic;
@@ -16,7 +15,7 @@ namespace Test.Chapter12Listings.EfCode
 
         public IntegrationEventDbContext(                         
             DbContextOptions<IntegrationEventDbContext> options, 
-            IWarehouseService warehouseService = null)  
+            IWarehouseService warehouseService)  
             : base(options)
         {
             _warehouseService = warehouseService;
@@ -32,7 +31,7 @@ namespace Test.Chapter12Listings.EfCode
                 .Where(x => x.State == EntityState.Added)
                 .Select(x => x.Entity)
                 .ToList();
-            if (!newOrders.Any() || _warehouseService == null)
+            if (!newOrders.Any())
                 return base.SaveChanges(acceptAllChangesOnSuccess);
             if (newOrders.Count > 1)
                 throw new Exception("Can only process one Order at a time");
