@@ -2,7 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
-using Test.Chapter12Listings.EfClasses;
+using Test.Chapter12Listings.DomainEventEfClasses;
 using Test.Chapter12Listings.EventInterfacesEtc;
 
 namespace Test.Chapter12Listings.EfCode

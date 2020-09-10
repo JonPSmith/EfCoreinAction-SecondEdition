@@ -3,7 +3,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Test.Chapter12Listings.EfClasses
+namespace Test.Chapter12Listings.DomainEventEfClasses
 {
     public class SalesTaxInfo
     {

@@ -8,7 +8,7 @@ using GenericEventRunner.ForHandlers;
 using GenericEventRunner.ForSetup;
 using Microsoft.Extensions.DependencyInjection;
 using Test.Chapter12Listings.BusinessLogic;
-using Test.Chapter12Listings.EfClasses;
+using Test.Chapter12Listings.DomainEventEfClasses;
 using Test.Chapter12Listings.EfCode;
 using Test.Chapter12Listings.EventHandlers;
 using Test.Chapter12Listings.EventInterfacesEtc;
