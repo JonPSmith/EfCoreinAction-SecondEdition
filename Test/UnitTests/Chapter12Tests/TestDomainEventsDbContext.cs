@@ -3,8 +3,6 @@
 
 using System.Linq;
 using System.Reflection;
-using BookApp.Domain.Books;
-using GenericEventRunner.ForHandlers;
 using GenericEventRunner.ForSetup;
 using Microsoft.Extensions.DependencyInjection;
 using Test.Chapter12Listings.BusinessLogic;
@@ -20,7 +18,7 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.Chapter12Tests
 {
-    public class TestEventsDbContext
+    public class TestDomainEventsDbContext
     {
         [Fact]
         public void TestEventsDbContextSeededOk()
