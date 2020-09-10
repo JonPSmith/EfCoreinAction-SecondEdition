@@ -54,7 +54,7 @@ namespace Test.UnitTests.Chapter12Tests
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<IntegrationEventDbContext>();
-            using var context = new IntegrationEventDbContext(options, new WarehouseService());
+            using var context = new IntegrationEventDbContext(options, new WarehouseEventHandler());
             context.Database.EnsureCreated();
 
             //ATTEMPT
@@ -71,7 +71,7 @@ namespace Test.UnitTests.Chapter12Tests
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<IntegrationEventDbContext>();
-            using var context = new IntegrationEventDbContext(options, new WarehouseService());
+            using var context = new IntegrationEventDbContext(options, new WarehouseEventHandler());
             context.Database.EnsureCreated();
 
             //ATTEMPT

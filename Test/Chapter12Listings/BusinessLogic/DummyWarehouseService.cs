@@ -2,13 +2,18 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Test.Chapter12Listings.IntegrationEventEfClasses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Test.Chapter12Listings.BusinessLogic
 {
-    public class DummyWarehouseService : IWarehouseService
+    public class DummyWarehouseService : IWarehouseEventHandler
     {
-        public List<string> AllocateOrderAndDispatch(Order order)
+        public bool NeedsCallToWarehouse(DbContext context)
+        {
+            return false;
+        }
+
+        public List<string> AllocateOrderAndDispatch()
         {
             return new List<string>();
         }

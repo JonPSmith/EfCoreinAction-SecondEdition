@@ -11,14 +11,14 @@ namespace Test.Chapter12Listings.EfCode
 {
     public class IntegrationEventDbContext : DbContext
     {
-        private readonly IWarehouseService _warehouseService;
+        private readonly IWarehouseEventHandler _warehouseEventHandler;
 
         public IntegrationEventDbContext(                         
             DbContextOptions<IntegrationEventDbContext> options, 
-            IWarehouseService warehouseService)  
+            IWarehouseEventHandler warehouseEventHandler)  
             : base(options)
         {
-            _warehouseService = warehouseService;
+            _warehouseEventHandler = warehouseEventHandler;
         }
 
         public DbSet<Order> Orders { get; set; }
@@ -27,20 +27,14 @@ namespace Test.Chapter12Listings.EfCode
         public override int SaveChanges
             (bool acceptAllChangesOnSuccess)
         {
-            var newOrders = ChangeTracker.Entries<Order>()
-                .Where(x => x.State == EntityState.Added)
-                .Select(x => x.Entity)
-                .ToList();
-            if (!newOrders.Any())
+            if (!_warehouseEventHandler.NeedsCallToWarehouse(this))
                 return base.SaveChanges(acceptAllChangesOnSuccess);
-            if (newOrders.Count > 1)
-                throw new Exception("Can only process one Order at a time");
 
             using(var transaction = Database.BeginTransaction())
             {
                 var result = base.SaveChanges(acceptAllChangesOnSuccess);
-                var errors = _warehouseService
-                    .AllocateOrderAndDispatch(newOrders.Single());
+                var errors = _warehouseEventHandler
+                    .AllocateOrderAndDispatch();
                 if (errors.Any())
                 {
                     throw new OutOfStockException(string.Join('.', errors));
