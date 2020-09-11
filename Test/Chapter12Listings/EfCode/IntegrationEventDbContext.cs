@@ -84,7 +84,7 @@ namespace Test.Chapter12Listings.EfCode
     #E There is an integration event so a transaction is opened
     #F It first calls the base SaveChange to save the Order
     #G This calls the warehouse event handler that communicates with the warehouse
-    #H If the warehouse returned errors, then it throws a OutOfStockException
+    #H If the warehouse returned errors, then it throws an OutOfStockException
     #I If there were no errors the Order is committed to the database
     #J Finally we return the result of the SaveChanges
      ***************************************************************/
