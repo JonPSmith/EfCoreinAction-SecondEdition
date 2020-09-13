@@ -146,7 +146,7 @@ namespace Test.UnitTests.Chapter12Tests
             //VERIFY
             services.Contains(new ServiceDescriptor(typeof(IEventRunner),
                 typeof(EventRunner),
-                ServiceLifetime.Scoped), new ServiceDescriptorCompare()).ShouldBeTrue();
+                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
             services.Contains(new ServiceDescriptor(typeof(IEventHandler<LocationChangedEvent>),
                 typeof(LocationChangedEventHandler),
                 ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
@@ -161,7 +161,7 @@ namespace Test.UnitTests.Chapter12Tests
             services.AddSingleton(SqliteInMemory.CreateOptions<DomainEventsDbContext>());
             services.AddScoped<DomainEventsDbContext>();
 
-            services.AddScoped<IEventRunner, EventRunner>();                //#A
+            services.AddTransient<IEventRunner, EventRunner>();             //#A
 
             services.AddTransient<IEventHandler<LocationChangedEvent>,      //#B
                     LocationChangedEventHandler>();                         //#B

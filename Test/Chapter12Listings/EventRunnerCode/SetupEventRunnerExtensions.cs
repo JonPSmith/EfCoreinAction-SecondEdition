@@ -14,7 +14,7 @@ namespace Test.Chapter12Listings.EventRunnerCode
             this IServiceCollection services,                     //#A
             params Assembly[] assembliesToScan)                   //#B
         {
-            services.AddScoped<IEventRunner, EventRunner>();      //#C
+            services.AddTransient<IEventRunner, EventRunner>();      //#C
 
             foreach (var assembly in assembliesToScan)            //#D
             {                                                     //#D
