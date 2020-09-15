@@ -5,7 +5,7 @@ using GenericEventRunner.DomainParts;
 
 namespace BookApp.Domain.Books.DomainEvents
 {
-    public class AuthorNameUpdatedEvent : IDomainEvent
+    public class AuthorNameUpdatedEvent : IEntityEvent
     {
         public AuthorNameUpdatedEvent(Author changedAuthor)
         {
