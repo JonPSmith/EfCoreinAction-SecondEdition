@@ -217,12 +217,12 @@ namespace Test.UnitTests.TestDataLayer
                                "FROM Books b " +
                                "WHERE b.BookId = @bookId";                     //#B
 
-                var bookDtos = connection                                      //#C
+                var bookDto = connection                                      //#C
                     .Query<RawSqlDto>(query, new                               //#C
                     {                                                          //#D
                         bookId = 4                                             //#D
                     })                                                         //#D
-                    .ToList();
+                    .Single();
 
                 /****************************************************************
                 #A Gets a DbConnection to the database, which the micro-ORM called Dapper can use 
@@ -232,8 +232,7 @@ namespace Test.UnitTests.TestDataLayer
                  * ******************************************************************/
 
                 //VERIFY
-                bookDtos.Count.ShouldEqual(1);
-                bookDtos.Single().AverageVotes.ShouldEqual(5);
+                bookDto.AverageVotes.ShouldEqual(5);
             }
         }
 

@@ -17,7 +17,7 @@ namespace Test.Chapter11Listings.Interfaces
         void LogChange(EntityEntry entry, Guid userId = default); //#F
     }
     /***********************************************************
-    #A Added to any entity class when the entity is added or updated.
+    #A Add this interface to any entity class where you want to log when/who it was created or updated
     #B Holds the datetime when the entity was first added to the database
     #C Holds the UserId who created the entity
     #D Holds the datetime when the entity was last updated
