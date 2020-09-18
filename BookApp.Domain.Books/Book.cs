@@ -22,7 +22,7 @@ namespace BookApp.Domain.Books
 
         //Use uninitialized backing fields - this means we can detect if the collection was loaded
         private HashSet<Review> _reviews;
-        private HashSet<BookTag> _bookTags;
+        private HashSet<Tag> _tags;
 
         //-----------------------------------------------
         //ctors
@@ -62,7 +62,7 @@ namespace BookApp.Domain.Books
 
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList();
-        public IReadOnlyCollection<BookTag> TagsLink => _bookTags?.ToList();
+        public IReadOnlyCollection<Tag> Tags => _tags?.ToList();
 
         //----------------------------------------------
         //Table splitting
@@ -108,8 +108,10 @@ namespace BookApp.Domain.Books
                 ActualPrice = price,
                 ImageUrl = imageUrl,
                 //We need to initialise the AuthorsOrdered string when the entry is created
+                //NOTE: We must NOT initialise the ReviewsCount and the ReviewsAverageVotes as they default to zero
                 AuthorsOrdered = string.Join(", ", authors.Select(x => x.Name)),
-                //We don't need to initialise the ReviewsCount and the ReviewsAverageVotes  as they default to zero
+
+                _tags = tags != null ? new HashSet<Tag>(tags) : new HashSet<Tag>(),
                 _reviews = new HashSet<Review>()       //We add an empty list on create. I allows reviews to be added when building test data
             };
             if (authors == null)
@@ -118,8 +120,7 @@ namespace BookApp.Domain.Books
             book._authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(book, a, order++)));
             if (!book._authorsLink.Any())
                 status.AddError("You must have at least one Author for a book.");
-            if (tags != null)
-                book._bookTags = new HashSet<BookTag>(tags.Select(t => new BookTag(book, t)));
+            
 
             return status.SetResult(book);
         }

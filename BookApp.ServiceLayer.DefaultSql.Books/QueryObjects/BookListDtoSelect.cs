@@ -25,7 +25,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
                     p.AuthorsLink
                         .OrderBy(q     => q.Order)
                         .Select(q      => q.Author.Name)),
-                TagStrings             = p.TagsLink.Select(x => x.TagId).ToArray(),
+                TagStrings             = p.Tags.Select(x => x.TagId).ToArray(),
                 ReviewsCount           = p.Reviews.Count(),
                 ReviewsAverageVotes    =
                     p.Reviews.Select(y =>
