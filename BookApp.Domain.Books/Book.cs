@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
@@ -54,15 +53,6 @@ namespace BookApp.Domain.Books
         /// </summary>
         public string ManningBookUrl { get; private set; }
 
-        //----------------------------------------------
-        //Detailed information
-
-        public string Description { get; private set; }
-        public string AboutAuthor { get; private set; }
-        public string AboutReader { get; private set; }
-        public string AboutTechnology { get; private set; }
-        public string WhatsInside { get; private set; }
-
         //---------------------------------------------
 
         public bool SoftDeleted { get; private set; }
@@ -73,6 +63,11 @@ namespace BookApp.Domain.Books
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList();
         public IReadOnlyCollection<BookTag> TagsLink => _bookTags?.ToList();
+
+        //----------------------------------------------
+        //Table splitting
+
+        public BookDetails Details { get; private set; }
 
         //----------------------------------------------
         //Extra properties filled in by events
@@ -151,11 +146,9 @@ namespace BookApp.Domain.Books
         public void SetBookDetails(string description, string aboutAuthor, string aboutReader, 
             string aboutTechnology, string whatsInside)
         {
-            Description = description;
-            AboutAuthor = aboutAuthor;
-            AboutReader = aboutReader;
-            AboutTechnology = aboutTechnology;
-            WhatsInside = whatsInside;
+            if (Details == null)
+                Details = new BookDetails();
+            Details.SetBookDetails(description, aboutAuthor, aboutReader, aboutTechnology, whatsInside, this);
         }
 
         public void SetManningBookUrl(string manningBookUrl)

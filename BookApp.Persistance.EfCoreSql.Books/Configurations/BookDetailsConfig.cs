@@ -7,16 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BookApp.Persistence.EfCoreSql.Books.Configurations
 {
-    internal class BookConfig : IEntityTypeConfiguration<Book>
+    internal class BookDetailsConfig : IEntityTypeConfiguration<BookDetails>
     {
-        public void Configure(EntityTypeBuilder<Book> entity)
+        public void Configure(EntityTypeBuilder<BookDetails> entity)
         {
-            entity.HasIndex(x => x.PublishedOn);
-            entity.HasIndex(x => x.ReviewsAverageVotes);
-
-            entity.HasOne(x => x.Details)
-                .WithOne()
-                .HasForeignKey<BookDetails>(x => x.BookDetailsId);
+            entity.ToTable("Books");
         }
     }
 }

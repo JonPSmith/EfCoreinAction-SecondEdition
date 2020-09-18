@@ -8,6 +8,7 @@ using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
+using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
 using Xunit;
@@ -29,6 +30,24 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 
             //VERIFY
             books.Count.ShouldBeInRange(700, 800);
+        }
+
+        [Fact]
+        public void TestManuallyAddDetailsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            //ATTEMPT
+            var book = BookTestData.CreateDummyBookOneAuthor();
+            book.SetBookDetails("d","aa", "ar", "at", "w");
+            context.Add(book);
+            context.SaveChanges();
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(1);
         }
 
         [Fact]

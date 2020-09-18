@@ -37,11 +37,11 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
                 TagStrings         = p.TagsLink.Select(x => x.TagId).ToArray(),
                 ImageUrl           = p.ImageUrl,
                 ManningBookUrl     = p.ManningBookUrl,
-                Description        = new HtmlString(p.Description),
-                AboutAuthor        = new HtmlString(p.AboutAuthor),
-                AboutReader        = new HtmlString(p.AboutReader),
-                AboutTechnology    = new HtmlString(p.AboutTechnology),
-                WhatsInside        = new HtmlString(p.WhatsInside)
+                Description        = new HtmlString(p.Details.Description),
+                AboutAuthor        = new HtmlString(p.Details.AboutAuthor),
+                AboutReader        = new HtmlString(p.Details.AboutReader),
+                AboutTechnology    = new HtmlString(p.Details.AboutTechnology),
+                WhatsInside        = new HtmlString(p.Details.WhatsInside)
             }).SingleOrDefaultAsync(x => x.BookId == bookId);
         }
     }
