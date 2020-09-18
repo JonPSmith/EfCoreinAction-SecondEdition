@@ -85,15 +85,17 @@ namespace BookApp.Infrastructure.Books.Seeding
             return authorDict;
         }
 
+        //This decodes The authorshipDisplay string which contains lots of different formats
         internal static IEnumerable<string> NormalizeAuthorNames(this ManningBooksJson json)
         {
             const string withChaptersBy = "With chapters selected by";
-            //There are ??? formats
+            //The formats for authors are
             //- Author1
             //- Author1 and Author2
             //- Author1, Author2
             //- Author1, Author2 with Author3
             //- Author1<br><i>Foreword by ...
+            //- Author1 Edited by
             //- With chapters selected by ...
             //- contributions by
             //- Author1, Ph.D.
@@ -106,7 +108,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                 ? json.authorshipDisplay.Substring(withChaptersBy.Length)
                 : json.authorshipDisplay;
 
-            var breakIndex = authorString.IndexOf("<");
+            var breakIndex = authorString.IndexOf("<"); //<br><i>Foreword by 
             if (breakIndex > 0)
                 authorString = authorString.Substring(0, breakIndex);
             var editedIndex = authorString.IndexOf("Edited by");
@@ -119,7 +121,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                 .Replace("contributions by", ",")
                 .Replace(" with ", ",")
                 .Replace(" and ", ",");
-            if(Regex.Match(authorString, @";|#|&").Success)
+            if(Regex.Match(authorString, @";|#|&").Success)//Some name come out wrong - don't know why
                 return new string[0];
 
             var authors = authorString.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(y => y.Trim());
