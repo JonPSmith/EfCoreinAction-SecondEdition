@@ -17,6 +17,13 @@ namespace BookApp.Persistence.EfCoreSql.Books.Configurations
             entity.HasOne(x => x.Details)
                 .WithOne()
                 .HasForeignKey<BookDetails>(x => x.BookDetailsId);
+
+            entity.HasMany(e => e.Tags)
+                .WithMany(e => e.Books)
+                .UsingEntity<BookTag>(
+                    b => b.HasOne(e => e.Tag).WithMany().HasForeignKey(e => e.TagId),
+                    b => b.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId));
+
         }
     }
 }

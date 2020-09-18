@@ -10,7 +10,7 @@ namespace BookApp.Domain.Books
 {
     public class Tag
     {
-        private HashSet<BookTag> _booksLink;
+        private HashSet<Book> _books;
 
         public Tag(string tagId)
         {
@@ -22,6 +22,6 @@ namespace BookApp.Domain.Books
         [MaxLength(40)]
         public string TagId { get; private set; }
 
-        public IReadOnlyCollection<BookTag> BooksLink => _booksLink.ToList();
+        public IReadOnlyCollection<Book> Books => _books.ToList();
     }
 }
