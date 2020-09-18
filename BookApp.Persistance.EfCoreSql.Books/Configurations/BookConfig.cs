@@ -18,6 +18,7 @@ namespace BookApp.Persistence.EfCoreSql.Books.Configurations
                 .WithOne()
                 .HasForeignKey<BookDetails>(x => x.BookDetailsId);
 
+            //Had to manually configure a BookTag because GenericServices can't (yet) handle index entities
             entity.HasMany(e => e.Tags)
                 .WithMany(e => e.Books)
                 .UsingEntity<BookTag>(
