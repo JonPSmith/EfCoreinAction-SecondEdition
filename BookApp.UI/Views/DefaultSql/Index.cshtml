@@ -123,9 +123,9 @@
                             Buy Book
                         </button>
                         <ul class="dropdown-menu">
-                            <a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="1">Buy 1 book</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="2">Buy 2 book</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="3">Buy 3 book</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="1">Buy book (demo only!)</a>
+                            @*<a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="2">Buy 2 book</a>*@
+                            <a class="dropdown-item" href="@item.ManningBookUrl">Buy book (Manning site)</a>
                         </ul>
                     </div>
                 }
