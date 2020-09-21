@@ -13,14 +13,16 @@ using Newtonsoft.Json;
 
 namespace ServiceLayer.DatabaseServices.Concrete
 {
+
     public static class BookJsonLoader
-    {
+        {
         public static IEnumerable<Book> LoadBooks(string fileDir, string fileSearchString)
         {
             var filePath = GetJsonFilePath(fileDir, fileSearchString);
             var jsonDecoded = JsonConvert.DeserializeObject<ICollection<BookInfoJson>>(File.ReadAllText(filePath));
 
             var authorDict = new Dictionary<string, Author>();
+            var tagDict = new Dictionary<string, Tag>();
             foreach (var bookInfoJson in jsonDecoded)
             {
                 foreach (var author in bookInfoJson.authors)
@@ -28,15 +30,24 @@ namespace ServiceLayer.DatabaseServices.Concrete
                     if (!authorDict.ContainsKey(author))
                         authorDict[author] = new Author {Name = author};
                 }
+
+                foreach (var category in bookInfoJson.categories)
+                {
+                    if (!tagDict.ContainsKey(category))
+                        tagDict[category] = new Tag {TagId = category};
+                }
+
             }
 
-            return jsonDecoded.Select(x => CreateBookWithRefs(x, authorDict));
+            return jsonDecoded.Select(x => CreateBookWithRefs(x, authorDict, tagDict));
         }
 
 
         //--------------------------------------------------------------
         //private methods
-        private static Book CreateBookWithRefs(BookInfoJson bookInfoJson, Dictionary<string, Author> authorDict)
+        private static Book CreateBookWithRefs(BookInfoJson bookInfoJson,
+            Dictionary<string, Author> authorDict,
+            Dictionary<string, Tag> tagsDict)
         {
             var book = new Book
             {
@@ -53,6 +64,12 @@ namespace ServiceLayer.DatabaseServices.Concrete
             foreach (var author in bookInfoJson.authors)
             {
                 book.AuthorsLink.Add(new BookAuthor {Book = book, Author = authorDict[author], Order = i++});
+            }
+
+            book.Tags = new List<Tag>();
+            foreach (var category in bookInfoJson.categories)
+            {
+                book.Tags.Add(tagsDict[category]);
             }
 
             if (bookInfoJson.averageRating != null)
@@ -100,7 +117,8 @@ namespace ServiceLayer.DatabaseServices.Concrete
                     return new DateTime(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
             }
 
-            throw new InvalidOperationException($"The json publishedDate failed to decode: string was {publishedDate}");
+            throw new InvalidOperationException(
+                $"The json publishedDate failed to decode: string was {publishedDate}");
         }
 
         private static string GetJsonFilePath(string fileDir, string searchPattern)
@@ -115,4 +133,5 @@ namespace ServiceLayer.DatabaseServices.Concrete
             return fileList.ToList().OrderBy(x => x).Last();
         }
     }
+
 }

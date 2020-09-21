@@ -196,10 +196,10 @@ namespace Test.UnitTests.TestDataLayer
                     context.Notify2.First();
                 entity.MyString = "Changed";
                 var ex = Assert.Throws<InvalidOperationException>(() => context.Entry(entity)
-                    .Property(nameof(NotifyEntity.MyString)).OriginalValue);
+                    .Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test"));
 
                 //VERIFY
-                ex.Message.StartsWith("The original value for property 'MyString' of entity type 'Notify2Entity' cannot be accessed because it is not being tracked. Original values are not recorded for most properties of entities when the 'ChangingAndChangedNotifications' strategy is used. ")
+                ex.Message.StartsWith("The original value for property 'Notify2Entity.MyString' cannot be accessed because it is not being tracked. ")
                     .ShouldBeTrue();
             }
         }

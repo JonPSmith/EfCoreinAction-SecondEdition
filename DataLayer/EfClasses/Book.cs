@@ -33,6 +33,8 @@ namespace DataLayer.EfClasses
         public PriceOffer Promotion { get; set; }
         public ICollection<Review> Reviews { get; set; }
 
+        public ICollection<Tag> Tags { get; set; }
+
         public ICollection<BookAuthor> 
             AuthorsLink { get; set; }
 

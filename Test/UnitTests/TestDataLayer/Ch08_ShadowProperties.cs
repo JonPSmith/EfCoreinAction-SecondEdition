@@ -117,7 +117,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.InnerException.Message.ShouldEqual(
-                    "SQLite Error 19: 'NOT NULL constraint failed: Attendees.MyShadowFk'.");
+                    "SQLite Error 19: 'FOREIGN KEY constraint failed'.");
                 //context.Set<RequiredTrack>().Count().ShouldEqual(1);
             }
         }

@@ -26,6 +26,8 @@ namespace DataLayer.EfCode
         public DbSet<Book> Books { get; set; }                        //#C
         public DbSet<Author> Authors { get; set; }                    //#C
         public DbSet<PriceOffer> PriceOffers { get; set; }            //#C
+        public DbSet<Tag> Tags { get; set; }                          //#C
+
         public DbSet<Order> Orders { get; set; }                      //#C
 
         protected override void                                       //#D //#A

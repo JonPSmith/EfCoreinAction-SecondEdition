@@ -16,7 +16,8 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 Title = "Quantum Networking",
                 Description = "Entangled quantum networking provides faster-than-light data communications",
                 PublishedOn = new DateTime(2057, 1, 1),
-                Price = 220
+                Price = 220,
+                Tags = new List<Tag> { new Tag { TagId = "Quantum Entanglement" } }
             };
             book4.AuthorsLink = new List<BookAuthor>
                 {new BookAuthor {Author = new Author {Name = "Future Person"}, Book = book4}};
