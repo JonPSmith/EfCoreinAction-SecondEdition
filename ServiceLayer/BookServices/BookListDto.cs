@@ -24,6 +24,7 @@ namespace ServiceLayer.BookServices
 
         public double?
             ReviewsAverageVotes { get; set; } //#H
+        public string[] TagStrings { get; set; } //#I
 
         /******************************************************
         #A I need the Primary Key if the customer clicks the entry to buy the book
@@ -34,6 +35,7 @@ namespace ServiceLayer.BookServices
         #F An array of the authors' names in the right order
         #G The number of people who reviewed the book
         #H The average of all the Votes - null if no votes
+        #I The Tags names for this book
          * ***************************************************/
     }
 }
