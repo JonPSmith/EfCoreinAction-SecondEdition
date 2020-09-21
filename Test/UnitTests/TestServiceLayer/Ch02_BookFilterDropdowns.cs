@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using ServiceLayer.BookServices;
 using ServiceLayer.BookServices.Concrete;
 using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;

@@ -84,6 +84,10 @@ namespace Test.TestHelpers
 
         public static List<Book> CreateFourBooks()
         {
+            var editorsChoice = new Tag { TagId = "Editor's Choice" };
+            var architectureTag = new Tag {TagId = "Architecture"};
+            var refactoring = new Tag {TagId = "Refactoring"};
+
             var martinFowler = new Author
             {
                 Name = "Martin Fowler"
@@ -96,7 +100,8 @@ namespace Test.TestHelpers
                 Title = "Refactoring",
                 Description = "Improving the design of existing code",
                 PublishedOn = new DateTime(1999, 7, 8),
-                Price = 40
+                Price = 40,
+                Tags = new List<Tag> { refactoring, editorsChoice }
             };
             book1.AuthorsLink = new List<BookAuthor> {new BookAuthor {Author = martinFowler, Book = book1}};
             books.Add(book1);
@@ -106,7 +111,8 @@ namespace Test.TestHelpers
                 Title = "Patterns of Enterprise Application Architecture",
                 Description = "Written in direct response to the stiff challenges",
                 PublishedOn = new DateTime(2002, 11, 15),
-                Price = 53
+                Price = 53,
+                Tags = new List<Tag> { architectureTag }
             };
             book2.AuthorsLink = new List<BookAuthor> {new BookAuthor {Author = martinFowler, Book = book2}};
             books.Add(book2);
@@ -116,7 +122,8 @@ namespace Test.TestHelpers
                 Title = "Domain-Driven Design",
                 Description = "Linking business needs to software design",
                 PublishedOn = new DateTime(2003, 8, 30),
-                Price = 56
+                Price = 56,
+                Tags = new List<Tag> { architectureTag, editorsChoice }
             };
             book3.AuthorsLink = new List<BookAuthor>
                 {new BookAuthor {Author = new Author {Name = "Eric Evans"}, Book = book3}};
@@ -127,7 +134,8 @@ namespace Test.TestHelpers
                 Title = "Quantum Networking",
                 Description = "Entangled quantum networking provides faster-than-light data communications",
                 PublishedOn = new DateTime(2057, 1, 1),
-                Price = 220
+                Price = 220,
+                Tags = new List<Tag> { new Tag { TagId = "Quantum Entanglement" } }
             };
             book4.AuthorsLink = new List<BookAuthor>
                 {new BookAuthor {Author = new Author {Name = "Future Person"}, Book = book4}};
