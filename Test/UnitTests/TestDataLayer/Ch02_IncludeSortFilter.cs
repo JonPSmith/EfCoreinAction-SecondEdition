@@ -137,26 +137,25 @@ namespace Test.UnitTests.TestDataLayer
             context.SeedDatabaseFourBooks();
 
             //ATTEMPT
-            //BUG in EF Core release 5.3 - see https://github.com/dotnet/efcore/issues/20777
-            var book = context.Books
-            .Include(r => r.AuthorsLink           //#A
-                .OrderBy(y => y.Order))           //#A
-                    .ThenInclude(r => r.Author)
-            .Include(r => r.Reviews               //#B
-                .Where(y => y.NumStars == 5))     //#B
-            .Include(r => r.Promotion)
-            .First();
+            var firstBook = context.Books
+                .Include(book => book.AuthorsLink //#A
+                    .OrderBy(bookAuthor => bookAuthor.Order)) //#A
+                    .ThenInclude(bookAuthor => bookAuthor.Author)
+                .Include(book => book.Reviews //#B
+                    .Where(review => review.NumStars == 5)) //#B
+                .Include(book => book.Promotion)
+                .First();
             /*********************************************************
             #A Sort example: On the eager loading of the AuthorsLink collection you sort the BookAuthors so that the Authors will be in the correct order to display
             #B Filter example: here you only load the Reviews with a start rating of 5
             * *******************************************************/
 
             //VERIFY
-            book.AuthorsLink.ShouldNotBeNull();
-            book.AuthorsLink.First()
+            firstBook.AuthorsLink.ShouldNotBeNull();
+            firstBook.AuthorsLink.First()
                 .Author.ShouldNotBeNull();
 
-            book.Reviews.ShouldNotBeNull();
+            firstBook.Reviews.ShouldNotBeNull();
         }
     }
 

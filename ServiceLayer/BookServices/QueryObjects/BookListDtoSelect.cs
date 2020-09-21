@@ -11,27 +11,27 @@ namespace ServiceLayer.BookServices.QueryObjects
         public static IQueryable<BookListDto> //#A
             MapBookToDto(this IQueryable<Book> books) //#A
         {
-            return books.Select(p => new BookListDto
+            return books.Select(book => new BookListDto
             {
-                BookId = p.BookId, //#B
-                Title = p.Title, //#B
-                Price = p.Price, //#B
-                PublishedOn = p.PublishedOn, //#B
-                ActualPrice = p.Promotion == null //#C
-                    ? p.Price //#C
-                    : p.Promotion.NewPrice, //#C
+                BookId = book.BookId, //#B
+                Title = book.Title, //#B
+                Price = book.Price, //#B
+                PublishedOn = book.PublishedOn, //#B
+                ActualPrice = book.Promotion == null //#C
+                    ? book.Price //#C
+                    : book.Promotion.NewPrice, //#C
                 PromotionPromotionalText = //#D
-                    p.Promotion == null //#D
+                    book.Promotion == null //#D
                         ? null //#D
-                        : p.Promotion.PromotionalText, //#D
+                        : book.Promotion.PromotionalText, //#D
                 AuthorsOrdered = string.Join(", ", //#E
-                    p.AuthorsLink //#E
-                        .OrderBy(q => q.Order) //#E
-                        .Select(q => q.Author.Name)), //#E
-                ReviewsCount = p.Reviews.Count, //#F
+                    book.AuthorsLink //#E
+                        .OrderBy(ba => ba.Order) //#E
+                        .Select(ba => ba.Author.Name)), //#E
+                ReviewsCount = book.Reviews.Count, //#F
                 ReviewsAverageVotes = //#G
-                    p.Reviews.Select(y => //#G
-                        (double?) y.NumStars).Average() //#G
+                    book.Reviews.Select(review => //#G
+                        (double?) review.NumStars).Average() //#G
             });
         }
 
