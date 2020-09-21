@@ -31,7 +31,9 @@ namespace ServiceLayer.BookServices.QueryObjects
                 ReviewsCount = book.Reviews.Count, //#F
                 ReviewsAverageVotes = //#G
                     book.Reviews.Select(review => //#G
-                        (double?) review.NumStars).Average() //#G
+                        (double?) review.NumStars).Average(), //#G
+                TagStrings = book.Tags          //#H
+                    .Select(x => x.TagId).ToArray(),//#H
             });
         }
 
@@ -43,6 +45,7 @@ namespace ServiceLayer.BookServices.QueryObjects
         #E This obtains an array of Authors' names, in the right order. We are using a Client vs. Server evaluation as we want the author's names combined into one string
         #F We need to calculate how many reviews there are
         #G To get EF Core to turn the LINQ average into the SQL AVG command I need to cast the NumStars to (double?)
+        #H Array of Tag names for this book
         * *******************************************************/
     }
 }

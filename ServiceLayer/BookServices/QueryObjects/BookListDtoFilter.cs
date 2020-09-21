@@ -12,7 +12,7 @@ namespace ServiceLayer.BookServices.QueryObjects
     {
         [Display(Name = "All")] NoFilter = 0,
         [Display(Name = "By Votes...")] ByVotes,
-
+        [Display(Name = "By Tags...")] ByTags,
         [Display(Name = "By Year published...")]
         ByPublicationYear
     }
@@ -36,6 +36,8 @@ namespace ServiceLayer.BookServices.QueryObjects
                     var filterVote = int.Parse(filterValue); //#D
                     return books.Where(x => //#D
                         x.ReviewsAverageVotes > filterVote); //#D
+                case BooksFilterBy.ByTags:
+                    return books.Where(x => x.TagStrings.Any(y => y == filterValue));
                 case BooksFilterBy.ByPublicationYear:
                     if (filterValue == AllBooksNotPublishedString) //#E
                         return books.Where( //#E

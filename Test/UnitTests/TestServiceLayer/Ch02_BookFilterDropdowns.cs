@@ -37,6 +37,26 @@ namespace Test.UnitTests.TestServiceLayer
             }
         }
 
+        [Fact]
+        public void DropdownByTag()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+                var service = new BookFilterDropdownService(context);
+
+                //ATTEMPT
+                var dropDown = service.GetFilterDropDownValues(BooksFilterBy.ByTags);
+
+                //VERIFY
+                dropDown.Select(x => x.Value).ToArray().ShouldEqual(
+                    new[] { "Refactoring", "Editor's Choice", "Architecture", "Quantum Entanglement" });
+            }
+        }
+
         ////Test used in https://github.com/dotnet/efcore/issues/21445
         //[Fact]
         //public void TestDistinctClientVsServerEval()
@@ -52,7 +72,7 @@ namespace Test.UnitTests.TestServiceLayer
         //            new Book{PublishedOn = new DateTime(2000,1,1)}
         //            );
         //        context.SaveChanges();
-                
+
 
         //        //ATTEMPT
         //        var dates = context.Books

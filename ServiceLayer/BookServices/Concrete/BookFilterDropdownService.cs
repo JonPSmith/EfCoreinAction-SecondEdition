@@ -32,6 +32,13 @@ namespace ServiceLayer.BookServices.Concrete
                     return new List<DropdownTuple>();
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
+                case BooksFilterBy.ByTags:
+                    return _db.Tags
+                        .Select(x => new DropdownTuple
+                        {
+                            Value = x.TagId,
+                            Text = x.TagId
+                        }).ToList();
                 case BooksFilterBy.ByPublicationYear:
                     var today = DateTime.UtcNow.Date;        //#A
                     var result = _db.Books                   //#B
