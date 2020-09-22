@@ -12,7 +12,7 @@ namespace ServiceLayer.BookServices.QueryObjects
     {
         [Display(Name = "All")] NoFilter = 0,
         [Display(Name = "By Votes...")] ByVotes,
-        [Display(Name = "By categories...")] ByTags,
+        [Display(Name = "By Categories...")] ByTags,
         [Display(Name = "By Year published...")]
         ByPublicationYear
     }
