@@ -45,7 +45,7 @@ namespace ServiceLayer.BookServices.QueryObjects
         #E This obtains an array of Authors' names, in the right order. We are using a Client vs. Server evaluation as we want the author's names combined into one string
         #F We need to calculate how many reviews there are
         #G To get EF Core to turn the LINQ average into the SQL AVG command I need to cast the NumStars to (double?)
-        #H Array of Tag names for this book
+        #H Array of Tag names (categories) for this book
         * *******************************************************/
     }
 }

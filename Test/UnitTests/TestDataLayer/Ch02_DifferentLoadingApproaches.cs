@@ -88,14 +88,16 @@ namespace Test.UnitTests.TestDataLayer
                     .Include(book => book.AuthorsLink) //#A
                         .ThenInclude(bookAuthor => bookAuthor.Author) //#B                    
                     .Include(book => book.Reviews) //#C
-                    .Include(book => book.Promotion) //#D
-                    .First(); //#E
+                    .Include(book => book.Tags) //#D
+                    .Include(book => book.Promotion) //#E
+                    .First(); //#F
                 /*********************************************************
                 #A The first Include() gets a collection of BookAuthor
                 #B The ThenInclude() gets the next link, in this case the link to the Author
                 #C The Include() gets a collection of Reviews, which may be an empty collection
-                #D This loads any optional PriceOffer class, if one is assigned
-                #E This takes the first book
+                #D This loads the Tags. Note that this directly accesses the Tags
+                #E This loads any optional PriceOffer class, if one is assigned
+                #F This takes the first book
                 * *******************************************************/
 
                 //VERIFY
@@ -189,14 +191,17 @@ namespace Test.UnitTests.TestDataLayer
 
                 context.Entry(firstBook)                          //#D
                     .Collection(book => book.Reviews).Load();     //#D
-                context.Entry(firstBook)                          //#E
-                    .Reference(book => book.Promotion).Load();    //#E
+                context.Entry(firstBook)  //#E
+                    .Collection(book => book.Tags).Load(); //#E
+                context.Entry(firstBook)                          //#F
+                    .Reference(book => book.Promotion).Load();    //#F
                 /*********************************************************
                 #A This reads in the first book on its own
                 #B This explicitly loads the linking table, BookAuthor
                 #C To load all the possible Authors it has to loop through all the BookAuthor entries and load each linked Author class
                 #D This loads all the Reviews
-                #E This loads the optional PriceOffer class
+                #E This loads the Tags
+                #F This loads the optional PriceOffer class
                 * *******************************************************/
 
                 //VERIFY

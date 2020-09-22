@@ -35,7 +35,7 @@ namespace ServiceLayer.BookServices
         #F An array of the authors' names in the right order
         #G The number of people who reviewed the book
         #H The average of all the Votes - null if no votes
-        #I The Tags names for this book
+        #I The Tag names (that is the categories) for this book
          * ***************************************************/
     }
 }

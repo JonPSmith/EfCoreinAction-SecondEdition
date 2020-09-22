@@ -12,7 +12,7 @@ namespace ServiceLayer.BookServices.QueryObjects
     {
         [Display(Name = "All")] NoFilter = 0,
         [Display(Name = "By Votes...")] ByVotes,
-        [Display(Name = "By Tags...")] ByTags,
+        [Display(Name = "By categories...")] ByTags,
         [Display(Name = "By Year published...")]
         ByPublicationYear
     }
@@ -30,23 +30,24 @@ namespace ServiceLayer.BookServices.QueryObjects
 
             switch (filterBy)
             {
-                case BooksFilterBy.NoFilter: //#C
-                    return books; //#C
+                case BooksFilterBy.NoFilter:                       //#C
+                    return books;                                  //#C
                 case BooksFilterBy.ByVotes:
-                    var filterVote = int.Parse(filterValue); //#D
-                    return books.Where(x => //#D
-                        x.ReviewsAverageVotes > filterVote); //#D
+                    var filterVote = int.Parse(filterValue);       //#D
+                    return books.Where(x =>                        //#D
+                        x.ReviewsAverageVotes > filterVote);       //#D
                 case BooksFilterBy.ByTags:
-                    return books.Where(x => x.TagStrings.Any(y => y == filterValue));
+                    return books.Where(x => x.TagStrings  //#E
+                        .Any(y => y == filterValue)); //#E
                 case BooksFilterBy.ByPublicationYear:
-                    if (filterValue == AllBooksNotPublishedString) //#E
-                        return books.Where( //#E
-                            x => x.PublishedOn > DateTime.UtcNow); //#E
+                    if (filterValue == AllBooksNotPublishedString) //#F
+                        return books.Where(                        //#F
+                            x => x.PublishedOn > DateTime.UtcNow); //#F
 
-                    var filterYear = int.Parse(filterValue); //#F
-                    return books.Where( //#F
-                        x => x.PublishedOn.Year == filterYear //#F
-                             && x.PublishedOn <= DateTime.UtcNow); //#F
+                    var filterYear = int.Parse(filterValue);       //#G
+                    return books.Where(                            //#G
+                        x => x.PublishedOn.Year == filterYear      //#G
+                             && x.PublishedOn <= DateTime.UtcNow); //#G
                 default:
                     throw new ArgumentOutOfRangeException
                         (nameof(filterBy), filterBy, null);
@@ -58,8 +59,9 @@ namespace ServiceLayer.BookServices.QueryObjects
         #B If the filter value isn't set then it returns the IQueryable with no change
         #C Same for no filter selected - it returns the IQueryable with no change
         #D The filter by votes is a value and above, e.g. 3 and above. Note: not reviews returns null, and the test is always false
-        #E If the "coming soon" was picked then we only return books not yet published
-        #F If we have a specific year we filter on that. Note that we also remove future books (in case the user chose this year's date)
+        #E This will select any books that have a Tag category that matches the filterValue
+        #F If the "coming soon" was picked then we only return books not yet published
+        #G If we have a specific year we filter on that. Note that we also remove future books (in case the user chose this year's date)
          * ************************************************************/
     }
 }
