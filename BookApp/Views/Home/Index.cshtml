@@ -71,7 +71,7 @@
                     Published on @item.PublishedOn.ToString("d")
                 </div>
                 <div>
-                    Tags: @string.Join(" | ", item.TagStrings)
+                    Categories: <i>@string.Join(", ", item.TagStrings)</i> 
                 </div>
                 <div>
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
