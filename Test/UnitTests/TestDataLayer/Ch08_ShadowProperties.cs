@@ -5,17 +5,73 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
+using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupportSchema;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch08_ShadowProperties
     {
+        private ITestOutputHelper _output;
+
+        public Ch08_ShadowProperties(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
-        public void TestShadowPropertyDeleteOk()
+        public void ListAttendeeColumnsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                var modelProps =  context.Model.FindEntityType(typeof(Attendee)).GetProperties();
+                var fks = context.Model.FindEntityType(typeof(Attendee)).GetForeignKeys();
+
+                //VERIFY
+                _output.WriteLine("Properties");
+                foreach (var modelProp in modelProps)
+                {
+                    _output.WriteLine(modelProp.ToString());
+                }
+                _output.WriteLine("Foreign keys");
+                foreach (var fk in fks)
+                {
+                    _output.WriteLine(fk.ToString());
+                }
+            }
+        }
+
+        [Fact]
+        public void ListTicketOption3ColumnsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                var modelProps = context.Model.FindEntityType(typeof(TicketOption3)).GetProperties();
+
+                //VERIFY
+                foreach (var modelProp in modelProps)
+                {
+                    _output.WriteLine(modelProp.ToString());
+                }
+            }
+        }
+
+        [Fact]
+        public void TestShadowPropertyDeleteAttendeeOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -38,10 +94,39 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.Attendees.Count().ShouldEqual(0);
+                context.Set<TicketOption1>().Count().ShouldEqual(1);
                 context.Set<RequiredTrack>().Count().ShouldEqual(1);
             }
         }
 
+        [Fact]
+        public void TestShadowPropertyDeleteTicketOption1()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var attendee = new Attendee
+                {
+                    Name = "Person1",
+                    TicketOption1 = new TicketOption1(),
+                    Required = new RequiredTrack { Track = TrackNames.EfCore }
+                };
+                context.Add(attendee);
+                context.SaveChanges();
+
+                //ATTEMPT
+                context.Remove(attendee.TicketOption1);
+                context.SaveChanges();
+
+                //VERIFY
+                context.Set<TicketOption1>().Count().ShouldEqual(0);
+                context.Attendees.Count().ShouldEqual(0);
+                context.Set<RequiredTrack>().Count().ShouldEqual(1);
+            }
+        }
 
         [Fact]
         public void TestShadowPropertyOptionalOk()
@@ -64,6 +149,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
 
                 //VERIFY
+                
                 context.Set<RequiredTrack>().Count().ShouldEqual(1);
                 context.Set<OptionalTrack>().Count().ShouldEqual(1);
             }

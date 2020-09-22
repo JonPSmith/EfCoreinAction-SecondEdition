@@ -9,7 +9,7 @@ namespace Test.Chapter08Listings.EfClasses
     public class TicketOption3
     {
         [Key]
-        public int AttendeeId { get; set; }
-        public Attendee Attendee { get; set; }
+        public int TicketId { get; set; }
+        public Attendee DifferentName { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var ticket = new TicketOption3
                 {
-                    Attendee = new Attendee{Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack()}
+                    DifferentName = new Attendee{Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack()}
                 };
                 context.Add(ticket);
                 context.SaveChanges();
@@ -33,7 +33,7 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 context.Attendees.Count().ShouldEqual(1);
                 context.TicketOption3s.Count().ShouldEqual(1);
-                ticket.Attendee.ShouldNotBeNull();
+                ticket.DifferentName.ShouldNotBeNull();
             }
         }
 
@@ -49,7 +49,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 var ticket = new TicketOption3
                 {
-                    Attendee = new Attendee
+                    DifferentName = new Attendee
                         {Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack()}
                 };
                 context.Add(ticket);
@@ -79,7 +79,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ticket = new TicketOption3
                 {
-                    Attendee = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
+                    DifferentName = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
                 };
                 context.Add(ticket);
                 context.SaveChanges();
@@ -104,13 +104,13 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ticket = new TicketOption3
                 {
-                    Attendee = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
+                    DifferentName = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
                 };
                 context.Add(ticket);
                 context.SaveChanges();
 
                 //ATTEMPT
-                context.Remove(ticket.Attendee);
+                context.Remove(ticket.DifferentName);
                 context.SaveChanges();
 
                 //VERIFY
