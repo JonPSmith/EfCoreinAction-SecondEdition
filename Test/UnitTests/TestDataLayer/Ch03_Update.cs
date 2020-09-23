@@ -169,19 +169,16 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
-                var author = context.Books                                          //#A
-                    .Where(p => p.Title == "Quantum Networking")                    //#A
-                    .Select(p => p.AuthorsLink.First().Author)                      //#A
-                    .Single();                                                      //#A
-                author.Name = "Future Person 2";                                    //#A
-                json = JsonConvert.SerializeObject(author,                          //#A
-                    new JsonSerializerSettings()                                    //#A
-                {
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects //#A
-                });                                                                 //#A
-            }                                                   
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                var author = context.Books                        //#A
+                    .Where(p => p.Title == "Quantum Networking")  //#A
+                    .Select(p => p.AuthorsLink.First().Author)    //#A
+                    .Single();                                    //#A
+                author.Name = "Future Person 2";                  //#A
+                json = JsonConvert.SerializeObject(author); //#A
+            }
             using (var context = new EfCoreContext(options))
             {
                 showLog = true;
