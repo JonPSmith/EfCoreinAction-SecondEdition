@@ -296,10 +296,10 @@ namespace Test.UnitTests.TestDataLayer
                     .Include(p => p.AuthorsLink) //#A
                     .Single(p => p.Title == "Quantum Networking"); //#A
 
-                var existingTags = context.Tags //#B         
+                var existingTag = context.Tags //#B         
                     .Single(p => p.TagId == "Editor's Choice"); //#B
 
-                book.Tags.Add(existingTags); //#C
+                book.Tags.Add(existingTag); //#C
                 context.SaveChanges(); //#D
                 /**********************************************************
                 #A This finds the book with title "Quantum Networking", whose current author is "Future Person"
