@@ -104,9 +104,21 @@ namespace DataLayer.EfCode
             //modelBuilder.ApplyConfiguration(new BookAuthorConfig());  //#E
             //modelBuilder.ApplyConfiguration(new PriceOfferConfig());  //#E
             //modelBuilder.ApplyConfiguration(new LineItemConfig());    //#E
-                                                                      
+
             //modelBuilder.Entity<Order>()                              //#F
             //    .HasQueryFilter(x => x.UserId == this.UserId);        //#F
+
+            //This is a check on detecting the database type (Sqlite can't filter on a decimal
+            if (!Database.IsSqlServer())
+            {
+                modelBuilder.Entity<Book>()
+                    .Property(e => e.Price)
+                    .HasConversion<double>();
+                modelBuilder.Entity<PriceOffer>()
+                    .Property(e => e.NewPrice)
+                    .HasConversion<double>();
+            }
+            
         }
 
     }
