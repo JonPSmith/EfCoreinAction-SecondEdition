@@ -21,18 +21,13 @@ namespace Test.Chapter13Listings.EfClasses
         private Book() { } //Needed by EF Core
 
         public int BookId { get; private set; }
-
         [Required(AllowEmptyStrings = false)]
         public string Title { get; private set; }
         public DateTime PublishedOn { get; private set; }
         public decimal OrgPrice { get; private set; }
         public decimal ActualPrice { get; private set; }
-
         [MaxLength(PromotionalTextLength)]
         public string PromotionalText { get; private set; }
-
-        [MaxLength(200)]
-        public string ImageUrl { get; private set; }
 
 
         //---------------------------------------
@@ -43,8 +38,8 @@ namespace Test.Chapter13Listings.EfClasses
 
         //----------------------------------------------
 
-        public static IStatusGeneric<Book> CreateBook(string title, DateTime publishedOn,
-            decimal price, string imageUrl,
+        public static IStatusGeneric<Book> CreateBook(
+            string title, DateTime publishedOn, decimal price, 
             ICollection<Author> authors)
         {
             var status = new StatusGenericHandler<Book>();
@@ -57,7 +52,6 @@ namespace Test.Chapter13Listings.EfClasses
                 PublishedOn = publishedOn,
                 OrgPrice = price,
                 ActualPrice = price,
-                ImageUrl = imageUrl,
                 _reviews = new HashSet<Review>()       //We add an empty list on create. I allows reviews to be added when building test data
             };
             if (authors == null)
