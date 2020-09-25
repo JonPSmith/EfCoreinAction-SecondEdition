@@ -18,7 +18,7 @@ namespace Test.Chapter06Listings
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Employee>()
-                .HasMany(x => x.WorksFromMe)
+                .HasMany(x => x.WorksForMe)
                 .WithOne(x => x.Manager)
                 .HasForeignKey(x => x.ManagerEmployeeId);
         }

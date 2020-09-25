@@ -31,7 +31,7 @@ namespace Test.Chapter06Listings
         {
             const int indentSize = 2;
             output(new string(' ', indent * indentSize) + employee.Name);
-            foreach (var person in employee.WorksFromMe)
+            foreach (var person in employee.WorksForMe)
             {
                 person.ShowHierarchical(output, indent + 1);
             }

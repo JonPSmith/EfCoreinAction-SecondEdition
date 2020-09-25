@@ -52,14 +52,14 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var all = context.Employees
-                    .Include(x => x.WorksFromMe)
-                    .ThenInclude(x => x.WorksFromMe)
+                    .Include(x => x.WorksForMe)
+                    .ThenInclude(x => x.WorksForMe)
                     .ToList();
 
                 //VERIFY
                 all.Count.ShouldEqual(11);
                 all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksFromMe.Any()).ShouldEqual(5);
+                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
                 var top = all.Single(x => x.Manager == null);
                 top.ShowHierarchical(s => _output.WriteLine(s));
             }
@@ -78,13 +78,13 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter06Context(options))
             {
                 //ATTEMPT
-                var all = context.Employees.Include(x => x.WorksFromMe)
+                var all = context.Employees.Include(x => x.WorksForMe)
                     .ToList();
 
                 //VERIFY
                 all.Count.ShouldEqual(11);
                 all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksFromMe.Any()).ShouldEqual(5);
+                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
                 var top = all.Single(x => x.Manager == null);
                 top.ShowHierarchical(s => _output.WriteLine(s));
             }
@@ -109,8 +109,8 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 all.Count.ShouldEqual(11);
                 all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksFromMe != null).ShouldEqual(5);
-                all.Count(x => x.WorksFromMe == null).ShouldEqual(6);
+                all.Count(x => x.WorksForMe != null).ShouldEqual(5);
+                all.Count(x => x.WorksForMe == null).ShouldEqual(6);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var query = context.Employees
-                    .Include(x => x.WorksFromMe)
+                    .Include(x => x.WorksForMe)
                     .Where(x => x.WhatTheyDo.HasFlag(Roles.Development));
                 var devDept = query.ToList();
 
@@ -154,7 +154,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var devDept = context.Employees                          //#A
-                    .Include(x => x.WorksFromMe)                         //#B
+                    .Include(x => x.WorksForMe)                         //#B
                     .Where(x => x.WhatTheyDo.HasFlag(Roles.Development)) //#C
                     .ToList();
                 /********************************************************
