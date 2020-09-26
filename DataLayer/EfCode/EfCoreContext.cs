@@ -109,14 +109,14 @@ namespace DataLayer.EfCode
             //    .HasQueryFilter(x => x.UserId == this.UserId);        //#F
 
             //This is a check on detecting the database type (Sqlite can't filter on a decimal
-            if (!Database.IsSqlServer())
-            {
-                modelBuilder.Entity<Book>()
-                    .Property(e => e.Price)
-                    .HasConversion<double>();
-                modelBuilder.Entity<PriceOffer>()
-                    .Property(e => e.NewPrice)
-                    .HasConversion<double>();
+            if (Database.IsSqlite())              //#A 
+            {                                     
+                modelBuilder.Entity<Book>()       //#B
+                    .Property(e => e.Price)       //#B
+                    .HasConversion<double>();     //#B
+                modelBuilder.Entity<PriceOffer>() //#B
+                    .Property(e => e.NewPrice)    //#B
+                    .HasConversion<double>();     //#B
             }
             
         }
