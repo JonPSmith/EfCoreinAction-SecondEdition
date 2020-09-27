@@ -23,7 +23,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestIsSqlServerWorksInOnModelCreating()
+        public void TestIsSqliteWorksInOnModelCreating()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
