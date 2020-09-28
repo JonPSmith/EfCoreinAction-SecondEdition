@@ -32,6 +32,13 @@ namespace ServiceLayer.BookServices.Concrete
                     return new List<DropdownTuple>();
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
+                case BooksFilterBy.ByTags:
+                    return _db.Tags
+                        .Select(x => new DropdownTuple
+                        {
+                            Value = x.TagId,
+                            Text = x.TagId
+                        }).ToList();
                 case BooksFilterBy.ByPublicationYear:
                     var today = DateTime.UtcNow.Date;        //#A
                     var result = _db.Books                   //#B
@@ -39,7 +46,6 @@ namespace ServiceLayer.BookServices.Concrete
                         .Select(x => x.PublishedOn.Year)     //#B
                         .Distinct()                          //#B
                         .OrderByDescending(x => x)           //#C
-                        .ToList() //Added to fix preview 6 problem - see https://github.com/dotnet/efcore/issues/21445
                         .Select(x => new DropdownTuple       //#D
                         {                                    //#D
                             Value = x.ToString(),            //#D

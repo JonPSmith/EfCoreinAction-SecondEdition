@@ -41,13 +41,13 @@ namespace Test.TestHelpers
         public static List<Book> CreateDummyBooks(int numBooks = 10, bool stepByYears = false, bool setBookId = true)
         {
             var result = new List<Book>();
-            var commonAuthor = new Author {Name = "CommonAuthor"};
+            var commonAuthor = new Author { Name = "CommonAuthor" };
             for (int i = 0; i < numBooks; i++)
             {
                 var reviews = new List<Review>();
                 for (int j = 0; j < i; j++)
                 {
-                    reviews.Add(new Review {VoterName = j.ToString(), NumStars = (j % 5) + 1});
+                    reviews.Add(new Review { VoterName = j.ToString(), NumStars = (j % 5) + 1 });
                 }
 
                 var book = new Book
@@ -55,13 +55,13 @@ namespace Test.TestHelpers
                     BookId = setBookId ? i + 1 : 0,
                     Title = $"Book{i:D4} Title",
                     Description = $"Book{i:D4} Description",
-                    Price = (short) (i + 1),
+                    Price = (short)(i + 1),
                     ImageUrl = $"Image{i:D4}",
                     PublishedOn = stepByYears ? DummyBookStartDate.AddYears(i) : DummyBookStartDate.AddDays(i),
                     Reviews = reviews
                 };
 
-                var author = new Author {Name = $"Author{i:D4}"};
+                var author = new Author { Name = $"Author{i:D4}" };
                 book.AuthorsLink = new List<BookAuthor>
                 {
                     new BookAuthor {Book = book, Author = author, Order = 0},
@@ -84,6 +84,10 @@ namespace Test.TestHelpers
 
         public static List<Book> CreateFourBooks()
         {
+            var editorsChoice = new Tag { TagId = "Editor's Choice" };
+            var architectureTag = new Tag { TagId = "Architecture" };
+            var refactoring = new Tag { TagId = "Refactoring" };
+
             var martinFowler = new Author
             {
                 Name = "Martin Fowler"
@@ -96,9 +100,10 @@ namespace Test.TestHelpers
                 Title = "Refactoring",
                 Description = "Improving the design of existing code",
                 PublishedOn = new DateTime(1999, 7, 8),
-                Price = 40
+                Price = 40,
+                Tags = new List<Tag> { refactoring, editorsChoice }
             };
-            book1.AuthorsLink = new List<BookAuthor> {new BookAuthor {Author = martinFowler, Book = book1}};
+            book1.AuthorsLink = new List<BookAuthor> { new BookAuthor { Author = martinFowler, Book = book1 } };
             books.Add(book1);
 
             var book2 = new Book
@@ -106,9 +111,10 @@ namespace Test.TestHelpers
                 Title = "Patterns of Enterprise Application Architecture",
                 Description = "Written in direct response to the stiff challenges",
                 PublishedOn = new DateTime(2002, 11, 15),
-                Price = 53
+                Price = 53,
+                Tags = new List<Tag> { architectureTag }
             };
-            book2.AuthorsLink = new List<BookAuthor> {new BookAuthor {Author = martinFowler, Book = book2}};
+            book2.AuthorsLink = new List<BookAuthor> { new BookAuthor { Author = martinFowler, Book = book2 } };
             books.Add(book2);
 
             var book3 = new Book
@@ -116,7 +122,8 @@ namespace Test.TestHelpers
                 Title = "Domain-Driven Design",
                 Description = "Linking business needs to software design",
                 PublishedOn = new DateTime(2003, 8, 30),
-                Price = 56
+                Price = 56,
+                Tags = new List<Tag> { architectureTag, editorsChoice }
             };
             book3.AuthorsLink = new List<BookAuthor>
                 {new BookAuthor {Author = new Author {Name = "Eric Evans"}, Book = book3}};
@@ -127,7 +134,8 @@ namespace Test.TestHelpers
                 Title = "Quantum Networking",
                 Description = "Entangled quantum networking provides faster-than-light data communications",
                 PublishedOn = new DateTime(2057, 1, 1),
-                Price = 220
+                Price = 220,
+                Tags = new List<Tag> { new Tag { TagId = "Quantum Entanglement" } }
             };
             book4.AuthorsLink = new List<BookAuthor>
                 {new BookAuthor {Author = new Author {Name = "Future Person"}, Book = book4}};
@@ -143,7 +151,7 @@ namespace Test.TestHelpers
                     VoterName = "Albert Einstein", NumStars = 5, Comment = "I write this book if I was still alive!"
                 }
             };
-            book4.Promotion = new PriceOffer {NewPrice = 219, PromotionalText = "Save $1 if you order 40 years ahead!"};
+            book4.Promotion = new PriceOffer { NewPrice = 219, PromotionalText = "Save $1 if you order 40 years ahead!" };
             books.Add(book4);
 
             return books;

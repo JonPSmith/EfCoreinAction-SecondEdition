@@ -9,11 +9,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Test.Chapter06Listings
 {
     [Flags]
-    public enum Roles {NotSet, Development = 1, Management = 2, Sales = 4, Finance = 8, HR = 16}
+    public enum Roles { NotSet, Development = 1, Management = 2, Sales = 4, Finance = 8, HR = 16 }
 
     public class Employee
     {
-        private Employee() {} //needed for EF Core
+        private Employee() { } //needed for EF Core
 
         public Employee(string name, Roles whatTheyDo, Employee manager)
         {
@@ -32,6 +32,6 @@ namespace Test.Chapter06Listings
         public int? ManagerEmployeeId { get; set; }
         public Employee Manager { get; set; }
 
-        public IList<Employee> WorksFromMe { get; set; }
+        public IList<Employee> WorksForMe { get; set; }
     }
 }

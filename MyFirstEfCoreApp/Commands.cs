@@ -18,7 +18,7 @@ namespace MyFirstEfCoreApp
             using (var db = new AppDbContext()) //#A
             {
                 foreach (var book in db.Books.AsNoTracking() //#B
-                    .Include(a => a.Author)) //#C
+                    .Include(book => book.Author)) //#C
                 {
                     var webUrl = book.Author.WebUrl ?? "- no web url given -";
                     Console.WriteLine($"{book.Title} by {book.Author.Name}");
@@ -40,11 +40,11 @@ namespace MyFirstEfCoreApp
 
             using (var db = new AppDbContext())
             {
-                var book = db.Books
-                    .Include(a => a.Author) //#B
-                    .Single(b => b.Title == "Quantum Networking"); //#C
+                var singleBook = db.Books
+                    .Include(book => book.Author) //#B
+                    .Single(book => book.Title == "Quantum Networking"); //#C
 
-                book.Author.WebUrl = newWebUrl; //#D
+                singleBook.Author.WebUrl = newWebUrl; //#D
                 db.SaveChanges(); //#E
                 Console.WriteLine("... SaveChanges called.");
             }
@@ -58,7 +58,6 @@ namespace MyFirstEfCoreApp
         #D To update the database we simply change the data that was read in
         #E The SaveChanges() tells EF Core to check for any changes to the data that has been read in and write out those changes to the database
         #F Finally we list all the book information
-
          * ************************************************************/
 
         public static void ListAllWithLogs()
@@ -67,20 +66,20 @@ namespace MyFirstEfCoreApp
             using (var db = new AppDbContext())
             {
                 var serviceProvider = db.GetInfrastructure();
-                var loggerFactory = (ILoggerFactory) serviceProvider.GetService(typeof(ILoggerFactory));
+                var loggerFactory = (ILoggerFactory)serviceProvider.GetService(typeof(ILoggerFactory));
                 loggerFactory.AddProvider(new MyLoggerProvider(logs));
 
-                foreach (var book in
+                foreach (var entity in
                     db.Books.AsNoTracking()
-                        .Include(a => a.Author))
+                        .Include(book => book.Author))
                 {
-                    var webUrl = book.Author.WebUrl == null
+                    var webUrl = entity.Author.WebUrl == null
                         ? "- no web url given -"
-                        : book.Author.WebUrl;
+                        : entity.Author.WebUrl;
                     Console.WriteLine(
-                        $"{book.Title} by {book.Author.Name}");
+                        $"{entity.Title} by {entity.Author.Name}");
                     Console.WriteLine("     " +
-                                      $"Published on {book.PublishedOn:dd-MMM-yyyy}" +
+                                      $"Published on {entity.PublishedOn:dd-MMM-yyyy}" +
                                       $". {webUrl}");
                 }
             }
@@ -101,13 +100,13 @@ namespace MyFirstEfCoreApp
             using (var db = new AppDbContext())
             {
                 var serviceProvider = db.GetInfrastructure();
-                var loggerFactory = (ILoggerFactory) serviceProvider.GetService(typeof(ILoggerFactory));
+                var loggerFactory = (ILoggerFactory)serviceProvider.GetService(typeof(ILoggerFactory));
                 loggerFactory.AddProvider(new MyLoggerProvider(logs));
 
-                var book = db.Books
-                    .Include(a => a.Author)
+                var singleBook = db.Books
+                    .Include(book => book.Author)
                     .Single(b => b.Title == "Quantum Networking");
-                book.Author.WebUrl = newWebUrl;
+                singleBook.Author.WebUrl = newWebUrl;
                 db.SaveChanges();
                 Console.Write("... SavedChanges called.");
             }

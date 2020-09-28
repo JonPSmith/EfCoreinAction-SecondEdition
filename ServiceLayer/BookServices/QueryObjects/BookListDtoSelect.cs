@@ -11,27 +11,29 @@ namespace ServiceLayer.BookServices.QueryObjects
         public static IQueryable<BookListDto> //#A
             MapBookToDto(this IQueryable<Book> books) //#A
         {
-            return books.Select(p => new BookListDto
+            return books.Select(book => new BookListDto
             {
-                BookId = p.BookId, //#B
-                Title = p.Title, //#B
-                Price = p.Price, //#B
-                PublishedOn = p.PublishedOn, //#B
-                ActualPrice = p.Promotion == null //#C
-                    ? p.Price //#C
-                    : p.Promotion.NewPrice, //#C
+                BookId = book.BookId, //#B
+                Title = book.Title, //#B
+                Price = book.Price, //#B
+                PublishedOn = book.PublishedOn, //#B
+                ActualPrice = book.Promotion == null //#C
+                    ? book.Price //#C
+                    : book.Promotion.NewPrice, //#C
                 PromotionPromotionalText = //#D
-                    p.Promotion == null //#D
+                    book.Promotion == null //#D
                         ? null //#D
-                        : p.Promotion.PromotionalText, //#D
+                        : book.Promotion.PromotionalText, //#D
                 AuthorsOrdered = string.Join(", ", //#E
-                    p.AuthorsLink //#E
-                        .OrderBy(q => q.Order) //#E
-                        .Select(q => q.Author.Name)), //#E
-                ReviewsCount = p.Reviews.Count, //#F
+                    book.AuthorsLink //#E
+                        .OrderBy(ba => ba.Order) //#E
+                        .Select(ba => ba.Author.Name)), //#E
+                ReviewsCount = book.Reviews.Count, //#F
                 ReviewsAverageVotes = //#G
-                    p.Reviews.Select(y => //#G
-                        (double?) y.NumStars).Average() //#G
+                    book.Reviews.Select(review => //#G
+                        (double?)review.NumStars).Average(), //#G
+                TagStrings = book.Tags          //#H
+                    .Select(x => x.TagId).ToArray(),//#H
             });
         }
 
@@ -43,6 +45,7 @@ namespace ServiceLayer.BookServices.QueryObjects
         #E This obtains an array of Authors' names, in the right order. We are using a Client vs. Server evaluation as we want the author's names combined into one string
         #F We need to calculate how many reviews there are
         #G To get EF Core to turn the LINQ average into the SQL AVG command I need to cast the NumStars to (double?)
+        #H Array of Tag names (categories) for this book
         * *******************************************************/
     }
 }

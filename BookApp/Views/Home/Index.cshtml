@@ -68,6 +68,12 @@
                     <small>by</small>&nbsp;@Html.DisplayFor(m => item.AuthorsOrdered)
                 </div>
                 <div>
+                    Published on @item.PublishedOn.ToString("d")
+                </div>
+                <div>
+                    Categories: <i>@string.Join(", ", item.TagStrings)</i>
+                </div>
+                <div>
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
                 </div>
                 <div>
@@ -75,9 +81,9 @@
                     @if (item.PromotionPromotionalText != null)
                     {
                         <span class="text-danger">
-                            <strong >&nbsp;<del>$@($"{item.Price:F}")</del>&nbsp;<i>@(item.PromotionPromotionalText)</i></strong>
+                            <strong>&nbsp;<del>$@($"{item.Price:F}")</del>&nbsp;<i>@(item.PromotionPromotionalText)</i></strong>
                         </span>
-                    }                    
+                    }
                 </div>
             </td>
             <td class="vert-align">

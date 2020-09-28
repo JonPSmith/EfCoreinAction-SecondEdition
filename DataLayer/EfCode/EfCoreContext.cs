@@ -22,24 +22,25 @@ namespace DataLayer.EfCode
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<PriceOffer> PriceOffers { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) //#E
         {
-            modelBuilder.Entity<BookAuthor>() 
-                .HasKey(x => new {x.BookId, x.AuthorId});
+            modelBuilder.Entity<BookAuthor>()
+                .HasKey(x => new { x.BookId, x.AuthorId });
 
             modelBuilder.Entity<LineItem>()
-                .HasOne(p => p.ChosenBook) 
+                .HasOne(p => p.ChosenBook)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Book>()                                    //#F
                 .HasQueryFilter(p => !p.SoftDeleted);                      //#F
-                                                            
+
             modelBuilder.Entity<Order>()                                   //#G
                 .HasQueryFilter(x => x.CustomerId == _userId);             //#G
-        } 
+        }
     }
 }
 /*********************************************************

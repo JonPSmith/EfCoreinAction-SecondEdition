@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using ServiceLayer.BookServices;
 using ServiceLayer.BookServices.Concrete;
 using ServiceLayer.BookServices.QueryObjects;
 using Test.TestHelpers;
@@ -34,7 +33,27 @@ namespace Test.UnitTests.TestServiceLayer
                 var dropDown = service.GetFilterDropDownValues(BooksFilterBy.ByPublicationYear);
 
                 //VERIFY
-                dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] {"2014", "2013", "2012", "2011", "2010"});
+                dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] { "2014", "2013", "2012", "2011", "2010" });
+            }
+        }
+
+        [Fact]
+        public void DropdownByTag()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+                var service = new BookFilterDropdownService(context);
+
+                //ATTEMPT
+                var dropDown = service.GetFilterDropDownValues(BooksFilterBy.ByTags);
+
+                //VERIFY
+                dropDown.Select(x => x.Value).ToArray().ShouldEqual(
+                    new[] { "Refactoring", "Editor's Choice", "Architecture", "Quantum Entanglement" });
             }
         }
 
@@ -53,7 +72,7 @@ namespace Test.UnitTests.TestServiceLayer
         //            new Book{PublishedOn = new DateTime(2000,1,1)}
         //            );
         //        context.SaveChanges();
-                
+
 
         //        //ATTEMPT
         //        var dates = context.Books
@@ -81,7 +100,7 @@ namespace Test.UnitTests.TestServiceLayer
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
-                var oldBook = new Book{PublishedOn = new DateTime(2000,1,1)};
+                var oldBook = new Book { PublishedOn = new DateTime(2000, 1, 1) };
                 var futureBookThisYear = new Book { PublishedOn = DateTime.UtcNow.Date.AddDays(1) };
                 context.Books.AddRange(oldBook, futureBookThisYear);
                 context.SaveChanges();
@@ -91,7 +110,7 @@ namespace Test.UnitTests.TestServiceLayer
                 var dropDown = service.GetFilterDropDownValues(BooksFilterBy.ByPublicationYear);
 
                 //VERIFY
-                dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] { BookListDtoFilter.AllBooksNotPublishedString, "2000"});
+                dropDown.Select(x => x.Value).ToArray().ShouldEqual(new[] { BookListDtoFilter.AllBooksNotPublishedString, "2000" });
             }
         }
     }

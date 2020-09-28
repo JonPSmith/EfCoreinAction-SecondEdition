@@ -21,22 +21,31 @@ namespace ServiceLayer.DatabaseServices.Concrete
             var jsonDecoded = JsonConvert.DeserializeObject<ICollection<BookInfoJson>>(File.ReadAllText(filePath));
 
             var authorDict = new Dictionary<string, Author>();
+            var tagDict = new Dictionary<string, Tag>();
             foreach (var bookInfoJson in jsonDecoded)
             {
                 foreach (var author in bookInfoJson.authors)
                 {
                     if (!authorDict.ContainsKey(author))
-                        authorDict[author] = new Author {Name = author};
+                        authorDict[author] = new Author { Name = author };
                 }
+                foreach (var category in bookInfoJson.categories)
+                {
+                    if (!tagDict.ContainsKey(category))
+                        tagDict[category] = new Tag { TagId = category };
+                }
+
             }
 
-            return jsonDecoded.Select(x => CreateBookWithRefs(x, authorDict));
+            return jsonDecoded.Select(x => CreateBookWithRefs(x, authorDict, tagDict));
         }
 
 
         //--------------------------------------------------------------
         //private methods
-        private static Book CreateBookWithRefs(BookInfoJson bookInfoJson, Dictionary<string, Author> authorDict)
+        private static Book CreateBookWithRefs(BookInfoJson bookInfoJson,
+            Dictionary<string, Author> authorDict,
+            Dictionary<string, Tag> tagsDict)
         {
             var book = new Book
             {
@@ -44,7 +53,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 Description = bookInfoJson.description,
                 PublishedOn = DecodePubishDate(bookInfoJson.publishedDate),
                 Publisher = bookInfoJson.publisher,
-                Price = (decimal) (bookInfoJson.saleInfoListPriceAmount ?? -1),
+                Price = (decimal)(bookInfoJson.saleInfoListPriceAmount ?? -1),
                 ImageUrl = bookInfoJson.imageLinksThumbnail
             };
 
@@ -52,12 +61,17 @@ namespace ServiceLayer.DatabaseServices.Concrete
             book.AuthorsLink = new List<BookAuthor>();
             foreach (var author in bookInfoJson.authors)
             {
-                book.AuthorsLink.Add(new BookAuthor {Book = book, Author = authorDict[author], Order = i++});
+                book.AuthorsLink.Add(new BookAuthor { Book = book, Author = authorDict[author], Order = i++ });
             }
 
+            book.Tags = new List<Tag>();
+            foreach (var category in bookInfoJson.categories)
+            {
+                book.Tags.Add(tagsDict[category]);
+            }
             if (bookInfoJson.averageRating != null)
                 book.Reviews =
-                    CalculateReviewsToMatch((double) bookInfoJson.averageRating, (int) bookInfoJson.ratingsCount);
+                    CalculateReviewsToMatch((double)bookInfoJson.averageRating, (int)bookInfoJson.ratingsCount);
 
             return book;
         }
@@ -77,7 +91,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 reviews.Add(new Review
                 {
                     VoterName = "anonymous",
-                    NumStars = (int) (currentAve > averageRating
+                    NumStars = (int)(currentAve > averageRating
                         ? Math.Truncate(averageRating)
                         : Math.Ceiling(averageRating))
                 });

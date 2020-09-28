@@ -38,8 +38,8 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var books = context.Books
                     .AsNoTracking()
-                    .Include(r => r.AuthorsLink) 
-                        .ThenInclude(r => r.Author)
+                    .Include(book => book.AuthorsLink)
+                        .ThenInclude(book => book.Author)
                     .ToList();
 
                 //VERIFY
@@ -61,8 +61,8 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var books = context.Books
-                    .Include(r => r.AuthorsLink)
-                        .ThenInclude(r => r.Author)
+                    .Include(book => book.AuthorsLink)
+                        .ThenInclude(bookAuthor => bookAuthor.Author)
                     .ToList();
 
                 //VERIFY
@@ -84,26 +84,28 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
-                var book = context.Books
-                    .Include(r => r.AuthorsLink) //#A
-                    .ThenInclude(r => r.Author) //#B
-                    .Include(r => r.Reviews) //#C
-                    .Include(r => r.Promotion) //#D
-                    .First(); //#E
+                var firstBook = context.Books
+                    .Include(book => book.AuthorsLink) //#A
+                        .ThenInclude(bookAuthor => bookAuthor.Author) //#B                    
+                    .Include(book => book.Reviews) //#C
+                    .Include(book => book.Tags) //#D
+                    .Include(book => book.Promotion) //#E
+                    .First(); //#F
                 /*********************************************************
                 #A The first Include() gets a collection of BookAuthor
                 #B The ThenInclude() gets the next link, in this case the link to the Author
                 #C The Include() gets a collection of Reviews, which may be an empty collection
-                #D This loads any optional PriceOffer class, if one is assigned
-                #E This takes the first book
+                #D This loads the Tags. Note that this directly accesses the Tags
+                #E This loads any optional PriceOffer class, if one is assigned
+                #F This takes the first book
                 * *******************************************************/
 
                 //VERIFY
-                book.AuthorsLink.ShouldNotBeNull();
-                book.AuthorsLink.First()
+                firstBook.AuthorsLink.ShouldNotBeNull();
+                firstBook.AuthorsLink.First()
                     .Author.ShouldNotBeNull();
 
-                book.Reviews.ShouldNotBeNull();
+                firstBook.Reviews.ShouldNotBeNull();
             }
         }
 
@@ -126,8 +128,8 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 showlog = true;
-                var book = context.Books
-                    .Include(r => r.Reviews) //#A
+                var firstBook = context.Books
+                    .Include(book => book.Reviews) //#A
                     .First(); //#B
                 /*********************************************************
                 #A The Include() gets a collection of Reviews, which may be an empty collection
@@ -135,8 +137,8 @@ namespace Test.UnitTests.TestDataLayer
                 * *******************************************************/
 
                 //VERIFY
-                book.Reviews.ShouldNotBeNull();
-                book.AuthorsLink.ShouldBeNull();
+                firstBook.Reviews.ShouldNotBeNull();
+                firstBook.AuthorsLink.ShouldBeNull();
             }
         }
 
@@ -155,11 +157,11 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var newPrices = context.Books.Include(x => x.Promotion)
-                    .Select(x => (decimal?) x.Promotion.NewPrice)
+                    .Select(x => (decimal?)x.Promotion.NewPrice)
                     .ToArray();
 
                 //VERIFY
-                newPrices.ShouldEqual(new decimal?[]{null, null, null, 219} );
+                newPrices.ShouldEqual(new decimal?[] { null, null, null, 219 });
             }
         }
 
@@ -176,34 +178,38 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
-                var book = context.Books.First(); //#A
-                context.Entry(book)
-                    .Collection(c => c.AuthorsLink).Load(); //#B
-                foreach (var authorLink in book.AuthorsLink) //#C
+                var firstBook = context.Books.First();            //#A
+                context.Entry(firstBook)
+                    .Collection(book => book.AuthorsLink).Load(); //#B
+                foreach (var authorLink in firstBook.AuthorsLink) //#C
                 {
                     //#C
-                    context.Entry(authorLink) //#C
-                        .Reference(r => r.Author).Load(); //#C
-                } //#C
+                    context.Entry(authorLink)                     //#C
+                        .Reference(bookAuthor =>                  //#C
+                            bookAuthor.Author).Load();            //#C
+                }                                                 //#C
 
-                context.Entry(book) //#D
-                    .Collection(c => c.Reviews).Load(); //#D
-                context.Entry(book) //#E
-                    .Reference(r => r.Promotion).Load(); //#E
+                context.Entry(firstBook)                          //#D
+                    .Collection(book => book.Reviews).Load();     //#D
+                context.Entry(firstBook)  //#E
+                    .Collection(book => book.Tags).Load(); //#E
+                context.Entry(firstBook)                          //#F
+                    .Reference(book => book.Promotion).Load();    //#F
                 /*********************************************************
                 #A This reads in the first book on its own
                 #B This explicitly loads the linking table, BookAuthor
                 #C To load all the possible Authors it has to loop through all the BookAuthor entries and load each linked Author class
                 #D This loads all the Reviews
-                #E This loads the optional PriceOffer class
+                #E This loads the Tags
+                #F This loads the optional PriceOffer class
                 * *******************************************************/
 
                 //VERIFY
-                book.AuthorsLink.ShouldNotBeNull();
-                book.AuthorsLink.First()
+                firstBook.AuthorsLink.ShouldNotBeNull();
+                firstBook.AuthorsLink.First()
                     .Author.ShouldNotBeNull();
 
-                book.Reviews.ShouldNotBeNull();
+                firstBook.Reviews.ShouldNotBeNull();
             }
         }
 
@@ -220,13 +226,13 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
-                var book = context.Books.First(); //#A
-                var numReviews = context.Entry(book) //#B
-                    .Collection(c => c.Reviews) //#B
+                var firstBook = context.Books.First(); //#A
+                var numReviews = context.Entry(firstBook) //#B
+                    .Collection(book => book.Reviews) //#B
                     .Query().Count(); //#B
-                var starRatings = context.Entry(book) //#C
-                    .Collection(c => c.Reviews) //#C
-                    .Query().Select(x => x.NumStars) //#C
+                var starRatings = context.Entry(firstBook) //#C
+                    .Collection(book => book.Reviews) //#C
+                    .Query().Select(review => review.NumStars) //#C
                     .ToList(); //#C
                 /*********************************************************
                 #A This reads in the first book on its own
@@ -284,14 +290,14 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 showlog = true;
                 var books = context.Books
-                    .Select(p => new //#A
-                        {
-                            //#A
-                            p.Title, //#B
-                            p.Price, //#B
-                            NumReviews //#C
-                                = p.Reviews.Count, //#C
-                        }
+                    .Select(book => new //#A
+                    {
+                        //#A
+                        book.Title, //#B
+                        book.Price, //#B
+                        NumReviews //#C
+                                = book.Reviews.Count, //#C
+                    }
                     ).ToList();
                 /*********************************************************
                 #A This uses the LINQ select keyword and creates an anonymous type to hold the results

@@ -79,16 +79,16 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 showLog = true;
-                var book = context.Books                          
+                var book = context.Books
                     .Single(p => p.Title == "Quantum Networking");
-                book.PublishedOn = new DateTime(2058, 1, 1);         
-                context.SaveChanges();                            
+                book.PublishedOn = new DateTime(2058, 1, 1);
+                context.SaveChanges();
                 showLog = false;
 
                 //VERIFY
-                var bookAgain = context.Books                     
+                var bookAgain = context.Books
                     .Single(p => p.Title == "Quantum Networking");
-                bookAgain.PublishedOn                             
+                bookAgain.PublishedOn
                     .ShouldEqual(new DateTime(2058, 1, 1));
 
             }
@@ -169,19 +169,16 @@ namespace Test.UnitTests.TestDataLayer
             {
                 context.Database.EnsureCreated();
                 context.SeedDatabaseFourBooks();
-
-                var author = context.Books                                          //#A
-                    .Where(p => p.Title == "Quantum Networking")                    //#A
-                    .Select(p => p.AuthorsLink.First().Author)                      //#A
-                    .Single();                                                      //#A
-                author.Name = "Future Person 2";                                    //#A
-                json = JsonConvert.SerializeObject(author,                          //#A
-                    new JsonSerializerSettings()                                    //#A
-                {
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects //#A
-                });                                                                 //#A
-            }                                                   
-
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                var author = context.Books                        //#A
+                    .Where(p => p.Title == "Quantum Networking")  //#A
+                    .Select(p => p.AuthorsLink.First().Author)    //#A
+                    .Single();                                    //#A
+                author.Name = "Future Person 2";                  //#A
+                json = JsonConvert.SerializeObject(author); //#A
+            }
             using (var context = new EfCoreContext(options))
             {
                 showLog = true;
@@ -191,11 +188,11 @@ namespace Test.UnitTests.TestDataLayer
 
                 context.Update(author); //#C                               
                 context.SaveChanges();  //#D  
-            /**********************************************************
-            #A This simulates an external system returning a modified Author entity class as a JSON string
-            #B This simulates receiving a JSON string from an external system and decoding it into an Author class
-            #C I use the Update command, which replaces all the row data for the given primary key, in this case AuthorId
-            * *******************************************************/
+                /**********************************************************
+                #A This simulates an external system returning a modified Author entity class as a JSON string
+                #B This simulates receiving a JSON string from an external system and decoding it into an Author class
+                #C I use the Update command, which replaces all the row data for the given primary key, in this case AuthorId
+                * *******************************************************/
 
                 //VERIFY
                 var authorAgain = context.Books.Where(p => p.Title == "Quantum Networking")
@@ -243,12 +240,12 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 var books = context.Books.ToList();
-                books.First().PublishedOn = new DateTime(2020, 1, 1);   
-                context.SaveChanges();  
+                books.First().PublishedOn = new DateTime(2020, 1, 1);
+                context.SaveChanges();
 
                 //VERIFY
-                context.Books.First().PublishedOn  
-                    .ShouldEqual(new DateTime(2020, 1, 1)); 
+                context.Books.First().PublishedOn
+                    .ShouldEqual(new DateTime(2020, 1, 1));
             }
         }
     }

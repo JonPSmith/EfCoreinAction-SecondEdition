@@ -5,10 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Utils\**" />
+    <EmbeddedResource Remove="Utils\**" />
+    <None Remove="Utils\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-preview.7.20365.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0-preview.7.20365.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-rc.1.20451.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0-rc.1.20451.13" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -17,10 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BizLogic\BizLogic.csproj" />
     <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

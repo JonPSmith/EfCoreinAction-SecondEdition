@@ -60,8 +60,8 @@ namespace Test.UnitTests.TestDataLayer
                 * *******************************************************/
 
                 //VERIFY
-                var bookAgain = context.Books 
-                    .Include(p => p.AuthorsLink)                    
+                var bookAgain = context.Books
+                    .Include(p => p.AuthorsLink)
                     .Single(p => p.BookId == book.BookId);
                 bookAgain.AuthorsLink.ShouldNotBeNull();
                 bookAgain.AuthorsLink.Count.ShouldEqual(1);
@@ -81,20 +81,28 @@ namespace Test.UnitTests.TestDataLayer
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var book = context.Books                          
-                    .Include(p => p.AuthorsLink)                  
-                    .Single(p => p.Title == "Quantum Networking");
+                var book = context.Books                           //#A
+                    .Include(p => p.AuthorsLink)                   //#A
+                    .Single(p => p.Title == "Quantum Networking"); //#A
 
-                var newAuthor = context.Authors                   
-                    .Single(p => p.Name == "Martin Fowler");
+                var existingAuthor = context.Authors        //#B         
+                    .Single(p => p.Name == "Martin Fowler");//#B
 
-                book.AuthorsLink.Add(new BookAuthor
+                book.AuthorsLink.Add(new BookAuthor  //#C
                 {
-                    Book = book,
-                    Author = newAuthor,
-                    Order = (byte) book.AuthorsLink.Count
+                    Book = book,                           //#D
+                    Author = existingAuthor,               //#D
+                    Order = (byte)book.AuthorsLink.Count  //#E
                 });
-                context.SaveChanges();
+                context.SaveChanges();                     //#F
+                /**********************************************************
+                #A This finds the book with title "Quantum Networking", whose current author is "Future Person"
+                #B You then find an existing author, in this case "Martin Fowler"
+                #C You add a new BookAuthor linking entity to the Book's AuthorsLink collection
+                #D You fill in the two navigational properties that are in the many-to-many relationship
+                #E You set the Order to the old count of AuthorsLink. In this case that will be 1 (the first author has a value of 0)
+                #F The SaveChanges will create a new row in the BookAuthor table
+                * *******************************************************/
 
                 //VERIFY
                 var bookAgain = context.Books
@@ -211,7 +219,7 @@ namespace Test.UnitTests.TestDataLayer
                 #B I then delete the original link
                 #C Now I create a new BookAuthor link to the Author chosen by the user and add it the BookAuthor table
                 #D Finally I call SaveChanges which find the deleted BookAuthor entry and the new BookAuthor entry and deletes/adds then respectively
-                 * **************************************************/        
+                 * **************************************************/
 
                 //VERIFY
                 var bookAgain = context.Books
@@ -250,13 +258,13 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 //ATTEMPT
-                context.Set<BookAuthor>().Add(new BookAuthor    
-                {                                               
-                    BookId = dto.BookId,                        
-                    AuthorId = dto.NewAuthorId,                 
-                    Order = 1                                   
-                });                                             
-                context.SaveChanges();                          
+                context.Set<BookAuthor>().Add(new BookAuthor
+                {
+                    BookId = dto.BookId,
+                    AuthorId = dto.NewAuthorId,
+                    Order = 1
+                });
+                context.SaveChanges();
 
                 //VERIFY
                 var bookAgain = context.Books
@@ -267,6 +275,48 @@ namespace Test.UnitTests.TestDataLayer
                 var authorsInOrder = bookAgain.AuthorsLink.OrderBy(p => p.Order).ToList();
                 authorsInOrder.First().Author.Name.ShouldEqual("Future Person");
                 authorsInOrder.Last().Author.Name.ShouldEqual("Martin Fowler");
+            }
+        }
+
+        //-----------------------------------------
+        //Tags
+
+        [Fact]
+        public void TestAddTagToBookOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+
+                //ATTEMPT
+                var book = context.Books //#A
+                    .Include(p => p.AuthorsLink) //#A
+                    .Single(p => p.Title == "Quantum Networking"); //#A
+
+                var existingTag = context.Tags //#B         
+                    .Single(p => p.TagId == "Editor's Choice"); //#B
+
+                book.Tags.Add(existingTag); //#C
+                context.SaveChanges(); //#D
+                /**********************************************************
+                #A This finds the book with title "Quantum Networking", whose current author is "Future Person"
+                #B You then find the Tag called "Editor's Choice" to add this this book
+                #C You simply add the Tag to the Books Tags collection
+                #D When SaveChanges is called EF Core will create a new row in the hidden BookTags table
+                * *******************************************************/
+            }
+            using (var context = new EfCoreContext(options))
+            {
+                //VERIFY
+                var bookAgain = context.Books
+                    .Include(p => p.Tags)
+                    .Single(p => p.Title == "Quantum Networking");
+                bookAgain.Tags.Count.ShouldEqual(2);
+                bookAgain.Tags.First().TagId.ShouldEqual("Editor's Choice");
+                bookAgain.Tags.Last().TagId.ShouldEqual("Quantum Entanglement");
             }
         }
 
