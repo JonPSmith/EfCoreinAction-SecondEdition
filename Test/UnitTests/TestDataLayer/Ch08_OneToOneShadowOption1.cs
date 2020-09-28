@@ -15,11 +15,11 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch08_OneToOneRelationshipsOption1
+    public class Ch08_OneToOneShadowOption1
     {
         private ITestOutputHelper _output;
 
-        public Ch08_OneToOneRelationshipsOption1(ITestOutputHelper output)
+        public Ch08_OneToOneShadowOption1(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -80,7 +80,7 @@ namespace Test.UnitTests.TestDataLayer
                 var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
 
                 //VERIFY
-                ex.Message.ShouldEqual("The value of 'ShadowAttendee.AttendeeId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.");
+                ex.Message.ShouldEqual("The value of 'ShadowAttendee.Id' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.");
             }
         }
 
@@ -153,7 +153,7 @@ namespace Test.UnitTests.TestDataLayer
                 var shadowAttendee = new ShadowAttendee { Name = "Person1", TicketOption1 = dupTicket };
                 context.Add(shadowAttendee);
                 context.SaveChanges();
-                dupticketId = dupTicket.TicketId;
+                dupticketId = dupTicket.TicketOption1Id;
             }
             using (var context = new Chapter08DbContext(options))
             {
@@ -164,7 +164,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.InnerException.Message.ShouldEqual(
-                    "SQLite Error 19: 'UNIQUE constraint failed: ShadowAttendees.AttendeeId'.");
+                    "SQLite Error 19: 'UNIQUE constraint failed: ShadowAttendees.Id'.");
                 context.TicketOption1s.Count().ShouldEqual(1);
             }
         }

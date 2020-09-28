@@ -3,9 +3,9 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
+using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -13,15 +13,33 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch08_OneToOneRelationshipsOption2
+    public class Ch08_OneToOneShadowOption2
     {
         private ITestOutputHelper _output;
 
-        public Ch08_OneToOneRelationshipsOption2(ITestOutputHelper output)
+        public Ch08_OneToOneShadowOption2(ITestOutputHelper output)
         {
             _output = output;
         }
 
+
+
+        [Fact]
+        public void ListShadowAttendeeTicketOption2ColumnsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                context.ListPropertiesAndForeignKeys<ShadowAttendee>(_output);
+                context.ListPropertiesAndForeignKeys<TicketOption2>(_output);
+
+                //VERIFY
+            }
+        }
 
         [Fact]
         public void TestOption2OneToOneAddOk()

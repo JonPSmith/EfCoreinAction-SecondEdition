@@ -8,13 +8,12 @@ namespace Test.Chapter08Listings.EfClasses
 {
     public class ShadowAttendee
     {
-        [Key]
-        public int AttendeeId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public TicketOption1 TicketOption1 { get; set; }
         public TicketOption2 TicketOption2 { get; set; }
 
-        public ICollection<AttendeeNote> Notes { get; set; }
+        public ICollection<ShadowAttendeeNote> Notes { get; set; }
     }
 }

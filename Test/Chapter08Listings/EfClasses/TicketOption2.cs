@@ -8,8 +8,7 @@ namespace Test.Chapter08Listings.EfClasses
 
     public class TicketOption2
     {
-        [Key]
-        public int TicketId { get; set; }
+        public int TicketOption2Id { get; set; }
 
         public ShadowAttendee Attendee { get; set; }
     }

@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
-using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupportSchema;
 using Xunit;
@@ -14,66 +13,20 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
-    public class Ch08_ShadowProperties
+    public class Ch08_OneToOneRelationships
     {
         private ITestOutputHelper _output;
 
-        public Ch08_ShadowProperties(ITestOutputHelper output)
+        public Ch08_OneToOneRelationships(ITestOutputHelper output)
         {
             _output = output;
         }
 
 
 
-        [Fact]
-        public void ListAttendeeNoteColumnsOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                var modelProps = context.Model.FindEntityType(typeof(AttendeeNote)).GetProperties();
-                var fks = context.Model.FindEntityType(typeof(AttendeeNote)).GetForeignKeys();
-
-                //VERIFY
-                _output.WriteLine("Properties");
-                foreach (var modelProp in modelProps)
-                {
-                    _output.WriteLine(modelProp.ToString());
-                }
-                _output.WriteLine("Foreign keys");
-                foreach (var fk in fks)
-                {
-                    _output.WriteLine(fk.ToString());
-                }
-            }
-        }
 
         [Fact]
-        public void ListTicketOption2ColumnsOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                var modelProps = context.Model.FindEntityType(typeof(TicketOption2)).GetProperties();
-
-                //VERIFY
-                foreach (var modelProp in modelProps)
-                {
-                    _output.WriteLine(modelProp.ToString());
-                }
-            }
-        }
-
-        [Fact]
-        public void TestShadowPropertyOptionalOk()
+        public void TestAttendeeOptionalOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -99,7 +52,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestShadowPropertyReplaceOk()
+        public void TestAttendeeReplaceOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -125,7 +78,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestShadowPropertyRequiredNotAddedOk()
+        public void TestAttendeeRequiredNotAddedOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -150,7 +103,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestShadowPropertyRequiredOk()
+        public void TestAttendeeRequiredOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -173,7 +126,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestShadowPropertySqlOk()
+        public void TestAttendeeSqlOk()
         {
             //SETUP
             var options = this.CreateUniqueClassOptions<Chapter08DbContext>();

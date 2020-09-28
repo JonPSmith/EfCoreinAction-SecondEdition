@@ -1,15 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.ComponentModel.DataAnnotations;
-
 namespace Test.Chapter08Listings.EfClasses
 {
-
-    public class TicketOption1
+    public class ShadowAttendeeNote
     {
-        public int TicketOption1Id { get; set; }
+        public int Id { get; set; }
 
-        public ShadowAttendee Attendee { get; set; }
+        public string Note { get; set; }
     }
 }

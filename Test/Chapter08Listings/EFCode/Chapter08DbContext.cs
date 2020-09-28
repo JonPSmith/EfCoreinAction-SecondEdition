@@ -28,6 +28,8 @@ namespace Test.Chapter08Listings.EFCode
         public DbSet<ShadowAttendee> ShadowAttendees { get; set; }
         public DbSet<TicketOption1> TicketOption1s { get; set; }
         public DbSet<TicketOption2> TicketOption2s { get; set; }
+        public DbSet<ShadowWithNotes> ShadowWithManys { get; set; }
+
 
         //Table-per-hierarchy
         public DbSet<Payment> Payments { get; set; } //#A

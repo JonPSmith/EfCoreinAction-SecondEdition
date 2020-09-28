@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+
 namespace Test.Chapter08Listings.EfClasses
 {
-    public class AttendeeNote
+    public class ShadowWithNotes
     {
-        public int Id { get; set; }
+        public int ShadowWithNotesId { get; set; }
 
-        public string Note { get; set; }
+        public ICollection<ShadowAttendeeNote> Notes { get; set; }
     }
 }
