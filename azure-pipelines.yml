@@ -10,11 +10,9 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'repasowebappacr-1806'
-  #'9ec5184a-6751-43a1-bfe9-f2c15982b003'
-  imageRepository: 'bookapprepaso'
+  dockerRegistryServiceConnection: variables.dockerRegistryName
+  imageRepository: variables.imageName
   containerRegistry: variables.acrio
-  #'repasowebappacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/BookApp/Dockerfile'
   tag: '$(Build.BuildId)'
   
@@ -66,6 +64,7 @@ stages:
         codeCoverageTool: Cobertura  
         summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'      
           
+# Please notice that for this stage we are using Ubuntu, just in order to deal with Docker Linux settings          
 - stage: Publish
   displayName: Build(image) and push stage
   jobs:  
