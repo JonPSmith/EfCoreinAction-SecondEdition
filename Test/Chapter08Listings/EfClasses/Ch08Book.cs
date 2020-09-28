@@ -20,7 +20,7 @@ namespace Test.Chapter08Listings.EfClasses
         public double? ReviewsAverageVotes { get; private set; }      //#B
 
         public IReadOnlyCollection<Review> Reviews =>                 //#C
-            _reviews.ToImmutableList();                               //#D
+            _reviews.ToList();                                        //#D
 
         public void AddReview(Review review)                          //#E
         {
@@ -41,7 +41,7 @@ namespace Test.Chapter08Listings.EfClasses
     #A You add a backing field, which is a list. By default EF Core will read and write to this
     #B This holds a pre-calculated average of the reviews. This is read-only
     #C This is a read-only collection so no one can change the collection
-    #D This returns an immutable copy of the reviews in the _reviews backing field. 
+    #D This returns an copy of the reviews in the _reviews backing field. 
     #E You add a method to allow a new Review to be added to the _reviews collection
     #F You add the new review to the backing field _reviews. This will update the database on the call to SaveChanges
     #G Then you recalculate the average votes for the book
