@@ -10,7 +10,8 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: variables.dockerRegistryName
+  dockerRegistryServiceConnection: 'repasowebappacr-1806'
+  #not working: variables.dockerRegistryName
   imageRepository: variables.imageName
   containerRegistry: variables.acrio
   dockerfilePath: '$(Build.SourcesDirectory)/BookApp/Dockerfile'
@@ -38,6 +39,8 @@ stages:
       inputs:
           projects: '**/*.csproj'
           arguments: '--configuration $(BuildConfiguration)'
+
+#This stage is executed only if variables.runTest is true, it can a default value, but it could be changed at execution time          
 - stage: Test
   displayName: Test stage  
   jobs:  
@@ -114,7 +117,8 @@ stages:
               DockerNamespace: '$(containerRegistry)'
               DockerRepository: '$(imageRepository)'
               DockerImageTag: '$(tag)'
-
+              
+#If desired this stage can be "protected" by using aprovals or another kind of checkers
 - stage: prod_deploy
   jobs:
   - deployment: prod_deploy
