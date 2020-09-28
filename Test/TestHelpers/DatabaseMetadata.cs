@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Xunit.Abstractions;
 
 namespace Test.TestHelpers
 {
@@ -50,6 +51,25 @@ namespace Test.TestHelpers
         {
             var efType = context.Model.FindEntityType(typeof(TEntity));
             return efType.FindProperty(propertyName).GetColumnType();
+        }
+
+        public static void ListPropertiesAndForeignKeys<TEntity>(this DbContext context, ITestOutputHelper output)
+            where TEntity : class
+        {
+            var modelProps = context.Model.FindEntityType(typeof(TEntity)).GetProperties();
+            var fks = context.Model.FindEntityType(typeof(TEntity)).GetForeignKeys();
+
+            //VERIFY
+            output.WriteLine($"Properties  for {typeof(TEntity).Name}");
+            foreach (var modelProp in modelProps)
+            {
+                output.WriteLine("   " + modelProp.ToString());
+            }
+            output.WriteLine("Foreign keys");
+            foreach (var fk in fks)
+            {
+                output.WriteLine("   " + fk.ToString());
+            }
         }
 
         //---------------------------------------------------

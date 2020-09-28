@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Test.Chapter08Listings.EfClasses
 {
@@ -12,9 +11,6 @@ namespace Test.Chapter08Listings.EfClasses
         [Key]
         public int TicketId { get; set; }
 
-        public int AttendeeId { get; set; }
-
-        [ForeignKey(nameof(AttendeeId))]
-        public Attendee Attendee { get; set; }
+        public ShadowAttendee Attendee { get; set; }
     }
 }

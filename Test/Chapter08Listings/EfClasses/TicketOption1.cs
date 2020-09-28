@@ -11,6 +11,6 @@ namespace Test.Chapter08Listings.EfClasses
         [Key]
         public int TicketId { get; set; }
 
-        public Attendee Attendee { get; set; }
+        public ShadowAttendee Attendee { get; set; }
     }
 }

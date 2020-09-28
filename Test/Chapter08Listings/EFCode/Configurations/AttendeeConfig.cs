@@ -12,12 +12,6 @@ namespace Test.Chapter08Listings.EFCode.Configurations
         public void Configure
             (EntityTypeBuilder<Attendee> entity)
         {
-            entity.HasOne(p => p.TicketOption1) //#A
-                .WithOne(p => p.Attendee)
-                .HasForeignKey<Attendee>
-                    (p => p.TicketId) //#B
-                .IsRequired();
-
             entity.HasOne(p => p.Optional)
                 .WithOne(p => p.Attend)
                 .HasForeignKey<Attendee>("OptionalTrackId");
@@ -27,12 +21,6 @@ namespace Test.Chapter08Listings.EFCode.Configurations
                 .HasForeignKey<Attendee>(
                     "MyShadowFk") //#D
                 .IsRequired(); //#E
-
-            entity.HasOne(p => p.TicketOption2)
-                .WithOne(p => p.Attendee);
-            entity.HasOne(p => p.TicketOption3)
-                .WithOne(p => p.DifferentName)
-                .HasForeignKey<Attendee>("TicketOption3ShadowFk");
         }
 
         /*******************************************************************

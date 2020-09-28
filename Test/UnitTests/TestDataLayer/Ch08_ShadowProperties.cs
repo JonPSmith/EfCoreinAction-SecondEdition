@@ -23,8 +23,10 @@ namespace Test.UnitTests.TestDataLayer
             _output = output;
         }
 
+
+
         [Fact]
-        public void ListAttendeeColumnsOk()
+        public void ListAttendeeNoteColumnsOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -33,8 +35,8 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var modelProps =  context.Model.FindEntityType(typeof(Attendee)).GetProperties();
-                var fks = context.Model.FindEntityType(typeof(Attendee)).GetForeignKeys();
+                var modelProps = context.Model.FindEntityType(typeof(AttendeeNote)).GetProperties();
+                var fks = context.Model.FindEntityType(typeof(AttendeeNote)).GetForeignKeys();
 
                 //VERIFY
                 _output.WriteLine("Properties");
@@ -51,7 +53,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void ListTicketOption3ColumnsOk()
+        public void ListTicketOption2ColumnsOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
@@ -60,71 +62,13 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var modelProps = context.Model.FindEntityType(typeof(TicketOption3)).GetProperties();
+                var modelProps = context.Model.FindEntityType(typeof(TicketOption2)).GetProperties();
 
                 //VERIFY
                 foreach (var modelProp in modelProps)
                 {
                     _output.WriteLine(modelProp.ToString());
                 }
-            }
-        }
-
-        [Fact]
-        public void TestShadowPropertyDeleteAttendeeOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var attendee = new Attendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1 (),
-                    Required = new RequiredTrack {Track = TrackNames.EfCore}
-                };
-                context.Add(attendee);
-                context.SaveChanges();
-
-                //ATTEMPT
-                context.Remove(attendee);
-                context.SaveChanges();
-
-                //VERIFY
-                context.Attendees.Count().ShouldEqual(0);
-                context.Set<TicketOption1>().Count().ShouldEqual(1);
-                context.Set<RequiredTrack>().Count().ShouldEqual(1);
-            }
-        }
-
-        [Fact]
-        public void TestShadowPropertyDeleteTicketOption1()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var attendee = new Attendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack { Track = TrackNames.EfCore }
-                };
-                context.Add(attendee);
-                context.SaveChanges();
-
-                //ATTEMPT
-                context.Remove(attendee.TicketOption1);
-                context.SaveChanges();
-
-                //VERIFY
-                context.Set<TicketOption1>().Count().ShouldEqual(0);
-                context.Attendees.Count().ShouldEqual(0);
-                context.Set<RequiredTrack>().Count().ShouldEqual(1);
             }
         }
 
@@ -141,7 +85,6 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore},
                     Optional = new OptionalTrack {Track = TrackNames.EfCore}
                 };
@@ -167,7 +110,6 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore}
                 };
                 context.Add(attendee);
@@ -194,8 +136,7 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var attendee = new Attendee
                 {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1 ()
+                    Name = "Person1"
                 };
                 context.Add(attendee);
                 //context.SaveChanges();
@@ -221,7 +162,6 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    TicketOption1 = new TicketOption1 (),
                     Required = new RequiredTrack {Track = TrackNames.EfCore}
                 };
                 context.Add(attendee);
@@ -246,7 +186,6 @@ namespace Test.UnitTests.TestDataLayer
                 var attendee = new Attendee
                 {
                     Name = "Person1",
-                    TicketOption1 = new TicketOption1( ),
                     Required = new RequiredTrack { Track = TrackNames.EfCore }
                 };
                 context.Add(attendee);

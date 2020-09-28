@@ -1,19 +1,46 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
+using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch08_OneToOneRelationshipsOption1
     {
+        private ITestOutputHelper _output;
+
+        public Ch08_OneToOneRelationshipsOption1(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+        [Fact]
+        public void ListShadowAttendeeTicketOption1ColumnsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
+            using (var context = new Chapter08DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                context.ListPropertiesAndForeignKeys<ShadowAttendee>(_output);
+                context.ListPropertiesAndForeignKeys<TicketOption1>(_output);
+
+                //VERIFY
+            }
+        }
+
         [Fact]
         public void TestOption1OneToOneAddOk()
         {
@@ -24,76 +51,18 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var attendee = new Attendee
+                var shadowAttendee = new ShadowAttendee
                 {
                     Name = "Person1",
                     TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
                 };
-                context.Add(attendee);
+                context.Add(shadowAttendee);
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(1);
+                context.ShadowAttendees.Count().ShouldEqual(1);
                 context.TicketOption1s.Count().ShouldEqual(1);
-                attendee.TicketOption1.ShouldNotBeNull();
-            }
-        }
-
-        [Fact]
-        public void TestOption1OneToOneDuplicateTicketOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                var dupTicket = new TicketOption1();
-                var attendees = new List<Attendee>
-                {
-                    new Attendee {Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack()},
-                    new Attendee {Name = "Person2", TicketOption1 = dupTicket, Required = new RequiredTrack()},
-                };
-                context.AddRange(attendees);
-                context.SaveChanges();
-
-                //VERIFY
-                context.TicketOption1s.Count().ShouldEqual(1);
-                attendees.All(x => x.Required != null).ShouldBeTrue();
-            }
-        }
-
-        [Fact]
-        public void TestOption1OneToOneChangeTicketOk()
-        {
-            //SETUP
-            //var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var attendee = new Attendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
-                };
-                context.Add(attendee);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                //ATTEMPT
-                var existingAttendee = context.Attendees.Single();
-                existingAttendee.TicketOption1 = new TicketOption1 { };
-                context.SaveChanges();
-
-                //VERIFY
-                context.Attendees.Count().ShouldEqual(1);
-                context.TicketOption1s.Count().ShouldEqual(2);
+                shadowAttendee.TicketOption1.ShouldNotBeNull();
             }
         }
 
@@ -107,11 +76,11 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                context.Add(new Attendee {Name = "Person1", Required = new RequiredTrack()});
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+                context.Add(new ShadowAttendee {Name = "Person1"});
+                var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
 
                 //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
+                ex.Message.ShouldEqual("The value of 'ShadowAttendee.AttendeeId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.");
             }
         }
 
@@ -123,13 +92,13 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
-                var attendee = new Attendee
+                var shadowAttendee = new ShadowAttendee
                 {
                     Name = "Person1",
                     TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
+                    
                 };
-                context.Add(attendee);
+                context.Add(shadowAttendee);
                 context.SaveChanges();
 
                 //ATTEMPT
@@ -138,7 +107,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.TicketOption1s.Count().ShouldEqual(0);
-                context.Attendees.Count().ShouldEqual(0);
+                context.ShadowAttendees.Count().ShouldEqual(0);
             }
         }
 
@@ -150,21 +119,21 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter08DbContext(options))
             {
                 context.Database.EnsureCreated();
-                var attendee = new Attendee
+                var shadowAttendee = new ShadowAttendee
                 {
                     Name = "Person1",
                     TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
+                    
                 };
-                context.Add(attendee);
+                context.Add(shadowAttendee);
                 context.SaveChanges();
 
                 //ATTEMPT
-                context.Remove(context.Attendees.Single());
+                context.Remove(context.ShadowAttendees.Single());
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(0);
+                context.ShadowAttendees.Count().ShouldEqual(0);
                 context.TicketOption1s.Count().ShouldEqual(1);
             }
         }
@@ -181,63 +150,25 @@ namespace Test.UnitTests.TestDataLayer
 
                 //ATTEMPT
                 var dupTicket = new TicketOption1();
-                var attendee = new Attendee { Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack() };
-                context.Add(attendee);
+                var shadowAttendee = new ShadowAttendee { Name = "Person1", TicketOption1 = dupTicket };
+                context.Add(shadowAttendee);
                 context.SaveChanges();
                 dupticketId = dupTicket.TicketId;
             }
             using (var context = new Chapter08DbContext(options))
             {
                 var dupTicket = context.TicketOption1s.Find(dupticketId);
-                var newAttendee = new Attendee { Name = "Person1", TicketOption1 = dupTicket, Required = new RequiredTrack() };
-                context.Add(newAttendee);
+                var newShadowAttendee = new ShadowAttendee { Name = "Person1", TicketOption1 = dupTicket };
+                context.Add(newShadowAttendee);
                 var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
 
                 //VERIFY
                 ex.InnerException.Message.ShouldEqual(
-                    "SQLite Error 19: 'UNIQUE constraint failed: Attendees.TicketId'.");
+                    "SQLite Error 19: 'UNIQUE constraint failed: ShadowAttendees.AttendeeId'.");
                 context.TicketOption1s.Count().ShouldEqual(1);
             }
         }
 
-        [Fact]
-        public void TestOption1OneToOneOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                var attendees = new List<Attendee>
-                {
-                    new Attendee
-                    {
-                        Name = "Person1",
-                        TicketOption1 = new TicketOption1(),
-                        Required = new RequiredTrack()
-                    },
-                    new Attendee
-                    {
-                        Name = "Person2",
-                        TicketOption1 = new TicketOption1(),
-                        Required = new RequiredTrack()
-                    },
-                    new Attendee
-                    {
-                        Name = "Person3",
-                        TicketOption1 = new TicketOption1(),
-                        Required = new RequiredTrack()
-                    },
-                };
-                context.AddRange(attendees);
-                context.SaveChanges();
-
-                //VERIFY
-                context.TicketOption1s.Count().ShouldEqual(3);
-            }
-        }
 
 
     }

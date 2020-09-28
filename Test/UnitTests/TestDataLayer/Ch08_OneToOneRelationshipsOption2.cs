@@ -3,16 +3,26 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestDataLayer
 {
     public class Ch08_OneToOneRelationshipsOption2
     {
+        private ITestOutputHelper _output;
+
+        public Ch08_OneToOneRelationshipsOption2(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         [Fact]
         public void TestOption2OneToOneAddOk()
         {
@@ -25,17 +35,15 @@ namespace Test.UnitTests.TestDataLayer
                 //ATTEMPT
                 var ticket = new TicketOption2
                 {
-                    Attendee = new Attendee{Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack()}
+                    Attendee = new ShadowAttendee{Name = "Person1", TicketOption1 = new TicketOption1()}
                 };
                 context.Add(ticket);
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(1);
+                context.ShadowAttendees.Count().ShouldEqual(1);
                 context.TicketOption2s.Count().ShouldEqual(1);
                 ticket.Attendee.ShouldNotBeNull();
-
-                var x = context.Model.FindEntityType(typeof(TicketOption2));
             }
         }
 
@@ -51,8 +59,8 @@ namespace Test.UnitTests.TestDataLayer
 
                 var ticket = new TicketOption2
                 {
-                    Attendee = new Attendee
-                        { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
+                    Attendee = new ShadowAttendee
+                        { Name = "Person1", TicketOption1 = new TicketOption1() }
                 };
                 context.Add(ticket);
                 context.SaveChanges();
@@ -60,13 +68,13 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new Chapter08DbContext(options))
             {
                 //ATTEMPT
-                var existingAttendee = context.Attendees.Include(x => x.TicketOption2).Single();
+                var existingAttendee = context.ShadowAttendees.Include(x => x.TicketOption2).Single();
                 context.Remove(existingAttendee.TicketOption2);
                 existingAttendee.TicketOption2 = new TicketOption2();
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(1);
+                context.ShadowAttendees.Count().ShouldEqual(1);
                 context.TicketOption2s.Count().ShouldEqual(1);
             }
         }
@@ -81,7 +89,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ticket = new TicketOption2
                 {
-                    Attendee = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
+                    Attendee = new ShadowAttendee { Name = "Person1", TicketOption1 = new TicketOption1() }
                 };
                 context.Add(ticket);
                 context.SaveChanges();
@@ -92,7 +100,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 context.TicketOption2s.Count().ShouldEqual(0);
-                context.Attendees.Count().ShouldEqual(1);
+                context.ShadowAttendees.Count().ShouldEqual(1);
             }
         }
 
@@ -106,7 +114,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
                 var ticket = new TicketOption2
                 {
-                    Attendee = new Attendee { Name = "Person1", TicketOption1 = new TicketOption1(), Required = new RequiredTrack() }
+                    Attendee = new ShadowAttendee { Name = "Person1", TicketOption1 = new TicketOption1() }
                 };
                 context.Add(ticket);
                 context.SaveChanges();
@@ -116,7 +124,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(0);
+                context.ShadowAttendees.Count().ShouldEqual(0);
                 context.TicketOption2s.Count().ShouldEqual(0);
             }
         }
@@ -131,17 +139,16 @@ namespace Test.UnitTests.TestDataLayer
                 context.Database.EnsureCreated();
 
                 //ATTEMPT
-                var attendee = new Attendee
+                var attendee = new ShadowAttendee
                 {
                     Name = "Person1",
                     TicketOption1 = new TicketOption1(),
-                    Required = new RequiredTrack()
                 };
                 context.Add(attendee);
                 context.SaveChanges();
 
                 //VERIFY
-                context.Attendees.Count().ShouldEqual(1);
+                context.ShadowAttendees.Count().ShouldEqual(1);
                 context.TicketOption2s.Count().ShouldEqual(0);
                 attendee.TicketOption2.ShouldBeNull();
             }

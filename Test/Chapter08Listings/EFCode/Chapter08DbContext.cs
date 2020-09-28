@@ -22,9 +22,12 @@ namespace Test.Chapter08Listings.EFCode
 
         //One-to-One versions
         public DbSet<Attendee> Attendees { get; set; }
+
+
+        //Shadow One-to-One versions
+        public DbSet<ShadowAttendee> ShadowAttendees { get; set; }
         public DbSet<TicketOption1> TicketOption1s { get; set; }
         public DbSet<TicketOption2> TicketOption2s { get; set; }
-        public DbSet<TicketOption3> TicketOption3s { get; set; }
 
         //Table-per-hierarchy
         public DbSet<Payment> Payments { get; set; } //#A
@@ -43,6 +46,7 @@ namespace Test.Chapter08Listings.EFCode
             (ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new AttendeeConfig());
+            modelBuilder.ApplyConfiguration(new ShadowAttendeeConfig());
             modelBuilder.ApplyConfiguration(new PersonConfig());
             modelBuilder.ApplyConfiguration(new EmployeeShortFkConfig());
             modelBuilder.ApplyConfiguration(new DeletePrincipalConfig());
