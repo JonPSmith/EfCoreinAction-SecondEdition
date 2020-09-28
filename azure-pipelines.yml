@@ -10,9 +10,11 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '9ec5184a-6751-43a1-bfe9-f2c15982b003'
+  dockerRegistryServiceConnection: 'repasowebappacr-1806'
+  #'9ec5184a-6751-43a1-bfe9-f2c15982b003'
   imageRepository: 'bookapprepaso'
-  containerRegistry: 'repasowebappacr.azurecr.io'
+  containerRegistry: variables.acrio
+  #'repasowebappacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/BookApp/Dockerfile'
   tag: '$(Build.BuildId)'
   
