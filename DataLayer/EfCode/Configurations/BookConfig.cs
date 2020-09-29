@@ -38,6 +38,14 @@ namespace DataLayer.EfCode.Configurations
             entity.HasMany(p => p.Reviews)                 //#B
                 .WithOne()                                 //#B
                 .HasForeignKey(p => p.BookId);             //#B
+
+            entity.HasMany(x => x.Tags)    //#A
+                .WithMany(x => x.Books)    //#A
+                .UsingEntity<BookTag>(       //#B
+                    bookTag => bookTag.HasOne(x => x.Tag)   //#C
+                        .WithMany().HasForeignKey(x => x.TagId),    //#C
+                    bookTag => bookTag.HasOne(x => x.Book)  //#D
+                        .WithMany().HasForeignKey(x => x.BookId));   //#D
         }
     }
     /*Type/Size setting**********************************************

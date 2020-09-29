@@ -23,7 +23,7 @@ namespace Test.Chapter08Listings.EFCode
         {
             modelBuilder.ApplyConfiguration(new BookSummaryConfig());
             modelBuilder.ApplyConfiguration(new BookDetailConfig());
-            //modelBuilder.ApplyConfiguration(new OrderInfoConfig());
+            modelBuilder.ApplyConfiguration(new OrderInfoConfig());
             modelBuilder.ApplyConfiguration(new UserConfig());
         }
     }
