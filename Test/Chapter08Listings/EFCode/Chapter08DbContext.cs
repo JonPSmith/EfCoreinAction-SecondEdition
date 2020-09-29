@@ -35,6 +35,9 @@ namespace Test.Chapter08Listings.EFCode
         public DbSet<Payment> Payments { get; set; } //#A
         public DbSet<SoldIt> SoldThings { get; set; } //#B
 
+        //Table-per-type
+        public DbSet<Container> Containers { get; set; }
+
         //Backing fields on relationships
         public DbSet<Ch08Book> Books { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -53,6 +56,9 @@ namespace Test.Chapter08Listings.EFCode
             modelBuilder.ApplyConfiguration(new EmployeeShortFkConfig());
             modelBuilder.ApplyConfiguration(new DeletePrincipalConfig());
             modelBuilder.ApplyConfiguration(new PaymentConfig()); //#C
+
+            modelBuilder.Entity<ShippingContainer>().ToTable(nameof(ShippingContainer));
+            modelBuilder.Entity<PlasticContainer>().ToTable(nameof(PlasticContainer));
         }
     }
     /**TPH**************************************************
