@@ -5,12 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Test.Chapter08Listings.EfClasses
 {
-    [Table("ShippingContainer")]
-    public class ShippingContainer : Container
+    public class ShippingContainer : Container //#D
     {
-        public int ThicknessMm { get; set; }
-        public string DoorType { get; set; }
-        public int StackingMax { get; set; }
-        public bool Refrigerated { get; set; }
+        public int ThicknessMm { get; set; }   //#E
+        public string DoorType { get; set; }   //#E
+        public int StackingMax { get; set; }   //#E
+        public bool Refrigerated { get; set; } //#E
     }
 }

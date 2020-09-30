@@ -23,13 +23,11 @@ namespace Test.Chapter08Listings.EFCode
         //One-to-One versions
         public DbSet<Attendee> Attendees { get; set; }
 
-
         //Shadow One-to-One versions
         public DbSet<ShadowAttendee> ShadowAttendees { get; set; }
         public DbSet<TicketOption1> TicketOption1s { get; set; }
         public DbSet<TicketOption2> TicketOption2s { get; set; }
         public DbSet<ShadowWithNotes> ShadowWithManys { get; set; }
-
 
         //Table-per-hierarchy
         public DbSet<Payment> Payments { get; set; } //#A
