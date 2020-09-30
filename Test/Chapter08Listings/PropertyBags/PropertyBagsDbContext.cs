@@ -46,7 +46,7 @@ namespace Test.Chapter08Listings.PropertyBags
     /*****************************************************************
     #A You pass in a class containing the specification of the table and properties
     #B The DbSet called MyTable  links to the SharedType entity built in OnModelCreating
-    #C This defines a SharedType entity type
+    #C This defines a SharedType entity type.This allows the same type to mapped to multiple tables
     #D You give this shared entity type a name so that you can refer to it
     #E This adds each property in turn from the tableSpec
     #F This adds an index property - it finds the primary key based on its name
