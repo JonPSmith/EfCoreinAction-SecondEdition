@@ -81,7 +81,7 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 connectEntities.Count.ShouldNotEqual(0);
-                connectEntities.All(x => x.Name == "tenant1");
+                connectEntities.All(x => x.Name == "tenant1").ShouldBeTrue();
             }
             using (var context = new ChangeConnectDbContext(noConnection, new TestGetConnection(tenant2Connection)))
                 context.Entities.Count().ShouldEqual(0);
