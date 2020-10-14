@@ -9,15 +9,13 @@ namespace Test.Chapter11Listings.EfCode
 {
     public class ChangeConnectDbContext : DbContext
     {
-        private IGetConnection _getConnection;
-
         public ChangeConnectDbContext(
             DbContextOptions<ChangeConnectDbContext> options, 
             IGetConnection getConnection)
             : base(options)
         {
-            _getConnection = getConnection;
-            Database.SetConnectionString(getConnection?.CurrentConnection());
+            Database.SetConnectionString(
+                getConnection?.CurrentConnection());
         }
 
         public DbSet<ConnectEntity> Entities { get; set; }

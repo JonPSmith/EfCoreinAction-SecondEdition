@@ -79,6 +79,29 @@ namespace Test.UnitTests.TestDataLayer
                 context.MyEntities.Count().ShouldEqual(stopSaveChanges ? 0 : 1);
             }
         }
-        
+
+        [Theory]
+        [InlineData(false, 1)]
+        [InlineData(true, -1)]
+        public async Task TestSaveChangesAsyncInterceptorOk(bool stopSaveChanges, int expectedResult)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter11DbContext>(builder =>
+               builder.AddInterceptors(new MySaveChangesInterceptor(stopSaveChanges)));
+            using (var context = new Chapter11DbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                var entity = new MyEntity { MyString = "Test" };
+                context.Add(entity);
+                var result = await context.SaveChangesAsync();
+
+                //VERIFY
+                result.ShouldEqual(expectedResult);
+                context.MyEntities.Count().ShouldEqual(stopSaveChanges ? 0 : 1);
+            }
+        }
+
     }
 }
