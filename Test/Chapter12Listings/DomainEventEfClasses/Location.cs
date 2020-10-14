@@ -36,6 +36,7 @@ namespace Test.Chapter12Listings.DomainEventEfClasses
     #B These are normal properties that don't generate events when they are changed
     #C The backing field contains the real value of the data
     #D The setter is changed to sent a LocationChangedEvent if the State value changes 
+    #E This code will add a LocationChangedEvent to the entity class if the State value changed
      **************************************************************/
 
 }

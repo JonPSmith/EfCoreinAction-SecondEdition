@@ -161,19 +161,19 @@ namespace Test.UnitTests.Chapter12Tests
             services.AddSingleton(SqliteInMemory.CreateOptions<DomainEventsDbContext>());
             services.AddScoped<DomainEventsDbContext>();
 
-            services.AddTransient<IEventRunner, EventRunner>();             //#A
+            services.AddTransient<IEventRunner, EventRunner>();             //#B
 
-            services.AddTransient<IEventHandler<LocationChangedEvent>,      //#B
-                    LocationChangedEventHandler>();                         //#B
-            services.AddTransient<IEventHandler<QuoteLocationChangedEvent>, //#B
-                QuoteLocationChangedEventHandler>();                        //#B
+            services.AddTransient<IEventHandler<LocationChangedEvent>,      //#C
+                    LocationChangedEventHandler>();                         //#C
+            services.AddTransient<IEventHandler<QuoteLocationChangedEvent>, //#C
+                QuoteLocationChangedEventHandler>();                        //#C
 
-            services.AddTransient<ICalcSalesTaxService,                     //#C
-                CalcSalesTaxService>();                                     //#C
+            services.AddTransient<ICalcSalesTaxService,                     //#D
+                CalcSalesTaxService>();                                     //#D
             /********************************************************************
-            #A Register the Event Runner which will be injected into your application's DbContext
-            #B Registering all of your event handlers
-            #C You need to register any services that your event handlers use
+            #B Register the Event Runner which will be injected into your application's DbContext
+            #C Registering all of your event handlers
+            #D You need to register any services that your event handlers use
              *****************************************************************/
 
             var serviceProvider = services.BuildServiceProvider();
