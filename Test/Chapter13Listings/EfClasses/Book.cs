@@ -87,7 +87,7 @@ namespace Test.Chapter13Listings.EfClasses
         //-----------------------------------------------------
         //DDD access methods
 
-        public void UpdatePublishedOnDay(DateTime publishedOn)
+        public void UpdatePublishedOn(DateTime publishedOn)
         {
             PublishedOn = publishedOn;
         }
