@@ -16,9 +16,57 @@ namespace Test.Chapter13Listings.EfClasses
         private HashSet<Review> _reviews;
 
         //-----------------------------------------------
-        //ctors
+        //ctors / static create factory
 
-        private Book() { } //Needed by EF Core
+        private Book() { } //#A
+
+        public static IStatusGeneric<Book> CreateBook(      //#B
+        string title, DateTime publishedOn,       //#C
+        decimal price,                            //#C
+        ICollection<Author> authors)              //#C
+        {
+            var status = new StatusGenericHandler<Book>();//#D
+            if (string.IsNullOrWhiteSpace(title))         //#E
+                status.AddError(                          //#E
+                    "The book title cannot be empty.");   //#E
+
+            var book = new Book                         //#F
+            {                                           //#F
+                Title = title,                          //#F
+                PublishedOn = publishedOn,              //#F
+                OrgPrice = price,                       //#F
+                ActualPrice = price,                    //#F
+            };
+            if (authors == null)                                   //#G
+                throw new ArgumentNullException(nameof(authors));  //#G
+
+            byte order = 0;                               //#H
+            book._authorsLink = new HashSet<BookAuthor>(  //#H
+                authors.Select(a =>                       //#H
+                    new BookAuthor(book, a, order++)));   //#H
+
+            if (!book._authorsLink.Any())                             //#I
+                status.AddError(                                      //#I
+                    "You must have at least one Author for a book."); //#I
+
+            return status.SetResult(book); //#J
+        }
+        /***********************************************************************************
+        #A Creating a private constructor means people can't create the entity via a constructor
+        #B The static CreateBook method returns a status with a valid Book (if there are no errors)
+        #C These all the parameters that are needed to create a valid book
+        #D This creates a status that can return a result - in this case a Book
+        #E This adds an error. Note it doesn't return immediately so that other errors can be added
+        #F Now you set the properties 
+        #G This sets up the Tags collection via the backing field
+        #H The authors parameter being null is considered a software error and throws an exception
+        #I This creates the BookAuthor class in the order that the Authors have been provided
+        #J If there are no Authors we add an error
+        #K This sets the status's Result to the new Book instance. But if there are errors it will be null
+         ************************************************************************/
+
+        //----------------------------------------
+        //properties
 
         public int BookId { get; private set; }
         [Required(AllowEmptyStrings = false)]
@@ -36,84 +84,82 @@ namespace Test.Chapter13Listings.EfClasses
         public IReadOnlyCollection<Review> Reviews => _reviews?.ToList();
         public IReadOnlyCollection<BookAuthor> AuthorsLink => _authorsLink?.ToList();
 
-        //----------------------------------------------
-
-        public static IStatusGeneric<Book> CreateBook(
-            string title, DateTime publishedOn, decimal price, 
-            ICollection<Author> authors)
-        {
-            var status = new StatusGenericHandler<Book>();
-            if (string.IsNullOrWhiteSpace(title))
-                status.AddError("The book title cannot be empty.");
-
-            var book = new Book
-            {
-                Title = title,
-                PublishedOn = publishedOn,
-                OrgPrice = price,
-                ActualPrice = price,
-                _reviews = new HashSet<Review>()       //We add an empty list on create. I allows reviews to be added when building test data
-            };
-            if (authors == null)
-                throw new ArgumentNullException(nameof(authors));
-            byte order = 0;
-            book._authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(book, a, order++)));
-            if (!book._authorsLink.Any())
-                status.AddError("You must have at least one Author for a book.");
-
-            return status.SetResult(book);
-        }
-
-
         //-----------------------------------------------------
-        //DDD methods
+        //DDD access methods
 
         public void UpdatePublishedOnDay(DateTime publishedOn)
         {
             PublishedOn = publishedOn;
         }
 
-        //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
-        public void AddReview(int numStars, string comment, string voterName)
+        public void AddReview(int numStars,   //#A
+            string comment, string voterName) //#A
         {
-            if (_reviews == null)
-                throw new InvalidOperationException("The Reviews collection must be loaded before calling this method");
-            _reviews.Add(new Review(numStars, comment, voterName));
+            if (_reviews == null)                      //#B
+                throw new InvalidOperationException(   //#B
+                    "The Reviews collection must be loaded before calling this method");
+            _reviews.Add(new Review(           //#C
+                numStars, comment, voterName));    //#C
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
-        public void RemoveReview(int reviewId)
+        public void RemoveReview(int reviewId) //#D
         {
-            if (_reviews == null)
-                throw new InvalidOperationException("The Reviews collection must be loaded before calling this method");
-            var localReview = _reviews.SingleOrDefault(x => x.ReviewId == reviewId);
-            if (localReview == null)
-                throw new InvalidOperationException("The review with that key was not found in the book's Reviews.");
-            _reviews.Remove(localReview);
-        }
+            if (_reviews == null)                    //#B
+                throw new InvalidOperationException( //#B
+                    "The Reviews collection must be loaded before calling this method");
+            var localReview = _reviews.SingleOrDefault(  //#E
+                x => x.ReviewId == reviewId);            //#E
 
-        public IStatusGeneric AddPromotion(decimal actualPrice, string promotionalText)                  
+            if (localReview == null)                  //#F
+                throw new InvalidOperationException(  //#F
+                    "The review with that key was not found in the book's Reviews.");
+
+            _reviews.Remove(localReview);             //#G
+        }
+        /*****************************************************************
+        #A This adds a new review with the given parameters
+        #B This code relies on the _reviews being loaded so it throws an exception if it isn't
+        #C This creates a new Review using its internal constructor
+        #D This removes a review using its primary key
+        #E This finds the specific Review to remove
+        #F Not finding the review is considered a software error, so it throws an exception
+        #G The found review is removed
+         ******************************************************************/
+
+
+        public IStatusGeneric AddPromotion(               //#A
+            decimal actualPrice, string promotionalText)  //#B               
         {
-            var status = new StatusGenericHandler();
-            if (string.IsNullOrWhiteSpace(promotionalText))
+            var status = new StatusGenericHandler();      //#C
+            if (string.IsNullOrWhiteSpace(promotionalText)) //#D
             {
-                status.AddError("You must provide some text to go with the promotion.", nameof(PromotionalText));
-                return status;
+                return status.AddError(                        //#E
+                    "You must provide text to go with the promotion.", //#F
+                    nameof(PromotionalText));     //#F
             }
 
-            ActualPrice = actualPrice;  
-            PromotionalText = promotionalText;
+            ActualPrice = actualPrice;         //#G
+            PromotionalText = promotionalText; //#G
 
-            status.Message = $"The book's new price is ${actualPrice:F}.";
-
-            return status; 
+            return status; //#H
         }
 
-        public void RemovePromotion() 
+        public void RemovePromotion() //#H
         {
-            ActualPrice = OrgPrice; 
-            PromotionalText = null; 
+            ActualPrice = OrgPrice; //#I
+            PromotionalText = null; //#I
         }
+        /******************************************************************
+        #A The AddPromotion return a status: successful if no error and returns errors 
+        #B The parameters came from the input
+        #C This creates a status which is successful unless errors are added to it
+        #D You ensure the promotionalText has some text in it
+        #E The AddError method adds an error, and it returned immediately
+        #F The error contains a user-friendly message and the name of the property that has the error
+        #G If no errors, then the ActualPrice and PromotionalText are updated
+        #H The status, which is successful, is returned
+         *******************************************************************/
     }
 
 }

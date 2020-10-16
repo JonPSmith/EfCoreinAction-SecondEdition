@@ -13,7 +13,7 @@ namespace Test.Chapter13Listings.EfClasses
         public const int EmailLength = 100;
 
         private string _name;
-        private HashSet<BookApp.Domain.Books.BookAuthor> _booksLink;
+        private HashSet<BookAuthor> _booksLink;
 
         public Author(string name, string email)
         {
@@ -33,7 +33,7 @@ namespace Test.Chapter13Listings.EfClasses
         //------------------------------
         //Relationships
 
-        public ICollection<BookApp.Domain.Books.BookAuthor> BooksLink => _booksLink?.ToList();
+        public ICollection<BookAuthor> BooksLink => _booksLink?.ToList();
 
         public void ChangeName(string newAuthorName)
         {
