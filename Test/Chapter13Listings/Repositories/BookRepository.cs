@@ -32,7 +32,7 @@ namespace Test.Chapter13Listings.Repositories
     #B The GenericRepository needs the application's DbContext
     #C This loads a Book with Reviews
     #D You use the GenericRepository's GetEntities to get a IQueryable<Book> query
-    #E This makes sure the the Review collection is loaded with the book
+    #E This makes sure the Review collection is loaded with the book
     #F And you select the Book with the given BookId
     #G This a rudimentary check that the entity was found
     #H Finally you return the book with the Reviews collection loaded
