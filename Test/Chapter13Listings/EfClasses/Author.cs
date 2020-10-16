@@ -12,12 +12,11 @@ namespace Test.Chapter13Listings.EfClasses
         public const int NameLength = 100;
         public const int EmailLength = 100;
 
-        private string _name;
         private HashSet<BookAuthor> _booksLink;
 
         public Author(string name, string email)
         {
-            _name = name;
+            Name = name;
             Email = email;
         }
 

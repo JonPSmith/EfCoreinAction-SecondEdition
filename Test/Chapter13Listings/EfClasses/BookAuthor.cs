@@ -21,7 +21,7 @@ namespace Test.Chapter13Listings.EfClasses
         //-----------------------------
         //Relationships
 
-        public Test.Chapter13Listings.EfClasses.Book Book { get; private set; }
+        public Book Book { get; private set; }
         public Author Author { get; private set; }
     }
 }
