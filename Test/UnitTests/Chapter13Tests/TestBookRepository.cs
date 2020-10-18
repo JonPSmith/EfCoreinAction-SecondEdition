@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using Microsoft.EntityFrameworkCore;
 using StatusGeneric;
 using Test.Chapter13Listings.EfClasses;
@@ -39,7 +41,7 @@ namespace Test.UnitTests.Chapter13Tests
         }
 
         [Fact]
-        public void TestGetBooksViaRepositoryOk()
+        public async Task TestGetBooksViaRepositoryOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<DddContext>();
@@ -60,7 +62,7 @@ namespace Test.UnitTests.Chapter13Tests
         }
 
         [Fact]
-        public void TestUpdatePublishedOnViaRepositoryOk()
+        public async Task TestUpdatePublishedOnViaRepositoryOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<DddContext>();
@@ -71,9 +73,9 @@ namespace Test.UnitTests.Chapter13Tests
             var repository = new BookRepository(context);
 
             //ATTEMPT
-            var book = repository.FindEntity(1);
+            var book = await repository.FindEntityAsync(1);
             book.UpdatePublishedOn(new DateTime(2020,1,1));
-            repository.PersistData();
+            await repository.PersistDataAsync();
 
             //VERIFY
             context.ChangeTracker.Clear();
@@ -82,7 +84,7 @@ namespace Test.UnitTests.Chapter13Tests
         }
 
         [Fact]
-        public void TestAddReviewViaRepositoryOk()
+        public async Task TestAddReviewViaRepositoryOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<DddContext>();
@@ -95,12 +97,38 @@ namespace Test.UnitTests.Chapter13Tests
             //ATTEMPT
             var book = repository.LoadBookWithReviews(1);
             book.AddReview(5,"great", "me");
-            repository.PersistData();
+            await repository.PersistDataAsync();
 
             //VERIFY
             context.ChangeTracker.Clear();
             var readBook = context.Books.Include(b => b.Reviews).Single();
             readBook.Reviews.Count.ShouldEqual(1);
+        }
+
+        [Fact]
+        public async Task TestExampleAddPromotionOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<DddContext>();
+            using var context = new DddContext(options);
+            context.Database.EnsureCreated();
+            AddBookWithNewAuthor(context);
+
+            var controller = new ExampleAddPromotion(new BookRepository(context));
+   
+            //ATTEMPT
+            var dto = await controller.AddPromotion(1);
+            dto.ActualPrice = 99;
+            dto.PromotionalText = "$99 today";
+            await controller.AddPromotion(dto);
+
+            //VERIFY
+            context.ChangeTracker.Clear();
+            dto.Title.ShouldEqual("Test");
+            dto.OrgPrice.ShouldEqual(123);
+            var readBook = context.Books.Single();
+            readBook.ActualPrice.ShouldEqual(99);
+            readBook.PromotionalText.ShouldEqual("$99 today");
         }
 
         //------------------------------------------------------------------------

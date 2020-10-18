@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace Test.Chapter13Listings.Repositories
@@ -23,18 +24,18 @@ namespace Test.Chapter13Listings.Repositories
             return Context.Set<TEntity>();       //#C  
         }                                        //#C
 
-        public TEntity FindEntity(int id)  //#D
+        public async Task<TEntity> FindEntityAsync(int id)  //#D
         {
-            var entity = Context.Find<TEntity>(id);     //#D
+            var entity = await Context.FindAsync<TEntity>(id); //#D
             if (entity == null)                               //#E
                 throw new Exception("Could not find entity"); //#E
             return entity; //#F
         }
 
-        public void PersistData()    //#G
-        {                            //#G
-            Context.SaveChanges();   //#G
-        }                            //#G
+        public Task PersistDataAsync()        //#G
+        {                                     //#G
+            return Context.SaveChangesAsync();//#G
+        }                                     //#G
     }
     /**************************************************************
     #A The generic repository will work with any entity class

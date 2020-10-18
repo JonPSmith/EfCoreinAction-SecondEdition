@@ -52,13 +52,14 @@ namespace BookApp.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPromotion(AddPromotionDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
+            Request.ThrowErrorIfNotLocal();
             if (!ModelState.IsValid)
             {
                 return View(dto);
             }
             await service.UpdateAndSaveAsync(dto);
             SetupTraceInfo();
-            if (service.IsValid)
+            if (!service.HasErrors)
                 return View("BookUpdated", service.Message);
 
             //Error state
