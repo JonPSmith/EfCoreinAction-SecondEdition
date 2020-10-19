@@ -1,23 +1,20 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
-using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
-using GenericServices;
-using GenericServices.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Test.Chapter13Listings.EfClasses;
+using Test.Chapter13Listings.Repositories;
 
-namespace Test.Chapter13Listings.Repositories
+namespace Test.Chapter13Listings.Examples
 {
-    public class ExampleAddPromotion
+    public class RepositoryAddPromotion
     //public class AdminController : Controller
     {
         private readonly GenericRepository<Book> _repository; //#A
 
-        public ExampleAddPromotion(             //#A
+        public RepositoryAddPromotion(             //#A
             GenericRepository<Book> repository) //#A
         {                                       //#A
             _repository = repository;           //#A

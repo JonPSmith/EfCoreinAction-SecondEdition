@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using StatusGeneric;
 using Test.Chapter13Listings.EfClasses;
 using Test.Chapter13Listings.EfCode;
+using Test.Chapter13Listings.Examples;
 using Test.Chapter13Listings.Repositories;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -95,7 +96,7 @@ namespace Test.UnitTests.Chapter13Tests
             var repository = new BookRepository(context);
 
             //ATTEMPT
-            var book = repository.LoadBookWithReviews(1);
+            var book = await repository.LoadBookWithReviewsAsync(1);
             book.AddReview(5,"great", "me");
             await repository.PersistDataAsync();
 
@@ -114,7 +115,7 @@ namespace Test.UnitTests.Chapter13Tests
             context.Database.EnsureCreated();
             AddBookWithNewAuthor(context);
 
-            var controller = new ExampleAddPromotion(new BookRepository(context));
+            var controller = new RepositoryAddPromotion(new BookRepository(context));
    
             //ATTEMPT
             var dto = await controller.AddPromotion(1);

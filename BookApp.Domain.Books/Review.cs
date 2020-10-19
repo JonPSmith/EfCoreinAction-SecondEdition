@@ -15,11 +15,14 @@ namespace BookApp.Domain.Books
 
         private Review() { }
 
-        internal Review(int numStars, string comment, string voterName, int bookId = 0)
+        internal Review(int numStars, 
+            string comment, string voterName, 
+            int bookId = 0)
         {
             NumStars = numStars;
             Comment = comment;
             VoterName = voterName;
+
             if (bookId != 0)
                 BookId = bookId;
         }

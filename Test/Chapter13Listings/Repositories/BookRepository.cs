@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter13Listings.EfClasses;
 
@@ -15,12 +16,13 @@ namespace Test.Chapter13Listings.Repositories
             : base(context)                     //#B
         { }
 
-
-        public Book LoadBookWithReviews(int bookId) //#C
+        public async Task<Book> 
+            LoadBookWithReviewsAsync(int bookId) //#C
         {
-            var book = GetEntities()                      //#D
-                .Include(b => b.Reviews)                   //#E
-                .SingleOrDefault(b => b.BookId == bookId); //#F
+            var book = await GetEntities()       //#D
+                .Include(b => b.Reviews)  //#E
+                .SingleOrDefaultAsync(    //#F
+                    b => b.BookId == bookId); //#F
             if (book == null)                                //#G
                 throw new Exception("Could not find book");  //#G
             return book; //#H
