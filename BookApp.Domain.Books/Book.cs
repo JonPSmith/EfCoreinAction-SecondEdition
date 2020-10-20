@@ -145,7 +145,7 @@ namespace BookApp.Domain.Books
             var reviewsString = _reviews == null
                 ? $"(Cached) {ReviewsCount} reviews"
                 : $"{_reviews.Count()} reviews";
-            var tagsString = _tags == null
+            var tagsString = _tags == null || !_tags.Any()
                 ? ""
                 : $" Tags: " + string.Join(", ", _tags.Select(x => x.TagId));
 

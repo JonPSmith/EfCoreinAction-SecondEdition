@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using StatusGeneric;
 
 namespace Test.Chapter13Listings.EfClasses
@@ -127,7 +128,6 @@ namespace Test.Chapter13Listings.EfClasses
         #G The found review is removed
          ******************************************************************/
 
-
         public IStatusGeneric AddPromotion(               //#A
             decimal actualPrice, string promotionalText)  //#B               
         {
@@ -160,6 +160,64 @@ namespace Test.Chapter13Listings.EfClasses
         #G If no errors, then the ActualPrice and PromotionalText are updated
         #H The status, which is successful, is returned
          *******************************************************************/
+
+        public void AddReviewUsingContext( //#A
+            int numStars, string comment, string voterName, //#A
+            DbContext context)        //#B
+        {
+            if (BookId == default)                         //#C
+                throw new Exception("Book must be in db"); //#C
+
+            if (context == null)
+                throw new ArgumentNullException(        //#D
+                    nameof(context),                    //#D
+                    "You must provide a context");      //#D
+            
+            var reviewToAdd = new Review(        //#E
+                numStars, comment, voterName,    //#E
+                BookId);            //#F
+
+            context.Add(reviewToAdd); //#G
+        }
+
+        public void RemoveReviewUsingContext(  //#E
+            int reviewId,    //#E
+            DbContext context) //#F
+        {
+            if (BookId == default)                         //#C
+                throw new Exception("Book must be in db"); //#C
+
+            if (context == null)
+                throw new ArgumentNullException(   //#D    
+                    nameof(context),               //#D    
+                    "You must provide a context"); //#D    
+
+            var reviewToDelete = context.Set<Review>()         //#G
+                .SingleOrDefault(x => x.ReviewId == reviewId); //#G
+
+            if (reviewToDelete == null)           //#H            
+                throw new Exception("Not found"); //#H
+            if (reviewToDelete.BookId != BookId)           //#I
+                throw new Exception("Not linked to book"); //#I
+
+            context.Remove(reviewToDelete); //#J
+        }
+        /****************************************************************
+        #A The access method takes the normal AddReview inputs...
+        #B ... but a new parameter is added, which is EF Core DbContext
+        #C This method only works on a Book that is already in the database
+        #D This method only works if an DbContext instance is provided
+        #E You create the Review, and you set the Review BookId foreign key
+        #F You use the DbContext Add method to mark the new Review to be added to the database
+        #E The access method takes the normal RemoveReview input...
+        #F ... but a new parameter is added, which is EF Core DbContext
+        #G reads in the review to delete
+        #H This a rudimentary check that the review entity was found
+        #I If not linked to this Book, then throw an exception
+        #J You delete the review
+         ******************************************************************/
+
+
     }
 
 }
