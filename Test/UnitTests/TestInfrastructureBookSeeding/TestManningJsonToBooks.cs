@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AutoMapper.Configuration.Annotations;
 using BookApp.Domain.Books;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -33,8 +34,10 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
+            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+
             //ATTEMPT
-            var books = fileDir.LoadBooks("ManningBooks*.json", "ManningDetails*.json").ToList();
+            var books = loader.LoadBooks().ToList();
 
             //VERIFY
             books.Count.ShouldBeInRange(700, 800);
@@ -47,8 +50,10 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
+            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+
             //ATTEMPT
-            var books10 = fileDir.LoadBooks("ManningBooks*.json", "ManningDetails*.json").Take(10).ToList();
+            var books10 = loader.LoadBooks().Take(10).ToList();
 
             //VERIFY
             foreach (var book in books10)
@@ -86,7 +91,9 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
-            var books10 = fileDir.LoadBooks("ManningBooks*.json", "ManningDetails*.json").Take(10).ToList();
+
+            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var books10 = loader.LoadBooks().Take(10).ToList();
 
             //ATTEMPT
             context.AddRange(books10);

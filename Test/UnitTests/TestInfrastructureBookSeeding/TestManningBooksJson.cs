@@ -80,7 +80,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             //VERIFY
             foreach (var json in list)
             {
-                _output.WriteLine(string.Join('|', json.NormalizeAuthorNames()) );
+                _output.WriteLine(string.Join('|', LoadManningBooks.NormalizeAuthorNames(json)) );
             }
         }
 
@@ -99,7 +99,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var authorsDict = new Dictionary<string, ManningBooksJson>();
             foreach (var json in list)
             {
-                var authors = json.NormalizeAuthorNames().ToList();
+                var authors = LoadManningBooks.NormalizeAuthorNames(json).ToList();
                 if (!authors.Any()) continue;
                 foreach (var author in authors)
                 {

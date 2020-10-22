@@ -17,7 +17,8 @@ namespace BookApp.Infrastructure.Books.Seeding
         public static async Task SeedDatabaseIfNoBooksAsync(this BookDbContext context, string wwwRootDir)
         {
             var seedDirPath = Path.Combine(wwwRootDir, SeedFileSubDirectory);
-            var books = seedDirPath.LoadBooks(SummaryBookSearchName, DetailBookSearchName).ToList();
+            var loader = new LoadManningBooks(seedDirPath, SummaryBookSearchName, DetailBookSearchName);
+            var books = loader.LoadBooks().ToList();
             context.AddRange(books);
             await context.SaveChangesAsync();
         }

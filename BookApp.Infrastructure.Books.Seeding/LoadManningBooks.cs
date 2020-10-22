@@ -14,17 +14,27 @@ using Newtonsoft.Json;
 
 namespace BookApp.Infrastructure.Books.Seeding
 {
-    /// <summary>
-    /// This reads in the Manning book info from json and converts it to a series of Books, Authors, and Tags
-    /// The stages are:
-    /// 1. Read in all the Manning books and extract all the Authors and Tags
-    /// </summary>
-    public static class ManningJsonToBooks
+    public class LoadManningBooks
     {
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
         private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
 
-        public static IEnumerable<Book> LoadBooks(this string fileDir, string summarySearchString, string detailSearchString)
+        private string fileDir;
+        private string summarySearchString;
+        private string detailSearchString;
+
+        public LoadManningBooks(string fileDir, string summarySearchString, string detailSearchString)
+        {
+            this.fileDir = fileDir;
+            this.summarySearchString = summarySearchString;
+            this.detailSearchString = detailSearchString;
+        }
+
+        public List<Book> Books { get; set; }
+        public Dictionary<string, Author> AuthorsDict { get; set; }
+        public Dictionary<string, Tag> TagsDict { get; set; }
+
+        public IEnumerable<Book> LoadBooks()
         {
             var summaryFilePath = GetJsonFilePath(fileDir, summarySearchString);
             var summaryJson = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(summaryFilePath));
@@ -33,8 +43,8 @@ namespace BookApp.Infrastructure.Books.Seeding
                 .ToDictionary(x => x.productId);
 
             var tagsNames = summaryJson.SelectMany(x => x.tags ?? new string[0]).Distinct();
-            var tagDict = tagsNames.ToDictionary(x => x, y => new Tag(y));
-            var authorDict = NormalizeAuthorsToCommaDelimited(summaryJson);
+            TagsDict = tagsNames.ToDictionary(x => x, y => new Tag(y));
+            AuthorsDict = NormalizeAuthorsToCommaDelimited(summaryJson);
 
             foreach (var jsonBook in summaryJson.Where(x => x.authorshipDisplay != null))
             {
@@ -44,21 +54,21 @@ namespace BookApp.Infrastructure.Books.Seeding
                     ? jsonBook.productOfferings.Select(x => x.price).Max()
                     : 100;
                 var authors = jsonBook.authorshipDisplay.Split(',')
-                    .Select(x => authorDict[x]).ToList();
+                    .Select(x => AuthorsDict[x]).ToList();
                 var tags = (jsonBook.tags ?? new string[0])
-                    .Select(x => tagDict[x]).ToList();
+                    .Select(x => TagsDict[x]).ToList();
 
                 var status = Book.CreateBook(jsonBook.title, publishedOn, jsonBook.publishedDate == null,
-                    "Manning", (decimal) price, fullImageUrl, authors, tags);
+                    "Manning", (decimal)price, fullImageUrl, authors, tags);
                 if (status.HasErrors)
-                    throw new InvalidOperationException( $"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
+                    throw new InvalidOperationException($"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
 
                 status.Result.SetManningBookUrl(string.Format(ManningUrlWithParam, jsonBook.slug));
 
                 if (detailDict.ContainsKey(jsonBook.id))
                 {
                     var summary = detailDict[jsonBook.id];
-                    status.Result.SetBookDetails(summary.description, summary.aboutAuthor, 
+                    status.Result.SetBookDetails(summary.description, summary.aboutAuthor,
                         summary.aboutReader, summary.aboutTechnology, summary.whatsInside);
                 }
 
@@ -71,7 +81,7 @@ namespace BookApp.Infrastructure.Books.Seeding
             var authorDict = new Dictionary<string, Author>();
             foreach (var manningBooksJson in summaryJson)
             {
-                var authors = manningBooksJson.NormalizeAuthorNames().ToList();
+                var authors = NormalizeAuthorNames(manningBooksJson).ToList();
                 manningBooksJson.authorshipDisplay = authors.Any()
                     ? string.Join(',', authors)
                     : null;
@@ -86,7 +96,7 @@ namespace BookApp.Infrastructure.Books.Seeding
         }
 
         //This decodes The authorshipDisplay string which contains lots of different formats
-        internal static IEnumerable<string> NormalizeAuthorNames(this ManningBooksJson json)
+        internal static IEnumerable<string> NormalizeAuthorNames(ManningBooksJson json)
         {
             const string withChaptersBy = "With chapters selected by";
             //The formats for authors are
@@ -117,11 +127,11 @@ namespace BookApp.Infrastructure.Books.Seeding
 
             authorString = authorString
                 .Replace("  ", " ")
-                .Replace("Ph.D.","")
+                .Replace("Ph.D.", "")
                 .Replace("contributions by", ",")
                 .Replace(" with ", ",")
                 .Replace(" and ", ",");
-            if(Regex.Match(authorString, @";|#|&").Success)//Some name come out wrong - don't know why
+            if (Regex.Match(authorString, @";|#|&").Success)//Some name come out wrong - don't know why
                 return new string[0];
 
             var authors = authorString.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(y => y.Trim());
