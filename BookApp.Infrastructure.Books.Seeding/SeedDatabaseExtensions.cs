@@ -14,11 +14,16 @@ namespace BookApp.Infrastructure.Books.Seeding
         private const string DetailBookSearchName = "ManningDetails*.json";
         public const string SeedFileSubDirectory = "seedData";
 
-        public static async Task SeedDatabaseIfNoBooksAsync(this BookDbContext context, string wwwRootDir)
+        public static ManningBookLoad LoadManningBooks(this string wwwRootDir)
         {
             var seedDirPath = Path.Combine(wwwRootDir, SeedFileSubDirectory);
-            var loadedBooks = new LoadManningBooks(seedDirPath, SummaryBookSearchName, DetailBookSearchName);
-            context.AddRange(loadedBooks.Books);
+            return new ManningBookLoad(seedDirPath, SummaryBookSearchName, DetailBookSearchName);
+        }
+
+        public static async Task SeedDatabaseIfNoBooksAsync(this BookDbContext context, string wwwRootDir)
+        {
+
+            context.AddRange(wwwRootDir.LoadManningBooks().Books);
             await context.SaveChangesAsync();
         }
     }

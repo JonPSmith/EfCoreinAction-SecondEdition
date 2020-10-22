@@ -20,7 +20,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 {
     public class TestManningJsonToBooks
     {
-        private ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
 
         public TestManningJsonToBooks(ITestOutputHelper output)
         {
@@ -35,12 +35,13 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
             //ATTEMPT
-            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //VERIFY
-            loadedBooks.Books.Count.ShouldBeInRange(700, 800);
+            loadedBooks.Books.Count().ShouldBeInRange(700, 800);
             loadedBooks.AuthorsDict.Values.Count.ShouldBeInRange(800,1000);
             loadedBooks.TagsDict.Values.Count.ShouldBeInRange(30, 40);
+            loadedBooks.Books.Count(x => x.Details?.Description != null).ShouldBeInRange(700, 750);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
             //ATTEMPT
-            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //VERIFY
             foreach (var book in loadedBooks.Books.Take(10))
@@ -90,7 +91,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
-            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
             context.AddRange(loadedBooks.Books.Take(10));
@@ -100,6 +101,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             context.Books.Count().ShouldEqual(10);
             context.Authors.Count().ShouldBeInRange(10, 20);
             context.Tags.Count().ShouldBeInRange(5,15);
+
         }
 
 

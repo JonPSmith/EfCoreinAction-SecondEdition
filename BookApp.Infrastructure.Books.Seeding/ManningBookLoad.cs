@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace BookApp.Infrastructure.Books.Seeding
 {
-    public class LoadManningBooks
+    public class ManningBookLoad
     {
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
         private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
@@ -23,7 +23,7 @@ namespace BookApp.Infrastructure.Books.Seeding
         private readonly string _summarySearchString;
         private readonly string _detailSearchString;
 
-        public LoadManningBooks(string fileDir, string summarySearchString, string detailSearchString)
+        public ManningBookLoad(string fileDir, string summarySearchString, string detailSearchString)
         {
             _fileDir = fileDir ?? throw new ArgumentNullException(nameof(fileDir));
             _summarySearchString = summarySearchString ?? throw new ArgumentNullException(nameof(summarySearchString));
