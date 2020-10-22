@@ -19,26 +19,28 @@ namespace BookApp.Infrastructure.Books.Seeding
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
         private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
 
-        private string fileDir;
-        private string summarySearchString;
-        private string detailSearchString;
+        private readonly string _fileDir;
+        private readonly string _summarySearchString;
+        private readonly string _detailSearchString;
 
         public LoadManningBooks(string fileDir, string summarySearchString, string detailSearchString)
         {
-            this.fileDir = fileDir;
-            this.summarySearchString = summarySearchString;
-            this.detailSearchString = detailSearchString;
+            _fileDir = fileDir ?? throw new ArgumentNullException(nameof(fileDir));
+            _summarySearchString = summarySearchString ?? throw new ArgumentNullException(nameof(summarySearchString));
+            _detailSearchString = detailSearchString ?? throw new ArgumentNullException(nameof(detailSearchString));
+
+            LoadBooks();
         }
 
-        public List<Book> Books { get; set; }
+        public List<Book> Books { get; set; } = new List<Book>();
         public Dictionary<string, Author> AuthorsDict { get; set; }
         public Dictionary<string, Tag> TagsDict { get; set; }
 
-        public IEnumerable<Book> LoadBooks()
+        private void LoadBooks()
         {
-            var summaryFilePath = GetJsonFilePath(fileDir, summarySearchString);
+            var summaryFilePath = GetJsonFilePath(_fileDir, _summarySearchString);
             var summaryJson = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(summaryFilePath));
-            var detailFilePath = GetJsonFilePath(fileDir, detailSearchString);
+            var detailFilePath = GetJsonFilePath(_fileDir, _detailSearchString);
             var detailDict = JsonConvert.DeserializeObject<List<ManningDetailsJson>>(File.ReadAllText(detailFilePath))
                 .ToDictionary(x => x.productId);
 
@@ -72,7 +74,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                         summary.aboutReader, summary.aboutTechnology, summary.whatsInside);
                 }
 
-                yield return status.Result;
+                Books.Add(status.Result);
             }
         }
 

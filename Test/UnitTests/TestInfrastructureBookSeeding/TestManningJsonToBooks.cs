@@ -34,13 +34,13 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
-            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
-
             //ATTEMPT
-            var books = loader.LoadBooks().ToList();
+            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //VERIFY
-            books.Count.ShouldBeInRange(700, 800);
+            loadedBooks.Books.Count.ShouldBeInRange(700, 800);
+            loadedBooks.AuthorsDict.Values.Count.ShouldBeInRange(800,1000);
+            loadedBooks.TagsDict.Values.Count.ShouldBeInRange(30, 40);
         }
 
         [Fact]
@@ -50,17 +50,15 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
-            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
-
             //ATTEMPT
-            var books10 = loader.LoadBooks().Take(10).ToList();
+            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //VERIFY
-            foreach (var book in books10)
+            foreach (var book in loadedBooks.Books.Take(10))
             {
                 _output.WriteLine(string.Join(", ", book.Tags.Select(x => x.TagId)));
+                book.Tags.Any().ShouldBeTrue();
             }
-            books10.Any(x => x.Tags.Count > 0).ShouldBeTrue();
         }
 
         [Fact]
@@ -92,15 +90,16 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
             var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
 
-            var loader = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
-            var books10 = loader.LoadBooks().Take(10).ToList();
+            var loadedBooks = new LoadManningBooks(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
-            context.AddRange(books10);
+            context.AddRange(loadedBooks.Books.Take(10));
             context.SaveChanges();
 
             //VERIFY
             context.Books.Count().ShouldEqual(10);
+            context.Authors.Count().ShouldBeInRange(10, 20);
+            context.Tags.Count().ShouldBeInRange(5,15);
         }
 
 
