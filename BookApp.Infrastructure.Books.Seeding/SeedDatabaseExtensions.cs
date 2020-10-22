@@ -20,9 +20,8 @@ namespace BookApp.Infrastructure.Books.Seeding
             return new ManningBookLoad(seedDirPath, SummaryBookSearchName, DetailBookSearchName);
         }
 
-        public static async Task SeedDatabaseIfNoBooksAsync(this BookDbContext context, string wwwRootDir)
+        public static async Task SeedDatabaseWithBooksAsync(this BookDbContext context, string wwwRootDir)
         {
-
             context.AddRange(wwwRootDir.LoadManningBooks().Books);
             await context.SaveChangesAsync();
         }

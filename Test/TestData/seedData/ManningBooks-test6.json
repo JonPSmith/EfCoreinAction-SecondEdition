@@ -1,0 +1,197 @@
+[
+  {
+    "expectedPublishDate": "2020-11-15T00:00:00-0500",
+    "hasAudio": false,
+    "authorshipDisplay": "Dave Bechberger, Josh Perryman",
+    "isbn": "9781617296376",
+    "externalId": "bechberger",
+    "lastSignificantDate": "2020-07-03T10:07:02-0400",
+    "title": "Graph Databases in Action",
+    "seoKeywords": "",
+    "tags": [
+      "Data"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 49.99,
+        "id": 2003,
+        "productType": "COMBO"
+      },
+      {
+        "price": 39.99,
+        "id": 2004,
+        "productType": "EBOOK"
+      }
+    ],
+    "subtitle": "Examples in Gremlin",
+    "imageUrl": "book/b/7825565-46a5-4846-b899-a0dfb64e54bb/Bechberger-GD-MEAP-HI.png",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 1125,
+    "publishedDate": null,
+    "slug": "graph-databases-in-action"
+  },
+  {
+    "expectedPublishDate": "2019-07-15T00:00:00-0400",
+    "hasAudio": false,
+    "authorshipDisplay": "Dustin A. Coates<br/><i>Foreword by Max Amordeluso<\/i>",
+    "isbn": "9781617295317",
+    "externalId": "coates",
+    "lastSignificantDate": "2019-08-01T07:10:07-0400",
+    "title": "Voice Applications for Alexa and Google Assistant",
+    "seoKeywords": "",
+    "tags": [
+      "Devices",
+      "Operations & Cloud"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 59.99,
+        "id": 1889,
+        "productType": "COMBO"
+      },
+      {
+        "price": 47.99,
+        "id": 1890,
+        "productType": "EBOOK"
+      }
+    ],
+    "subtitle": "",
+    "imageUrl": "book/2/5b090ac-87f1-4c78-9da7-f317f3312ea3/Coates-VA-HI.png",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 975,
+    "publishedDate": "2019-07-04T00:00:00-0400",
+    "slug": "voice-applications-for-alexa-and-google-assistant"
+  },
+  {
+    "expectedPublishDate": "2020-01-15T00:00:00-0500",
+    "hasAudio": false,
+    "authorshipDisplay": "Dane Hillard",
+    "isbn": "9781617296086",
+    "externalId": "hillard",
+    "lastSignificantDate": "2020-01-21T06:52:54-0500",
+    "title": "Practices of the Python Pro",
+    "seoKeywords": "Python, Software, Data Science, Data Scientists, Best practices, maintainable code",
+    "tags": [
+      "Development"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 49.99,
+        "id": 2006,
+        "productType": "COMBO"
+      },
+      {
+        "price": 39.99,
+        "id": 2007,
+        "productType": "EBOOK"
+      }
+    ],
+    "subtitle": "",
+    "imageUrl": "book/6/c19cced-ff69-4345-9eb8-e77753628685/Hillard-PPP-HI.png",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 1085,
+    "publishedDate": "2019-12-22T00:00:00-0500",
+    "slug": "practices-of-the-python-pro"
+  },
+  {
+    "expectedPublishDate": "2019-01-30T00:00:00-0500",
+    "hasAudio": false,
+    "authorshipDisplay": "Andrew W. Trask",
+    "isbn": "9781617293702",
+    "externalId": "trask2",
+    "lastSignificantDate": "2019-01-23T07:13:46-0500",
+    "title": "Grokking Deep Learning",
+    "seoKeywords": "",
+    "tags": [
+      "Data"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 39.99,
+        "id": 1291,
+        "productType": "EBOOK"
+      },
+      {
+        "price": 49.99,
+        "id": 1290,
+        "productType": "COMBO"
+      }
+    ],
+    "subtitle": "",
+    "imageUrl": "book/1/831bea7-12bc-4438-91fa-b3af12e50b00/Trask_GDL_hires.png",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 800,
+    "publishedDate": "2019-01-23T00:00:00-0500",
+    "slug": "grokking-deep-learning"
+  },
+  {
+    "expectedPublishDate": "2019-11-15T00:00:00-0500",
+    "hasAudio": false,
+    "authorshipDisplay": "Jeff Nickoloff and Stephen Kuenzli<br/><i>Foreword by Bret Fisher<\/i>",
+    "isbn": "9781617294761",
+    "externalId": "nickoloff2",
+    "lastSignificantDate": "2019-11-16T05:58:47-0500",
+    "title": "Docker in Action, Second Edition",
+    "seoKeywords": "docker, containers, linux, mac, windows, registry, run, operations, applications, packaging",
+    "tags": [
+      "Development",
+      "Operations & Cloud"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 49.99,
+        "id": 1940,
+        "productType": "COMBO"
+      },
+      {
+        "price": 39.99,
+        "id": 1941,
+        "productType": "EBOOK"
+      }
+    ],
+    "subtitle": "",
+    "imageUrl": "book/9/9a102d1-8e4d-4f20-a095-c60ca54fc5e6/Nickoloff-Docker-2ed-RGB.jpg",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 902,
+    "publishedDate": "2019-10-28T00:00:00-0400",
+    "slug": "docker-in-action-second-edition"
+  },
+  {
+    "expectedPublishDate": "2016-11-06T00:00:00-0400",
+    "hasAudio": false,
+    "authorshipDisplay": "With chapters selected by Richard Siddaway",
+    "isbn": "9781617294525",
+    "externalId": "siddaway5",
+    "lastSignificantDate": "2016-11-06T00:00:00-0400",
+    "title": "Exploring PowerShell Automation",
+    "seoKeywords": "",
+    "tags": [
+      "Microsoft & .NET"
+    ],
+    "livebook": true,
+    "productOfferings": [
+      {
+        "price": 0.00,
+        "id": 1325,
+        "productType": "PDF"
+      }
+    ],
+    "subtitle": "",
+    "imageUrl": "book/3/98b61e8-5b54-4969-93d4-1bdc62dfd4fc/Siddaway_EPA_hires.png",
+    "isLiveVideo": false,
+    "isLiveProject": false,
+    "id": 896,
+    "publishedDate": "2016-11-06T00:00:00-0400",
+    "slug": "exploring-powershell-automation"
+  }
+]

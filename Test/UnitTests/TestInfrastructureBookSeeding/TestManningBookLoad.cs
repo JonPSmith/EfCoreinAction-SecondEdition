@@ -18,11 +18,11 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestInfrastructureBookSeeding
 {
-    public class TestManningJsonToBooks
+    public class TestManningBookLoad
     {
         private readonly ITestOutputHelper _output;
 
-        public TestManningJsonToBooks(ITestOutputHelper output)
+        public TestManningBookLoad(ITestOutputHelper output)
         {
             _output = output;
         }

@@ -33,6 +33,7 @@ namespace BookApp.Infrastructure.Books.Seeding
             //Find out how many in db so we can pick up where we left off
             var numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
 
+            var numWritten = 0;
             if (numBooksInDb < NumBooksInSet)
             {
                 //If the data in the database doesn't contain the current json set then wipe and add json books
@@ -40,10 +41,10 @@ namespace BookApp.Infrastructure.Books.Seeding
                 await _context.Database.EnsureDeletedAsync();
                 await _context.Database.MigrateAsync();
                 _context.AddRange(_loadedBookData.Books);
-                await _context.SaveChangesAsync();
+                numBooksInDb = await _context.SaveChangesAsync();
+                numWritten = numBooksInDb;
             }
 
-            var numWritten = 0;
             var numToWrite = totalBooksNeeded - numBooksInDb;
             while (numWritten < numToWrite)
             {

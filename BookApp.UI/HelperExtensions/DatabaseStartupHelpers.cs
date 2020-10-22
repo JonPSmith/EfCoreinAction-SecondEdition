@@ -36,7 +36,7 @@ namespace BookApp.UI.HelperExtensions
                     await orderContext.Database.MigrateAsync();
                     if (!bookContext.Books.Any())
                     {
-                        await bookContext.SeedDatabaseIfNoBooksAsync(env.WebRootPath);
+                        await bookContext.SeedDatabaseWithBooksAsync(env.WebRootPath);
                     }
                 }
                 catch (Exception ex)
