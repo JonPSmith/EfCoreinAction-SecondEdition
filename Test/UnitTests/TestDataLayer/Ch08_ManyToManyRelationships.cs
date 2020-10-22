@@ -42,7 +42,6 @@ namespace Test.UnitTests.TestDataLayer
                 //VERIFY
                 context.Books.Count().ShouldEqual(1);
                 context.Tags.Count().ShouldEqual(2);
-                context.Set<BookTag>().Count().ShouldEqual(2);
             }
         }
 
