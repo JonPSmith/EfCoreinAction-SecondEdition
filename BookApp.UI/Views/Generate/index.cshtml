@@ -1,0 +1,94 @@
+﻿@model int
+
+
+<h2>How many books do you want to have?</h2>
+<h4>There are currently <strong>@Model.ToString("##,###") books</strong> in the SQL database.</h4>
+
+<h3 class="text-danger">WARNING!</h3>
+<p class="text-danger">
+    This can take a long time! On my (fast) PC it takes 1 minutes to generate 50,000 books (without NoSql)
+    I have added a web.config file with a requestTimeout of 20 minutes, so that it doesn't time out the action
+</p>
+
+<div class="form-horizontal">
+    <form asp-controller="Generate" asp-action="Books" method="post" id="input-form">
+        <!-- Input and Submit elements -->
+
+        <div class="form-group">
+            <div class="col-sm-2">
+                <label class="control-label">Total books you want</label>
+            </div>
+            <div class="col-sm-10">
+                <input name="totalBooksNeeded" id="totalBooksNeeded" value="10000" class="form-control col-sm-10" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-2">
+                <label class="control-label">Wipe database?</label>
+            </div>
+            <div class="col-sm-1">
+                <input type="checkbox" name="wipeDatabase" value="true" class="form-control" />
+                <input type="hidden" name="wipeDatabase" value="false" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" onclick="startGenerate()">Generate</button>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<p>
+    <strong>NOTE:</strong> to stop the generator refresh this page, or go to a different page. It stops at the next batch update.
+    <br />
+    <i>Thanks to Andrew Lock's <a href="https://andrewlock.net/using-cancellationtokens-in-asp-net-core-mvc-controllers/">Using CancellationTokens in ASP.NET Core MVC controllers</a> article for how to do that.</i>
+</p>
+<hr />
+<H4 id="show-num-books" class="hidden">
+</H4>
+
+<script>
+    function startGenerate() {
+        var form = $('#input-form');
+        startUpdatingProgressIndicator();
+        $.post(
+            form.attr('action'),
+            form.serialize
+        );
+    }
+
+    var intervalId;
+
+    function startUpdatingProgressIndicator() {
+        var $progress = $("#show-num-books");
+        $progress.removeClass('hidden');
+
+        var skipFirst = true;
+        intervalId = setInterval(
+            function () {
+                // We use the POST requests here to avoid caching problems (we could use the GET requests and disable the cache instead)
+                $.post(
+                    '@Url.Action("NumBooks")',
+                    {},
+                    function (data, status) {
+                        if (skipFirst) {
+                            skipFirst = false;
+                            return;
+                        }
+                        $progress.html(data);
+                    }
+                );
+            },
+            1000
+        );
+    }
+
+    function stopUpdatingProgressIndicator() {
+        clearInterval(intervalId);
+    }
+</script>

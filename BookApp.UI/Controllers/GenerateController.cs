@@ -34,7 +34,7 @@ namespace BookApp.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Books(int totalBooksNeeded, bool wipeDatabase,
             CancellationToken cancellationToken,
-            IBookGenerator generator,
+            [FromServices] IBookGenerator generator,
             [FromServices] IWebHostEnvironment env)
         {
             Request.ThrowErrorIfNotLocal();

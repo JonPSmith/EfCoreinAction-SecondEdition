@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using BookApp.UI.HelperExtensions
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -33,18 +34,17 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Your Orders</a>
                     </li>
-
-                    @*@if (Context.Request.IsLocal())
+                    @if (Context.Request.IsLocal())
                     {
                         <li class="dropdown nav-link text-dark">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 Admin
                             </a>
                             <div class="dropdown-menu">
-                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ResetDatabase">Reset Database</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Generate" asp-action="Index">Generate</a>
                             </div>
                         </li>
-                    }*@
+                    }
                     <li>
                         <a href="#" id="show-logs" class="nav-link text-dark d-none">Logs&nbsp;<span class="badge badge-pill badge-primary"></span></a>
                     </li>
