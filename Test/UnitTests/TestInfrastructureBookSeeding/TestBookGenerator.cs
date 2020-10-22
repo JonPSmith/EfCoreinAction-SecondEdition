@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 using BookApp.Infrastructure.Book.EventHandlers;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
-using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
-using Xunit.Sdk;
 
 namespace Test.UnitTests.TestInfrastructureBookSeeding
 {
@@ -58,12 +56,36 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 var generator = new BookGenerator(context);
 
                 //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, 1, true, default);
+                await generator.WriteBooksAsync(fileDir, false, 1, true, default);
 
                 //VERIFY
                 context.Books.Count().ShouldEqual(6);
                 context.Authors.Count().ShouldEqual(8);
                 context.Tags.Count().ShouldEqual(5);
+            }
+        }
+
+        [Fact]
+        public async Task TestWriteBooksAsyncWipeDatabaseOk()
+        {
+            //SETUP
+            var fileDir = Path.Combine(TestData.GetTestDataDir());
+            var options = this.CreateUniqueClassOptions<BookDbContext>();
+            using (var context = new BookDbContext(options))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                await context.SeedDatabaseWithBooksAsync(fileDir);
+            }
+            using (var context = new BookDbContext(options))
+            {
+                var generator = new BookGenerator(context);
+
+                //ATTEMPT
+                await generator.WriteBooksAsync(fileDir, true, 10, true, default);
+
+                //VERIFY
+                context.Books.Count().ShouldEqual(10);
             }
         }
 
@@ -85,7 +107,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 var generator = new BookGenerator(context);
 
                 //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, totalBooks, true, default);
+                await generator.WriteBooksAsync(fileDir, false, totalBooks, true, default);
 
                 //VERIFY
                 context.Books.Count().ShouldEqual(totalBooks);
@@ -108,7 +130,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 var generator = new BookGenerator(context);
 
                 //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, 10, true, default);
+                await generator.WriteBooksAsync(fileDir, false, 10, true, default);
 
                 //VERIFY
                 foreach (var book in context.Books)

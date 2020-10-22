@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace BookApp.Infrastructure.Books.Seeding
 {
-    public class BookGenerator
+    public class BookGenerator : IBookGenerator
     {
         private readonly BookDbContext _context;
         private ManningBookLoad _loadedBookData;
@@ -26,25 +26,25 @@ namespace BookApp.Infrastructure.Books.Seeding
             _context = context;
         }
 
-        public async Task WriteBooksAsync(string filePath, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
+        public async Task WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
         {
-            _loadedBookData = filePath.LoadManningBooks();
+            _loadedBookData = wwwRootDir.LoadManningBooks();
 
             //Find out how many in db so we can pick up where we left off
             var numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
 
-            var numWritten = 0;
-            if (numBooksInDb < NumBooksInSet)
+            if (wipeDatabase || numBooksInDb < NumBooksInSet)
             {
                 //If the data in the database doesn't contain the current json set then wipe and add json books
 
                 await _context.Database.EnsureDeletedAsync();
                 await _context.Database.MigrateAsync();
                 _context.AddRange(_loadedBookData.Books);
-                numBooksInDb = await _context.SaveChangesAsync();
-                numWritten = numBooksInDb;
+                await _context.SaveChangesAsync();
+                numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
             }
 
+            var numWritten = 0;
             var numToWrite = totalBooksNeeded - numBooksInDb;
             while (numWritten < numToWrite)
             {
@@ -53,7 +53,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                _context.ChangeTracker.Clear();
+                _context.ChangeTracker.Clear(); //Clear all tracked entities - better for performance
 
                 var authorsDict = _context.Authors.ToDictionary(x => x.Name);
                 var tagsDict = _context.Tags.ToDictionary(x => x.TagId);

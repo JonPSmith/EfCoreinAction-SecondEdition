@@ -4,6 +4,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using BookApp.Infrastructure.Book.EventHandlers.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.Seeding.AppStart;
 using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
@@ -59,6 +60,7 @@ namespace BookApp.UI
             //This registers all the services across all the projects in this application
             services.RegisterOrdersDbAccess(Configuration);
             services.RegisterOrdersBizLogic(Configuration);
+            services.RegisterBooksSeeding(Configuration);
             services.RegisterServiceLayerDefaultBooks(Configuration);
             services.RegisterServiceLayerDefaultOrders(Configuration);
 
