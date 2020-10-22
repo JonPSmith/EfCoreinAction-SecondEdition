@@ -71,7 +71,7 @@ namespace Test.UnitTests.TestDataLayer
             }
 
             //VERIFY
-            ex.Message.StartsWith("The configured execution strategy 'SqlServerRetryingExecutionStrategy' does not support user initiated transactions. ").ShouldBeTrue();
+            ex.Message.StartsWith("The configured execution strategy 'SqlServerRetryingExecutionStrategy' does not support user-initiated transactions. Use the execution strategy returned by 'DbContext.Database.CreateExecutionStrategy()' to execute all the operations in the transaction as a retriable unit.").ShouldBeTrue();
         }
 
         [Fact]

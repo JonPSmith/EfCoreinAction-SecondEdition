@@ -81,7 +81,7 @@ namespace Test.UnitTests.TestDataLayer
                 var tableNames = string.Join(",", context.GetTableNamesInOrderForWipe());
 
                 //VERIFY
-                tableNames.ShouldEqual("[BookTag],[BookAuthor],[LineItem],[PriceOffers],[Review],[Orders],[Authors],[Tag],[Books]");
+                tableNames.ShouldEqual("[BookTag],[BookAuthor],[LineItem],[PriceOffers],[Review],[Orders],[Authors],[Tags],[Books]");
 
             }
         }

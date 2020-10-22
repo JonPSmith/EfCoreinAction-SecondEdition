@@ -130,11 +130,11 @@ namespace Test.UnitTests.TestDataLayer
                 * *********************************************/
 
                 //VERIFY
-                context.NumTrackedEntities().ShouldEqual(6);
                 foreach (var entity in context.ChangeTracker.Entries())
                 {
                     _output.WriteLine("{0}: State = {1}", entity.Metadata.Name, entity.State);
                 }
+                context.NumTrackedEntities().ShouldEqual(8);
                 context.ChangeTracker.Entries().Where(x => x.Metadata.Name != typeof(Author).FullName)
                     .All(x => x.State == EntityState.Unchanged).ShouldBeTrue();
                 context.GetEntityState(book.AuthorsLink.First().Author).ShouldEqual(EntityState.Modified);

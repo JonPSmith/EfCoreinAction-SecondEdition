@@ -62,7 +62,7 @@ namespace Test.UnitTests.TestDataLayer
                 var ex = Assert.Throws<InvalidOperationException>(() => context.SaveChanges());
 
                 //VERIFY
-                ex.Message.ShouldEqual("The entity type 'DupClass' is not mapped to a table, therefore the entities cannot be persisted to the database. Use ToTable to map it.");
+                ex.Message.ShouldEqual("The entity type 'DupClass' is not mapped to a table, therefore the entities cannot be persisted to the database. Use 'ToTable' in 'OnModelCreating' to map it.");
             }
         }
 
