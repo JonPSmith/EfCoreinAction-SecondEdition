@@ -10,6 +10,7 @@ namespace BookApp.Infrastructure.LoggingServices
     public class LogParts
     {
         private const string EfCoreEventIdStartWith = "Microsoft.EntityFrameworkCore";
+        public const string DapperEventName = "EfCoreInAction.Dapper";
 
         public LogParts(LogLevel logLevel, EventId eventId, string eventString)
         {
@@ -25,7 +26,15 @@ namespace BookApp.Infrastructure.LoggingServices
 
         public string EventString { get; private set; }
 
-        public bool IsDb => EventId.Name?.StartsWith(EfCoreEventIdStartWith) ?? false;
+        public bool IsDb
+        {
+            get
+            {
+                var name = EventId.Name;
+                return name != null && (name.StartsWith(EfCoreEventIdStartWith)
+                                        || name.StartsWith(DapperEventName));
+            }
+        }
 
         public override string ToString()
         {

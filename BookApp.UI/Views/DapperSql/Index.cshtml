@@ -1,10 +1,10 @@
 ﻿@using BookApp.UI.HelperExtensions
 @model BookApp.ServiceLayer.DefaultSql.Books.Dtos.BookListCombinedDto
 @{
-    ViewData["Title"] = "Cached SQL";
+    ViewData["Title"] = "Dapper SQL";
 }
 
-<p><span class="text-primary h2">Cached SQL&nbsp;</span>- using events to set up cached values.</p>
+<p><span class="text-primary h2">Dapper SQL&nbsp;</span>- Uses Dapper to query the database.</p>
 
 <form id="sort-filter-form" role="form">
     <div class="row">
@@ -77,9 +77,9 @@
                         <small>&nbsp;(estimated)</small>
                     }
                 </div>
-                <div>
+                @*<div>
                     Tags: @string.Join(" | ", item.TagStrings)
-                </div>
+                </div>*@
                 <div>
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
                 </div>

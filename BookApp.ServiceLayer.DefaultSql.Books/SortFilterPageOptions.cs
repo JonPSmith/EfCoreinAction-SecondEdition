@@ -57,8 +57,13 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
 
         public async Task SetupRestOfDtoAsync<T>(IQueryable<T> query)
         {
-            NumPages = (int) Math.Ceiling(
-                ((double)await query.CountAsync()) / PageSize);
+            SetupRestOfDto(await query.CountAsync());
+        }
+
+        public void SetupRestOfDto(int rowCount)
+        {
+            NumPages = (int)Math.Ceiling(
+                ((double)rowCount) / PageSize);
             PageNum = Math.Min(
                 Math.Max(1, PageNum), NumPages);
 
