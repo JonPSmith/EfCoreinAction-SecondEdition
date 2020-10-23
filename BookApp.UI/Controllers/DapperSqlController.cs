@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DapperSql.Books.DapperQueries;
+using BookApp.ServiceLayer.DapperSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace BookApp.UI.Controllers
 
             SetupTraceInfo();
 
-            return View(new BookListCombinedDto(options, bookList));
+            return View(new DapperBookListCombinedDto(options, bookList));
         }
 
         /// <summary>

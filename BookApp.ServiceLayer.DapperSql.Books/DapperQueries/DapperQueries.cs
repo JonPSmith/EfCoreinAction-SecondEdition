@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.ServiceLayer.DapperSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
@@ -40,7 +41,7 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperQueries
             }
         }
 
-        public static async Task<IEnumerable<BookListDto>> //#A
+        public static async Task<IEnumerable<DapperBookListDto>> //#A
             DapperBookListQueryAsync(this BookDbContext context, //#B
                 SortFilterPageOptions options) //#C
         {
@@ -48,7 +49,7 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperQueries
             using(new LogDapperCommand(command, context)) //#E
             {
                 return await context.Database.GetDbConnection() //#F
-                    .QueryAsync<BookListDto>(command, new    //#G
+                    .QueryAsync<DapperBookListDto>(command, new    //#G
                     {                                   //#G
                         pageSize = options.PageSize,    //#G
                         skipRows = options.PageSize     //#G
@@ -165,6 +166,7 @@ AND ([b].[PublishedOn] <= GETUTCDATE()) ";
 [b].[PublishedOn],
 [b].[PromotionalText] AS [PromotionPromotionalText], 
 [dbo].AuthorsStringUdf([b].[BookId]) AS [AuthorsOrdered], 
+[dbo].TagsStringUdf([b].[BookId]) AS [TagsString],
 ( SELECT COUNT(*) FROM [Review] AS [r] WHERE [b].[BookId] = [r].[BookId] ) AS [ReviewsCount], 
 ( SELECT AVG(CAST([y].[NumStars] AS float)) FROM [Review] AS [y] WHERE [b].[BookId] = [y].[BookId] ) AS [ReviewsAverageVotes] 
 FROM [Books] AS [b]
