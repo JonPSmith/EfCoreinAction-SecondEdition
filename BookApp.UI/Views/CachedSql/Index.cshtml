@@ -1,0 +1,146 @@
+﻿@using BookApp.UI.HelperExtensions
+@model BookApp.ServiceLayer.DefaultSql.Books.Dtos.BookListCombinedDto
+@{
+    ViewData["Title"] = "Default SQL";
+}
+
+<p><span class="text-primary h2">Default SQL&nbsp;</span>- using standard EF Core with Select method.</p>
+
+<form id="sort-filter-form" role="form">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Sort By</label>
+            <select asp-for="SortFilterPageData.OrderByOptions" name="OrderByOptions"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.OrderByOptions>()"
+                    class="form-control sort-filter-width"
+                    onchange="BookList.sendForm(this)"></select>
+        </div>
+
+        <div class="col-sm-3">
+            <label>Filter Type</label>
+            <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.BooksFilterBy>()"
+                    class="form-control sort-filter-width"
+                    onchange="BookList.filterByHasChanged(this)"></select>
+        </div>
+
+        <div class="col-sm-3 dim-filter-value" id="filter-value-group">
+            <label>Filter By</label>
+            <select asp-for="SortFilterPageData.FilterValue" name="FilterValue"
+                    id="filter-value-dropdown"
+                    class="form-control sort-filter-width"
+                    disabled
+                    onchange="BookList.sendForm(this)">
+                <option>Select filter type...</option>
+            </select>
+        </div>
+
+        <div class="col-sm-2">
+            <label>Page</label>
+            <div>
+                <input asp-for="SortFilterPageData.PageNum" name="PageNum"
+                       class="form-control page-control-width page-num-input"
+                       onchange="BookList.sendForm(this)">
+                <span class="num-pages-text">of @Model.SortFilterPageData.NumPages</span>
+            </div>
+        </div>
+
+        <div class="col-sm-1">
+            <label>Page&nbsp;Size</label>
+            <select asp-for="SortFilterPageData.PageSize" name="PageSize"
+                    asp-items="Model.SortFilterPageData.PageSizes.Select(x => new SelectListItem {Text = x.ToString(), Value = x.ToString()})"
+                    class="form-control page-control-width"
+                    onchange="BookList.sendForm(this)"></select>
+        </div>
+    </div>
+
+    <input id="PrevCheckState" name="PrevCheckState" type="hidden" value=@Model.SortFilterPageData.PrevCheckState>
+    @*@Html.Hidden("PrevCheckState", @Model.SortFilterPageData.PrevCheckState) -- this didn't work for some reason*@
+</form>
+<br />
+
+<table class="table">
+    @foreach (var item in Model.BooksList)
+    {
+        <tr>
+            <td>
+                <p>
+                    <span class="h3"><a asp-controller="DefaultSql" asp-action="Detail" asp-route-id="@item.BookId">@item.Title</a></span><span>&nbsp;click to see more...</span>
+                </p>
+                <div>
+                    <small>by</small>&nbsp;@Html.DisplayFor(m => item.AuthorsOrdered)
+                </div>
+                <div>
+                    Published on @item.PublishedOn.ToString("d")
+                    @if (@item.EstimatedDate)
+                    {
+                        <small>&nbsp;(estimated)</small>
+                    }
+                </div>
+                <div>
+                    Tags: @string.Join(" | ", item.TagStrings)
+                </div>
+                <div>
+                    @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
+                </div>
+                <div>
+                    <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"Price: ${item.ActualPrice:F}")</span>
+                    @if (item.PromotionText != null)
+                    {
+                        <span class="text-danger">
+                            <strong >&nbsp;<del>$@($"{item.OrgPrice:F}")</del>&nbsp;<i>@(item.PromotionText)</i></strong>
+                        </span>
+                    }
+                </div>
+            </td>
+            <td class="vert-align">
+                @if (Context.Request.IsLocal())
+                {
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown">
+                            Admin
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePubDate" asp-route-id="@item.BookId">Change Pub Date</a>
+                            @if (item.PromotionText == null)
+                            {
+                                <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddPromotion" asp-route-id="@item.BookId">Add Promotion</a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="RemovePromotion" asp-route-id="@item.BookId">Remove Promotion</a>
+                            }
+                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
+                            </div>
+                    </div>
+                }
+            </td>
+            <td class="vert-align">
+                @if (item.ActualPrice >= 0)
+                {
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+                            Buy Book
+                        </button>
+                        <ul class="dropdown-menu">
+                            <a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="1">Buy book (demo only!)</a>
+                            @*<a class="dropdown-item" asp-area="" asp-controller="Checkout" asp-action="Buy" asp-route-BookId="@item.BookId" asp-route-numBooks="2">Buy 2 book</a>*@
+                            <a class="dropdown-item" href="@item.ManningBookUrl">Buy book (Manning site)</a>
+                        </ul>
+                    </div>
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+
+    <script type='text/javascript'>
+        document.addEventListener("DOMContentLoaded",
+            function(event) {
+                BookList.initialise('@Model.SortFilterPageData.FilterBy', '@Model.SortFilterPageData.FilterValue',
+                    '@Url.Action("GetFilterSearchContent")');
+            });
+    </script>
+}

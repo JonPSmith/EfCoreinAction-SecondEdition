@@ -9,6 +9,7 @@ using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.Persistence.EfCoreSql.Orders.DbAccess.AppStart;
+using BookApp.ServiceLayer.CachedSql.Books.AppStart;
 using BookApp.ServiceLayer.DefaultSql.Books.AppStart;
 using BookApp.ServiceLayer.EfCoreSql.Orders.AppStart;
 using BookApp.UI.Logger;
@@ -62,6 +63,7 @@ namespace BookApp.UI
             services.RegisterOrdersBizLogic(Configuration);
             services.RegisterBooksSeeding(Configuration);
             services.RegisterServiceLayerDefaultBooks(Configuration);
+            services.RegisterServiceLayerCachedBooks(Configuration);
             services.RegisterServiceLayerDefaultOrders(Configuration);
 
             //Register EfCore.GenericEventRunner
