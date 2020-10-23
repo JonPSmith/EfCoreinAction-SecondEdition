@@ -92,6 +92,10 @@ namespace Test.TestHelpers
 
         public static List<Book> CreateFourBooks()
         {
+            var editorsChoice = new Tag("Editor's Choice");
+            var architectureTag = new Tag("Architecture");
+            var refactoring = new Tag("Refactoring");
+
             var martinFowler = new Author("Martin Fowler", "mf@gmail.com");
 
             var books = new List<Book>();
@@ -103,7 +107,8 @@ namespace Test.TestHelpers
                 null,
                 40,
                 null,
-                new[] { martinFowler }
+                new[] { martinFowler },
+                new List<Tag> { refactoring, editorsChoice }
             ).Result;
             books.Add(book1);
 
@@ -114,7 +119,8 @@ namespace Test.TestHelpers
                 null,
                 53,
                 null,
-                new[] { martinFowler }
+                new[] { martinFowler },
+                new List<Tag> { architectureTag }
             ).Result;
             book2.AuthorsOrdered = martinFowler.Name;
             books.Add(book2);
@@ -126,7 +132,8 @@ namespace Test.TestHelpers
                  null,
                 56,
                 null,
-                new[] { new Author("Eric Evans", "ee@gmail.com") }
+                new[] { new Author("Eric Evans", "ee@gmail.com") },
+                new List<Tag> { architectureTag, editorsChoice }
             ).Result;
             books.Add(book3);
 
@@ -137,7 +144,8 @@ namespace Test.TestHelpers
                 "Future Published",
                 220,
                 null,
-                new[] { new Author("Future Person", "fp@gmail.com") }
+                new[] { new Author("Future Person", "fp@gmail.com") },
+                new List<Tag> { new Tag("Quantum Entanglement") }
             ).Result;
             book4.AuthorsOrdered = book4.AuthorsLink.First().Author.Name;
             book4.AddReview(5,

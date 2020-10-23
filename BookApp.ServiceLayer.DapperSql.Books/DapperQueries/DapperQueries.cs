@@ -118,6 +118,10 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperQueries
     FROM [Review] AS [y0]
     WHERE [b].[BookId] = [y0].[BookId]
 ) > @filterVal)";
+                case BooksFilterBy.ByTags:
+                    return start + @"AND 
+(@filterVal IN (SELECT [t].[TagId] FROM BookTag AS t 
+WHERE [t].[BookId] = [b].[BookId])) ";
                 case BooksFilterBy.ByPublicationYear:
                     return start +
 @"AND (DATEPART(year, [b].[PublishedOn]) = @filterVal) 
