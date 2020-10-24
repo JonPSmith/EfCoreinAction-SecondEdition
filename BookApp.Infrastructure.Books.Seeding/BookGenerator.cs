@@ -3,23 +3,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace BookApp.Infrastructure.Books.Seeding
 {
     public class BookGenerator : IBookGenerator
     {
         private readonly BookDbContext _context;
-        private ManningBookLoad _loadedBookData;
-        private int NumBooksInSet => _loadedBookData.Books.Count;
+        private List<Book> _loadedBooks;
+        private int NumBooksInSet => _loadedBooks.Count;
 
         public BookGenerator(BookDbContext context)
         {
@@ -28,18 +25,17 @@ namespace BookApp.Infrastructure.Books.Seeding
 
         public async Task WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
         {
-            _loadedBookData = wwwRootDir.LoadManningBooks();
-
             //Find out how many in db so we can pick up where we left off
             var numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
 
+            _loadedBooks = wwwRootDir.LoadManningBooks(false).ToList();
             if (wipeDatabase || numBooksInDb < NumBooksInSet)
             {
                 //If the data in the database doesn't contain the current json set then wipe and add json books
 
                 await _context.Database.EnsureDeletedAsync();
                 await _context.Database.MigrateAsync();
-                _context.AddRange(_loadedBookData.Books);
+                _context.AddRange(wwwRootDir.LoadManningBooks(true));
                 await _context.SaveChangesAsync();
                 numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
             }
@@ -58,6 +54,8 @@ namespace BookApp.Infrastructure.Books.Seeding
                 var authorsDict = _context.Authors.ToDictionary(x => x.Name);
                 var tagsDict = _context.Tags.ToDictionary(x => x.TagId);
 
+
+
                 var batchToAdd = Math.Min(NumBooksInSet, numToWrite - numWritten);
                 var batch = GenerateBooks(batchToAdd, numBooksInDb, makeBookTitlesDistinct, authorsDict, tagsDict).ToList();
                 _context.AddRange(batch);
@@ -74,7 +72,7 @@ namespace BookApp.Infrastructure.Books.Seeding
             {
                 var sectionNum = (int)Math.Truncate(i / (double)NumBooksInSet);
 
-                var jsonBook = _loadedBookData.Books[i % NumBooksInSet];
+                var jsonBook = _loadedBooks[i % NumBooksInSet];
                 var authors = jsonBook.AuthorsLink.Select(x => x.Author.Name)
                     .Select(x => authorDict[x])
                     .ToList();

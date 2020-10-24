@@ -173,7 +173,7 @@ namespace BookApp.Domain.Books
             SoftDeleted = softDeleted;
         }
 
-        public void UpdatePublishedOnDay(DateTime publishedOn)
+        public void UpdatePublishedOn(DateTime publishedOn)
         {
             PublishedOn = publishedOn;
         }

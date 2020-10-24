@@ -1,12 +1,8 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AutoMapper.Configuration.Annotations;
-using BookApp.Domain.Books;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
 using Test.TestHelpers;
@@ -32,33 +28,34 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
         {
             //SETUP
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
+            var fileDir = Path.Combine(TestData.GetTestDataDir(), "seedData\\");
+            var loader = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
-            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = loader.LoadBooks(false);
 
             //VERIFY
-            loadedBooks.Books.Count().ShouldBeInRange(700, 800);
-            loadedBooks.AuthorsDict.Values.Count.ShouldBeInRange(800,1000);
-            loadedBooks.TagsDict.Values.Count.ShouldBeInRange(30, 40);
-            loadedBooks.Books.Count(x => x.Details?.Description != null).ShouldBeInRange(700, 750);
+            loadedBooks.Count().ShouldEqual(6);
         }
 
-        [Fact]
-        public void TestLoadBooksCheckTagsOk()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TestLoadBooksCheckTagsOk(bool tagAsOriginal)
         {
             //SETUP
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
+            var fileDir = Path.Combine(TestData.GetTestDataDir(), "seedData\\");
+            var loader = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
-            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = loader.LoadBooks(tagAsOriginal);
 
             //VERIFY
-            foreach (var book in loadedBooks.Books.Take(10))
+            foreach (var book in loadedBooks)
             {
-                _output.WriteLine(string.Join(", ", book.Tags.Select(x => x.TagId)));
                 book.Tags.Any().ShouldBeTrue();
+                book.Tags.Select(x => x.TagId).Contains("Manning books").ShouldEqual(tagAsOriginal);
             }
         }
 
@@ -89,18 +86,18 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             context.Database.EnsureCreated();
 
             var callingAssemblyPath = TestData.GetCallingAssemblyTopLevelDir();
-            var fileDir = Path.GetFullPath(Path.Combine(callingAssemblyPath, "..\\BookApp.UI\\wwwroot\\seedData"));
+            var fileDir = Path.Combine(TestData.GetTestDataDir(), "seedData\\");
 
-            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loader = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
-            context.AddRange(loadedBooks.Books.Take(10));
+            context.AddRange(loader.LoadBooks(false));
             context.SaveChanges();
 
             //VERIFY
-            context.Books.Count().ShouldEqual(10);
-            context.Authors.Count().ShouldBeInRange(10, 20);
-            context.Tags.Count().ShouldBeInRange(5,15);
+            context.Books.Count().ShouldEqual(6);
+            context.Authors.Count().ShouldEqual(8);
+            context.Tags.Count().ShouldEqual(5);
 
         }
 

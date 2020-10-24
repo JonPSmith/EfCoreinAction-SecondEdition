@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BookApp.Infrastructure.Book.EventHandlers;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
+using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
@@ -31,13 +32,15 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
         {
             //SETUP
             var fileDir = Path.Combine(TestData.GetTestDataDir(), "seedData\\");
+            var loader = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
 
             //ATTEMPT
-            var loadedBooks = new ManningBookLoad(fileDir, "ManningBooks*.json", "ManningDetails*.json");
+            var loadedBooks = loader.LoadBooks(true).ToList();
 
             //VERIFY
-            loadedBooks.Books.Count().ShouldEqual(6);
-            loadedBooks.Books.Count(x => x.Details?.Description != null).ShouldEqual(0);
+            loadedBooks.Count().ShouldEqual(6);
+            loadedBooks.Count(x => x.Details?.Description != null).ShouldEqual(0);
+            loadedBooks.All(x => x.Tags.Select(x => x.TagId).Contains("Manning books")).ShouldBeTrue();
         }
 
         [Fact]
@@ -61,7 +64,11 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 //VERIFY
                 context.Books.Count().ShouldEqual(6);
                 context.Authors.Count().ShouldEqual(8);
-                context.Tags.Count().ShouldEqual(5);
+                context.Tags.Count().ShouldEqual(6);
+                context.Books
+                    .Include(x => x.Tags)
+                    .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
+                    .ShouldEqual(6);
             }
         }
 
@@ -86,6 +93,10 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 
                 //VERIFY
                 context.Books.Count().ShouldEqual(10);
+                context.Books
+                    .Include(x => x.Tags)
+                    .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
+                    .ShouldEqual(6);
             }
         }
 

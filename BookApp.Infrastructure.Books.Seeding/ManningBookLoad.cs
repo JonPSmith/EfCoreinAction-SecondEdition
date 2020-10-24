@@ -19,6 +19,8 @@ namespace BookApp.Infrastructure.Books.Seeding
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
         private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
 
+        const string OriginalBooksTag = "Manning books";
+
         private readonly string _fileDir;
         private readonly string _summarySearchString;
         private readonly string _detailSearchString;
@@ -28,15 +30,14 @@ namespace BookApp.Infrastructure.Books.Seeding
             _fileDir = fileDir ?? throw new ArgumentNullException(nameof(fileDir));
             _summarySearchString = summarySearchString ?? throw new ArgumentNullException(nameof(summarySearchString));
             _detailSearchString = detailSearchString ?? throw new ArgumentNullException(nameof(detailSearchString));
-
-            LoadBooks();
         }
 
-        public List<Book> Books { get; set; } = new List<Book>();
-        public Dictionary<string, Author> AuthorsDict { get; set; }
-        public Dictionary<string, Tag> TagsDict { get; set; }
-
-        private void LoadBooks()
+        /// <summary>
+        /// This returns Book entities created using the Manning json data
+        /// </summary>
+        /// <param name="tagAsOriginal">if true, then add an extra tag to say they are Manning books</param>
+        /// <returns></returns>
+        public IEnumerable<Book> LoadBooks(bool tagAsOriginal)
         {
             var summaryFilePath = GetJsonFilePath(_fileDir, _summarySearchString);
             var summaryJson = JsonConvert.DeserializeObject<List<ManningBooksJson>>(File.ReadAllText(summaryFilePath));
@@ -44,9 +45,11 @@ namespace BookApp.Infrastructure.Books.Seeding
             var detailDict = JsonConvert.DeserializeObject<List<ManningDetailsJson>>(File.ReadAllText(detailFilePath))
                 .ToDictionary(x => x.productId);
 
-            var tagsNames = summaryJson.SelectMany(x => x.tags ?? new string[0]).Distinct();
-            TagsDict = tagsNames.ToDictionary(x => x, y => new Tag(y));
-            AuthorsDict = NormalizeAuthorsToCommaDelimited(summaryJson);
+            var tagsNames = summaryJson.SelectMany(x => x.tags ?? new string[0]).Distinct().ToList();
+            if (tagAsOriginal)
+                tagsNames.Add(OriginalBooksTag);
+            var tagsDict = tagsNames.ToDictionary(x => x, y => new Tag(y));
+            var authorsDict = NormalizeAuthorsToCommaDelimited(summaryJson);
 
             foreach (var jsonBook in summaryJson.Where(x => x.authorshipDisplay != null))
             {
@@ -56,9 +59,11 @@ namespace BookApp.Infrastructure.Books.Seeding
                     ? jsonBook.productOfferings.Select(x => x.price).Max()
                     : 100;
                 var authors = jsonBook.authorshipDisplay.Split(',')
-                    .Select(x => AuthorsDict[x]).ToList();
+                    .Select(x => authorsDict[x]).ToList();
                 var tags = (jsonBook.tags ?? new string[0])
-                    .Select(x => TagsDict[x]).ToList();
+                    .Select(x => tagsDict[x]).ToList();
+                if (tagAsOriginal)
+                    tags.Add(tagsDict[OriginalBooksTag]);
 
                 var status = Book.CreateBook(jsonBook.title, publishedOn, jsonBook.publishedDate == null,
                     "Manning", (decimal)price, fullImageUrl, authors, tags);
@@ -74,7 +79,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                         summary.aboutReader, summary.aboutTechnology, summary.whatsInside);
                 }
 
-                Books.Add(status.Result);
+                yield return status.Result;
             }
         }
 
