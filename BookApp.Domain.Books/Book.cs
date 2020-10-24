@@ -129,7 +129,8 @@ namespace BookApp.Domain.Books
         public double ReviewsAverageVotes { get; private set; }
 
         //This is an action provided in the review add/remove event so that the review handler can update these properties
-        private void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
+        //NOTE it should be private, but to make the BookGenerator easier to control I have made it public
+        public void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
         {
             ReviewsCount = reviewsCount;
             ReviewsAverageVotes = reviewsAverageVotes;

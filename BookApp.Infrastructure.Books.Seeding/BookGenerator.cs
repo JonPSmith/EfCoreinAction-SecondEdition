@@ -14,31 +14,37 @@ namespace BookApp.Infrastructure.Books.Seeding
 {
     public class BookGenerator : IBookGenerator
     {
-        private readonly BookDbContext _context;
+        private readonly DbContextOptions<BookDbContext> _dbOptions;
         private List<Book> _loadedBooks;
+
+        public BookGenerator(DbContextOptions<BookDbContext> dbOptions)
+        {
+            _dbOptions = dbOptions;
+        }
+
         private int NumBooksInSet => _loadedBooks.Count;
 
-        public BookGenerator(BookDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
         {
             //Find out how many in db so we can pick up where we left off
-            var numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
+            int numBooksInDb = 0;
+            using (var context = new BookDbContext(_dbOptions))
+                numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
 
             _loadedBooks = wwwRootDir.LoadManningBooks(false).ToList();
             if (wipeDatabase || numBooksInDb < NumBooksInSet)
-            {
-                //If the data in the database doesn't contain the current json set then wipe and add json books
+                using (var context = new BookDbContext(_dbOptions))
+                {
+                    //If the data in the database doesn't contain the current json set then wipe and add json books
 
-                await _context.Database.EnsureDeletedAsync();
-                await _context.Database.MigrateAsync();
-                _context.AddRange(wwwRootDir.LoadManningBooks(true));
-                await _context.SaveChangesAsync();
-                numBooksInDb = await _context.Books.IgnoreQueryFilters().CountAsync();
-            }
+                    await context.Database.EnsureDeletedAsync();
+                    await context.Database.MigrateAsync();
+                    //Assumes no reviews
+                    context.AddRange(wwwRootDir.LoadManningBooks(true));
+                    await context.SaveChangesAsync();
+                    numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
+                }
 
             var numWritten = 0;
             var numToWrite = totalBooksNeeded - numBooksInDb;
@@ -49,20 +55,26 @@ namespace BookApp.Infrastructure.Books.Seeding
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                _context.ChangeTracker.Clear(); //Clear all tracked entities - better for performance
-
-                var authorsDict = _context.Authors.ToDictionary(x => x.Name);
-                var tagsDict = _context.Tags.ToDictionary(x => x.TagId);
-
-
-
-                var batchToAdd = Math.Min(NumBooksInSet, numToWrite - numWritten);
-                var batch = GenerateBooks(batchToAdd, numBooksInDb, makeBookTitlesDistinct, authorsDict, tagsDict).ToList();
-                _context.AddRange(batch);
-                await _context.SaveChangesAsync();
-                numWritten += batch.Count;
-                numBooksInDb += batch.Count;
+                var numInBatch =
+                    await GenerateBatchAndWrite(makeBookTitlesDistinct, numToWrite, numWritten, numBooksInDb);
+                numWritten += numInBatch;
+                numBooksInDb += numInBatch;
             }
+        }
+
+        private async Task<int> GenerateBatchAndWrite(bool makeBookTitlesDistinct, int numToWrite,
+            int numWritten, int numBooksInDb)
+        {
+            using var context = new BookDbContext(_dbOptions);
+            var authorsDict = context.Authors.ToDictionary(x => x.Name);
+            var tagsDict = context.Tags.ToDictionary(x => x.TagId);
+
+            var batchToAdd = Math.Min(NumBooksInSet, numToWrite - numWritten);
+            var batch = GenerateBooks(batchToAdd, numBooksInDb, makeBookTitlesDistinct, authorsDict, tagsDict)
+                .ToList();
+            context.AddRange(batch);
+            await context.SaveChangesAsync();
+            return batch.Count;
         }
 
         private IEnumerable<Book> GenerateBooks(int batchToAdd, int numBooksInDb, bool makeBookTitlesDistinct, 
@@ -92,6 +104,9 @@ namespace BookApp.Infrastructure.Books.Seeding
                 {
                     book.AddReview((Math.Abs(3 - j) % 4) + 2, null, j.ToString());
                 }
+                if (book.Reviews.Any())
+                    book.UpdateReviewCachedValues(book.Reviews.Count, book.Reviews.Average(y => y.NumStars));
+
                 if (i % 7 == 0)
                 {
                     book.AddPromotion(book.ActualPrice * 0.5m, "today only - 50% off! ");

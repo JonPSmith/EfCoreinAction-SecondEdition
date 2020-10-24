@@ -56,7 +56,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             using (var context = new BookDbContext(options))
             {
                 var fileDir = Path.Combine(TestData.GetTestDataDir());
-                var generator = new BookGenerator(context);
+                var generator = new BookGenerator(options);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, 1, true, default);
@@ -86,7 +86,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(context);
+                var generator = new BookGenerator(options);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, true, 10, true, default);
@@ -115,7 +115,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(context);
+                var generator = new BookGenerator(options);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, totalBooks, true, default);
@@ -138,18 +138,23 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>())
             {
-                var generator = new BookGenerator(context);
+                var generator = new BookGenerator(options);
 
                 //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, false, 10, true, default);
+                await generator.WriteBooksAsync(fileDir, false, 20, true, default);
 
                 //VERIFY
                 foreach (var book in context.Books)
                 {
                     _output.WriteLine(book.ToString());
                 }
-                context.Books
-                    .Count(x => x.Reviews.Count() > 0).ShouldEqual(4);
+
+                var books = context.Books.Include(x => x.Reviews).ToList();
+                books.Count(x => x.Reviews.Count > 0).ShouldEqual(13);
+                //Can't get exact review value compare
+                books.All(x => x.ReviewsCount == x.Reviews.Count).ShouldBeTrue();
+                books.Where(x => x.ReviewsCount > 0)
+                    .All(x => x.ReviewsAverageVotes == x.Reviews.Average(y => y.NumStars)).ShouldBeTrue();
             }
         }
 
