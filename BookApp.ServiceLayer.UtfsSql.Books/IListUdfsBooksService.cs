@@ -1,0 +1,16 @@
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
+
+using System.Linq;
+using System.Threading.Tasks;
+using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+
+namespace BookApp.ServiceLayer.UtfsSql.Books
+{
+    public interface IListUdfsBooksService
+    {
+        Task<IQueryable<UtfsBookListDto>> SortFilterPageAsync
+            (SortFilterPageOptions options);
+    }
+}

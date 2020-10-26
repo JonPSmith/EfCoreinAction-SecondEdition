@@ -59,6 +59,7 @@
     <ProjectReference Include="..\BookApp.ServiceLayer.DapperSql.Books\BookApp.ServiceLayer.DapperSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.EfCoreSql.Orders\BookApp.ServiceLayer.EfCoreSql.Orders.csproj" />
+    <ProjectReference Include="..\BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UtfsSql.Books.csproj" />
   </ItemGroup>
 
 

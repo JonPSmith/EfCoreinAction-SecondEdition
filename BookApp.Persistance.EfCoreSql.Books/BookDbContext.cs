@@ -26,6 +26,8 @@ namespace BookApp.Persistence.EfCoreSql.Books
             modelBuilder.AutoConfigureQueryFilters<BookDbContext>(this);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.RegisterUdfDefinitions();
         }
     }
 }
