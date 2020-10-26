@@ -30,7 +30,8 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
                     return books.Where(x => 
                         x.ReviewsAverageVotes > filterVote);
                 case BooksFilterBy.ByTags:
-                    return books.Where(x => x.TagsString.Contains(filterValue));
+                    //The ByTags has been handled in a prequery
+                    return books;
                 case BooksFilterBy.ByPublicationYear:
                     if (filterValue == AllBooksNotPublishedString) 
                         return books.Where( 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
 using BookApp.ServiceLayer.UtfsSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,16 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.Services
         public async Task<IQueryable<UtfsBookListDto>> SortFilterPageAsync
             (SortFilterPageOptions options)
         {
-            var booksQuery = _context.Books 
-                .AsNoTracking() 
+            var preQuery = _context.Books
+                .AsNoTracking();
+            if (options.FilterBy == BooksFilterBy.ByTags)
+            {
+                preQuery = preQuery.Where(x =>
+                    x.Tags.Select(y => y.TagId)
+                        .Contains(options.FilterValue));
+            }
+
+             var booksQuery = preQuery
                 .MapBookUtfsToDto() 
                 .OrderUtfsBooksBy(options.OrderByOptions) 
                 .FilterUtfsBooksBy(options.FilterBy, 

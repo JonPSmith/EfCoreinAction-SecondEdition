@@ -8,7 +8,7 @@ using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
 
 namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
 {
-    public static class BookUdfsListDtoSelect
+    public static class BookUtfsListDtoSelect
     {
         public static IQueryable<UtfsBookListDto> 
             MapBookUtfsToDto(this IQueryable<Book> books) 
@@ -24,9 +24,11 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
                 PromotionText          = p.PromotionalText,
                 AuthorsOrdered         = UdfDefinitions.AuthorsStringUdf(p.BookId),
                 TagsString             = UdfDefinitions.TagsStringUdf(p.BookId),
-                ReviewsCount           = p.ReviewsCount,
-                ReviewsAverageVotes    = p.ReviewsAverageVotes,
-                ManningBookUrl         = p.ManningBookUrl
+                ReviewsCount = p.Reviews.Count(),
+                ReviewsAverageVotes =
+                    p.Reviews.Select(y =>
+                        (double?)y.NumStars).Average(),
+                ManningBookUrl = p.ManningBookUrl
             });
         }
     }

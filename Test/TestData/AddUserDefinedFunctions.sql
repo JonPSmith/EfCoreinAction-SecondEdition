@@ -37,3 +37,17 @@ WHERE t.BookId = @bookId AND b.BookId =  @bookId
 RETURN @Tags
 END
 GO
+
+IF OBJECT_ID('dbo.FilterByTag') IS NOT NULL
+	DROP FUNCTION dbo.TagsStringUdf
+GO
+
+CREATE FUNCTION FilterByTag (@tagFilter NVARCHAR(4000), @bookId int)
+RETURNS BIT
+AS
+BEGIN
+DECLARE @Result AS BIT
+SELECT @Result = (@tagFilter IN (SELECT [t].[TagId] FROM BookTag AS t 
+WHERE [t].[BookId] =  @bookId)
+RETURN @result
+GO

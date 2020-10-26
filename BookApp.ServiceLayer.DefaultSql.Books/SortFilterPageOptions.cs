@@ -11,7 +11,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
 {
     public class SortFilterPageOptions
     {
-        public const int DefaultPageSize = 10; //default page size is 10
+        public const int DefaultPageSize = 100; //default page
 
         //-----------------------------------------
         //Paging parts, which require the use of the method

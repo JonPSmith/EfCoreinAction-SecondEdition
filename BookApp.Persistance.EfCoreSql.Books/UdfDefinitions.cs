@@ -25,5 +25,10 @@ namespace BookApp.Persistence.EfCoreSql.Books
             return null;
         }
 
+        public static bool FilterByTag(string tagFilter, int bookId)
+        {
+            return false;
+        }
+
     }
 }
