@@ -1,9 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BookApp.Domain.Books;
 using BookApp.Infrastructure.Book.EventHandlers;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -19,13 +22,31 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 {
     public class TestBookGenerator
     {
-        private ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
 
         public TestBookGenerator(ITestOutputHelper output)
         {
             _output = output;
         }
 
+
+        [Fact]
+        public void TestBookCreateTestBookOk()
+        {
+            //SETUP
+
+            //ATTEMPT
+            var book = new Book("book title", new DateTime(2000,1,2), false, 
+                "publishier", 123, "imageurl", 
+                new List<Author>{ new Author("Author1", null)},
+                new List<Tag>{ new Tag("Tag1")},
+                new List<byte>{1,2,3}, "reviewUser" );
+
+            //VERIFY
+            book.ToString().ShouldEqual("book title: by (Cached) Author1. Price 123, 3 reviews. Published 02/01/2000");
+            book.ReviewsAverageVotes.ShouldEqual(2);
+            book.ReviewsCount.ShouldEqual(3);
+        }
 
         [Fact]
         public void TestLoadBooksFromTestDataOk()

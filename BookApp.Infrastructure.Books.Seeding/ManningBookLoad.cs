@@ -19,6 +19,7 @@ namespace BookApp.Infrastructure.Books.Seeding
         private const string ImageUrlPrefix = "https://images.manning.com/360/480/resize/";
         private const string ManningUrlWithParam = "https://www.manning.com/books/{0}?a_aid=su4utaraxuTre8tuthup";
 
+        public const string PublisherString = "Manning publications";
         const string OriginalBooksTag = "Manning books";
 
         private readonly string _fileDir;
@@ -66,7 +67,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                     tags.Add(tagsDict[OriginalBooksTag]);
 
                 var status = Book.CreateBook(jsonBook.title, publishedOn, jsonBook.publishedDate == null,
-                    "Manning", (decimal)price, fullImageUrl, authors, tags);
+                    PublisherString, (decimal)price, fullImageUrl, authors, tags);
                 if (status.HasErrors)
                     throw new InvalidOperationException($"Book {jsonBook.title}: errors = {status.GetAllErrors()}");
 

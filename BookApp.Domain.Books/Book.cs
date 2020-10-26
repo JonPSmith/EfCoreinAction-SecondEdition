@@ -73,6 +73,44 @@ namespace BookApp.Domain.Books
             return status.SetResult(book); 
         }
 
+        /// <summary>
+        /// This static factory is used by the BookGenerator when filling the database with test data
+        /// This is designed to work without the GenericEventRunner running 
+        /// </summary>
+        public Book(string title, DateTime publishedOn,
+            bool estimatedDate, string publisher,
+            decimal price, string imageUrl,
+            ICollection<Author> authors,
+            ICollection<Tag> tags,
+            ICollection<byte> reviewNumStars, string reviewVoterName)
+        {
+            if (authors == null) throw new ArgumentNullException(nameof(authors));
+            if (tags == null) throw new ArgumentNullException(nameof(tags));
+
+            Title = title ?? throw new ArgumentNullException(nameof(title));
+            PublishedOn = publishedOn;
+            EstimatedDate = estimatedDate;
+            Publisher = publisher;
+            OrgPrice = price;
+            ActualPrice = price;
+            ImageUrl = imageUrl;
+
+            //Set cached values
+            AuthorsOrdered = string.Join(", ", authors.Select(x => x.Name));
+
+            if (!reviewNumStars.Any()) return; //no reviews to add
+
+            //Now we add the reviews for the generated book
+            _reviews = new HashSet<Review>();
+            foreach (var numStar in reviewNumStars)
+            {
+                _reviews.Add(new Review(numStar, null, reviewVoterName));
+            }
+            //And set up the 
+            ReviewsCount = _reviews.Count;
+            ReviewsAverageVotes = _reviews.Average(y => y.NumStars);
+        }
+
         //---------------------------------------
         //scalar properties
 
@@ -128,9 +166,7 @@ namespace BookApp.Domain.Books
         [ConcurrencyCheck]
         public double ReviewsAverageVotes { get; private set; }
 
-        //This is an action provided in the review add/remove event so that the review handler can update these properties
-        //NOTE it should be private, but to make the BookGenerator easier to control I have made it public
-        public void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
+        private void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
         {
             ReviewsCount = reviewsCount;
             ReviewsAverageVotes = reviewsAverageVotes;

@@ -17,6 +17,10 @@ namespace BookApp.Infrastructure.Books.Seeding
         private readonly DbContextOptions<BookDbContext> _dbOptions;
         private List<Book> _loadedBooks;
 
+        private const int addPromotionEvery = 7;
+        private const int maxReviewsPerBook = 12;
+        private Random _random = new Random(1); //Used to create random review star ratings. Seeded for same sequence
+
         public BookGenerator(DbContextOptions<BookDbContext> dbOptions)
         {
             _dbOptions = dbOptions;
@@ -91,23 +95,23 @@ namespace BookApp.Infrastructure.Books.Seeding
                 var tags = jsonBook.Tags.Select(x => tagsDict[x.TagId])
                     .ToList();
 
-                var book = Book.CreateBook(makeBookTitlesDistinct ?  $"{jsonBook.Title} (copy {sectionNum})" : jsonBook.Title,
+                var reviewNumStars = new List<byte>();
+                for (int j = 0; j < i % maxReviewsPerBook; j++)
+                {
+                    reviewNumStars.Add((byte)_random.Next(0, 6));
+                }
+
+                var book = new Book(makeBookTitlesDistinct ?  $"{jsonBook.Title} (copy {sectionNum})" : jsonBook.Title,
                     jsonBook.PublishedOn.AddDays(sectionNum),
                     jsonBook.EstimatedDate,
-                    "Manning",
+                    ManningBookLoad.PublisherString,
                     (i + 1),
                     jsonBook.ImageUrl,
                     authors,
-                    tags).Result;
+                    tags,
+                    reviewNumStars, $"User{i:7}");
 
-                for (int j = 0; j < i % 12; j++)
-                {
-                    book.AddReview((Math.Abs(3 - j) % 4) + 2, null, j.ToString());
-                }
-                if (book.Reviews.Any())
-                    book.UpdateReviewCachedValues(book.Reviews.Count, book.Reviews.Average(y => y.NumStars));
-
-                if (i % 7 == 0)
+                if (i % addPromotionEvery == 0)
                 {
                     book.AddPromotion(book.ActualPrice * 0.5m, "today only - 50% off! ");
                 }
