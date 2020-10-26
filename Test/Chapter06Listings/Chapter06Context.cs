@@ -12,6 +12,9 @@ namespace Test.Chapter06Listings
 
         public DbSet<BookNotSafe> Books { get; set; }
 
+        public DbSet<OnePrincipal> OnePrincipals { get; set; }
+        public DbSet<OneDependent> OneDependents { get; set; }
+
         public Chapter06Context(DbContextOptions<Chapter06Context> options)
             : base(options) { }
 

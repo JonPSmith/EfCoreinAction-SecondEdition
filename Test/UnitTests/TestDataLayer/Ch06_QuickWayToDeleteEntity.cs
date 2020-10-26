@@ -6,6 +6,7 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using Test.Chapter06Listings;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
@@ -75,7 +76,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 var book = new Book { BookId = bookId };
-                context.RemoveRange(book);
+                context.Remove(book);
                 context.SaveChanges();
             }
             //VERIFY
@@ -110,7 +111,7 @@ namespace Test.UnitTests.TestDataLayer
             using (var context = new EfCoreContext(options))
             {
                 var pOfferToDelete = new PriceOffer { PriceOfferId = priceOfferId };
-                context.RemoveRange(pOfferToDelete);
+                context.Remove(pOfferToDelete);
                 context.SaveChanges();
             }
             //VERIFY
@@ -144,7 +145,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 var bookWithPromotion = context.Books
                     .Include(x => x.Promotion).Single();
-                context.RemoveRange(bookWithPromotion.Promotion);
+                context.Remove(bookWithPromotion.Promotion);
                 context.SaveChanges();
                 bookWithPromotion.Promotion.ShouldBeNull();
             }
@@ -175,6 +176,54 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
                 ex.Message.ShouldStartWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).");
+            }
+        }
+
+        [Fact]
+        public void TestDeleteDependent()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            using (var context = new Chapter06Context(options))
+            {
+                context.Database.EnsureCreated();
+                context.Add(new OnePrincipal {Link = new OneDependent()});
+                context.SaveChanges();
+
+                context.ChangeTracker.Clear();
+
+                //ATTEMPT
+                var depToRemove = new OneDependent {Id = 1};
+                context.Remove(depToRemove);
+                context.SaveChanges();
+
+                //VERIFY
+                context.OneDependents.Count().ShouldEqual(0);
+                context.OnePrincipals.Count().ShouldEqual(1);
+            }
+        }
+
+        [Fact]
+        public void TestDeletePrincipal()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            using (var context = new Chapter06Context(options))
+            {
+                context.Database.EnsureCreated();
+                context.Add(new OnePrincipal { Link = new OneDependent() });
+                context.SaveChanges();
+
+                context.ChangeTracker.Clear();
+
+                //ATTEMPT
+                var depToRemove = new OnePrincipal { Id = 1 };
+                context.Remove(depToRemove);
+                context.SaveChanges();
+
+                //VERIFY
+                context.OneDependents.Count().ShouldEqual(0);
+                context.OnePrincipals.Count().ShouldEqual(0);
             }
         }
     }
