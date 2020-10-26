@@ -69,6 +69,7 @@ namespace BookApp.UI
             //Register EfCore.GenericEventRunner
             var eventConfig = new GenericEventRunnerConfig();
             eventConfig.RegisterSaveChangesExceptionHandler<BookDbContext>(BookWithEventsConcurrencyHandler.HandleCacheValuesConcurrency);
+            eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(BookDetectChangesExtensions.ChangeChecker);
             services.RegisterGenericEventRunner(eventConfig,
                 Assembly.GetAssembly(typeof(Infrastructure.Book.EventHandlers.ReviewAddedHandler))
                 );

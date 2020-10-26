@@ -10,10 +10,12 @@ using BookApp.Domain.Books;
 using BookApp.Infrastructure.Book.EventHandlers;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
+using GenericEventRunner.ForSetup;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -71,8 +73,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var options = this.CreateUniqueClassOptions<BookDbContext>();
             using (var context = new BookDbContext(options))
             {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+                context.Database.EnsureClean();
             }
             using (var context = new BookDbContext(options))
             {
@@ -157,7 +158,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 context.Database.EnsureCreated();
                 await context.SeedDatabaseWithBooksAsync(fileDir);
             }
-            using (var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>())
+            using (var context = new BookDbContext(options))
             {
                 var generator = new BookGenerator(options);
 
@@ -176,6 +177,39 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 books.All(x => x.ReviewsCount == x.Reviews.Count).ShouldBeTrue();
                 books.Where(x => x.ReviewsCount > 0)
                     .All(x => x.ReviewsAverageVotes == x.Reviews.Average(y => y.NumStars)).ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public async Task TestWriteBooksAsyncCheckAddUpdateDates()
+        {
+            //SETUP
+            var fileDir = Path.Combine(TestData.GetTestDataDir());
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            var timeNow = DateTime.UtcNow;
+
+            var eventConfig = new GenericEventRunnerConfig();
+            eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(localContext =>
+                localContext.ChangeChecker());
+            using (var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig))
+            {
+                context.Database.EnsureCreated();
+                await context.SeedDatabaseWithBooksAsync(fileDir); //The LastUpdatedUtc is set via events
+            }
+            using (var context = new BookDbContext(options))
+            {
+                var generator = new BookGenerator(options);
+
+                //ATTEMPT
+                await generator.WriteBooksAsync(fileDir, false, 20, true, default);
+
+                //VERIFY
+                var books = context.Books
+                    .Include(x => x.Reviews)
+                    .Include(x => x.AuthorsLink).ToList();
+                books.All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
+                books.SelectMany(x => x.Reviews).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
+                books.SelectMany(x => x.AuthorsLink).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
             }
         }
 

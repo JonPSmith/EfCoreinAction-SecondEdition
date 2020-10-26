@@ -2,10 +2,11 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using BookApp.Domain.Books.SupportTypes;
 
 namespace BookApp.Domain.Books
 {
-    public class BookAuthor
+    public class BookAuthor : BookAggregateBase
     {
         private BookAuthor() { }
 

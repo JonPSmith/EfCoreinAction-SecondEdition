@@ -7,12 +7,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Domain.Books.SupportTypes;
-using GenericEventRunner.DomainParts;
 using StatusGeneric;
 
 namespace BookApp.Domain.Books
 {
-    public class Book : EntityEventsBase, ISoftDelete
+    public class Book : BookAggregateBase, ISoftDelete
     {
         public const int PromotionalTextLength = 200;
 
@@ -95,8 +94,20 @@ namespace BookApp.Domain.Books
             ActualPrice = price;
             ImageUrl = imageUrl;
 
-            //Set cached values
+            if (authors == null)
+                throw new ArgumentNullException(nameof(authors));
+
+            byte order = 0;
+            _authorsLink = new HashSet<BookAuthor>(
+                authors.Select(a =>
+                    new BookAuthor(this, a, order++)));
+            if (!_authorsLink.Any())
+                throw new ArgumentNullException(nameof(authors));
+            //Set AuthorsOrdered cached value
             AuthorsOrdered = string.Join(", ", authors.Select(x => x.Name));
+
+            _tags = new HashSet<Tag>(tags);
+
 
             if (!reviewNumStars.Any()) return; //no reviews to add
 
@@ -106,7 +117,7 @@ namespace BookApp.Domain.Books
             {
                 _reviews.Add(new Review(numStar, null, reviewVoterName));
             }
-            //And set up the 
+            //And set up the reviews cached values
             ReviewsCount = _reviews.Count;
             ReviewsAverageVotes = _reviews.Average(y => y.NumStars);
         }

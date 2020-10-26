@@ -4,12 +4,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using BookApp.Domain.Books.SupportTypes;
 
 [assembly: InternalsVisibleTo("Test")]
 
 namespace BookApp.Domain.Books
 {
-    public class Review
+    public class Review : BookAggregateBase
     {
         public const int NameLength = 100;
 

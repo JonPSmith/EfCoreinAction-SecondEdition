@@ -32,7 +32,7 @@ namespace BookApp.Infrastructure.Books.Seeding
         public async Task WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
         {
             //Find out how many in db so we can pick up where we left off
-            int numBooksInDb = 0;
+            int numBooksInDb;
             using (var context = new BookDbContext(_dbOptions))
                 numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
 
@@ -44,8 +44,10 @@ namespace BookApp.Infrastructure.Books.Seeding
 
                     await context.Database.EnsureDeletedAsync();
                     await context.Database.MigrateAsync();
+                    var books = wwwRootDir.LoadManningBooks(true).ToList();
+                    books.ForEach(SetCreatedUpdated);
                     //Assumes no reviews
-                    context.AddRange(wwwRootDir.LoadManningBooks(true));
+                    context.AddRange(books);
                     await context.SaveChangesAsync();
                     numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
                 }
@@ -110,6 +112,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                     authors,
                     tags,
                     reviewNumStars, $"User{i:7}");
+                SetCreatedUpdated(book);
 
                 if (i % addPromotionEvery == 0)
                 {
@@ -117,6 +120,21 @@ namespace BookApp.Infrastructure.Books.Seeding
                 }
 
                 yield return book;
+            }
+        }
+
+        private void SetCreatedUpdated(Book book)
+        {
+            book.LogAddUpdate(true);
+            if (book.Reviews != null)
+                foreach (var review in book.Reviews)
+                {
+                    review.LogAddUpdate(true);
+                }
+
+            foreach (var bookAuthor in book.AuthorsLink)
+            {
+                bookAuthor.LogAddUpdate(true);
             }
         }
     }

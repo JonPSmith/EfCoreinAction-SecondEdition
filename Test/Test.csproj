@@ -13,19 +13,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="TestData\AddUserDefinedFunctions.sql">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="TestData\seedData\ManningBooks-test6.json" />
     <Content Include="TestData\seedData\ManningDetails-test-empty.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="TestData\AddUserDefinedFunctions.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="EfCore.TestSupport" Version="3.2.0" />
-    <PackageReference Include="EfCore.TestSupportSchema" Version="1.0.0-preview004" />
+    <PackageReference Include="EfCore.TestSupportSchema" Version="5.0.0-preview001" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-rc.2.20475.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.0-rc.2.20475.6" />

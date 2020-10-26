@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Infrastructure.Book.EventHandlers;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForHandlers;
+using GenericEventRunner.ForSetup;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -91,6 +93,26 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
             var book = context.Books.Include(x => x.Reviews).Single(x => x.BookId == books[3].BookId);
             book.ReviewsCount.ShouldEqual(1);
             book.ReviewsAverageVotes.ShouldEqual(3);
+        }
+
+        [Fact]
+        public void TestGenericEventRunnerConfigAddActionToRunAfterDetectChangeOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            var eventConfig = new GenericEventRunnerConfig();
+            eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(localContext =>
+                localContext.ChangeChecker());
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig);
+            context.Database.EnsureCreated();
+
+            //ATTEMPT
+            var books = context.SeedDatabaseFourBooks();
+
+            //VERIFY
+            var timeNow = DateTime.UtcNow;
+            books.ForEach(x => x.LastUpdatedUtc.ShouldBeInRange(DateTime.UtcNow.AddMilliseconds(-500), timeNow));
+            books.ForEach(x => x.NotUpdatedYet.ShouldBeTrue());
         }
 
     }
