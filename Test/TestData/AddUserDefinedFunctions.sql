@@ -31,7 +31,7 @@ AS
 BEGIN
 -- Thanks to https://stackoverflow.com/a/194887/1434764
 DECLARE @Tags AS NVARCHAR(4000)
-SELECT @Tags = COALESCE(@Tags + ', ', '') + t.TagId
+SELECT @Tags = COALESCE(@Tags + ' | ', '') + t.TagId
 FROM BookTag AS t, Books AS b 
 WHERE t.BookId = @bookId AND b.BookId =  @bookId
 RETURN @Tags

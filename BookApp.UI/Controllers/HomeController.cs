@@ -1,18 +1,11 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
-using BookApp.ServiceLayer.DefaultSql.Books.Services;
 using BookApp.UI.HelperExtensions;
 using BookApp.UI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace BookApp.UI.Controllers
@@ -20,10 +13,9 @@ namespace BookApp.UI.Controllers
     public class HomeController : BaseTraceController
     {
 
-
-        public IActionResult Index()
+        public IActionResult Index([FromServices]BookDbContext context)
         {
-            return View();
+            return View(new DatabaseStatsDto(context));
         }
 
         public IActionResult Privacy()

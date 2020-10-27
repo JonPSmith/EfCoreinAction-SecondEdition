@@ -1,4 +1,5 @@
-﻿@{
+﻿@model BookApp.UI.Models.DatabaseStatsDto
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -17,18 +18,50 @@
     </ul>
 </p>
 <p>
+    The database that the Book App is accessing has the following data in it:
+    <table class="text-right">
+        <thead>
+        <tr>
+            <th class="text-left">Type</th>
+            <th class="text-right">Rows</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="text-left">Books&nbsp;</td>
+            <td class="text-right">@Model.NumBooks.ToString("N0")</td>
+        </tr>
+        <tr>
+            <td class="text-left">Reviews&nbsp;</td>
+            <td class="text-right">@Model.NumReviews.ToString("N0")</td>
+        </tr>
+        <tr>
+            <td class="text-left">Authors&nbsp;</td>
+            <td class="text-right">@Model.NumAuthors.ToString("N0")</td>
+        </tr>
+        <tr>
+            <td class="text-left">Tags&nbsp;</td>
+            <td class="text-right">@Model.NumTags.ToString("N0")</td>
+        </tr>
+        </tbody>
+    </table>
+</p>
+<p>
+    The menu lists the different techniques you can try to query the database. 
+    And you see the SQL used to query the database via the "Logs" menu item. 
+</p>
+<p>
     You can find the code for this application in the Git repo at
     <a href="https://github.com/JonPSmith/EfCoreinAction-SecondEdition">https://github.com/JonPSmith/EfCoreinAction-SecondEdition</a> in the branch <strong>Part3</strong>.
 </p>
-<p>
-    Have a look at my book
-    <strong><a href="https://www.manning.com/books/entity-framework-core-in-action-second-edition?a_aid=su4utaraxuTre8tuthup&a_bid=examplewebsite">
-        Entity Framework Core in Action, Second Edition
-    </a></strong>
-    to find out how this application was built. Also, if you can clone the Git repo and run the application in the branch <strong>Part3</strong>,
-    then lots of extra features will appear that allow you to edit the data.
-</p>
 
-<h4>Jon P Smith</h4>
-<p>Author of the <strong>Entity Framework Core in Action, second edition</strong> book.</p>
-<a href="http://www.thereformedprogrammer.net/">My blog site</a>, where you will find articles on Entity Framework Core, ASP.NET Core, and much more.
+
+<div>
+    <span class="h4">Jon P Smith</span>
+    <span>Author of the <a href="https://bit.ly/EfCoreBook2">Entity Framework Core in Action, second edition</a> book.</span>
+</div>
+<p>
+    You can find the code for this application in the branch <i>Part3</i> in the GitHub repo at
+    <a href="https://github.com/JonPSmith/EfCoreinAction-SecondEdition">https://github.com/JonPSmith/EfCoreinAction-SecondEdition</a> and 
+    <a href="http://www.thereformedprogrammer.net/">my blog site</a>, where you will find articles on Entity Framework Core, ASP.NET Core, and much more.
+</p>

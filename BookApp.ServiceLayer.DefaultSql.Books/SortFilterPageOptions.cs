@@ -23,7 +23,7 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
         /// <summary>
         ///     This holds the possible page sizes
         /// </summary>
-        public int[] PageSizes = new[] {5, DefaultPageSize, 20, 50, 100, 500, 1000};
+        public int[] PageSizes = new[] {5, 10, 20, 50, 100, 500, 1000};
 
         public OrderByOptions OrderByOptions { get; set; }
 
