@@ -16,10 +16,6 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
         //-----------------------------------------
         //Paging parts, which require the use of the method
 
-        private int _pageNum = 1;
-
-        private int _pageSize = DefaultPageSize;
-
         /// <summary>
         ///     This holds the possible page sizes
         /// </summary>
@@ -31,17 +27,9 @@ namespace BookApp.ServiceLayer.DefaultSql.Books
 
         public string FilterValue { get; set; }
 
-        public int PageNum
-        {
-            get { return _pageNum; }
-            set { _pageNum = value; }
-        }
+        public int PageNum { get; set; } = 1;
 
-        public int PageSize
-        {
-            get { return _pageSize; }
-            set { _pageSize = value; }
-        }
+        public int PageSize { get; set; } = DefaultPageSize;
 
 
         /// <summary>

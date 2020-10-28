@@ -12,36 +12,34 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
         public static IQueryable<BookListDto> 
             MapBookToDto(this IQueryable<Book> books) 
         {
-            return books.Select(p      => new BookListDto
+            return books.Select(p      => new BookListDto //#A
             {
-                BookId                 = p.BookId, 
-                Title                  = p.Title, 
-                PublishedOn            = p.PublishedOn, 
-                EstimatedDate          = p.EstimatedDate,
-                OrgPrice               = p.OrgPrice, 
-                ActualPrice            = p.ActualPrice, 
-                PromotionText          = p.PromotionalText,
-                AuthorsOrdered         = string.Join(", ",
-                    p.AuthorsLink
-                        .OrderBy(q     => q.Order)
-                        .Select(q      => q.Author.Name)),
-                TagStrings             = p.Tags.Select(x => x.TagId).ToArray(),
-                ReviewsCount           = p.Reviews.Count(),
-                ReviewsAverageVotes    =
-                    p.Reviews.Select(y =>
-                        (double?)y.NumStars).Average(),
+                BookId                 = p.BookId,           //#A
+                Title                  = p.Title,            //#A
+                PublishedOn            = p.PublishedOn,      //#A
+                EstimatedDate          = p.EstimatedDate,    //#A
+                OrgPrice               = p.OrgPrice,         //#B
+                ActualPrice            = p.ActualPrice,      //#B
+                PromotionText          = p.PromotionalText,  //#B
+                AuthorsOrdered         = string.Join(", ", //#C
+                    p.AuthorsLink                          //#C
+                        .OrderBy(q     => q.Order)         //#C
+                        .Select(q      => q.Author.Name)), //#C
+                TagStrings             = p.Tags            //#C
+                    .Select(x => x.TagId).ToArray(),       //#C
+                ReviewsCount           = p.Reviews.Count(), //#D
+                ReviewsAverageVotes    =                    //#D
+                    p.Reviews.Select(y =>                   //#D
+                        (double?)y.NumStars).Average(),     //#D
                 ManningBookUrl         = p.ManningBookUrl
             });
         }
 
         /*********************************************************
-        #A This method takes in IQueryable<Book> and returns IQueryable<BookListDto>
-        #B These are simple copies of existing columns in the Books table
-        #C This calculates the selling price, which is the normal price, or the promotion price if that relationship exists 
-        #D The PromotionalText depends on whether a PriceOffer exists for this book
-        #E This obtains an array of Authors' names, in the right order. We are using a Client vs. Server evaluation as we want the author's names combined into one string
-        #F We need to calculate how many reviews there are
-        #G To get EF Core to turn the LINQ average into the SQL AVG command I need to cast the NumStars to (double?)
+        #A Good practice: Only load the properties you need
+        #B Good practice: Part 3 uses DDD so that the price promotion alters the ActualPrice 
+        #C Good practice: Don't load the whole relationships, but just the parts you need 
+        #D Good practice: The ReviewsCount and ReviewsAverageVotes are calculated in the database
         * *******************************************************/
     }
 }
