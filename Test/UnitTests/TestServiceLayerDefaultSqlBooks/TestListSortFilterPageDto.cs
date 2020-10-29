@@ -32,6 +32,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 {
                     FilterBy = BooksFilterBy.ByVotes,
                     FilterValue = "Dummy",
+                    PageSize = 10,
                     PageNum = 2
                 };
 

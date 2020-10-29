@@ -45,7 +45,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
                 new List<byte>{1,2,3}, "reviewUser" );
 
             //VERIFY
-            book.ToString().ShouldEqual("book title: by (Cached) Author1. Price 123, 3 reviews. Published 02/01/2000");
+            book.ToString().ShouldEqual("book title: by Author1. Price 123, 3 reviews. Published 02/01/2000 Tags: Tag1");
             book.ReviewsAverageVotes.ShouldEqual(2);
             book.ReviewsCount.ShouldEqual(3);
         }
