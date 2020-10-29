@@ -11,14 +11,18 @@ namespace BookApp.UI.Models
     {
         public int NumBooks { get; }
         public int NumReviews { get; }
+        public int NumBookAuthors { get; }
         public int NumAuthors { get; }
+        public int NumBookTags { get; }
         public int NumTags { get; }
 
         public DatabaseStatsDto(BookDbContext context)
         {
             NumBooks = context.Books.Count();
             NumReviews = context.Set<Review>().Count();
+            NumBookAuthors = context.Set<BookAuthor>().Count();
             NumAuthors = context.Authors.Count();
+            NumBookTags = context.Set<BookTag>().Count();
             NumTags = context.Tags.Count();
         }
     }
