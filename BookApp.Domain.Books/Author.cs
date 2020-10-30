@@ -10,47 +10,46 @@ using GenericEventRunner.DomainParts;
 
 namespace BookApp.Domain.Books
 {
-    public class Author : EntityEventsBase
+    public class Author : EntityEventsBase  //#A
     {
-        public const int NameLength = 100;
-        public const int EmailLength = 100;
-
-        private string _name;
+        private string _name;   //#B
         private HashSet<BookAuthor> _booksLink;
 
         public Author(string name, string email)
-        {
-            _name = name;
-            Email = email;
-        }
+        {                                       
+            _name = name;                       
+            Email = email;                      
+        }                                       
 
         public int AuthorId { get;  private set; }
 
         [Required(AllowEmptyStrings = false)]
-        [MaxLength(NameLength)]
+        [MaxLength(100)]
         public string Name
         {
             get => _name;
-            private set
+            private set   //#C
             {
-                if (value != _name)
-                    AddEvent(new AuthorNameUpdatedEvent(this));
+                if (value != _name)                    //#D
+                    AddEvent(                          //#D
+                        new AuthorNameUpdatedEvent()); //#D
                 _name = value;
             }
         }
 
-        [MaxLength(EmailLength)]
+        [MaxLength(100)]
         public string Email { get; private set; }
 
         //------------------------------
         //Relationships
 
         public ICollection<BookAuthor> BooksLink => _booksLink?.ToList();
-
-        public void ChangeName(string newAuthorName)
-        {
-            Name = newAuthorName;
-        }
     }
+    /*******************************************************
+    #A Adding the EntityEventsBase will provide the methods to send an event
+    #B This is the backing field for the Name property. EF Core will read/write this
+    #C You override the setter to add the event test/send
+    #D If the Name has changes then it sends a domain event
+     *******************************************************/
 
 }

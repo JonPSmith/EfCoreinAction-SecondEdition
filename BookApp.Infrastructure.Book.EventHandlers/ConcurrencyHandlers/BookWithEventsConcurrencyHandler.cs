@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Book.EventHandlers.ConcurrencyHandlers
+namespace BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers
 {
     public static class BookWithEventsConcurrencyHandler
     {

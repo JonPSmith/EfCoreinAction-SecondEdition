@@ -8,16 +8,14 @@ namespace BookApp.Domain.Books.DomainEvents
 {
     public class BookReviewAddedEvent : IEntityEvent
     { 
-        public BookReviewAddedEvent(int numStars, Book book, Action<int,double> updateReviewCachedValues)
+        public BookReviewAddedEvent(int numStars, Action<int,double> updateReviewCachedValues)
         {
             NumStars = numStars;
-            Book = book;
+
             UpdateReviewCachedValues = updateReviewCachedValues;
         }
 
         public int NumStars { get; }
-
-        public Book Book { get; }
 
         public Action<int, double> UpdateReviewCachedValues { get; }
     }

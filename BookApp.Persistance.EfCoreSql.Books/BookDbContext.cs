@@ -9,12 +9,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.Persistence.EfCoreSql.Books
 {
-    public class BookDbContext : DbContextWithEvents<BookDbContext>
+    public class BookDbContext                  //#A
+        : DbContextWithEvents<BookDbContext>    //#B
     {
 
-        public BookDbContext(DbContextOptions<BookDbContext> options, IEventsRunner eventRunner = null)
-            : base(options, eventRunner)
+        public BookDbContext(
+            DbContextOptions<BookDbContext> options, 
+            IEventsRunner eventRunner = null) //#C
+            : base(options, eventRunner)      //#D
         { }
+
+        /***********************************************************
+        #A The BookDbContext handles the Books side of the data 
+        #B Instead of inheriting EF Core's DbContext you inherit the class from GenericEventRunner
+        #C DI will provide GenericEventRunner's EventRunner. If null then no events used (useful for unit tests)
+        #D The constructor of the DbContextWithEvents class needs the EventRunner
+         ***********************************************************/
 
         public DbSet<Book> Books { get; set; }                        
         public DbSet<Author> Authors { get; set; }

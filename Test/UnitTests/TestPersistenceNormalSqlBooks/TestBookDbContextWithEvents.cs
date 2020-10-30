@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
-using BookApp.Infrastructure.Book.EventHandlers;
+using BookApp.Infrastructure.Books.EventHandlers;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForHandlers;
 using GenericEventRunner.ForSetup;

@@ -3,21 +3,21 @@
 
 using System;
 using BookApp.Domain.Books.DomainEvents;
-using GenericEventRunner.DomainParts;
 using GenericEventRunner.ForHandlers;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Book.EventHandlers
+namespace BookApp.Infrastructure.Books.EventHandlers
 {
     public class ReviewAddedHandler : IBeforeSaveEventHandler<BookReviewAddedEvent>
     {
         public IStatusGeneric Handle(object callingEntity, BookReviewAddedEvent domainEvent)
         {
+            var book = (Domain.Books.Book) callingEntity;
             //Here is the fast (delta) version of the update. Doesn't need access to the database
-            var totalStars = Math.Round(domainEvent.Book.ReviewsAverageVotes * 
-                                        domainEvent.Book.ReviewsCount) +
+            var totalStars = Math.Round(book.ReviewsAverageVotes *
+                                        book.ReviewsCount) +
                              domainEvent.NumStars;
-            var numReviews = domainEvent.Book.ReviewsCount + 1;
+            var numReviews = book.ReviewsCount + 1;
             domainEvent.UpdateReviewCachedValues(numReviews, totalStars / numReviews);
 
             return null;

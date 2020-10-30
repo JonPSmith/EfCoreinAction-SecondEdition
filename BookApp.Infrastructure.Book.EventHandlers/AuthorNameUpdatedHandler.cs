@@ -5,11 +5,10 @@ using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Persistence.EfCoreSql.Books;
-using GenericEventRunner.DomainParts;
 using GenericEventRunner.ForHandlers;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Book.EventHandlers
+namespace BookApp.Infrastructure.Books.EventHandlers
 {
     public class AuthorNameUpdatedHandler : IBeforeSaveEventHandler<AuthorNameUpdatedEvent>
     {
@@ -23,8 +22,9 @@ namespace BookApp.Infrastructure.Book.EventHandlers
         public IStatusGeneric Handle(object callingEntity, AuthorNameUpdatedEvent domainEvent)
         {
             //We go through all the books that have this author as one of its authors
+            var changedAuthor = (Author) callingEntity;
             foreach (var bookWithEvents in _context.Set<BookAuthor>()
-                .Where(x => x.AuthorId == domainEvent.ChangedAuthor.AuthorId)
+                .Where(x => x.AuthorId == changedAuthor.AuthorId)
                 .Select(x => x.Book))
             {
                 //For each book that has this author has its AuthorsOrdered string recomputed.
@@ -35,8 +35,8 @@ namespace BookApp.Infrastructure.Book.EventHandlers
 
                 //The database hasn't been updated yet, so we have to manually insert the new name into the correct point in the authorsOrdered
                 var newAuthorsOrdered = string.Join(", ", allAuthorsInOrder.Select(x =>
-                    x.AuthorId == domainEvent.ChangedAuthor.AuthorId
-                        ? domainEvent.ChangedAuthor.Name 
+                    x.AuthorId == changedAuthor.AuthorId
+                        ? changedAuthor.Name 
                         : x.Name));
 
                 bookWithEvents.AuthorsOrdered = newAuthorsOrdered;

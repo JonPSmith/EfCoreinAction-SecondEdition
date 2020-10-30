@@ -3,7 +3,8 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
-using BookApp.Infrastructure.Book.EventHandlers.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.EventHandlers;
+using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
 using BookApp.Infrastructure.Books.Seeding.AppStart;
 using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -73,7 +74,7 @@ namespace BookApp.UI
             eventConfig.RegisterSaveChangesExceptionHandler<BookDbContext>(BookWithEventsConcurrencyHandler.HandleCacheValuesConcurrency);
             eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(BookDetectChangesExtensions.ChangeChecker);
             services.RegisterGenericEventRunner(eventConfig,
-                Assembly.GetAssembly(typeof(Infrastructure.Book.EventHandlers.ReviewAddedHandler))
+                Assembly.GetAssembly(typeof(ReviewAddedHandler))
                 );
 
             //Register EfCoreGenericServices

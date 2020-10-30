@@ -177,11 +177,13 @@ namespace BookApp.Domain.Books
         [ConcurrencyCheck]
         public double ReviewsAverageVotes { get; private set; }
 
-        private void UpdateReviewCachedValues(int reviewsCount, double reviewsAverageVotes)
+        private void UpdateReviewCachedValues
+            (int reviewsCount, double reviewsAverageVotes)
         {
             ReviewsCount = reviewsCount;
             ReviewsAverageVotes = reviewsAverageVotes;
         }
+
         //----------------------------------------------
 
         public override string ToString()
@@ -227,8 +229,8 @@ namespace BookApp.Domain.Books
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
-        public void AddReview(int numStars,   
-            string comment, string voterName) 
+        public void AddReview(int numStars,   //#B
+            string comment, string voterName) //#B
         {
             if (_reviews == null)                      
                 throw new InvalidOperationException(   
@@ -236,11 +238,12 @@ namespace BookApp.Domain.Books
             _reviews.Add(new Review(           
                 numStars, comment, voterName));    
 
-            AddEvent(new BookReviewAddedEvent(numStars, this, UpdateReviewCachedValues));
+            AddEvent(new BookReviewAddedEvent(numStars, //#C
+                UpdateReviewCachedValues)); //#D
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
-        public void RemoveReview(int reviewId) 
+        public void RemoveReview(int reviewId) //#E
         {
             if (_reviews == null)                    
                 throw new InvalidOperationException( 
@@ -252,8 +255,19 @@ namespace BookApp.Domain.Books
                     "The review with that key was not found in the book's Reviews.");
             _reviews.Remove(localReview);             
             
-            AddEvent(new BookReviewRemovedEvent(localReview, this, UpdateReviewCachedValues));
+            AddEvent(new BookReviewRemovedEvent(localReview, //#F
+                UpdateReviewCachedValues)); //#D
         }
+
+        /*******************************************************************
+        #A Adding the EntityEventsBase will provide the methods to send an event
+        #B The AddReview is the only way to add a Review to this Book
+        #C This adds a BookReviewAddedEvent domain event with the NumStars of the new Review
+        #D It provides the event handler with a secure way to update the Review cached values
+        #E The RemoveReview method is the only way to remove a Review from this Book
+        #F This add a BookReviewAddedEvent domain event with the review that has been deleted
+        #G This private method can be used by the event handlers to update the cached values
+         ********************************************************************/
 
         public IStatusGeneric AddPromotion(               
             decimal actualPrice, string promotionalText)                 
