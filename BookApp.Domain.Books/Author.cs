@@ -28,7 +28,7 @@ namespace BookApp.Domain.Books
         public string Name
         {
             get => _name;
-            private set   //#C
+            set   //#C
             {
                 if (value != _name)                    //#D
                     AddEvent(                          //#D
@@ -48,7 +48,7 @@ namespace BookApp.Domain.Books
     /*******************************************************
     #A Adding the EntityEventsBase will provide the methods to send an event
     #B This is the backing field for the Name property. EF Core will read/write this
-    #C You override the setter to add the event test/send
+    #C You make the setting public and  override the setter to add the event test/send
     #D If the Name has changes then it sends a domain event
      *******************************************************/
 

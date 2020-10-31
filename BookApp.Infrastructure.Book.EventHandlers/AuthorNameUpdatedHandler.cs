@@ -10,40 +10,54 @@ using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.EventHandlers
 {
-    public class AuthorNameUpdatedHandler : IBeforeSaveEventHandler<AuthorNameUpdatedEvent>
+    public class AuthorNameUpdatedHandler : 
+        IBeforeSaveEventHandler<AuthorNameUpdatedEvent> //#A
     {
-        private readonly BookDbContext _context;
+        private readonly BookDbContext _context;  //#B
 
-        public AuthorNameUpdatedHandler(BookDbContext context)
-        {
-            _context = context;
-        }
+        public AuthorNameUpdatedHandler//#B
+            (BookDbContext context)    //#B
+        {                              //#B
+            _context = context;        //#B
+        }                              //#B
 
-        public IStatusGeneric Handle(object callingEntity, AuthorNameUpdatedEvent domainEvent)
+        public IStatusGeneric Handle(object callingEntity,  //#C
+            AuthorNameUpdatedEvent domainEvent)             //#C
         {
-            //We go through all the books that have this author as one of its authors
-            var changedAuthor = (Author) callingEntity;
-            foreach (var bookWithEvents in _context.Set<BookAuthor>()
-                .Where(x => x.AuthorId == changedAuthor.AuthorId)
-                .Select(x => x.Book))
+            var changedAuthor = (Author) callingEntity;     //#D
+
+            foreach (var book in _context.Set<BookAuthor>()     //#E
+                .Where(x => x.AuthorId == changedAuthor.AuthorId) //#E
+                .Select(x => x.Book))                             //#E
             {
-                //For each book that has this author has its AuthorsOrdered string recomputed.
-                var allAuthorsInOrder = _context.Books
-                    .Where(x => x.BookId == bookWithEvents.BookId)
-                    .Select(x => x.AuthorsLink.OrderBy(y => y.Order).Select(y => y.Author).ToList())
-                    .Single();
+                var allAuthorsInOrder = _context.Books    //#F
+                    .Single(x => x.BookId == book.BookId) //#F
+                    .AuthorsLink.OrderBy(y => y.Order)    //#F
+                    .Select(y => y.Author).ToList();      //#F
 
-                //The database hasn't been updated yet, so we have to manually insert the new name into the correct point in the authorsOrdered
-                var newAuthorsOrdered = string.Join(", ", allAuthorsInOrder.Select(x =>
-                    x.AuthorId == changedAuthor.AuthorId
-                        ? changedAuthor.Name 
-                        : x.Name));
+                var newAuthorsOrdered =                   //#G
+                    string.Join(", ",                     //#G
+                        allAuthorsInOrder.Select(x =>     //#G
+                    x.AuthorId == changedAuthor.AuthorId  //#H
+                        ? changedAuthor.Name              //#H
+                        : x.Name));                       //#H
 
-                bookWithEvents.AuthorsOrdered = newAuthorsOrdered;
+                book.AuthorsOrdered = newAuthorsOrdered;  //#I
             }
 
-            return null;
+            return null; //#J
         }
-
     }
+    /***********************************************************
+    #A This tells the Event Runner that this event should be called when it finds a AuthorNameUpdatedEvent
+    #B The event handler needs to access the database 
+    #C The Event Runner provides the instance of the calling entity and the event
+    #D This casts the object back to its actual type of Author to make access easier
+    #E This loops through all the books that contain the Author that has changed
+    #F This gets the Authors, in the correct order, linked to this Book
+    #G This will create a comma delimited string with the names from the Authors in the Book
+    #H The changed Author's Name hasn't been written to the database yet, so it finds that Author and substitutes the new name 
+    #I This updates each Book's AuthorsOrdered property
+    #J Returning null is a quick way to say the event handler is always successful
+     ************************************************************/
 }

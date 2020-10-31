@@ -13,7 +13,7 @@ namespace BookApp.Infrastructure.Books.EventHandlers
         public IStatusGeneric Handle(object callingEntity, BookReviewRemovedEvent domainEvent)
         {
             var book = (Domain.Books.Book)callingEntity;
-            //Here is the fast (delta) version of the update. Doesn't need access to the database
+
             var numReviews = book.ReviewsCount - 1;
             var totalStars = Math.Round(book.ReviewsAverageVotes * book.ReviewsCount)
                              - domainEvent.ReviewRemoved.NumStars;

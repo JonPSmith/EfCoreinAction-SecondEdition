@@ -96,6 +96,28 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         }
 
         [Fact]
+        public void TestBookDbContextAlterAuthorOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>();
+            context.Database.EnsureCreated();
+            var books = context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            books[0].AuthorsLink.Single().Author.Name = "Test Name";
+            context.SaveChanges();
+
+            //VERIFY
+            context.ChangeTracker.Clear();
+            var readBooks = context.Books.ToList();
+            readBooks[0].AuthorsOrdered.ShouldEqual("Test Name");
+            readBooks[1].AuthorsOrdered.ShouldEqual("Test Name");
+            readBooks[2].AuthorsOrdered.ShouldNotEqual("Test Name");
+            readBooks[3].AuthorsOrdered.ShouldNotEqual("Test Name");
+        }
+
+        [Fact]
         public void TestGenericEventRunnerConfigAddActionToRunAfterDetectChangeOk()
         {
             //SETUP
