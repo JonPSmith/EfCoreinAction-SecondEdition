@@ -30,7 +30,8 @@ namespace BookApp.Domain.Books
             get => _name;
             set   //#C
             {
-                if (value != _name)                    //#D
+                if (value != _name &&    //#D
+                    AuthorId != default) //#D
                     AddEvent(                          //#D
                         new AuthorNameUpdatedEvent()); //#D
                 _name = value;
@@ -49,7 +50,7 @@ namespace BookApp.Domain.Books
     #A Adding the EntityEventsBase will provide the methods to send an event
     #B This is the backing field for the Name property. EF Core will read/write this
     #C You make the setting public and  override the setter to add the event test/send
-    #D If the Name has changes then it sends a domain event
+    #D If the Name has changes and it's not a new Author then it sends a domain event
      *******************************************************/
 
 }

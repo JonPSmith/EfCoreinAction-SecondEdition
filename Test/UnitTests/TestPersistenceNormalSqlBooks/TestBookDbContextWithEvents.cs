@@ -96,6 +96,22 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         }
 
         [Fact]
+        public void TestBookDbContextNewAuthorDoesNotCreateEventOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            //ATTEMPT
+            var author = new Author("Name1", null);
+            author.Name = "Name2";
+
+            //VERIFY
+            author.GetBeforeSaveEventsThenClear().Count.ShouldEqual(0);
+        }
+
+        [Fact]
         public void TestBookDbContextAlterAuthorOk()
         {
             //SETUP
