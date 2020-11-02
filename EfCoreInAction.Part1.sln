@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.Dapper
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.UtfsSql.Books", "BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UtfsSql.Books.csproj", "{6636514C-76C8-4CF4-919D-B2B61D4E3C64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.BackgroundTasks", "BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj", "{861A2BB1-5398-4018-92FB-FB50CB06BFF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{6636514C-76C8-4CF4-919D-B2B61D4E3C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6636514C-76C8-4CF4-919D-B2B61D4E3C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6636514C-76C8-4CF4-919D-B2B61D4E3C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

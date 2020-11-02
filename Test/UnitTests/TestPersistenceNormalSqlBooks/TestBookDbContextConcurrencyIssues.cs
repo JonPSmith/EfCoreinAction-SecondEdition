@@ -3,7 +3,7 @@
 
 using System;
 using System.Linq;
-using BookApp.Infrastructure.Books.EventHandlers;
+using BookApp.Infrastructure.Books.EventHandlers.Handlers;
 using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;

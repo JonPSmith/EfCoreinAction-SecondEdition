@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
-using BookApp.Infrastructure.Books.EventHandlers;
+using BookApp.Infrastructure.Books.EventHandlers.Handlers;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForSetup;

@@ -11,7 +11,7 @@ using StatusGeneric;
 
 namespace BookApp.Domain.Books
 {
-    public class Book : BookAggregateBase, ISoftDelete
+    public class Book : BookAggregateBase, ISoftDelete, IHasBookId
     {
         public const int PromotionalTextLength = 200;
 
@@ -177,7 +177,7 @@ namespace BookApp.Domain.Books
         [ConcurrencyCheck]
         public double ReviewsAverageVotes { get; private set; }
 
-        private void UpdateReviewCachedValues
+        public void UpdateReviewCachedValues
             (int reviewsCount, double reviewsAverageVotes)
         {
             ReviewsCount = reviewsCount;

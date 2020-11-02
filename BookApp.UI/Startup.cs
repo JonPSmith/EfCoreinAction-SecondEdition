@@ -3,8 +3,8 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
-using BookApp.Infrastructure.Books.EventHandlers;
 using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.EventHandlers.Handlers;
 using BookApp.Infrastructure.Books.Seeding.AppStart;
 using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;

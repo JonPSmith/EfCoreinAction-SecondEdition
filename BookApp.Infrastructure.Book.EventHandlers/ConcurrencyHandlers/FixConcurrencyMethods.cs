@@ -41,8 +41,8 @@ namespace BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers
 
             if (previousCount ==                                  //#E
                 bookThatCausedConcurrency.ReviewsCount            //#E
-                && previousAverageVotes ==                        //#E
-                   bookThatCausedConcurrency.ReviewsAverageVotes) //#E
+                && Math.Abs(previousAverageVotes -                //#E
+                    bookThatCausedConcurrency.ReviewsAverageVotes) < 0.0001) //#E
                 return;                                           //#E
             
             

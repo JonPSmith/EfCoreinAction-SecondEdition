@@ -6,7 +6,7 @@ using BookApp.Domain.Books.SupportTypes;
 
 namespace BookApp.Domain.Books
 {
-    public class BookAuthor : BookAggregateBase
+    public class BookAuthor : BookAggregateBase, IHasBookId
     {
         private BookAuthor() { }
 
