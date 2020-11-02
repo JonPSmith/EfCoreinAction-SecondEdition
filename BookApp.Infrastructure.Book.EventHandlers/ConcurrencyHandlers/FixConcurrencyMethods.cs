@@ -28,38 +28,78 @@ namespace BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers
         /// </summary>
         /// <param name="bookThatCausedConcurrency"></param>
         /// <param name="bookBeingWrittenOut"></param>
-        public void CheckFixReviewCacheValues(Domain.Books.Book bookThatCausedConcurrency, Domain.Books.Book bookBeingWrittenOut)
+        public void CheckFixReviewCacheValues( //#A
+            Book bookThatCausedConcurrency,  //#B
+            Book bookBeingWrittenOut)        //#C
         {
-            var previousCount = (int)_entry.Property(nameof(Domain.Books.Book.ReviewsCount)).OriginalValue;
-            var previousAverageVotes = (double)_entry.Property(nameof(Domain.Books.Book.ReviewsAverageVotes)).OriginalValue;
+            var previousCount = (int)_entry                  //#D
+                .Property(nameof(Book.ReviewsCount))         //#D
+                .OriginalValue;                              //#D
+            var previousAverageVotes = (double)_entry        //#D
+                .Property(nameof(Book.ReviewsAverageVotes))  //#D
+                .OriginalValue;                              //#D
 
-            if (previousCount != bookThatCausedConcurrency.ReviewsCount ||
-                previousAverageVotes != bookThatCausedConcurrency.ReviewsAverageVotes)
-            {
-                //There was a concurrency issue with the Review cache values
-                //In this case we need recompute the Review cache including the bookThatCausedConcurrency changes
+            if (previousCount ==                                  //#E
+                bookThatCausedConcurrency.ReviewsCount            //#E
+                && previousAverageVotes ==                        //#E
+                   bookThatCausedConcurrency.ReviewsAverageVotes) //#E
+                return;                                           //#E
+            
+            
+            //There was a concurrency issue with the Review cache values
+            //In this case we need recompute the Review cache including the bookThatCausedConcurrency changes
 
-                //Get the change that the new book update was trying to apply.
-                var previousTotalStars = Math.Round(previousAverageVotes * previousCount);
-                var countChange = bookBeingWrittenOut.ReviewsCount - previousCount;
-                var starsChange = Math.Round(bookBeingWrittenOut.ReviewsAverageVotes * bookBeingWrittenOut.ReviewsCount) - previousTotalStars;
+            //Get the change that the new book update was trying to apply.
+            var previousTotalStars = Math.Round(       //#F
+                previousAverageVotes * previousCount); //#F
 
-                //Now we combine original change in the bookBeingWrittenOut with the bookThatCausedConcurrency changes to get the combined answer.
-                var newCount = bookThatCausedConcurrency.ReviewsCount + countChange;
-                var totalStars = Math.Round(bookThatCausedConcurrency.ReviewsAverageVotes * bookThatCausedConcurrency.ReviewsCount) +
-                                 starsChange;
+            //This gets the change that the event was trying at make to the cached values
+            var countChange = 
+                bookBeingWrittenOut.ReviewsCount         //#G
+                - previousCount;           //#G
+            var starsChange = Math.Round(                //#G
+                  bookBeingWrittenOut.ReviewsAverageVotes  //#G
+                  * bookBeingWrittenOut.ReviewsCount)      //#G
+              - previousTotalStars;      //#G
 
-                //We write these combined values into the bookBeingWrittenOut via the entry
-                _entry.Property(nameof(Domain.Books.Book.ReviewsCount)).CurrentValue = newCount;
-                _entry.Property(nameof(Domain.Books.Book.ReviewsAverageVotes)).CurrentValue = totalStars / newCount;
+            //Now we combine original change in the bookBeingWrittenOut with the bookThatCausedConcurrency changes to get the combined answer.
+            var newCount =                                     //#H
+                bookThatCausedConcurrency.ReviewsCount         //#H
+                + countChange;                                 //#H
+            var newTotalStars = Math.Round(                    //#H
+                    bookThatCausedConcurrency.ReviewsAverageVotes  //#H
+                    * bookThatCausedConcurrency.ReviewsCount)      //#H
+                + starsChange;                    //#H
 
-                //Now set the original values to the bookOverwrote so that we won't have another concurrency
-                //- unless another update happened while we were fixing this. In which case we get another concurrency to fix in the same way.
-                _entry.Property(nameof(Domain.Books.Book.ReviewsCount)).OriginalValue = bookThatCausedConcurrency.ReviewsCount;
-                _entry.Property(nameof(Domain.Books.Book.ReviewsAverageVotes)).OriginalValue =
-                    bookThatCausedConcurrency.ReviewsAverageVotes;
-            }
+            //We write these combined values into the bookBeingWrittenOut via the entry
+            _entry.Property(nameof(Book.ReviewsCount))          //#I
+                .CurrentValue = newCount;                       //#I
+            _entry.Property(nameof(Book.ReviewsAverageVotes))   //#I
+                .CurrentValue = newCount == 0                   //#I
+                ? 0 : newTotalStars / newCount;                 //#I
+
+            //Now set the original values to the bookOverwrote so that we won't have another concurrency
+            //- unless another update happened while we were fixing this. In which case we get another concurrency to fix in the same way.
+            _entry.Property(nameof(Book.ReviewsCount))        //#J
+                .OriginalValue = bookThatCausedConcurrency    //#J
+                .ReviewsCount;                            //#J
+            _entry.Property(nameof(Book.ReviewsAverageVotes)) //#J
+                    .OriginalValue =                          //#J
+                bookThatCausedConcurrency             //#J
+                    .ReviewsAverageVotes;             //#J
         }
+        /**********************************************************************
+        #A This method handles concurrency errors in the Reviews cached values
+        #B This parameter is the Book from the database that caused the concurrency issue
+        #C This parameter is the Book you were trying to update
+        #D These hold the count and votes in the database before the events changed them
+        #E If the previous count and votes match the current database then there is no Review concurrency issue, so it returns
+        #F This works out the stars before the new update was applied
+        #G This gets the change that the event was trying at make to the cached values
+        #H These works out the combined change from the current book and the other updates done to the database
+        #I From this you can set the Reviews cached values with the combined values
+        #J Finally you need to set the OriginalValues for the Review cached values to the current database
+         ******************************************************************/
 
         /// <summary>
         /// This recomputes the AuthorsOrdered string from the database. But to get the correct answer
@@ -67,32 +107,59 @@ namespace BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers
         /// </summary>
         /// <param name="bookThatCausedConcurrency"></param>
         /// <param name="bookBeingWrittenOut"></param>
-        public void CheckFixAuthorOrdered(Domain.Books.Book bookThatCausedConcurrency, Domain.Books.Book bookBeingWrittenOut)
+        public void CheckFixAuthorsOrdered( //#A
+            Book bookThatCausedConcurrency, //#B
+            Book bookBeingWrittenOut)       //#C
         {
-            var previousAuthorsOrdered = (string)_entry.Property(nameof(Domain.Books.Book.AuthorsOrdered)).OriginalValue;
+            var previousAuthorsOrdered = (string)_entry //#D
+                .Property(nameof(Book.AuthorsOrdered))  //#D
+                .OriginalValue;                         //#D
 
-            if (previousAuthorsOrdered != bookThatCausedConcurrency.AuthorsOrdered)
-            {
-                //There was a concurrency issue with the combined string of authors.
-                //In this case we need recompute the AuthorsOrdered, but we must use Find so that any outstanding changes will be picked up.
+            if (previousAuthorsOrdered ==                 //#E
+                bookThatCausedConcurrency.AuthorsOrdered) //#E
+                return;                                   //#E
 
-                var allAuthorsIdsInOrder = _context.Set<Domain.Books.Book>()
-                    .Where(x => x.BookId == bookBeingWrittenOut.BookId)
-                    .Select(x => x.AuthorsLink.OrderBy(y => y.Order).Select(y => y.AuthorId)).ToList()
-                    .Single();
+            //There was a concurrency issue with the combined string of authors.
+            //In this case we need recompute the AuthorsOrdered, but we must use Find so that any outstanding changes will be picked up.
 
-                //Note the use of Find to get the changed data in the current DbContext
-                //That catches any changes that are waiting to be written to the database
-                var namesInOrder = allAuthorsIdsInOrder.Select(x => _context.Find<Author>(x).Name);
-                var newAuthorsOrdered = string.Join(", ", namesInOrder);
+            var allAuthorsIdsInOrder = _context.Set<Book>() //#F
+                .IgnoreQueryFilters()                       //#F
+                .Where(x => x.BookId ==                     //#F
+                            bookBeingWrittenOut.BookId)     //#F
+                .Select(x => x.AuthorsLink                  //#F
+                    .OrderBy(y => y.Order)                  //#F
+                    .Select(y => y.AuthorId)).ToList()      //#F
+                .Single();                                  //#F
 
-                //We write the new value into the bookBeingWrittenOut via the entry
-                _entry.Property(nameof(Domain.Books.Book.AuthorsOrdered)).CurrentValue = newAuthorsOrdered;
+            //Note the use of Find to get the changed data in the current DbContext
+            //That catches any changes that are waiting to be written to the database
+            var namesInOrder = allAuthorsIdsInOrder          //#G
+                .Select(x => _context.Find<Author>(x).Name); //#G
 
-                //Now set the original value to the bookOverwrote so that we won't have another concurrency
-                //- unless another update happened while we were fixing this. In which case we get another concurrency to fix in the same way.
-                _entry.Property(nameof(Domain.Books.Book.AuthorsOrdered)).OriginalValue = bookThatCausedConcurrency.AuthorsOrdered;
-            }
+            var newAuthorsOrdered =                //#H
+                string.Join(", ", namesInOrder);   //#H
+
+            //We write the new value into the bookBeingWrittenOut via the entry
+            _entry.Property(nameof(Book.AuthorsOrdered)) //#I
+                .CurrentValue = newAuthorsOrdered;       //#I
+
+            //Now set the original value to the bookOverwrote so that we won't have another concurrency
+            //- unless another update happened while we were fixing this. In which case we get another concurrency to fix in the same way.
+            _entry.Property(nameof(Book.AuthorsOrdered))   //#J
+                .OriginalValue =                           //#J
+                bookThatCausedConcurrency.AuthorsOrdered;  //#J
         }
+        /**********************************************************************
+        #A This method handles concurrency errors in the AuthorsOrdered cached value
+        #B This parameter is the Book from the database that caused the concurrency issue
+        #C This parameter is the Book you were trying to update
+        #D This gets the previous AuthorsOrdered string before the event updated it
+        #E If the previous AuthorsOrdered match the current database AuthorsOrdered then there is no AuthorsOrdered concurrency issue, so it returns
+        #F THis gets the AuthorIds for each Author linked to this Book in the correct order 
+        #G This gets the Name of each Author using the Find method
+        #H Then it is simple to created a comma delimited list of the authors
+        #I From this you can set the AuthorsOrdered cached value with the combined values
+        #J Finally you need to set the OriginalValues for the AuthorsOrdered cached value to the current database
+         ******************************************************************/
     }
 }
