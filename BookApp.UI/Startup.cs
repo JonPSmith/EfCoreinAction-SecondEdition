@@ -4,6 +4,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using BookApp.BackgroundTasks;
+using BookApp.Infrastructure.Books.EventHandlers.AppStart;
 using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
 using BookApp.Infrastructure.Books.EventHandlers.Handlers;
@@ -63,16 +64,18 @@ namespace BookApp.UI
             services.AddHttpContextAccessor();
 
             services.Configure<CheckFixCacheOptions>(Configuration.GetSection("CheckFixCacheOptions"));
-            services.AddHostedService<CheckFixCacheBackground>();
 
             //This registers all the services across all the projects in this application
             services.RegisterOrdersDbAccess(Configuration);
             services.RegisterOrdersBizLogic(Configuration);
             services.RegisterBooksSeeding(Configuration);
+            services.RegisterCheckFixCacheValuesService(Configuration);
             services.RegisterServiceLayerDefaultBooks(Configuration);
             services.RegisterServiceLayerUtfsSqlOrders(Configuration);
             services.RegisterServiceLayerCachedBooks(Configuration);
             services.RegisterServiceLayerDefaultOrders(Configuration);
+
+            services.AddHostedService<CheckFixCacheBackground>();
 
             //Register EfCore.GenericEventRunner
             var eventConfig = new GenericEventRunnerConfig();
