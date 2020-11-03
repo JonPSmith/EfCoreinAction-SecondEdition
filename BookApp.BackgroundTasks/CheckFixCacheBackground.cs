@@ -31,8 +31,9 @@ namespace BookApp.BackgroundTasks
             _options = options.Value;
             _logger = logger;
 
-            _ignoreBeforeDateUtc = _options.IgnoreBeforeDateUtc 
-                                   ?? DateTime.UtcNow;
+            _ignoreBeforeDateUtc = _options.OnlyCheckUpdatesSinceAppStart
+                ? DateTime.UtcNow
+                : new DateTime(2000, 1, 1);
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -53,6 +54,7 @@ namespace BookApp.BackgroundTasks
                     .GetRequiredService<ICheckFixCacheValuesService>();
 
                 _ignoreBeforeDateUtc = await checkService.RunCheckAsync(_ignoreBeforeDateUtc);
+                _logger.LogDebug("Ran the CheckFixCacheValuesService.");
             }
         }
 

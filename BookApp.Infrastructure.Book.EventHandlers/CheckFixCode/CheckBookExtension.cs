@@ -32,8 +32,8 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
                 Math.Abs(dto.RecalcReviewsAverageVotes ?? 0 - dto.ReviewsAverageVotes) > 0.0001)
             {
                 status.AddError($"BookId: {dto.BookId}, Review cached values incorrect\n" +
-                                  $"Actual Reviews.Count = {dto.RecalcReviewsCount}, Cached ReviewsCount = {dto.ReviewsCount}" +
-                                  $"Actual Reviews average = {dto.RecalcReviewsCount:F5}, Cached ReviewsAverageVotes = {dto.ReviewsAverageVotes:F5}" +
+                                  $"Actual Reviews.Count = {dto.RecalcReviewsCount}, Cached ReviewsCount = {dto.ReviewsCount}\n" +
+                                  $"Actual Reviews average = {dto.RecalcReviewsCount:F5}, Cached ReviewsAverageVotes = {dto.ReviewsAverageVotes:F5}\n" +
                                   $"Last updated {dto.LastUpdatedUtc:G}");
                 if (fixBadCacheValues)
                 {
@@ -47,7 +47,7 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
             if (dto.RecalcAuthorsOrdered != dto.AuthorsOrdered)
             {
                 status.AddError($"BookId: {dto.BookId}, AuthorsOrdered cached value incorrect\n" +
-                                $"Actual authors string = {dto.RecalcAuthorsOrdered}, Cached AuthorsOrdered = {dto.AuthorsOrdered}" +
+                                $"Actual authors string = {dto.RecalcAuthorsOrdered}, Cached AuthorsOrdered = {dto.AuthorsOrdered}\n" +
                                 $"Last updated {dto.LastUpdatedUtc:G}");
 
                 if (fixBadCacheValues)

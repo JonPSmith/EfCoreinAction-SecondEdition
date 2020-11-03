@@ -15,7 +15,6 @@ namespace BookApp.Domain.Books.SupportTypes
         /// This should be called if the status of the entity is Added or Modified
         /// You check this just before SaveChanges/Async is called, typically by overriding SaveChanges/Async
         /// </summary>
-        /// <param name="entry"></param>
         /// <param name="added"></param>
         void LogAddUpdate(bool added);
     }

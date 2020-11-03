@@ -45,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj" />
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Books.EventHandlers.csproj" />

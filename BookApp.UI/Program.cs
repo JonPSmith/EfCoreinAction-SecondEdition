@@ -2,8 +2,11 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using BookApp.BackgroundTasks;
+using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using BookApp.UI.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -26,10 +29,6 @@ namespace BookApp.UI
                 {
                     logging.ClearProviders(); //Clear logging providers to improve performance
                 })
-                //.ConfigureServices(services =>
-                //{
-                //    services.AddHostedService<BackgroundServiceCountReviews>();
-                //})
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

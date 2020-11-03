@@ -3,6 +3,8 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
+using BookApp.BackgroundTasks;
+using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
 using BookApp.Infrastructure.Books.EventHandlers.Handlers;
 using BookApp.Infrastructure.Books.Seeding.AppStart;
@@ -59,6 +61,9 @@ namespace BookApp.UI
                     dbOptions.MigrationsHistoryTable("OrderMigrationHistoryName")));
 
             services.AddHttpContextAccessor();
+
+            services.Configure<CheckFixCacheOptions>(Configuration.GetSection("CheckFixCacheOptions"));
+            services.AddHostedService<CheckFixCacheBackground>();
 
             //This registers all the services across all the projects in this application
             services.RegisterOrdersDbAccess(Configuration);

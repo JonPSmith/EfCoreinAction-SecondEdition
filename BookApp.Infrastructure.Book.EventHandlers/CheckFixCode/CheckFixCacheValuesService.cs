@@ -31,7 +31,7 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
 
         public async Task<DateTime> RunCheckAsync(DateTime fromThisDate)
         {
-            var toThisDate = DateTime.UtcNow.Add(-_options.IgnoreAfterOffset);
+            var toThisDate = DateTime.UtcNow.Add(-_options.IgnoreIfWithinOffset);
             var bookIdsOfChanged = new HashSet<int>();
             bookIdsOfChanged.UnionWith(await FilterByToFrom(
                     _context.Books, 
@@ -54,15 +54,15 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
             var hadErrors = false;
             foreach (var bookId in bookIdsOfChanged)
             {
-
                 var status = await _context.CheckSingleBookAsync(bookId, _options.FixBadCacheValues);
                 if (status.HasErrors)
                 {
                     foreach (var error in status.Errors)
                     {
-                        _logger.LogWarning(error.ToString());
+                        _logger.Log(_options.FixBadCacheValues 
+                            ? LogLevel.Warning : LogLevel.Error, 
+                            error.ToString());
                     }
-
                     hadErrors = true;
                 }
                 await Task.Delay(_options.WaitBetweenEachCheck);
