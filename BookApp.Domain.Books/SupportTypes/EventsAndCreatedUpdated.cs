@@ -6,7 +6,7 @@ using GenericEventRunner.DomainParts;
 
 namespace BookApp.Domain.Books.SupportTypes
 {
-    public class BookAggregateBase : EntityEventsBase, ICreatedUpdated
+    public class EventsAndCreatedUpdated : EntityEventsBase, ICreatedUpdated
     {
         public DateTime WhenCreatedUtc { get; private set; }
         public DateTime LastUpdatedUtc { get; private set; }

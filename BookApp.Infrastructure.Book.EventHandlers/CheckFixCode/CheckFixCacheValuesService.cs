@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.Services
+namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
 {
     public class CheckFixCacheValuesService : ICheckFixCacheValuesService
     {
@@ -45,17 +45,17 @@ namespace BookApp.Infrastructure.Books.EventHandlers.Services
                     _context.Set<BookAuthor>(), 
                     fromThisDate, toThisDate)
                     .Select(x => x.BookId).ToListAsync());
+            bookIdsOfChanged.UnionWith(await FilterByToFrom(
+                    _context.Set<Author>(),
+                    fromThisDate, toThisDate)
+                .SelectMany(x => x.BooksLink
+                    .Select(y => y.BookId)).ToListAsync());
 
             var hadErrors = false;
             foreach (var bookId in bookIdsOfChanged)
             {
-                var book = await _context.Books
-                    .Include(y => y.Reviews)
-                    .Include(y => y.AuthorsLink.OrderBy(y => y.Order))
-                    .ThenInclude(y => y.Author)
-                    .SingleOrDefaultAsync(y => y.BookId == bookId);
 
-                var status = book.CheckSingleBook(_options.FixBadCacheValues);
+                var status = await _context.CheckSingleBookAsync(bookId, _options.FixBadCacheValues);
                 if (status.HasErrors)
                 {
                     foreach (var error in status.Errors)
@@ -76,7 +76,7 @@ namespace BookApp.Infrastructure.Books.EventHandlers.Services
 
         private IQueryable<T> FilterByToFrom<T>(IQueryable<T> source, 
             DateTime fromThisDate, DateTime toThisDate)
-            where T : ICreatedUpdated, IHasBookId
+            where T : ICreatedUpdated
         {
             return source.Where(x => x.LastUpdatedUtc >= fromThisDate
                                      && x.LastUpdatedUtc < toThisDate);

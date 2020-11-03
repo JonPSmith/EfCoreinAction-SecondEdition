@@ -10,7 +10,7 @@ using BookApp.Domain.Books.SupportTypes;
 
 namespace BookApp.Domain.Books
 {
-    public class Review : BookAggregateBase, IHasBookId
+    public class Review : EventsAndCreatedUpdated
     {
         public const int NameLength = 100;
 

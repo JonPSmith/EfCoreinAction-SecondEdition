@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.Books.EventHandlers;
-using BookApp.Infrastructure.Books.EventHandlers.Services;
+using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,7 +31,8 @@ namespace BookApp.BackgroundTasks
             _options = options.Value;
             _logger = logger;
 
-            _ignoreBeforeDateUtc = _options.IgnoreBeforeDateUtc;
+            _ignoreBeforeDateUtc = _options.IgnoreBeforeDateUtc 
+                                   ?? DateTime.UtcNow;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)

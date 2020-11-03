@@ -3,11 +3,11 @@
 
 using System;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.Services
+namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
 {
     public class CheckFixCacheOptions
     {
-        public DateTime IgnoreBeforeDateUtc { get; set; }
+        public DateTime? IgnoreBeforeDateUtc { get; set; }
         public TimeSpan IgnoreAfterOffset { get; set; }
 
         public TimeSpan WaitBetweenRuns { get; set; }

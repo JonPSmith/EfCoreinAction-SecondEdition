@@ -1,16 +1,15 @@
 ﻿// Copyright (c) 2019 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
-using GenericEventRunner.DomainParts;
+using BookApp.Domain.Books.SupportTypes;
 
 namespace BookApp.Domain.Books
 {
-    public class Author : EntityEventsBase  //#A
+    public class Author : EventsAndCreatedUpdated  //#A
     {
         private string _name;   //#B
         private HashSet<BookAuthor> _booksLink;

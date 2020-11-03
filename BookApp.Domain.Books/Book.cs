@@ -11,7 +11,7 @@ using StatusGeneric;
 
 namespace BookApp.Domain.Books
 {
-    public class Book : BookAggregateBase, ISoftDelete, IHasBookId
+    public class Book : EventsAndCreatedUpdated, ISoftDelete
     {
         public const int PromotionalTextLength = 200;
 
