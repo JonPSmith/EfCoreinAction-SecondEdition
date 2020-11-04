@@ -37,6 +37,11 @@ namespace BookApp.Persistence.EfCoreSql.Books
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            modelBuilder.Entity<Book>().HasIndex(x => x.LastUpdatedUtc);
+            modelBuilder.Entity<Review>().HasIndex(x => x.LastUpdatedUtc);
+            modelBuilder.Entity<BookAuthor>().HasIndex(x => x.LastUpdatedUtc);
+            modelBuilder.Entity<Author>().HasIndex(x => x.LastUpdatedUtc);
+
             modelBuilder.RegisterUdfDefinitions();
         }
     }
