@@ -13,37 +13,34 @@ using Microsoft.Extensions.Options;
 
 namespace BookApp.BackgroundTasks
 {
-    public class CheckFixCacheBackground : IHostedService, IDisposable
+    public class CheckFixCacheBackground : IHostedService
     {
-        private readonly IServiceProvider _services;
-        private readonly CheckFixCacheOptions _options;
-        private readonly ILogger<CheckFixCacheBackground> _logger;
-        private Timer _timer;
+        private CancellationToken _stopCancellationToken = new CancellationToken();
+        private readonly NightlyTimer _nightlyTimer = new NightlyTimer();
 
-        private DateTime _ignoreBeforeDateUtc;
+        private readonly IServiceProvider _services;
+        private readonly ILogger<CheckFixCacheBackground> _logger;
+
 
         public CheckFixCacheBackground(
             IServiceProvider services,
-            IOptions<CheckFixCacheOptions> options,
             ILogger<CheckFixCacheBackground> logger)
         {
             _services = services;
-            _options = options.Value;
             _logger = logger;
-
-            _ignoreBeforeDateUtc = _options.OnlyCheckUpdatesSinceAppStart
-                ? DateTime.UtcNow
-                : new DateTime(2000, 1, 1);
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
+        public async Task StartAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("CheckFixCacheBackground Hosted Service running.");
 
-            _timer = new Timer(async _ => await DoWorkAsync(), null, TimeSpan.Zero,
-                _options.WaitBetweenRuns);
-
-            return Task.CompletedTask;
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var delayTime = _nightlyTimer.TimeToWait();
+                await Task.Delay(delayTime, stoppingToken);
+                if (!_stopCancellationToken.IsCancellationRequested)
+                    await DoWorkAsync();
+            }
         }
 
         private async Task DoWorkAsync()
@@ -53,7 +50,8 @@ namespace BookApp.BackgroundTasks
                 var checkService = scope.ServiceProvider
                     .GetRequiredService<ICheckFixCacheValuesService>();
 
-                _ignoreBeforeDateUtc = await checkService.RunCheckAsync(_ignoreBeforeDateUtc);
+                var last25Hours = DateTime.UtcNow.AddHours(-25);
+                await checkService.RunCheckAsync(last25Hours, true, _stopCancellationToken);
                 _logger.LogDebug("Ran the CheckFixCacheValuesService.");
             }
         }
@@ -62,14 +60,10 @@ namespace BookApp.BackgroundTasks
         {
             _logger.LogInformation("CheckFixCacheBackground Hosted Service is stopping.");
 
-            _timer?.Change(Timeout.Infinite, 0);
+            _stopCancellationToken = new CancellationToken(true);
 
             return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
     }
 }

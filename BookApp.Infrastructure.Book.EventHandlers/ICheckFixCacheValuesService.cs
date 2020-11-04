@@ -2,12 +2,13 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BookApp.Infrastructure.Books.EventHandlers
 {
     public interface ICheckFixCacheValuesService
     {
-        Task<DateTime> RunCheckAsync(DateTime fromThisDate);
+        Task RunCheckAsync(DateTime fromThisDate, bool fixBadCacheValues, CancellationToken cancellationToken);
     }
 }

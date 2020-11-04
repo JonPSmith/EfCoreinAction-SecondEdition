@@ -32,10 +32,10 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
             var logs = new List<LogOutput>();
             var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
-            var service = new CheckFixCacheValuesService(context, new MockCheckFixIOptions(), logger);
+            var service = new CheckFixCacheValuesService(context,  logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1));
+            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
@@ -59,10 +59,10 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
             var logs = new List<LogOutput>();
             var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
-            var service = new CheckFixCacheValuesService(context, new MockCheckFixIOptions(false), logger);
+            var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1));
+            await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
@@ -87,10 +87,10 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
             var logs = new List<LogOutput>();
             var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
-            var service = new CheckFixCacheValuesService(context, new MockCheckFixIOptions(), logger);
+            var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1));
+            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
@@ -115,10 +115,10 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
             var logs = new List<LogOutput>();
             var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
-            var service = new CheckFixCacheValuesService(context, new MockCheckFixIOptions(false), logger);
+            var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1));
+            await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
 
             //VERIFY
             context.ChangeTracker.Clear();

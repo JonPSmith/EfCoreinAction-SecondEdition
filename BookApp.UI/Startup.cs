@@ -63,8 +63,6 @@ namespace BookApp.UI
 
             services.AddHttpContextAccessor();
 
-            services.Configure<CheckFixCacheOptions>(Configuration.GetSection("CheckFixCacheOptions"));
-
             //This registers all the services across all the projects in this application
             services.RegisterOrdersDbAccess(Configuration);
             services.RegisterOrdersBizLogic(Configuration);

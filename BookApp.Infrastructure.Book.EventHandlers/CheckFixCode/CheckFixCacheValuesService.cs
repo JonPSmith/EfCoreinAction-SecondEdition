@@ -4,82 +4,80 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.SupportTypes;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
 {
     public class CheckFixCacheValuesService : ICheckFixCacheValuesService
     {
+
+
         private readonly BookDbContext _context;
-        private readonly CheckFixCacheOptions _options;
         private readonly ILogger<CheckFixCacheValuesService> _logger;
 
-        public CheckFixCacheValuesService(BookDbContext context, 
-            IOptions<CheckFixCacheOptions> options, 
+
+        public CheckFixCacheValuesService(BookDbContext context,
             ILogger<CheckFixCacheValuesService> logger)
         {
             _context = context;
             _logger = logger;
-            _options = options.Value;
         }
 
-        public async Task<DateTime> RunCheckAsync(DateTime fromThisDate)
+        public async Task RunCheckAsync(DateTime fromThisDate, bool fixBadCacheValues, CancellationToken cancellationToken)
         {
-            var toThisDate = DateTime.UtcNow.Add(-_options.IgnoreIfWithinOffset);
             var bookIdsOfChanged = new HashSet<int>();
             bookIdsOfChanged.UnionWith(await FilterByToFrom(
                     _context.Books, 
-                    fromThisDate, toThisDate)
-                    .Select(x => x.BookId).ToListAsync());
+                    fromThisDate)
+                    .Select(x => x.BookId).ToListAsync(cancellationToken));
             bookIdsOfChanged.UnionWith(await FilterByToFrom(
                     _context.Set<Review>(), 
-                    fromThisDate, toThisDate)
-                    .Select(x => x.BookId).ToListAsync());
+                    fromThisDate)
+                    .Select(x => x.BookId).ToListAsync(cancellationToken));
             bookIdsOfChanged.UnionWith(await FilterByToFrom(
                     _context.Set<BookAuthor>(), 
-                    fromThisDate, toThisDate)
-                    .Select(x => x.BookId).ToListAsync());
+                    fromThisDate)
+                    .Select(x => x.BookId).ToListAsync(cancellationToken));
             bookIdsOfChanged.UnionWith(await FilterByToFrom(
                     _context.Set<Author>(),
-                    fromThisDate, toThisDate)
+                    fromThisDate)
                 .SelectMany(x => x.BooksLink
-                    .Select(y => y.BookId)).ToListAsync());
+                    .Select(y => y.BookId)).ToListAsync(cancellationToken));
 
             var hadErrors = false;
             foreach (var bookId in bookIdsOfChanged)
             {
-                var status = await _context.CheckSingleBookAsync(bookId, _options.FixBadCacheValues);
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                var status = await _context.CheckSingleBookAsync(bookId, fixBadCacheValues, cancellationToken);
                 if (status.HasErrors)
                 {
                     foreach (var error in status.Errors)
                     {
-                        _logger.Log(_options.FixBadCacheValues 
+                        _logger.Log(fixBadCacheValues 
                             ? LogLevel.Warning : LogLevel.Error, 
                             error.ToString());
                     }
                     hadErrors = true;
                 }
-                await Task.Delay(_options.WaitBetweenEachCheck);
             }
 
-            if (hadErrors && _options.FixBadCacheValues)
-                await _context.SaveChangesAsync();
-
-            return toThisDate;
+            if (hadErrors && fixBadCacheValues)
+                await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private IQueryable<T> FilterByToFrom<T>(IQueryable<T> source, 
-            DateTime fromThisDate, DateTime toThisDate)
+        private IQueryable<T> FilterByToFrom<T>(IQueryable<T> source,
+            DateTime fromThisDate)
             where T : ICreatedUpdated
         {
-            return source.Where(x => x.LastUpdatedUtc >= fromThisDate
-                                     && x.LastUpdatedUtc < toThisDate);
+            return source.Where(x => x.LastUpdatedUtc >= fromThisDate);
         }
     }
 }

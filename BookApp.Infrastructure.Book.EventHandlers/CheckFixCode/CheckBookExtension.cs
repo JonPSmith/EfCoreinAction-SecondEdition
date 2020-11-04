@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -14,14 +15,14 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
     public static class CheckBookExtension
     {
         public static async Task<IStatusGeneric> CheckSingleBookAsync(
-            this BookDbContext context, int bookId, bool fixBadCacheValues)
+            this BookDbContext context, int bookId, bool fixBadCacheValues, CancellationToken cancellationToken)
         {
             var status = new StatusGenericHandler();
 
             var dto = await context.Books
                 .IgnoreQueryFilters()
                 .MapBookToDto()
-                .SingleOrDefaultAsync(x => x.BookId == bookId);
+                .SingleOrDefaultAsync(x => x.BookId == bookId, cancellationToken);
             if (dto == null)
                 status.AddError($"BookId: {dto.BookId}: No book found.");
 
@@ -39,7 +40,7 @@ namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
                 {
                     loadedBook = await context.Books.
                         SingleOrDefaultAsync(x => x.BookId == bookId);
-                    loadedBook.UpdateReviewCachedValues(dto.RecalcReviewsCount, dto.RecalcReviewsAverageVotes ?? 0);
+                    loadedBook?.UpdateReviewCachedValues(dto.RecalcReviewsCount, dto.RecalcReviewsAverageVotes ?? 0);
                     status.AddError($"BookId: {dto.BookId}: Review cached values fixed.");
                 }
             }
