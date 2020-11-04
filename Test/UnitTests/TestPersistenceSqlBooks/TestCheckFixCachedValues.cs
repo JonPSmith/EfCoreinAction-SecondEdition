@@ -18,8 +18,33 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 {
     public class TestCheckFixCachedValues
     {
+
         [Fact]
-        public async Task TestCheckFixCacheValuesServiceFindFixReviews()
+        public async Task TestCheckFixCacheValuesServiceFindFixReviewsOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            var books = context.SeedDatabaseFourBooks(); //The Review cache values will be incorrect, and createUpdate not set
+            SetAllBooksAsUpdatedNow(books);
+            books[3].UpdateReviewCachedValues(2, books[3].Reviews.Average(x => x.NumStars));
+            await context.SaveChangesAsync();
+
+            var logs = new List<LogOutput>();
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var service = new CheckFixCacheValuesService(context, logger);
+
+            //ATTEMPT
+            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
+
+            //VERIFY
+            logs.Count.ShouldEqual(0);
+        }
+
+        [Fact]
+        public async Task TestCheckFixCacheValuesServiceFindFixBadReviews()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
@@ -46,7 +71,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
         }
 
         [Fact]
-        public async Task TestCheckFixCacheValuesServiceFindOnlyReviews()
+        public async Task TestCheckFixCacheValuesServiceFindBadOnlyReviews()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
