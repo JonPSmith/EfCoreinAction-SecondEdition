@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace BookApp.BackgroundTasks
 {
-    public class CheckFixCacheBackground : IHostedService
+    public class CheckFixCacheBackground : BackgroundService
     {
         private CancellationToken _stopCancellationToken = new CancellationToken();
         private readonly NightlyTimer _nightlyTimer = new NightlyTimer();
@@ -30,7 +30,7 @@ namespace BookApp.BackgroundTasks
             _logger = logger;
         }
 
-        public async Task StartAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("CheckFixCacheBackground Hosted Service running.");
 
@@ -56,7 +56,7 @@ namespace BookApp.BackgroundTasks
             }
         }
 
-        public Task StopAsync(CancellationToken stoppingToken)
+        public override Task StopAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("CheckFixCacheBackground Hosted Service is stopping.");
 

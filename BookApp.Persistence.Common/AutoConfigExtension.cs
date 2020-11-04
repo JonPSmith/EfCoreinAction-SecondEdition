@@ -32,6 +32,12 @@ namespace BookApp.Persistence.Common
                         entityProperty.SetValueConverter(utcConverter);
                     }
 
+                    if (entityProperty.ClrType == typeof(DateTime)
+                        && entityProperty.Name == "LastUpdatedUtc")
+                    {
+                        entityProperty.IsIndex();
+                    }
+
                     if (entityProperty.ClrType == typeof(decimal)
                         && entityProperty.Name.Contains("Price"))
                     {

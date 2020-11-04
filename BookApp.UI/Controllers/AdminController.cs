@@ -1,8 +1,12 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.Infrastructure.Books.EventHandlers;
+using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.UI.HelperExtensions;
@@ -124,6 +128,31 @@ namespace BookApp.UI.Controllers
             //Error state
             service.CopyErrorsToModelState(ModelState, dto);
             return View(dto);
+        }
+
+
+        public IActionResult CacheCheckFix()
+        {
+            Request.ThrowErrorIfNotLocal();
+            SetupTraceInfo();
+            return View(new CheckFixInputDto{ FixBadCacheValues = true, LookingBack = new TimeSpan(0,0,30,0)});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CacheCheckFix(CheckFixInputDto dto, CancellationToken cancellationToken, 
+            [FromServices]ICheckFixCacheValuesService service)
+        {
+            Request.ThrowErrorIfNotLocal();
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
+
+            var scanFrom = DateTime.UtcNow.Subtract(dto.LookingBack);
+            await service.RunCheckAsync(scanFrom, dto.FixBadCacheValues, cancellationToken );
+            SetupTraceInfo();
+            return View("BookUpdated", "The CheckFixCache service has finished - see logs for info.");
         }
 
     }
