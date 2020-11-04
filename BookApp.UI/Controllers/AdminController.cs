@@ -135,7 +135,7 @@ namespace BookApp.UI.Controllers
         {
             Request.ThrowErrorIfNotLocal();
             SetupTraceInfo();
-            return View(new CheckFixInputDto{ FixBadCacheValues = true, LookingBack = new TimeSpan(0,0,30,0)});
+            return View(new CheckFixInputDto{ FixBadCacheValues = true, LookingBack = new TimeSpan(0,1,00,0)});
         }
 
         [HttpPost]
