@@ -4,7 +4,7 @@
 using System.Linq;
 using BookApp.Domain.Books;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
+namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
 {
     public static class CheckFixDtoSelect
     {

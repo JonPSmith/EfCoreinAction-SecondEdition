@@ -4,8 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using BookApp.Infrastructure.Books.EventHandlers;
-using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
+using BookApp.Infrastructure.Books.CachedValues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

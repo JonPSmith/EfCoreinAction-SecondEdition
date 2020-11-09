@@ -7,7 +7,7 @@ using BookApp.Domain.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers
+namespace BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers
 {
     public class FixConcurrencyMethods
     {

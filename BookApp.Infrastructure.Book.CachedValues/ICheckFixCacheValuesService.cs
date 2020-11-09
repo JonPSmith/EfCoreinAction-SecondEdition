@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BookApp.Infrastructure.Books.EventHandlers
+namespace BookApp.Infrastructure.Books.CachedValues
 {
     public interface ICheckFixCacheValuesService
     {

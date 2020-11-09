@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
@@ -10,7 +9,7 @@ using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
+namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
 {
     public static class CheckBookExtension
     {

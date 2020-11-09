@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using BookApp.BackgroundTasks;
-using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
 using BookApp.UI.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

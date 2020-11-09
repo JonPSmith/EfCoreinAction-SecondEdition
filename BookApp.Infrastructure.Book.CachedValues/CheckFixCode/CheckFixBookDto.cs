@@ -3,7 +3,7 @@
 
 using System;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
+namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
 {
     public class CheckFixBookDto
     {

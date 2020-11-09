@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Domain.Books", "Boo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Domain.Orders", "BookApp.Domain.Orders\BookApp.Domain.Orders.csproj", "{744EE105-41E9-48F5-85E0-8789D1D71BF2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.Books.EventHandlers", "BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Books.EventHandlers.csproj", "{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.Books.CachedValues", "BookApp.Infrastructure.Book.CachedValues\BookApp.Infrastructure.Books.CachedValues.csproj", "{87BF7583-7A2F-46D3-AC18-DEB4C60430E0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Persistence.Common", "BookApp.Persistence.Common\BookApp.Persistence.Common.csproj", "{EF1AB29D-E92B-4E09-BAD8-37A9324FA5F7}"
 EndProject
@@ -41,9 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.Cached
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.DapperSql.Books", "BookApp.ServiceLayer.DapperSql.Books\BookApp.ServiceLayer.DapperSql.Books.csproj", "{8EFBE2F6-A5F5-4628-BE89-9FAEE1998213}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.UtfsSql.Books", "BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UtfsSql.Books.csproj", "{6636514C-76C8-4CF4-919D-B2B61D4E3C64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.UtfsSql.Books", "BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UtfsSql.Books.csproj", "{6636514C-76C8-4CF4-919D-B2B61D4E3C64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.BackgroundTasks", "BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj", "{861A2BB1-5398-4018-92FB-FB50CB06BFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.BackgroundTasks", "BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj", "{861A2BB1-5398-4018-92FB-FB50CB06BFF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

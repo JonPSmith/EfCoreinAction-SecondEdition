@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Books.EventHandlers.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Book.CachedValues\BookApp.Infrastructure.Books.CachedValues.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Books.CachedValues.csproj" />
   </ItemGroup>
 
 </Project>

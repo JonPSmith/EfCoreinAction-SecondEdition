@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using BookApp.Infrastructure.Books.EventHandlers.Handlers;
-using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.CachedValues.Handlers;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;

@@ -12,7 +12,7 @@ using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BookApp.Infrastructure.Books.EventHandlers.CheckFixCode
+namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
 {
     public class CheckFixCacheValuesService : ICheckFixCacheValuesService
     {

@@ -4,10 +4,9 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using BookApp.BackgroundTasks;
-using BookApp.Infrastructure.Books.EventHandlers.AppStart;
-using BookApp.Infrastructure.Books.EventHandlers.CheckFixCode;
-using BookApp.Infrastructure.Books.EventHandlers.ConcurrencyHandlers;
-using BookApp.Infrastructure.Books.EventHandlers.Handlers;
+using BookApp.Infrastructure.Books.CachedValues.AppStart;
+using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
+using BookApp.Infrastructure.Books.CachedValues.Handlers;
 using BookApp.Infrastructure.Books.Seeding.AppStart;
 using BookApp.Infrastructure.Orders.BizLogic.AppStart;
 using BookApp.Persistence.EfCoreSql.Books;
