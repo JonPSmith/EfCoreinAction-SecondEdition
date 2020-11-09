@@ -6,7 +6,7 @@ using BookApp.Domain.Books.DomainEvents;
 using GenericEventRunner.ForHandlers;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Books.CachedValues.Handlers
+namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
     public class ReviewRemovedHandler : IBeforeSaveEventHandler<BookReviewRemovedEvent>
     {

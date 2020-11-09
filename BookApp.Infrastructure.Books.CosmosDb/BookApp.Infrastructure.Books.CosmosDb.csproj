@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -6,13 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="EfCore.GenericEventRunner" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-rc.2.20475.6" />
-    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Persistence.CosmosDb.Books\BookApp.Persistence.CosmosDb.Books.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
-using BookApp.Infrastructure.Books.CachedValues.Handlers;
+using BookApp.Infrastructure.Books.CachedValues.EventHandlers;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForSetup;
 using Microsoft.EntityFrameworkCore;

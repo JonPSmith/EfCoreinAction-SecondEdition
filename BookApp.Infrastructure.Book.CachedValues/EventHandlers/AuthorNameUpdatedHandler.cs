@@ -8,7 +8,7 @@ using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForHandlers;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Books.CachedValues.Handlers
+namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
     public class AuthorNameUpdatedHandler : 
         IBeforeSaveEventHandler<AuthorNameUpdatedEvent> //#A
