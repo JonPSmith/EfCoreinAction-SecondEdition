@@ -42,7 +42,7 @@ namespace BookApp.Infrastructure.Books.CachedValues.Handlers
                         ? changedAuthor.Name              //#H
                         : x.Name));                       //#H
 
-                book.ResetAuthorsOrdered(newAuthorsOrdered);  //#I
+                book.ResetAuthorsOrdered(newAuthorsOrdered);//#I
             }
 
             return null; //#J
