@@ -49,7 +49,6 @@
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Book.CachedValues\BookApp.Infrastructure.Books.CachedValues.csproj" />
-    <ProjectReference Include="..\BookApp.Infrastructure.Book.EventHandlers\BookApp.Infrastructure.Books.CachedValues.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Orders.BizLogic\BookApp.Infrastructure.Orders.BizLogic.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
