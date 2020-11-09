@@ -46,6 +46,29 @@ namespace BookApp.UI.HelperExtensions
             return baseConnection;
         }
 
+        public static CosmosDbSettings GetCosmosDbSettings(this IConfiguration config, BookAppSettings settings = null)
+        {
+            if (settings == null)
+            {
+                settings = new BookAppSettings();
+                config.GetSection(nameof(BookAppSettings)).Bind(settings);
+            }
+
+            var sectionName = settings.ProductionDbs
+                ? "Production-CosmosDbSettings" //Assumed to be in secrets
+                : "CosmosDbSettings";
+
+            var result = new CosmosDbSettings();
+            config.GetSection(sectionName).Bind(result);
+
+            if (settings.DbNameSuffix != null)
+            {
+                result.DataBaseName += settings.DbNameSuffix;
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// This makes sure the database is created/updated
         /// </summary>

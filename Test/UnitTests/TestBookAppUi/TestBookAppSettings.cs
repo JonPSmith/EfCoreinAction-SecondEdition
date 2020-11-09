@@ -63,5 +63,26 @@ namespace Test.UnitTests.TestBookAppUi
             var builder = new SqlConnectionStringBuilder(connection);
             builder["Initial Catalog"].ShouldEqual("Default-Test");
         }
+
+        [Theory]
+        [InlineData((string)null)]
+        [InlineData("-Test")]
+        public void TestGetCosmosDbSettingsProvidedSettings(string suffix)
+        {
+            //SETUP
+            var config = AppSettings.GetConfiguration();
+            var settings = new BookAppSettings
+            {
+                DbNameSuffix = suffix
+            };
+
+            //ATTEMPT
+            var cosmosSettings = config.GetCosmosDbSettings(settings);
+
+            //VERIFY
+            cosmosSettings.EndPoint.ShouldNotBeEmpty();
+            cosmosSettings.AuthKey.ShouldNotBeEmpty();
+            cosmosSettings.DataBaseName.ShouldEqual("Cosmos" + (suffix ?? ""));
+        }
     }
 }
