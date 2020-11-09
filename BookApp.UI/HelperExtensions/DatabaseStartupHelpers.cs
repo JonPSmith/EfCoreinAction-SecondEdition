@@ -7,16 +7,45 @@ using System.Threading.Tasks;
 using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
+using BookApp.UI.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace BookApp.UI.HelperExtensions
 {
     public static class DatabaseStartupHelpers
     {
+        public static string GetCorrectSqlConnection(this IConfiguration config, BookAppSettings settings = null)
+        {
+            if (settings == null)
+            {
+                settings = new BookAppSettings();
+                config.GetSection(nameof(BookAppSettings)).Bind(settings);
+            }
+
+            var connectionName = settings.ProductionDbs
+                ? "Production-DefaultConnection" //Assumed to be in secrets
+                : "DefaultConnection";
+            var baseConnection = config.GetConnectionString(connectionName) ;
+
+            if (baseConnection == null)
+                throw new NullReferenceException($"The connection {connectionName} wasn't found.");
+
+            if (settings.DbNameSuffix != null)
+            {
+                var builder = new SqlConnectionStringBuilder(baseConnection);
+                builder["Initial Catalog"] += settings.DbNameSuffix;
+                return builder.ConnectionString;
+            }
+
+            return baseConnection;
+        }
+
         /// <summary>
         /// This makes sure the database is created/updated
         /// </summary>

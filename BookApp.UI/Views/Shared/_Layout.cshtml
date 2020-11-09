@@ -1,4 +1,6 @@
 ﻿@using BookApp.UI.HelperExtensions
+@using BookApp.UI.Services
+@inject IMenuBuilder MenuBuilder
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,24 +21,12 @@
             </button>
             <div class="navbar-collapse collapse d-lg-inline-flex flex-lg-row-reverse">
                 <ul class="navbar-nav flex-grow-1">
-                    @*<li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>*@
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="DefaultSql" asp-action="Index">SQL (LINQ)</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="UtfsSql" asp-action="Index">SQL (+UTFs)</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="DapperSql" asp-action="Index">SQL (Dapper)</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="CachedSql" asp-action="Index">SQL (cached)</a>
-                    </li>
-                    @*<li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Your Orders</a>
-                    </li>*@
+                    @foreach (var menuData in MenuBuilder.GetMenus())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="@menuData.ControllerName" asp-action="Index">@menuData.MenuString</a>
+                        </li>
+                    }
                     @if (Context.Request.IsLocal())
                     {
                         <li class="dropdown nav-link text-dark">

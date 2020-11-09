@@ -16,7 +16,10 @@ using BookApp.ServiceLayer.CachedSql.Books.AppStart;
 using BookApp.ServiceLayer.DefaultSql.Books.AppStart;
 using BookApp.ServiceLayer.EfCoreSql.Orders.AppStart;
 using BookApp.ServiceLayer.UtfsSql.Books.AppStart;
+using BookApp.UI.HelperExtensions;
 using BookApp.UI.Logger;
+using BookApp.UI.Models;
+using BookApp.UI.Services;
 using GenericEventRunner.ForSetup;
 using GenericServices.Setup;
 using Microsoft.AspNetCore.Builder;
@@ -50,17 +53,22 @@ namespace BookApp.UI
                     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            var connection = Configuration.GetConnectionString("DefaultConnection");
+            //This gets the correct sql connection string based on the BookAppSettings
+            var sqlConnection = Configuration.GetCorrectSqlConnection();
 
             //This registers both DbContext. Each MUST have a unique MigrationsHistoryTable for Migrations to work
             services.AddDbContext<BookDbContext>( 
-                options => options.UseSqlServer(connection, dbOptions =>
+                options => options.UseSqlServer(sqlConnection, dbOptions =>
                 dbOptions.MigrationsHistoryTable("BookMigrationHistoryName")));
             services.AddDbContext<OrderDbContext>(
-                options => options.UseSqlServer(connection, dbOptions =>
+                options => options.UseSqlServer(sqlConnection, dbOptions =>
                     dbOptions.MigrationsHistoryTable("OrderMigrationHistoryName")));
 
             services.AddHttpContextAccessor();
+
+            services.Configure<BookAppSettings>(options => 
+                Configuration.GetSection(nameof(BookAppSettings)).Bind(options));
+            services.AddSingleton<IMenuBuilder, MenuBuilder>();
 
             //This registers all the services across all the projects in this application
             services.RegisterOrdersDbAccess(Configuration);
