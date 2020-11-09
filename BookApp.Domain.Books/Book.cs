@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Domain.Books.SupportTypes;
+using GenericEventRunner.DomainParts;
 using StatusGeneric;
 
 namespace BookApp.Domain.Books
@@ -68,6 +69,8 @@ namespace BookApp.Domain.Books
             if (!book._authorsLink.Any())                             
                 status.AddError(                                      
                     "You must have at least one Author for a book."); 
+            
+            book.AddEvent(new BookAddedEvent(), EventToSend.DuringSave);
 
             return status.SetResult(book); 
         }
@@ -169,7 +172,14 @@ namespace BookApp.Domain.Books
         //Extra properties filled in by events
 
         [ConcurrencyCheck]
-        public string AuthorsOrdered { get; set; }
+        public string AuthorsOrdered { get; private set; }
+
+        public void ResetAuthorsOrdered(string authorOrdered)
+        {
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+
+            AuthorsOrdered = authorOrdered;
+        }
 
         [ConcurrencyCheck]
         public int ReviewsCount { get; private set; }
@@ -180,6 +190,8 @@ namespace BookApp.Domain.Books
         public void UpdateReviewCachedValues
             (int reviewsCount, double reviewsAverageVotes)
         {
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+
             ReviewsCount = reviewsCount;
             ReviewsAverageVotes = reviewsAverageVotes;
         }
@@ -220,6 +232,12 @@ namespace BookApp.Domain.Books
 
         public void AlterSoftDelete(bool softDeleted)
         {
+            if (SoftDeleted == softDeleted)
+            {
+                AddEvent(softDeleted 
+                    ? (IEntityEvent) new BookDeleteEvent()
+                    : (IEntityEvent) new BookAddedEvent(), EventToSend.DuringSave);
+            }
             SoftDeleted = softDeleted;
         }
 

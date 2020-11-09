@@ -52,7 +52,7 @@ namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
                 if (fixBadCacheValues)
                 {
                     loadedBook ??= await context.Books.SingleOrDefaultAsync(x => x.BookId == bookId);
-                    loadedBook.AuthorsOrdered = dto.RecalcAuthorsOrdered;
+                    loadedBook.ResetAuthorsOrdered(dto.RecalcAuthorsOrdered);
                     status.AddError($"BookId: {dto.BookId}: AuthorsOrdered cached value fixed.");
                 }
             }

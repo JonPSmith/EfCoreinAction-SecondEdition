@@ -7,7 +7,6 @@ using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Infrastructure.Books.CachedValues.Handlers;
 using BookApp.Persistence.EfCoreSql.Books;
-using GenericEventRunner.ForHandlers;
 using GenericEventRunner.ForSetup;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
@@ -15,7 +14,7 @@ using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.TestPersistenceNormalSqlBooks
+namespace Test.UnitTests.TestPersistenceSqlBooks
 {
     public class TestBookDbContextWithEvents
     {
@@ -60,7 +59,11 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>();
+            var eventConfig = new GenericEventRunnerConfig
+            {
+                NotUsingDuringSaveHandlers = true
+            };
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig);
             context.Database.EnsureCreated();
             var books = context.SeedDatabaseFourBooks();
 
@@ -80,7 +83,11 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>();
+            var eventConfig = new GenericEventRunnerConfig
+            {
+                NotUsingDuringSaveHandlers = true
+            };
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig);
             context.Database.EnsureCreated();
             var books = context.SeedDatabaseFourBooks();
 
@@ -116,7 +123,11 @@ namespace Test.UnitTests.TestPersistenceNormalSqlBooks
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>();
+            var eventConfig = new GenericEventRunnerConfig
+            {
+                NotUsingDuringSaveHandlers = true
+            };
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig);
             context.Database.EnsureCreated();
             var books = context.SeedDatabaseFourBooks();
 

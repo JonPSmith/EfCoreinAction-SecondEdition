@@ -188,7 +188,10 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
             var timeNow = DateTime.UtcNow;
 
-            var eventConfig = new GenericEventRunnerConfig();
+            var eventConfig = new GenericEventRunnerConfig
+            {
+                NotUsingDuringSaveHandlers = true
+            };
             eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(localContext =>
                 localContext.ChangeChecker());
             using (var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig))

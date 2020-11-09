@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.UtfsSq
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.BackgroundTasks", "BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj", "{861A2BB1-5398-4018-92FB-FB50CB06BFF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Persistence.CosmosDb.Books", "BookApp.Persistence.CosmosDb.Books\BookApp.Persistence.CosmosDb.Books.csproj", "{BE6280EE-069F-46A9-9533-7808DC84132D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{861A2BB1-5398-4018-92FB-FB50CB06BFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE6280EE-069F-46A9-9533-7808DC84132D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE6280EE-069F-46A9-9533-7808DC84132D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE6280EE-069F-46A9-9533-7808DC84132D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE6280EE-069F-46A9-9533-7808DC84132D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

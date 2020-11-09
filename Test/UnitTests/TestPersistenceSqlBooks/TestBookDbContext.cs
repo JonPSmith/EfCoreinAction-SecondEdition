@@ -12,7 +12,7 @@ using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Test.UnitTests.TestPersistenceNormalSqlBooks
+namespace Test.UnitTests.TestPersistenceSqlBooks
 {
     public class TestBookDbContext
     {

@@ -122,7 +122,6 @@ namespace Test.TestHelpers
                 new[] { martinFowler },
                 new List<Tag> { architectureTag }
             ).Result;
-            book2.AuthorsOrdered = martinFowler.Name;
             books.Add(book2);
 
             var book3 = Book.CreateBook
@@ -147,7 +146,6 @@ namespace Test.TestHelpers
                 new[] { new Author("Future Person", "fp@gmail.com") },
                 new List<Tag> { new Tag("Quantum Entanglement") }
             ).Result;
-            book4.AuthorsOrdered = book4.AuthorsLink.First().Author.Name;
             book4.AddReview(5,
                 "I look forward to reading this book, if I am still alive!", "Jon P Smith");
             book4.AddReview(3,
