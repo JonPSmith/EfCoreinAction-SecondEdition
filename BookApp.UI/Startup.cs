@@ -109,7 +109,7 @@ namespace BookApp.UI
             };
             eventConfig.RegisterSaveChangesExceptionHandler<BookDbContext>(BookWithEventsConcurrencyHandler.HandleCacheValuesConcurrency);
             eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(BookDetectChangesExtensions.ChangeChecker);
-            services.RegisterGenericEventRunner(eventConfig,
+            var logs = services.RegisterGenericEventRunner(eventConfig,
                 Assembly.GetAssembly(typeof(ReviewAddedHandler)),   //SQL cached values event handlers
                 Assembly.GetAssembly(typeof(BookAddedHandlerAsync))  //Cosmos Db event handlers
                 );

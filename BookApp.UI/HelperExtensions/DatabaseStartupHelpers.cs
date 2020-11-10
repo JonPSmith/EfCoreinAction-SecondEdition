@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.Books.Seeding;
+using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.UI.Models;
@@ -101,6 +102,18 @@ namespace BookApp.UI.HelperExtensions
 
                     throw;
                 }
+
+                var cosmosContext = services.GetService<CosmosDbContext>();
+                if (cosmosContext != null)
+                    try
+                    {
+                        await cosmosContext.Database.EnsureCreatedAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = services.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "An error occurred while making sure Cosmos database was created.");
+                    }
             }
 
             return webHost;
