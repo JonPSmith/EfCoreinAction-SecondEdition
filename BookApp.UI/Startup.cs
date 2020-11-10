@@ -86,7 +86,7 @@ namespace BookApp.UI
             services.AddSingleton<IMenuBuilder, MenuBuilder>();
 
             //This registers all the services across all the projects in this application
-            services.RegisterAssemblyPublicNonGenericClasses(
+            var diLogs = services.RegisterAssemblyPublicNonGenericClasses(
                     Assembly.GetAssembly(typeof(ICheckFixCacheValuesService)),
                     Assembly.GetAssembly(typeof(IBookToCosmosBookService)),
                     Assembly.GetAssembly(typeof(IBookGenerator)),

@@ -6,10 +6,12 @@ using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForHandlers;
+using NetCore.AutoRegisterDi;
 using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
+    [DoNotAutoRegister]
     public class AuthorNameUpdatedHandler : 
         IBeforeSaveEventHandler<AuthorNameUpdatedEvent> //#A
     {

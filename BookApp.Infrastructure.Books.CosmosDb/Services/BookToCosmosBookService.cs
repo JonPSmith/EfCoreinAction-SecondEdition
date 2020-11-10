@@ -101,9 +101,11 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
         private async Task<CosmosBook> MapBookToCosmosBookAsync(Book sqlBook)
         {
-            var readData = await _sqlContext.Books.Select(p => new 
+            var readData = await _sqlContext.Books
+                .Where(x => x.BookId == sqlBook.BookId)
+                .Select(p => new 
             {
-                BookId = p.BookId,
+
                 AuthorsOrdered = string.Join(", ",
                     p.AuthorsLink
                         .OrderBy(q => q.Order)
@@ -112,9 +114,9 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 ReviewsAverageVotes =
                     p.Reviews.Select(y =>
                         (double?) y.NumStars).Average(),
-                Tags = sqlBook.Tags
+                Tags = p.Tags
                     .Select(x => new CosmosTag(x.TagId)).ToList()
-            }).SingleOrDefaultAsync(x => x.BookId == sqlBook.BookId);
+            }).SingleOrDefaultAsync();
 
             if (readData == null)
                 return null;

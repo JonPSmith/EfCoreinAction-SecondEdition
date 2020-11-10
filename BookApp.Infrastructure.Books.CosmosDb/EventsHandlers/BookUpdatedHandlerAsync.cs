@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
 using GenericEventRunner.ForHandlers;
+using NetCore.AutoRegisterDi;
 using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.CosmosDb.EventsHandlers
 {
+    [DoNotAutoRegister]
     public class BookUpdatedHandlerAsync : IDuringSaveEventHandlerAsync<BookUpdatedEvent>
     {
         private readonly IBookToCosmosBookService _service;

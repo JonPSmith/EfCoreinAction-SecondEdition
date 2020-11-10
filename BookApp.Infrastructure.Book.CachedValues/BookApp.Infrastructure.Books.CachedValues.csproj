@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EfCore.GenericEventRunner" Version="2.2.1" />
+    <PackageReference Include="EfCore.GenericEventRunner" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

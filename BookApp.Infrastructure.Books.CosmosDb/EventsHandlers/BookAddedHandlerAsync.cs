@@ -7,9 +7,11 @@ using System;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Domain.Books.DomainEvents;
+using NetCore.AutoRegisterDi;
 
 namespace BookApp.Infrastructure.Books.CosmosDb.EventsHandlers
 {
+    [DoNotAutoRegister]
     public class BookAddedHandlerAsync : IDuringSaveEventHandlerAsync<BookAddedEvent>
     {
         private readonly IBookToCosmosBookService _service;

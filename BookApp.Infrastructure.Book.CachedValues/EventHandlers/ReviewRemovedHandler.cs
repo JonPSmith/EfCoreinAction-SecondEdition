@@ -4,10 +4,12 @@
 using System;
 using BookApp.Domain.Books.DomainEvents;
 using GenericEventRunner.ForHandlers;
+using NetCore.AutoRegisterDi;
 using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
+    [DoNotAutoRegister]
     public class ReviewRemovedHandler : IBeforeSaveEventHandler<BookReviewRemovedEvent>
     {
         public IStatusGeneric Handle(object callingEntity, BookReviewRemovedEvent domainEvent)

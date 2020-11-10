@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EfCore.GenericEventRunner" Version="2.2.1" />
+    <PackageReference Include="EfCore.GenericEventRunner" Version="2.2.2" />
     <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="EfCore.GenericServices.AspNetCore" Version="4.1.1" />
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.1.0" />
