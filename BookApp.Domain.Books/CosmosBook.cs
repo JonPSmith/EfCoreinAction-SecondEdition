@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BookApp.Domain.Books
 {
@@ -23,6 +24,15 @@ namespace BookApp.Domain.Books
         public string ManningBookUrl { get; set; }
 
         public List<CosmosTag> Tags { get; set; }
+
+        public override string ToString()
+        {
+            var tagsString = Tags == null || !Tags.Any()
+                ? ""
+                : $" Tags: " + string.Join(", ", Tags.Select(x => x.TagId));
+
+            return $"{Title}: by {AuthorsOrdered}. Price {ActualPrice}, {ReviewsCount} reviews. Published {PublishedOn:d}{tagsString}";
+        }
     }
 
 }
