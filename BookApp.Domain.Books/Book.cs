@@ -176,6 +176,7 @@ namespace BookApp.Domain.Books
 
         public void ResetAuthorsOrdered(string authorOrdered)
         {
+            //This is an easy way to capture a change to the author, but it does rely on the cached code to be used
             AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
 
             AuthorsOrdered = authorOrdered;
@@ -190,8 +191,6 @@ namespace BookApp.Domain.Books
         public void UpdateReviewCachedValues
             (int reviewsCount, double reviewsAverageVotes)
         {
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
-
             ReviewsCount = reviewsCount;
             ReviewsAverageVotes = reviewsAverageVotes;
         }
@@ -228,6 +227,7 @@ namespace BookApp.Domain.Books
         public void SetManningBookUrl(string manningBookUrl)
         {
             ManningBookUrl = manningBookUrl;
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
         }
 
         public void AlterSoftDelete(bool softDeleted)
@@ -244,6 +244,7 @@ namespace BookApp.Domain.Books
         public void UpdatePublishedOn(DateTime publishedOn)
         {
             PublishedOn = publishedOn;
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
@@ -258,6 +259,7 @@ namespace BookApp.Domain.Books
 
             AddEvent(new BookReviewAddedEvent(numStars, //#C
                 UpdateReviewCachedValues)); //#D
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
@@ -275,6 +277,7 @@ namespace BookApp.Domain.Books
             
             AddEvent(new BookReviewRemovedEvent(localReview, //#F
                 UpdateReviewCachedValues)); //#D
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
         }
 
         /*******************************************************************
@@ -301,13 +304,17 @@ namespace BookApp.Domain.Books
             ActualPrice = actualPrice;         
             PromotionalText = promotionalText; 
 
+            if (status.IsValid)
+                AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+
             return status; 
         }
 
         public void RemovePromotion() 
         {
             ActualPrice = OrgPrice; 
-            PromotionalText = null; 
+            PromotionalText = null;
+            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
         }
     }
 

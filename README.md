@@ -1,11 +1,16 @@
-# EfCoreInAction SecondEdition - Part2 branch
+# EfCoreInAction SecondEdition - Part3 branch
 
-Welcome to the Git repo that is associated with part 2, that's chapters 7 to 11, of the the book Entity Framework Core in Action (second edition). Part 2 is called "Entity Framework Core in depth", and is a reference section dealing with EF Core configuration, migrations, concurrency and the DbContext.
+Welcome to the Git repo that is associated with part 3, that's chapters 12 to 17, of the the book Entity Framework Core in Action (second edition). Part 2 is called "Entity Framework Core in depth", and is the real-world applications part with events, Domain-Driven Design, performance tuning, Cosmos DB, adn unit testing.
+
+The current release of this code is running on:
+
+* EF Core 5.0
+* ASP.NET Core 3.1
 
 Other branches are:
 
 * `master`, which covers part 1 of the book - chapters 1 to 6.
-* `Part3`, which covers part 3 of the book - chapters 12 to 17.
+* `Part2`, which covers part 3 of the book - chapters 7 to 11.
 
 ## What you need to install to run the example applications
 
@@ -20,7 +25,9 @@ Currently I am using EF Core 5 previews, but that will change when EF Core 5 is 
 
 ## What can you run in this branch?
 
-I have placed all the code relating to part 2 of the book, chapters 7 to 11. The  `BookApp`, which is the ASP.NET Core application, has its database is configured to make the database have the right column types.  
+I have placed all the code relating to part 3 of the book, chapters 12 to 17. The  `BookApp`, which is the ASP.NET Core application, is significancy different from Part 1 and 2. It is built using a number of different approaches such as Modular Monolith, Domain-Driven Design (DDD), and a Clean Code architecture.
+
+The Part3 BookApp is designed to show different ways to performance tune EF Core applications and introduces you to Cosmos DB.
 
 Once you have installed your chosen development tool you can run the BookApp, which is designed to create and seed a SQL Server database on startup. The `BookApp` application can be run from **Visual Studio** or **VS Code**.
 
