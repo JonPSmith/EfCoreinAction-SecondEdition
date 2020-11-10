@@ -36,12 +36,14 @@
     <PackageReference Include="EfCore.GenericServices.AspNetCore" Version="4.1.1" />
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0-rc.2.20475.6">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,11 +51,13 @@
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Book.CachedValues\BookApp.Infrastructure.Books.CachedValues.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.Books.CosmosDb\BookApp.Infrastructure.Books.CosmosDb.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Books.Seeding\BookApp.Infrastructure.Books.Seeding.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.LoggingServices\BookApp.Infrastructure.LoggingServices.csproj" />
     <ProjectReference Include="..\BookApp.Infrastructure.Orders.BizLogic\BookApp.Infrastructure.Orders.BizLogic.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.Common\BookApp.Persistence.Common.csproj" />
+    <ProjectReference Include="..\BookApp.Persistence.CosmosDb.Books\BookApp.Persistence.CosmosDb.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders.DbAccess\BookApp.Persistence.EfCoreSql.Orders.DbAccess.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.CachedSql.Books\BookApp.ServiceLayer.CachedSql.Books.csproj" />

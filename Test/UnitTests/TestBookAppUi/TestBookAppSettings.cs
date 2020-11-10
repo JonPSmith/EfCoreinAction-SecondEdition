@@ -24,6 +24,7 @@ namespace Test.UnitTests.TestBookAppUi
             config.GetSection(nameof(BookAppSettings)).Bind(result);
 
             //VERIFY
+            result.CosmosAvailable.ShouldEqual(true);
             result.MenuSet.ShouldEqual(BookAppMenuSettings.Chapter15);
             result.DbNameSuffix.ShouldEqual("-Test");
             result.ProductionDbs.ShouldBeFalse();
@@ -83,6 +84,23 @@ namespace Test.UnitTests.TestBookAppUi
             cosmosSettings.EndPoint.ShouldNotBeEmpty();
             cosmosSettings.AuthKey.ShouldNotBeEmpty();
             cosmosSettings.DataBaseName.ShouldEqual("Cosmos" + (suffix ?? ""));
+        }
+
+        [Fact]
+        public void TestGetCosmosDbSettingsCosmosAvailableFalse()
+        {
+            //SETUP
+            var config = AppSettings.GetConfiguration();
+            var settings = new BookAppSettings
+            {
+                CosmosAvailable = false
+            };
+
+            //ATTEMPT
+            var cosmosSettings = config.GetCosmosDbSettings(settings);
+
+            //VERIFY
+            cosmosSettings.ShouldBeNull();
         }
     }
 }

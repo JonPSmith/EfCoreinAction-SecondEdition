@@ -6,6 +6,7 @@ namespace BookApp.UI.Models
     public enum BookAppMenuSettings { Basic, Chapter15, Chapter16, All}
     public class BookAppSettings
     {
+        public bool CosmosAvailable { get; set; }
         public BookAppMenuSettings MenuSet { get; set; }
         public string DbNameSuffix { get; set; }
         public bool ProductionDbs { get; set; }

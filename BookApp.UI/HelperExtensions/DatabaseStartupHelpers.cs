@@ -54,6 +54,9 @@ namespace BookApp.UI.HelperExtensions
                 config.GetSection(nameof(BookAppSettings)).Bind(settings);
             }
 
+            if (!settings.CosmosAvailable)
+                return null;
+
             var sectionName = settings.ProductionDbs
                 ? "Production-CosmosDbSettings" //Assumed to be in secrets
                 : "CosmosDbSettings";

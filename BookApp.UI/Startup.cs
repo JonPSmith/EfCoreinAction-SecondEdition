@@ -4,18 +4,21 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using BookApp.BackgroundTasks;
-using BookApp.Infrastructure.Books.CachedValues.AppStart;
+using BookApp.Infrastructure.Books.CachedValues;
 using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
 using BookApp.Infrastructure.Books.CachedValues.EventHandlers;
-using BookApp.Infrastructure.Books.Seeding.AppStart;
-using BookApp.Infrastructure.Orders.BizLogic.AppStart;
+using BookApp.Infrastructure.Books.CosmosDb;
+using BookApp.Infrastructure.Books.CosmosDb.EventsHandlers;
+using BookApp.Infrastructure.Books.Seeding;
+using BookApp.Infrastructure.Orders.BizLogic.Orders;
+using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
-using BookApp.Persistence.EfCoreSql.Orders.DbAccess.AppStart;
-using BookApp.ServiceLayer.CachedSql.Books.AppStart;
-using BookApp.ServiceLayer.DefaultSql.Books.AppStart;
-using BookApp.ServiceLayer.EfCoreSql.Orders.AppStart;
-using BookApp.ServiceLayer.UtfsSql.Books.AppStart;
+using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
+using BookApp.ServiceLayer.CachedSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices;
+using BookApp.ServiceLayer.UtfsSql.Books;
 using BookApp.UI.HelperExtensions;
 using BookApp.UI.Logger;
 using BookApp.UI.Models;
@@ -30,6 +33,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetCore.AutoRegisterDi;
 
 namespace BookApp.UI
 {
@@ -64,6 +68,17 @@ namespace BookApp.UI
                 options => options.UseSqlServer(sqlConnection, dbOptions =>
                     dbOptions.MigrationsHistoryTable("OrderMigrationHistoryName")));
 
+            var cosmosSettings = Configuration.GetCosmosDbSettings();
+            if (cosmosSettings != null)
+                services.AddDbContext<CosmosDbContext>(options => options.UseCosmos(
+                    cosmosSettings.EndPoint,
+                    cosmosSettings.AuthKey,
+                    cosmosSettings.DataBaseName));
+            else
+            {
+                services.AddSingleton<CosmosDbContext>(_ => null);
+            }
+
             services.AddHttpContextAccessor();
 
             services.Configure<BookAppSettings>(options => 
@@ -71,23 +86,32 @@ namespace BookApp.UI
             services.AddSingleton<IMenuBuilder, MenuBuilder>();
 
             //This registers all the services across all the projects in this application
-            services.RegisterOrdersDbAccess(Configuration);
-            services.RegisterOrdersBizLogic(Configuration);
-            services.RegisterBooksSeeding(Configuration);
-            services.RegisterCheckFixCacheValuesService(Configuration);
-            services.RegisterServiceLayerDefaultBooks(Configuration);
-            services.RegisterServiceLayerUtfsSqlOrders(Configuration);
-            services.RegisterServiceLayerCachedBooks(Configuration);
-            services.RegisterServiceLayerDefaultOrders(Configuration);
+            services.RegisterAssemblyPublicNonGenericClasses(
+                    Assembly.GetAssembly(typeof(ICheckFixCacheValuesService)),
+                    Assembly.GetAssembly(typeof(IBookToCosmosBookService)),
+                    Assembly.GetAssembly(typeof(IBookGenerator)),
+                    Assembly.GetAssembly(typeof(IPlaceOrderBizLogic)),
+                    Assembly.GetAssembly(typeof(IPlaceOrderDbAccess)),
+                    Assembly.GetAssembly(typeof(IListBooksCachedService)),
+                    Assembly.GetAssembly(typeof(IListBooksService)),
+                    Assembly.GetAssembly(typeof(IDisplayOrdersService)),
+                    Assembly.GetAssembly(typeof(IListUdfsBooksService)),
+                    Assembly.GetAssembly(typeof(IListUdfsBooksService))
+                )
+                .AsPublicImplementedInterfaces();
 
             services.AddHostedService<CheckFixCacheBackground>();
 
             //Register EfCore.GenericEventRunner
-            var eventConfig = new GenericEventRunnerConfig();
+            var eventConfig = new GenericEventRunnerConfig
+            {
+                NotUsingDuringSaveHandlers = cosmosSettings == null //This stops any attempts to update cosmos db if not turned on
+            };
             eventConfig.RegisterSaveChangesExceptionHandler<BookDbContext>(BookWithEventsConcurrencyHandler.HandleCacheValuesConcurrency);
             eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(BookDetectChangesExtensions.ChangeChecker);
             services.RegisterGenericEventRunner(eventConfig,
-                Assembly.GetAssembly(typeof(ReviewAddedHandler))
+                Assembly.GetAssembly(typeof(ReviewAddedHandler)),   //SQL cached values event handlers
+                Assembly.GetAssembly(typeof(BookAddedHandlerAsync))  //Cosmos Db event handlers
                 );
 
             //Register EfCoreGenericServices

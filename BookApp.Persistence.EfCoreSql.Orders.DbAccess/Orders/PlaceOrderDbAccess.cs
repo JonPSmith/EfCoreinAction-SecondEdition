@@ -10,18 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.Persistence.EfCoreSql.Orders.DbAccess.Orders
 {
-    public interface IPlaceOrderDbAccess
-    {
-        /// <summary>
-        /// This finds any books that fits the BookIds given to it
-        /// </summary>
-        /// <param name="bookIds"></param>
-        /// <returns>A dictionary with the BookId as the key, and the Book as the value</returns>
-        Task<IDictionary<int, BookView>> FindBooksByIdsAsync(IEnumerable<int> bookIds);
-
-        Task AddAndSave(Order newOrder);
-    }
-
     public class PlaceOrderDbAccess : IPlaceOrderDbAccess
     {
         private readonly OrderDbContext _context;

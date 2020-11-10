@@ -42,7 +42,12 @@ namespace BookApp.UI.Services
 
         public List<MenuData> GetMenus()
         {
-            return PossibleMenus[_settings.MenuSet];
+            var menuSet = _settings.MenuSet == BookAppMenuSettings.Chapter16 && !_settings.CosmosAvailable
+                ? BookAppMenuSettings.Chapter15
+                : _settings.MenuSet;
+
+
+            return PossibleMenus[menuSet];
         }
     }
 }
