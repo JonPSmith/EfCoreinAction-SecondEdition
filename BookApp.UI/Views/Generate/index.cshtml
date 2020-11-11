@@ -1,14 +1,25 @@
-﻿@model int
+﻿@model (int BookCount, bool cosmosAvailable)
 
 
 <h2>How many books do you want to have?</h2>
-<h4>There are currently <strong>@Model.ToString("##,###") books</strong> in the SQL database.</h4>
+<h4>There are currently <strong>@Model.BookCount.ToString("##,###") books</strong> in the SQL database.</h4>
+
 
 <h3 class="text-danger">WARNING!</h3>
-<p class="text-danger">
-    This can take a long time! On my (fast) PC it takes 1 minutes to generate 50,000 books (without NoSql)
-    I have added a web.config file with a requestTimeout of 20 minutes, so that it doesn't time out the action
-</p>
+@if (Model.cosmosAvailable)
+{
+    <p class="text-danger">
+        This can take a long time! On my (fast) PC it takes 5 minutes to generate 10,000 books in both SQL and Cosmos database via the emulator
+    </p>
+}
+else
+{
+    <p class="text-danger">
+        This can take a long time! On my (fast) PC it takes 1 minutes to generate 50,000 books in a local SQL database
+    </p> 
+}
+
+<p>I have added a web.config file with a requestTimeout of 20 minutes, so that it doesn't time out the action</p>
 
 <div class="form-horizontal">
     <form asp-controller="Generate" asp-action="Books" method="post" id="input-form">

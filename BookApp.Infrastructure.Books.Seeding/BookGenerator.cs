@@ -3,52 +3,65 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BookApp.Infrastructure.Books.Seeding
 {
     public class BookGenerator : IBookGenerator
     {
-        private readonly DbContextOptions<BookDbContext> _dbOptions;
+        private readonly DbContextOptions<BookDbContext> _sqlOptions;
+        private readonly DbContextOptions<CosmosDbContext> _cosmosOptions;
         private List<Book> _loadedBooks;
 
-        private const int addPromotionEvery = 7;
-        private const int maxReviewsPerBook = 12;
-        private Random _random = new Random(1); //Used to create random review star ratings. Seeded for same sequence
+        private const int AddPromotionEvery = 7;
+        private const int MaxReviewsPerBook = 12;
+        private readonly Random _random = new Random(1); //Used to create random review star ratings. Seeded for same sequence
 
-        public BookGenerator(DbContextOptions<BookDbContext> dbOptions)
+        public BookGenerator(IServiceProvider provider)
         {
-            _dbOptions = dbOptions;
+            _sqlOptions = provider.GetRequiredService<DbContextOptions<BookDbContext>>();
+            //If cosmos not turned on then this will be null
+            _cosmosOptions = provider.GetService<DbContextOptions<CosmosDbContext>>();
         }
 
         private int NumBooksInSet => _loadedBooks.Count;
+        private bool IncludeCosmosDb => _cosmosOptions != null;
 
-
-        public async Task WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, bool makeBookTitlesDistinct, CancellationToken cancellationToken)
+        public async Task<TimeSpan> WriteBooksAsync(string wwwRootDir, bool wipeDatabase, int totalBooksNeeded, 
+            bool makeBookTitlesDistinct, CancellationToken cancellationToken)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             //Find out how many in db so we can pick up where we left off
             int numBooksInDb;
-            using (var context = new BookDbContext(_dbOptions))
+            using (var context = new BookDbContext(_sqlOptions))
                 numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
 
             _loadedBooks = wwwRootDir.LoadManningBooks(false).ToList();
             if (wipeDatabase || numBooksInDb < NumBooksInSet)
-                using (var context = new BookDbContext(_dbOptions))
+                using (var context = new BookDbContext(_sqlOptions))
                 {
                     //If the data in the database doesn't contain the current json set then wipe and add json books
 
                     await context.Database.EnsureDeletedAsync();
                     await context.Database.MigrateAsync();
+
                     var books = wwwRootDir.LoadManningBooks(true).ToList();
                     books.ForEach(SetCreatedUpdated);
                     //Assumes no reviews
                     context.AddRange(books);
                     await context.SaveChangesAsync();
+                    await OptionalCosmosWriteAsync(books, true);
+
                     numBooksInDb = await context.Books.IgnoreQueryFilters().CountAsync();
                 }
 
@@ -59,19 +72,59 @@ namespace BookApp.Infrastructure.Books.Seeding
                 //This adds books in batches of the json Books (or shorter if near to the end)
 
                 if (cancellationToken.IsCancellationRequested)
-                    return;
+                    return stopWatch.Elapsed;
 
                 var numInBatch =
                     await GenerateBatchAndWrite(makeBookTitlesDistinct, numToWrite, numWritten, numBooksInDb);
                 numWritten += numInBatch;
                 numBooksInDb += numInBatch;
             }
+
+            return stopWatch.Elapsed;
+        }
+
+        private async ValueTask OptionalCosmosWriteAsync(List<Book> books, bool wipeDatabase = false)
+        {
+            if (!IncludeCosmosDb)
+                return;
+
+            using var cosmosContext = new CosmosDbContext(_cosmosOptions);
+            if (wipeDatabase)
+            {
+                await cosmosContext.Database.EnsureDeletedAsync();
+                await cosmosContext.Database.EnsureCreatedAsync();
+            }
+
+            var cosmosBooks = books.Select(b => new CosmosBook
+            {
+                BookId = b.BookId,
+                Title = b.Title,
+                PublishedOn = b.PublishedOn,
+                EstimatedDate = b.EstimatedDate,
+                YearPublished = b.PublishedOn.Year,
+                OrgPrice = b.OrgPrice,
+                ActualPrice = b.ActualPrice,
+                PromotionalText = b.PromotionalText,
+                ManningBookUrl = b.ManningBookUrl,
+                AuthorsOrdered = string.Join(", ",
+                    b.AuthorsLink
+                        .OrderBy(q => q.Order)
+                        .Select(q => q.Author.Name)),
+                ReviewsCount = b.Reviews?.Count ?? 0,
+                ReviewsAverageVotes = b.Reviews != null && b.Reviews.Any()
+                    ? b.Reviews.Average(y => y.NumStars)
+                    : 0.0,
+                Tags = b.Tags
+                    .Select(x => new CosmosTag(x.TagId)).ToList()
+            });
+            cosmosContext.AddRange(cosmosBooks);
+            await cosmosContext.SaveChangesAsync();
         }
 
         private async Task<int> GenerateBatchAndWrite(bool makeBookTitlesDistinct, int numToWrite,
             int numWritten, int numBooksInDb)
         {
-            using var context = new BookDbContext(_dbOptions);
+            using var context = new BookDbContext(_sqlOptions);
             var authorsDict = context.Authors.ToDictionary(x => x.Name);
             var tagsDict = context.Tags.ToDictionary(x => x.TagId);
 
@@ -80,6 +133,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                 .ToList();
             context.AddRange(batch);
             await context.SaveChangesAsync();
+            await OptionalCosmosWriteAsync(batch);
             return batch.Count;
         }
 
@@ -98,7 +152,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                     .ToList();
 
                 var reviewNumStars = new List<byte>();
-                for (int j = 0; j < i % maxReviewsPerBook; j++)
+                for (int j = 0; j < i % MaxReviewsPerBook; j++)
                 {
                     reviewNumStars.Add((byte)_random.Next(0, 6));
                 }
@@ -114,7 +168,7 @@ namespace BookApp.Infrastructure.Books.Seeding
                     reviewNumStars, $"User{i:7}");
                 SetCreatedUpdated(book);
 
-                if (i % addPromotionEvery == 0)
+                if (i % AddPromotionEvery == 0)
                 {
                     book.AddPromotion(book.ActualPrice * 0.5m, "today only - 50% off! ");
                 }

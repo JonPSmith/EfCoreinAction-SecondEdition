@@ -127,6 +127,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 Title = sqlBook.Title,
                 PublishedOn = sqlBook.PublishedOn,
                 EstimatedDate = sqlBook.EstimatedDate,
+                YearPublished = sqlBook.PublishedOn.Year,
                 OrgPrice = sqlBook.OrgPrice,
                 ActualPrice = sqlBook.ActualPrice,
                 PromotionalText = sqlBook.PromotionalText,

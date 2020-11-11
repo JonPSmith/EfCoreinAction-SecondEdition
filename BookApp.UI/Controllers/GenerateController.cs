@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.Books.Seeding;
+using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.UI.HelperExtensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BookApp.UI.Controllers
 {
@@ -27,7 +29,9 @@ namespace BookApp.UI.Controllers
         // GET
         public IActionResult Index()
         {
-            return View(_context.Books.Count());
+            var cosmosAvailable = HttpContext.RequestServices.GetService<CosmosDbContext>() != null;
+
+            return View((BookCount: _context.Books.Count(), cosmosAvailable));
         }
 
         [HttpPost]
@@ -39,13 +43,13 @@ namespace BookApp.UI.Controllers
         {
             Request.ThrowErrorIfNotLocal();
 
-            await generator.WriteBooksAsync(env.WebRootPath, wipeDatabase, totalBooksNeeded, true, cancellationToken);
+            var timeTaken = await generator.WriteBooksAsync(env.WebRootPath, wipeDatabase, totalBooksNeeded, true, cancellationToken);
 
             SetupTraceInfo();
 
             return
                 View((object)((cancellationToken.IsCancellationRequested ? "Cancelled" : "Successful") +
-                              $" generate. Num books in database = {_context.Books.Count()}."));
+                              $" generate. Num books in database = {_context.Books.Count()}. Took {timeTaken:g}"));
         }
 
         [HttpPost]

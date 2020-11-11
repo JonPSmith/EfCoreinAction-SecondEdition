@@ -12,6 +12,7 @@ using BookApp.Infrastructure.Books.Seeding;
 using BookApp.Persistence.EfCoreSql.Books;
 using GenericEventRunner.ForSetup;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
@@ -22,13 +23,21 @@ using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestInfrastructureBookSeeding
 {
-    public class TestBookGenerator
+    public class TestBookGeneratorSqlOnly
     {
         private readonly ITestOutputHelper _output;
 
-        public TestBookGenerator(ITestOutputHelper output)
+        public TestBookGeneratorSqlOnly(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        private IServiceProvider BuildServiceProvider(DbContextOptions<BookDbContext> sqlOptions)
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton(sqlOptions);
+
+            return services.BuildServiceProvider();
         }
 
 
@@ -78,7 +87,8 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             using (var context = new BookDbContext(options))
             {
                 var fileDir = Path.Combine(TestData.GetTestDataDir());
-                var generator = new BookGenerator(options);
+                var serviceProvider = BuildServiceProvider(options);
+                var generator = new BookGenerator(serviceProvider);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, 1, true, default);
@@ -108,7 +118,8 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(options);
+                var serviceProvider = BuildServiceProvider(options);
+                var generator = new BookGenerator(serviceProvider);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, true, 10, true, default);
@@ -137,7 +148,8 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(options);
+                var serviceProvider = BuildServiceProvider(options);
+                var generator = new BookGenerator(serviceProvider);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, totalBooks, true, default);
@@ -160,7 +172,8 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(options);
+                var serviceProvider = BuildServiceProvider(options);
+                var generator = new BookGenerator(serviceProvider);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, 20, true, default);
@@ -201,7 +214,8 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             }
             using (var context = new BookDbContext(options))
             {
-                var generator = new BookGenerator(options);
+                var serviceProvider = BuildServiceProvider(options);
+                var generator = new BookGenerator(serviceProvider);
 
                 //ATTEMPT
                 await generator.WriteBooksAsync(fileDir, false, 20, true, default);
