@@ -9,9 +9,9 @@ namespace BookApp.Infrastructure.Books.CosmosDb
 {
     public interface IBookToCosmosBookService
     {
-        Task AddCosmosBookAsync(Book sqlBook);
-        Task UpdateCosmosBookAsync(Book sqlBook);
-        Task DeleteCosmosBookAsync(Book sqlBook);
+        Task AddCosmosBookAsync(int? bookId);
+        Task UpdateCosmosBookAsync(int? bookId);
+        Task DeleteCosmosBookAsync(int? bookId);
         Task UpdateManyCosmosBookAsync(List<int> bookIds);
     }
 }

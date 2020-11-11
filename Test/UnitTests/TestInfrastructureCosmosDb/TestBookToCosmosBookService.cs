@@ -64,7 +64,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.AddCosmosBookAsync(seeded[3]);
+            await service.AddCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             var cBook = _cosmosContext.Books.Single(x => x.BookId == seeded[3].BookId);
@@ -82,7 +82,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.AddCosmosBookAsync(seeded[3]);
+            await service.AddCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             (await _cosmosContext.Books.CountAsync()).ShouldEqual(0);
@@ -98,7 +98,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.UpdateCosmosBookAsync(seeded[3]);
+            await service.UpdateCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
@@ -114,7 +114,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.UpdateCosmosBookAsync(seeded[3]);
+            await service.UpdateCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
@@ -131,7 +131,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.DeleteCosmosBookAsync(seeded[3]);
+            await service.DeleteCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleOrDefaultAsync(x => x.BookId == seeded[3].BookId);
@@ -148,7 +148,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT
-            await service.DeleteCosmosBookAsync(seeded[3]);
+            await service.DeleteCosmosBookAsync(seeded[3].BookId);
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleOrDefaultAsync(x => x.BookId == seeded[3].BookId);

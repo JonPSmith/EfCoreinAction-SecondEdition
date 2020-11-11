@@ -27,75 +27,54 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             _cosmosContext = cosmosContext;
         }
 
-        public async Task AddCosmosBookAsync(Book sqlBook)
+        public async Task AddCosmosBookAsync(int? bookId)
         {
             if (CosmosNotConfigured)
                 return;
 
-            if (sqlBook == null) throw new ArgumentNullException(nameof(sqlBook));
+            if (bookId == null) throw new ArgumentNullException(nameof(bookId));
 
-            var cosmosBook = await MapBookToCosmosBookAsync(sqlBook);
+            var cosmosBook = await MapBookToCosmosBookAsync(bookId);
             if (cosmosBook != null)
             {
                 _cosmosContext.Add(cosmosBook);
-                await _cosmosContext.SaveChangesAsync();
+                await CosmosSaveChangesWithChecksAsync(WhatDoing.Adding, bookId);
             }
             else
             {
-                await DeleteCosmosBookAsync(sqlBook);
+                await DeleteCosmosBookAsync(bookId);
             }
         }
 
-        public async Task UpdateCosmosBookAsync(Book sqlBook)
+        public async Task UpdateCosmosBookAsync(int? bookId)
         {
             if (CosmosNotConfigured)
                 return;
 
-            if (sqlBook == null) throw new ArgumentNullException(nameof(sqlBook));
+            if (bookId == null) throw new ArgumentNullException(nameof(bookId));
 
-            var cosmosBook = await MapBookToCosmosBookAsync(sqlBook);
+            var cosmosBook = await MapBookToCosmosBookAsync(bookId);
             if (cosmosBook != null)
             {
                 _cosmosContext.Update(cosmosBook);
-                try
-                {
-                    await _cosmosContext.SaveChangesAsync();
-                }
-                catch (CosmosException e)
-                {
-                    if (e.StatusCode != HttpStatusCode.NotFound)
-                        throw;
-                    //If couldn't update the entry it creates an entry 
-                    _cosmosContext.Entry(cosmosBook).State = EntityState.Detached;
-                    await AddCosmosBookAsync(sqlBook);
-                }
+                await CosmosSaveChangesWithChecksAsync(WhatDoing.Updating, bookId);
             }
             else
             {
-                await DeleteCosmosBookAsync(sqlBook);
+                await DeleteCosmosBookAsync(bookId);
             }
         }
 
-        public async Task DeleteCosmosBookAsync(Book sqlBook)
+        public async Task DeleteCosmosBookAsync(int? bookId)
         {
             if (CosmosNotConfigured)
                 return;
 
-            if (sqlBook == null) throw new ArgumentNullException(nameof(sqlBook));
+            if (bookId == null) throw new ArgumentNullException(nameof(bookId));
 
-            var cosmosBook = new CosmosBook {BookId = sqlBook.BookId};
+            var cosmosBook = new CosmosBook {BookId = (int)bookId};
             _cosmosContext.Remove(cosmosBook);
-
-            try
-            {
-                await _cosmosContext.SaveChangesAsync();
-            }
-            catch (CosmosException e)
-            {
-                if (e.StatusCode != HttpStatusCode.NotFound)
-                    //We ignore a delete that didn't work
-                    throw;
-            }
+            await CosmosSaveChangesWithChecksAsync(WhatDoing.Deleting, bookId);
         }
 
         public async Task UpdateManyCosmosBookAsync(List<int> bookIds)
@@ -108,12 +87,56 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             await _cosmosContext.SaveChangesAsync();
         }
 
+        private enum WhatDoing {Adding, Updating, Deleting}
 
-        private async Task<CosmosBook> MapBookToCosmosBookAsync(Book sqlBook)
+        private async Task CosmosSaveChangesWithChecksAsync(WhatDoing whatDoing, int? bookId)
+        {
+            try
+            {
+                await _cosmosContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                var cosmosException = e.InnerException as CosmosException;
+                if (cosmosException?.StatusCode == HttpStatusCode.Conflict && whatDoing == WhatDoing.Adding)
+                {
+                    var updateVersion = _cosmosContext.Find<CosmosBook>(bookId);
+                    _cosmosContext.Entry(updateVersion).State = EntityState.Detached;
+                    await UpdateCosmosBookAsync(bookId);
+                    await CosmosSaveChangesWithChecksAsync(WhatDoing.Updating, bookId);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (CosmosException e)
+            {
+
+                if (e.StatusCode == HttpStatusCode.NotFound && whatDoing == WhatDoing.Updating)
+                {
+                    var updateVersion = _cosmosContext.Find<CosmosBook>(bookId);
+                    _cosmosContext.Entry(updateVersion).State = EntityState.Detached;
+                    await AddCosmosBookAsync(bookId);
+                    await CosmosSaveChangesWithChecksAsync(WhatDoing.Adding, bookId);
+                }
+                else if (e.StatusCode == HttpStatusCode.NotFound && whatDoing == WhatDoing.Deleting)
+                {
+                    //Do nothing
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
+        private async Task<CosmosBook> MapBookToCosmosBookAsync(int? bookId)
         {
             return await MapBookToCosmosBook(_sqlContext.Books
                     .IgnoreQueryFilters()
-                    .Where(x => x.BookId == sqlBook.BookId))
+                    .Where(x => x.BookId == bookId))
                 .SingleOrDefaultAsync();
         }
 
