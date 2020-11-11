@@ -16,6 +16,7 @@ using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
 using BookApp.ServiceLayer.CachedSql.Books;
+using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices;
 using BookApp.ServiceLayer.UtfsSql.Books;
@@ -93,6 +94,7 @@ namespace BookApp.UI
                     Assembly.GetAssembly(typeof(IPlaceOrderBizLogic)),
                     Assembly.GetAssembly(typeof(IPlaceOrderDbAccess)),
                     Assembly.GetAssembly(typeof(IListBooksCachedService)),
+                    Assembly.GetAssembly(typeof(ICosmosEfListNoSqlBooksService)),
                     Assembly.GetAssembly(typeof(IListBooksService)),
                     Assembly.GetAssembly(typeof(IDisplayOrdersService)),
                     Assembly.GetAssembly(typeof(IListUdfsBooksService)),
