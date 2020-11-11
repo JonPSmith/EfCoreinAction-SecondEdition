@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -64,9 +65,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 {
                     if (e.StatusCode != HttpStatusCode.NotFound)
                         throw;
-
                     //If couldn't update the entry it creates an entry 
-                    _cosmosContext.ChangeTracker.Clear();
+                    _cosmosContext.Entry(cosmosBook).State = EntityState.Detached;
                     await AddCosmosBookAsync(sqlBook);
                 }
             }
@@ -98,50 +98,59 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             }
         }
 
+        public async Task UpdateManyCosmosBookAsync(List<int> bookIds)
+        {
+            var updatedCosmosBooks = await MapManyBooksToCosmosBookAsync(bookIds);
+            foreach (var cosmosBook in updatedCosmosBooks)
+            {
+                _cosmosContext.Update(cosmosBook);
+            }
+            await _cosmosContext.SaveChangesAsync();
+        }
+
 
         private async Task<CosmosBook> MapBookToCosmosBookAsync(Book sqlBook)
         {
-            var readData = await _sqlContext.Books
-                .Where(x => x.BookId == sqlBook.BookId)
-                .Select(p => new 
-            {
-
-                AuthorsOrdered = string.Join(", ",
-                    p.AuthorsLink
-                        .OrderBy(q => q.Order)
-                        .Select(q => q.Author.Name)),
-                ReviewsCount = p.Reviews.Count(),
-                ReviewsAverageVotes =
-                    p.Reviews.Select(y =>
-                        (double?) y.NumStars).Average(),
-                Tags = p.Tags
-                    .Select(x => new CosmosTag(x.TagId)).ToList()
-            }).SingleOrDefaultAsync();
-
-            if (readData == null)
-                return null;
-
-            var cosmosBook = new CosmosBook
-            {
-                BookId = sqlBook.BookId,
-                Title = sqlBook.Title,
-                PublishedOn = sqlBook.PublishedOn,
-                EstimatedDate = sqlBook.EstimatedDate,
-                YearPublished = sqlBook.PublishedOn.Year,
-                OrgPrice = sqlBook.OrgPrice,
-                ActualPrice = sqlBook.ActualPrice,
-                PromotionalText = sqlBook.PromotionalText,
-                ManningBookUrl = sqlBook.ManningBookUrl,
-
-                AuthorsOrdered = readData.AuthorsOrdered,
-                ReviewsCount = readData.ReviewsCount,
-                ReviewsAverageVotes = readData.ReviewsAverageVotes ?? 0.0,
-                Tags = readData.Tags
-            };
-
-            return cosmosBook;
+            return await MapBookToCosmosBook(_sqlContext.Books
+                .Where(x => x.BookId == sqlBook.BookId))
+                .SingleOrDefaultAsync();
         }
 
-        
+        private async Task<List<CosmosBook>> MapManyBooksToCosmosBookAsync(List<int> bookIds)
+        {
+            return await MapBookToCosmosBook(_sqlContext.Books
+                    .Where(x => bookIds.Contains(x.BookId)))
+                .ToListAsync();
+        }
+
+        private IQueryable<CosmosBook> MapBookToCosmosBook(IQueryable<Book> books)
+        {
+            return books
+                .Select(p => new CosmosBook
+                {
+                    BookId = p.BookId,
+                    Title = p.Title,
+                    PublishedOn = p.PublishedOn,
+                    EstimatedDate = p.EstimatedDate,
+                    YearPublished = p.PublishedOn.Year,
+                    OrgPrice = p.OrgPrice,
+                    ActualPrice = p.ActualPrice,
+                    PromotionalText = p.PromotionalText,
+                    ManningBookUrl = p.ManningBookUrl,
+
+                    AuthorsOrdered = string.Join(", ",
+                        p.AuthorsLink
+                            .OrderBy(q => q.Order)
+                            .Select(q => q.Author.Name)),
+                    ReviewsCount = p.Reviews.Count(),
+                    ReviewsAverageVotes =
+                        p.Reviews.Select(y =>
+                            (double?)y.NumStars).Average(),
+                    Tags = p.Tags
+                        .Select(x => new CosmosTag(x.TagId)).ToList()
+                });
+        }
+
+
     }
 }

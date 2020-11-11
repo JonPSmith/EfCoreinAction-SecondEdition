@@ -176,9 +176,6 @@ namespace BookApp.Domain.Books
 
         public void ResetAuthorsOrdered(string authorOrdered)
         {
-            //This is an easy way to capture a change to the author, but it does rely on the cached code to be used
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
-
             AuthorsOrdered = authorOrdered;
         }
 

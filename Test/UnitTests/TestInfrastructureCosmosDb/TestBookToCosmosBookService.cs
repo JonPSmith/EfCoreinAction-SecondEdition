@@ -68,7 +68,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = _cosmosContext.Books.Single(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
+            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
+            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
+            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057 Tags: Quantum Entanglement");
         }
 
         [Fact]
@@ -154,6 +154,25 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var cBook = await _cosmosContext.Books.SingleOrDefaultAsync(x => x.BookId == seeded[3].BookId);
             cBook.ShouldBeNull();
             (await _cosmosContext.Books.CountAsync()).ShouldEqual(1);
+        }
+
+        [Fact]
+        public async Task TestUpdateManyCosmosBookOk()
+        {
+            //SETUP
+            var seeded = await ResetDatabasesAndSeedAsync();
+            await AddDummyCosmosBook(seeded[0].BookId);
+            await AddDummyCosmosBook(seeded[1].BookId);
+
+            var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
+
+            //ATTEMPT
+            await service.UpdateManyCosmosBookAsync(new List<int>{ seeded[0].BookId, seeded[1].BookId });
+
+            //VERIFY
+            var cBooks = await _cosmosContext.Books.ToListAsync();
+            cBooks.Count.ShouldEqual(2);
+            cBooks.All(x => x.AuthorsOrdered == "Martin Fowler").ShouldBeTrue();
         }
     }
 }

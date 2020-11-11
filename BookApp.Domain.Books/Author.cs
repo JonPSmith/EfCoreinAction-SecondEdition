@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.Domain.Books.DomainEvents;
 using BookApp.Domain.Books.SupportTypes;
+using GenericEventRunner.DomainParts;
 
 namespace BookApp.Domain.Books
 {
@@ -31,8 +32,12 @@ namespace BookApp.Domain.Books
             {
                 if (value != _name &&    //#D
                     AuthorId != default) //#D
+                {
                     AddEvent(                          //#D
                         new AuthorNameUpdatedEvent()); //#D
+                    AddEvent( //#D
+                        new AuthorNameUpdatedEvent(), EventToSend.DuringSave);
+                }
                 _name = value;
             }
         }

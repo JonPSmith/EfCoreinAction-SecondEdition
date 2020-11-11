@@ -20,7 +20,7 @@ namespace BookApp.Domain.Books
         public string PromotionalText { get; set; }
         public string AuthorsOrdered { get; set; }
         public int ReviewsCount { get; set; }
-        public double ReviewsAverageVotes { get; set; }
+        public double? ReviewsAverageVotes { get; set; }
         public string ManningBookUrl { get; set; }
 
         public List<CosmosTag> Tags { get; set; }
