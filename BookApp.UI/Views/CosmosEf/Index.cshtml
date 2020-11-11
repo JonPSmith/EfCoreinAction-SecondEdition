@@ -9,42 +9,42 @@
 
 <form id="sort-filter-form" role="form">
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <label>Sort By</label>
             <select asp-for="SortFilterPageData.OrderByOptions" name="OrderByOptions"
                     asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.OrderByOptions>()"
-                    class="form-control sort-filter-width"
+                    class="form-control"
                     onchange="BookList.sendForm(this)"></select>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <label>Filter Type</label>
             <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
                     asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.BooksFilterBy>()"
-                    class="form-control sort-filter-width"
+                    class="form-control"
                     onchange="BookList.filterByHasChanged(this)"></select>
         </div>
 
-        <div class="col-sm-3 dim-filter-value" id="filter-value-group">
+        <div class="col-sm-2 dim-filter-value" id="filter-value-group">
             <label>Filter By</label>
             <select asp-for="SortFilterPageData.FilterValue" name="FilterValue"
                     id="filter-value-dropdown"
-                    class="form-control sort-filter-width"
+                    class="form-control"
                     disabled
                     onchange="BookList.sendForm(this)">
                 <option>Select filter type...</option>
             </select>
         </div>
 
-        @*<div class="col-sm-2">
-            <label>Page</label>
+        
+        <div class="col-sm-3">
+            <label>Paging</label>
             <div>
-                <input asp-for="SortFilterPageData.PageNum" name="PageNum"
-                       class="form-control page-control-width page-num-input"
-                       onchange="BookList.sendForm(this)">
-                <span class="num-pages-text">of @Model.SortFilterPageData.NumPages</span>
+                <button type="button" onclick="stepPageNum(this,-1)" class="btn btn-light" @(Model.SortFilterPageData.PrevPageValid ? "" : "disabled")>Prev</button>
+                <button type="button" class="btn btn-light">Page @Model.SortFilterPageData.PageNum</button>
+                <button type="button" onclick="stepPageNum(this,+1)" class="btn btn-light" @(Model.SortFilterPageData.NextPageValid ? "" : "disabled")>Next</button>
             </div>
-        </div>*@
+        </div>
 
         <div class="col-sm-1">
             <label>Page&nbsp;Size</label>
@@ -55,6 +55,7 @@
         </div>
     </div>
 
+    <input id="PageNum" name="PageNum" type="hidden" value=@Model.SortFilterPageData.PageNum>
     <input id="PrevCheckState" name="PrevCheckState" type="hidden" value=@Model.SortFilterPageData.PrevCheckState>
     @*@Html.Hidden("PrevCheckState", @Model.SortFilterPageData.PrevCheckState) -- this didn't work for some reason*@
 </form>

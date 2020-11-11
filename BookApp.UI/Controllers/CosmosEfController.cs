@@ -19,7 +19,6 @@ namespace BookApp.UI.Controllers
             return View(new CosmosEfBookListCombinedDto(options, output));              
         }
 
-
         /// <summary>
         /// This provides the filter search dropdown content
         /// </summary>
