@@ -23,37 +23,36 @@ namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
                 .MapBookToDto()
                 .SingleOrDefaultAsync(x => x.BookId == bookId, cancellationToken);
             if (dto == null)
-                status.AddError($"BookId: {dto.BookId}: No book found.");
+                status.AddError("SQL: No book found.");
 
             Book loadedBook = null;
+            var fixedThem = fixBadCacheValues ? "and fixed it" : "(not fixed)";
 
             if (dto.RecalcReviewsCount != dto.ReviewsCount || 
                 Math.Abs((dto.RecalcReviewsAverageVotes ?? 0) - dto.ReviewsAverageVotes) > 0.0001)
             {
-                status.AddError($"BookId: {dto.BookId}, Review cached values incorrect\n" +
-                                  $"Actual Reviews.Count = {dto.RecalcReviewsCount}, Cached ReviewsCount = {dto.ReviewsCount}\n" +
-                                  $"Actual Reviews average = {dto.RecalcReviewsAverageVotes:F5}, Cached ReviewsAverageVotes = {dto.ReviewsAverageVotes:F5}\n" +
-                                  $"Last updated {dto.LastUpdatedUtc:G}");
+                status.AddError($"SQL: Review cached values incorrect {fixedThem}. " +
+                                $"Actual Reviews.Count = {dto.RecalcReviewsCount}, Cached ReviewsCount = {dto.ReviewsCount}. " +
+                                $"Actual Reviews average = {dto.RecalcReviewsAverageVotes:F5}, Cached ReviewsAverageVotes = {dto.ReviewsAverageVotes:F5}. " +
+                                $"Last updated {dto.LastUpdatedUtc:G}");
                 if (fixBadCacheValues)
                 {
                     loadedBook = await context.Books.
                         SingleOrDefaultAsync(x => x.BookId == bookId);
                     loadedBook?.UpdateReviewCachedValues(dto.RecalcReviewsCount, dto.RecalcReviewsAverageVotes ?? 0);
-                    status.AddError($"BookId: {dto.BookId}: Review cached values fixed.");
                 }
             }
 
             if (dto.RecalcAuthorsOrdered != dto.AuthorsOrdered)
             {
-                status.AddError($"BookId: {dto.BookId}, AuthorsOrdered cached value incorrect\n" +
-                                $"Actual authors string = {dto.RecalcAuthorsOrdered}, Cached AuthorsOrdered = {dto.AuthorsOrdered}\n" +
+                status.AddError($"SQL: AuthorsOrdered cached value incorrect {fixedThem}. " +
+                                $"Actual authors string = {dto.RecalcAuthorsOrdered}, Cached AuthorsOrdered = {dto.AuthorsOrdered}. " +
                                 $"Last updated {dto.LastUpdatedUtc:G}");
 
                 if (fixBadCacheValues)
                 {
                     loadedBook ??= await context.Books.SingleOrDefaultAsync(x => x.BookId == bookId);
                     loadedBook.ResetAuthorsOrdered(dto.RecalcAuthorsOrdered);
-                    status.AddError($"BookId: {dto.BookId}: AuthorsOrdered cached value fixed.");
                 }
             }
 

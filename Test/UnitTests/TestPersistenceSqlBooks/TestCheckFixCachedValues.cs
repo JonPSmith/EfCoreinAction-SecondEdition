@@ -37,10 +37,11 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
+            var notes = await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
 
             //VERIFY
             logs.Count.ShouldEqual(0);
+            notes.First().ShouldEqual("Looked at 4 SQL books and found no errors");
         }
 
         [Fact]
@@ -60,14 +61,17 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             var service = new CheckFixCacheValuesService(context,  logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
+            var notes = await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
             var readBook = context.Books.Single(x => x.BookId == books[3].BookId);
             readBook.ReviewsAverageVotes.ShouldEqual(4);
             readBook.ReviewsCount.ShouldEqual(2);
-            logs.Count.ShouldEqual(2);
+
+            logs.Count.ShouldEqual(1);
+            notes.First().ShouldEqual("Looked at 4 SQL books and found 1 errors and fixed them");
+            notes[1].ShouldEqual("BookId: 4");
         }
 
         [Fact]
@@ -87,14 +91,17 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
+            var notes = await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
             var readBook = context.Books.Single(x => x.BookId == books[3].BookId);
             readBook.ReviewsAverageVotes.ShouldEqual(0);
             readBook.ReviewsCount.ShouldEqual(0);
+
             logs.Count.ShouldEqual(1);
+            notes.First().ShouldEqual("Looked at 4 SQL books and found 1 errors (not fixed)");
+            notes[1].ShouldEqual("BookId: 4");
         }
 
         [Fact]
@@ -115,14 +122,18 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
+            var notes = await service.RunCheckAsync(new DateTime(2000, 1, 1), true, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
             var readBooks = context.Books.ToList();
             readBooks[0].AuthorsOrdered.ShouldEqual("New Name");
             readBooks[1].AuthorsOrdered.ShouldEqual("New Name");
-            logs.Count.ShouldEqual(4);
+
+            logs.Count.ShouldEqual(2);
+            notes.First().ShouldEqual("Looked at 2 SQL books and found 2 errors and fixed them");
+            notes[1].ShouldEqual("BookId: 1");
+            notes[3].ShouldEqual("BookId: 2");
         }
 
         [Fact]
@@ -143,14 +154,18 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
-            await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
+            var notes = await service.RunCheckAsync(new DateTime(2000, 1, 1), false, default);
 
             //VERIFY
             context.ChangeTracker.Clear();
             var readBooks = context.Books.ToList();
             readBooks[0].AuthorsOrdered.ShouldEqual("Martin Fowler");
             readBooks[1].AuthorsOrdered.ShouldEqual("Martin Fowler");
+
             logs.Count.ShouldEqual(2);
+            notes.First().ShouldEqual("Looked at 2 SQL books and found 2 errors (not fixed)");
+            notes[1].ShouldEqual("BookId: 1");
+            notes[3].ShouldEqual("BookId: 2");
         }
 
         private void SetAllBooksAsUpdatedNow(IEnumerable<Book> books)

@@ -150,9 +150,9 @@ namespace BookApp.UI.Controllers
             }
 
             var scanFrom = DateTime.UtcNow.Subtract(dto.LookingBack);
-            await service.RunCheckAsync(scanFrom, dto.FixBadCacheValues, cancellationToken );
+            var notes = await service.RunCheckAsync(scanFrom, dto.FixBadCacheValues, cancellationToken );
             SetupTraceInfo();
-            return View("BookUpdated", "The CheckFixCache service has finished - see logs for info.");
+            return View("CacheCheckFixResult", notes);
         }
 
     }

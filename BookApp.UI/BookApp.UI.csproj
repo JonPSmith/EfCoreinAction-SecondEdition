@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
+    <Content Remove="Views\Admin\CacheCheckFixResult.cshtml" />
     <Content Remove="Views\Admin\RemovePromotion.cshtml" />
     <Content Remove="wwwroot\js\bundle.min.js" />
   </ItemGroup>
@@ -17,6 +18,7 @@
   <ItemGroup>
     <None Include="bundleconfig.json" />
     <None Include="Views\Admin\AddBookReview.cshtml" />
+    <None Include="Views\Admin\CacheCheckFixResult.cshtml" />
     <None Include="Views\Admin\BookUpdated.cshtml" />
     <None Include="Views\Admin\RemovePromotion.cshtml" />
     <None Include="Views\Admin\AddPromotion.cshtml" />

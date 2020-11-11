@@ -1,0 +1,15 @@
+﻿@model List<string>
+
+<h2>Check/Heal results</h2>
+
+<div>
+    @foreach (var note in @Model)
+    {
+        <span>@note</span>
+        <br/>
+    }
+</div>
+
+<br />
+@Html.ActionLink("Default SQL Books", "Index", "DefaultSql")
+
