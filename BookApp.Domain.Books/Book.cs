@@ -229,7 +229,7 @@ namespace BookApp.Domain.Books
 
         public void AlterSoftDelete(bool softDeleted)
         {
-            if (SoftDeleted == softDeleted)
+            if (SoftDeleted != softDeleted)
             {
                 AddEvent(softDeleted 
                     ? (IEntityEvent) new BookDeleteEvent()

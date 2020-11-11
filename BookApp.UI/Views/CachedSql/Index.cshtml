@@ -110,8 +110,9 @@
                             {
                                 <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="RemovePromotion" asp-route-id="@item.BookId">Remove Promotion</a>
                             }
-                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
-                            </div>
+                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddBookReview" asp-route-id="@item.BookId">Add Review</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="SoftDelete" asp-route-id="@item.BookId">Soft delete book</a>
+                        </div>
                     </div>
                 }
             </td>

@@ -112,7 +112,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
         private async Task<CosmosBook> MapBookToCosmosBookAsync(Book sqlBook)
         {
             return await MapBookToCosmosBook(_sqlContext.Books
-                .Where(x => x.BookId == sqlBook.BookId))
+                    .IgnoreQueryFilters()
+                    .Where(x => x.BookId == sqlBook.BookId))
                 .SingleOrDefaultAsync();
         }
 

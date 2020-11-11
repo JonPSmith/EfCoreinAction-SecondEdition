@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
@@ -13,6 +14,7 @@ using BookApp.UI.HelperExtensions;
 using GenericServices;
 using GenericServices.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.UI.Controllers
 {
@@ -73,6 +75,7 @@ namespace BookApp.UI.Controllers
 
         public async Task<IActionResult> RemovePromotion(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
+            Request.ThrowErrorIfNotLocal();
             var dto = await service.ReadSingleAsync<RemovePromotionDto>(id);
             if (!service.IsValid)
             {
@@ -86,6 +89,7 @@ namespace BookApp.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemovePromotion(RemovePromotionDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
+            Request.ThrowErrorIfNotLocal();
             if (!ModelState.IsValid)
             {
                 return View(dto);
@@ -103,6 +107,7 @@ namespace BookApp.UI.Controllers
 
         public async Task<IActionResult> AddBookReview(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
+            Request.ThrowErrorIfNotLocal();
             var dto = await service.ReadSingleAsync<AddReviewDto>(id);
             if (!service.IsValid)
             {
@@ -116,6 +121,7 @@ namespace BookApp.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddBookReview(AddReviewDto dto, [FromServices] ICrudServicesAsync<BookDbContext> service)
         {
+            Request.ThrowErrorIfNotLocal();
             if (!ModelState.IsValid)
             {
                 return View(dto);
@@ -153,6 +159,38 @@ namespace BookApp.UI.Controllers
             var notes = await service.RunCheckAsync(scanFrom, dto.FixBadCacheValues, cancellationToken );
             SetupTraceInfo();
             return View("CacheCheckFixResult", notes);
+        }
+
+        public async Task<IActionResult> SoftDelete(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            Request.ThrowErrorIfNotLocal();
+            var dto = new AlterSoftDeleteDto {BookId = id, SoftDeleted = true};
+            await service.UpdateAndSaveAsync(dto);
+            SetupTraceInfo();
+            
+            return View("BookUpdated", service.IsValid ? "Successfully (soft) deleted the book" : service.GetAllErrors() );
+        }
+
+        public async Task<IActionResult> ListSoftDeleted([FromServices] ICrudServicesAsync<BookDbContext> service)
+        {
+            Request.ThrowErrorIfNotLocal();
+
+            var softDeletedBooks = await service.ProjectFromEntityToDto<Book, SimpleBookList>
+                (x => x.IgnoreQueryFilters().Where(y => y.SoftDeleted)).ToListAsync();
+
+            SetupTraceInfo();
+            return View(softDeletedBooks);
+        }
+
+        public async Task<IActionResult> UnSoftDelete(int id, [FromServices]BookDbContext context)
+        {
+            Request.ThrowErrorIfNotLocal();
+            var softDeletedBook = await context.Books.IgnoreQueryFilters().SingleAsync(x => x.BookId == id);
+            softDeletedBook.AlterSoftDelete(false);
+            await context.SaveChangesAsync();
+            SetupTraceInfo();
+
+            return View("BookUpdated", "Successfully un (soft) deleted the book");
         }
 
     }

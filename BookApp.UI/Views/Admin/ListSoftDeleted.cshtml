@@ -1,0 +1,45 @@
+﻿@model IEnumerable<BookApp.ServiceLayer.DefaultSql.Books.Dtos.SimpleBookList>
+
+@{
+    ViewData["Title"] = "ListSoftDeleted";
+}
+
+<h1>ListSoftDeleted</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BookId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastUpdatedUtc)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BookId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastUpdatedUtc)
+            </td>
+            <td>
+                @Html.ActionLink("Undelete", "UnSoftDelete", new { id=item.BookId }) 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

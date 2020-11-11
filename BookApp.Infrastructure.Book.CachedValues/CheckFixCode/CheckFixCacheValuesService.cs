@@ -93,11 +93,11 @@ namespace BookApp.Infrastructure.Books.CachedValues.CheckFixCode
             return FormFinalReturn(false); 
         }
 
-        private IQueryable<T> FilterByToFrom<T>(IQueryable<T> source,
+        private IQueryable<T> FilterByToFrom<T>(DbSet<T> source,
             DateTime fromThisDate)
-            where T : ICreatedUpdated
+            where T : class, ICreatedUpdated
         {
-            return source.Where(x => x.LastUpdatedUtc >= fromThisDate);
+            return source.IgnoreQueryFilters().Where(x => x.LastUpdatedUtc >= fromThisDate);
         }
     }
 }
