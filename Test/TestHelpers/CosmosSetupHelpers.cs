@@ -20,7 +20,7 @@ namespace Test.TestHelpers
                 .UseCosmos(
                     dbSettings.EndPoint,
                     dbSettings.AuthKey,
-                    callingClass?.GetType().Name ?? dbSettings.DataBaseName);
+                    callingClass?.GetType().Name ?? dbSettings.DatabaseName);
 
             return builder.Options;
         }

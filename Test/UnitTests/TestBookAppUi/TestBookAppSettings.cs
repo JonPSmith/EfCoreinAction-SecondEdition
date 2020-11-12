@@ -83,7 +83,7 @@ namespace Test.UnitTests.TestBookAppUi
             //VERIFY
             cosmosSettings.EndPoint.ShouldNotBeEmpty();
             cosmosSettings.AuthKey.ShouldNotBeEmpty();
-            cosmosSettings.DataBaseName.ShouldEqual("Cosmos" + (suffix ?? ""));
+            cosmosSettings.DatabaseName.ShouldEqual("Cosmos" + (suffix ?? ""));
         }
 
         [Fact]

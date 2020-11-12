@@ -74,7 +74,7 @@ namespace BookApp.UI
                 services.AddDbContext<CosmosDbContext>(options => options.UseCosmos(
                     cosmosSettings.EndPoint,
                     cosmosSettings.AuthKey,
-                    cosmosSettings.DataBaseName));
+                    cosmosSettings.DatabaseName));
             else
             {
                 services.AddSingleton<CosmosDbContext>(_ => null);

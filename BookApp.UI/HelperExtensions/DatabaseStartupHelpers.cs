@@ -58,16 +58,15 @@ namespace BookApp.UI.HelperExtensions
             if (!settings.CosmosAvailable)
                 return null;
 
-            var sectionName = settings.ProductionDbs
-                ? "Production-CosmosDbSettings" //Assumed to be in secrets
-                : "CosmosDbSettings";
-
             var result = new CosmosDbSettings();
-            config.GetSection(sectionName).Bind(result);
+            if (settings.CosmosSettingSection == null)
+                return result;
+
+            config.GetSection(settings.CosmosSettingSection).Bind(result);
 
             if (settings.DbNameSuffix != null)
             {
-                result.DataBaseName += settings.DbNameSuffix;
+                result.DatabaseName += settings.DbNameSuffix;
             }
 
             return result;
