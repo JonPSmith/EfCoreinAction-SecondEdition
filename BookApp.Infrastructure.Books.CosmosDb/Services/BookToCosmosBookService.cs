@@ -27,7 +27,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             _cosmosContext = cosmosContext;
         }
 
-        public async Task AddCosmosBookAsync(int? bookId)
+        public async Task AddCosmosBookAsync(int bookId)
         {
             if (CosmosNotConfigured)
                 return;
@@ -46,7 +46,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             }
         }
 
-        public async Task UpdateCosmosBookAsync(int? bookId)
+        public async Task UpdateCosmosBookAsync(int bookId)
         {
             if (CosmosNotConfigured)
                 return;
@@ -65,7 +65,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             }
         }
 
-        public async Task DeleteCosmosBookAsync(int? bookId)
+        public async Task DeleteCosmosBookAsync(int bookId)
         {
             if (CosmosNotConfigured)
                 return;
@@ -89,7 +89,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
         private enum WhatDoing {Adding, Updating, Deleting}
 
-        private async Task CosmosSaveChangesWithChecksAsync(WhatDoing whatDoing, int? bookId)
+        private async Task CosmosSaveChangesWithChecksAsync(WhatDoing whatDoing, int bookId)
         {
             try
             {

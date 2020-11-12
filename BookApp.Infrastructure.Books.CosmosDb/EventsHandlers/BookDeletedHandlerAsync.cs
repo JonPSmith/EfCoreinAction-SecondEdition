@@ -23,8 +23,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.EventsHandlers
 
         public async Task<IStatusGeneric> HandleAsync(object callingEntity, BookDeleteEvent domainEvent, Guid uniqueKey)
         {
-            var book = callingEntity as Book;
-            await _service.DeleteCosmosBookAsync(book?.BookId);
+            await _service.DeleteCosmosBookAsync(((Book)callingEntity).BookId);
             return null;
         }
     }

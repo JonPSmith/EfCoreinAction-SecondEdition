@@ -31,7 +31,7 @@ namespace BookApp.UI.Services
                 new MenuData("CosmosEf", "Cosmos (EF)"),
                 new MenuData("CosmosDirect", "Cosmos (Direct)"),
                 new MenuData("CachedSql", "SQL (cached)"),
-                new MenuData("Orders", "Your Orders")
+                new MenuData("DapperSql", "SQL (Dapper)")
             },
         };
 

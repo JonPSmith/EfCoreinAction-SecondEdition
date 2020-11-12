@@ -23,8 +23,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.EventsHandlers
 
         public async Task<IStatusGeneric> HandleAsync(object callingEntity, BookAddedEvent domainEvent, Guid uniqueKey)
         {
-            var book = callingEntity as Book;
-            await _service.AddCosmosBookAsync(book?.BookId);
+            var bookId = ((Book) callingEntity).BookId;
+            await _service.AddCosmosBookAsync(bookId);
             return null;
         }
     }
