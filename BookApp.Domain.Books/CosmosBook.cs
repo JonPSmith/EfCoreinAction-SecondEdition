@@ -26,7 +26,7 @@ namespace BookApp.Domain.Books
 
         public List<CosmosTag> Tags { get; set; }  //#D
 
-        public string TagsString { get; set; }
+        public string TagsString { get; set; }  //#E
 
         public override string ToString()
         {
@@ -38,6 +38,7 @@ namespace BookApp.Domain.Books
     #B These are normal properties that are needed to display the book
     #C These are pre-calculated values used for display and filtering
     #D To allow filtering on Tags we provide a list of CosmosTags, which are configured as Owned Types
+    #E EF Core 5 doesn't support IN for Cosmos DB, but it does support string contains
      ************************************************************/
 
 }
