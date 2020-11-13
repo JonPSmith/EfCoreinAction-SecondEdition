@@ -26,13 +26,11 @@ namespace BookApp.Domain.Books
 
         public List<CosmosTag> Tags { get; set; }  //#D
 
+        public string TagsString { get; set; }
+
         public override string ToString()
         {
-            var tagsString = Tags == null || !Tags.Any()
-                ? ""
-                : $" Tags: " + string.Join(", ", Tags.Select(x => x.TagId));
-
-            return $"{Title}: by {AuthorsOrdered}. Price {ActualPrice}, {ReviewsCount} reviews. Published {PublishedOn:d}{tagsString}";
+            return $"{Title}: by {AuthorsOrdered}. Price {ActualPrice}, {ReviewsCount} reviews. Published {PublishedOn:d}, Tags: {TagsString}";
         }
     }
     /*********************************************************

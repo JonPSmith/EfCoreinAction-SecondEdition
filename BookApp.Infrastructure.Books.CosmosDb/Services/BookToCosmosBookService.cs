@@ -195,7 +195,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                         p.Reviews.Select(y =>
                             (double?)y.NumStars).Average(),
                     Tags = p.Tags
-                        .Select(x => new CosmosTag(x.TagId)).ToList()
+                        .Select(x => new CosmosTag(x.TagId)).ToList(),
+                    TagsString = $"| {string.Join(" | ", p.Tags.Select(x => x.TagId))} |"
                 });
         }
 

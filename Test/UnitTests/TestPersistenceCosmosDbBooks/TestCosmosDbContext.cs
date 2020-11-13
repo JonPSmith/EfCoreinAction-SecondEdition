@@ -66,26 +66,27 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             var book1 = new CosmosBook
             {
                 BookId = 123,
-                Title = "Test",
-                Tags = new List<CosmosTag> { new CosmosTag("Tag1"), new CosmosTag("Tag2") }
+                Title = "Test1",
+                Tags = new List<CosmosTag> { new CosmosTag("Tag1"), new CosmosTag("Tag2") },
+                TagsString = "| Tag1 | Tag2 |"
             };
             var book2 = new CosmosBook
             {
                 BookId = 567,
-                Title = "Test",
-                Tags = new List<CosmosTag> { new CosmosTag("Tag3"), new CosmosTag("Tag2") }
+                Title = "Test2",
+                Tags = new List<CosmosTag> { new CosmosTag("Tag3"), new CosmosTag("Tag2") },
+                TagsString = "| Tag3 | Tag2 |"
             };
             context.AddRange(book1, book2);
             await context.SaveChangesAsync();
 
             //ATTEMPT
             context.ChangeTracker.Clear();
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await context.Books.Where(x => x.Tags
-                .Select(y => y.TagId).Contains("Tag3")).ToListAsync());
+            var books = await context.Books.Where(x => x.TagsString.Contains("| Tag3 |")).ToListAsync();
 
             //VERIFY
-            ex.Message.ShouldContain("could not be translated.");
+            books.Count.ShouldEqual(1);
+            books.Single().Title.ShouldEqual("Test2");
         }
     }
 }
