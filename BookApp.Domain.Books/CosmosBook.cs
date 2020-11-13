@@ -9,21 +9,22 @@ namespace BookApp.Domain.Books
 {
     public class CosmosBook 
     {
-        public int BookId { get; set; }
+        public int BookId { get; set; }  //#A
 
-        public string Title { get; set; }
-        public DateTime PublishedOn { get; set; }
-        public bool EstimatedDate { get;  set; }
-        public int YearPublished { get; set; }
-        public decimal OrgPrice { get; set; }
-        public decimal ActualPrice { get; set; }
-        public string PromotionalText { get; set; }
-        public string AuthorsOrdered { get; set; }
-        public int ReviewsCount { get; set; }
-        public double? ReviewsAverageVotes { get; set; }
-        public string ManningBookUrl { get; set; }
+        public string Title { get; set; }           //#B
+        public DateTime PublishedOn { get; set; }   //#B
+        public bool EstimatedDate { get;  set; }    //#B
+        public int YearPublished { get; set; }      //#B
+        public decimal OrgPrice { get; set; }       //#B
+        public decimal ActualPrice { get; set; }    //#B
+        public string PromotionalText { get; set; } //#B
+        public string ManningBookUrl { get; set; }  //#B
 
-        public List<CosmosTag> Tags { get; set; }
+        public string AuthorsOrdered { get; set; }       //#C
+        public int ReviewsCount { get; set; }            //#C
+        public double? ReviewsAverageVotes { get; set; } //#C
+
+        public List<CosmosTag> Tags { get; set; }  //#D
 
         public override string ToString()
         {
@@ -34,5 +35,11 @@ namespace BookApp.Domain.Books
             return $"{Title}: by {AuthorsOrdered}. Price {ActualPrice}, {ReviewsCount} reviews. Published {PublishedOn:d}{tagsString}";
         }
     }
+    /*********************************************************
+    #A We use the BookId used in the SQL database to link this entity to the SQL entity
+    #B These are normal properties that are needed to display the book
+    #C These are pre-calculated values used for display and filtering
+    #D To allow filtering on Tags we provide a list of CosmosTags, which are configured as Owned Types
+     ************************************************************/
 
 }

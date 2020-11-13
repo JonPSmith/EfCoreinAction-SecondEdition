@@ -10,6 +10,6 @@ namespace BookApp.Domain.Books
             TagId = tagId;
         }
 
-        public string TagId { get; private set; }
+        public string TagId { get; set; }
     }
 }
