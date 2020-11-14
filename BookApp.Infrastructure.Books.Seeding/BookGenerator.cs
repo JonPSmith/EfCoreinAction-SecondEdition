@@ -115,7 +115,8 @@ namespace BookApp.Infrastructure.Books.Seeding
                     ? b.Reviews.Average(y => y.NumStars)
                     : 0.0,
                 Tags = b.Tags
-                    .Select(x => new CosmosTag(x.TagId)).ToList()
+                    .Select(x => new CosmosTag(x.TagId)).ToList(),
+                TagsString = $"| {string.Join(" | ", b.Tags.Select(x => x.TagId))} |"
             });
             cosmosContext.AddRange(cosmosBooks);
             await cosmosContext.SaveChangesAsync();

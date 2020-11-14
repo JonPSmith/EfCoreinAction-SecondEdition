@@ -158,46 +158,19 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
         private async Task<CosmosBook> MapBookToCosmosBookAsync(int? bookId)
         {
-            return await MapBookToCosmosBook(_sqlContext.Books
-                    .IgnoreQueryFilters()
-                    .Where(x => x.BookId == bookId))
+            return await _sqlContext.Books
+                .IgnoreQueryFilters()
+                .Where(x => x.BookId == bookId)
+                .MapBookToCosmosBook()
                 .SingleOrDefaultAsync();
         }
 
         private async Task<List<CosmosBook>> MapManyBooksToCosmosBookAsync(List<int> bookIds)
         {
-            return await MapBookToCosmosBook(_sqlContext.Books
-                    .Where(x => bookIds.Contains(x.BookId)))
+            return await _sqlContext.Books
+                .Where(x => bookIds.Contains(x.BookId))
+                .MapBookToCosmosBook()
                 .ToListAsync();
-        }
-
-        private IQueryable<CosmosBook> MapBookToCosmosBook(IQueryable<Book> books)
-        {
-            return books
-                .Select(p => new CosmosBook
-                {
-                    BookId = p.BookId,
-                    Title = p.Title,
-                    PublishedOn = p.PublishedOn,
-                    EstimatedDate = p.EstimatedDate,
-                    YearPublished = p.PublishedOn.Year,
-                    OrgPrice = p.OrgPrice,
-                    ActualPrice = p.ActualPrice,
-                    PromotionalText = p.PromotionalText,
-                    ManningBookUrl = p.ManningBookUrl,
-
-                    AuthorsOrdered = string.Join(", ",
-                        p.AuthorsLink
-                            .OrderBy(q => q.Order)
-                            .Select(q => q.Author.Name)),
-                    ReviewsCount = p.Reviews.Count(),
-                    ReviewsAverageVotes =
-                        p.Reviews.Select(y =>
-                            (double?)y.NumStars).Average(),
-                    Tags = p.Tags
-                        .Select(x => new CosmosTag(x.TagId)).ToList(),
-                    TagsString = $"| {string.Join(" | ", p.Tags.Select(x => x.TagId))} |"
-                });
         }
 
 
