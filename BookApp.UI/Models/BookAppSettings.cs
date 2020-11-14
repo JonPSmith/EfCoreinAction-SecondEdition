@@ -9,7 +9,6 @@ namespace BookApp.UI.Models
         public bool CosmosAvailable { get; set; }
         public string CosmosSettingSection { get; set; }
         public BookAppMenuSettings MenuSet { get; set; }
-        public string DbNameSuffix { get; set; }
         public bool ProductionDbs { get; set; }
     }
 }

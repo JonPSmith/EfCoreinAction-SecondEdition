@@ -26,20 +26,18 @@ namespace Test.UnitTests.TestBookAppUi
             //VERIFY
             result.CosmosAvailable.ShouldEqual(true);
             result.MenuSet.ShouldEqual(BookAppMenuSettings.Chapter15);
-            result.DbNameSuffix.ShouldEqual("-Test");
             result.ProductionDbs.ShouldBeFalse();
         }
 
         [Theory]
-        [InlineData(false, "Default-Test")]
-        [InlineData(true, "Production-Test")]
+        [InlineData(false, "Default")]
+        [InlineData(true, "Production")]
         public void TestGetCorrectSqlConnectionProvidedSettings(bool productionDbs, string expectedDbName)
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
             var settings = new BookAppSettings
             {
-                DbNameSuffix = "-Test",
                 ProductionDbs = productionDbs
             };
 
@@ -62,28 +60,7 @@ namespace Test.UnitTests.TestBookAppUi
 
             //VERIFY
             var builder = new SqlConnectionStringBuilder(connection);
-            builder["Initial Catalog"].ShouldEqual("Default-Test");
-        }
-
-        [Theory]
-        [InlineData((string)null)]
-        [InlineData("-Test")]
-        public void TestGetCosmosDbSettingsProvidedSettings(string suffix)
-        {
-            //SETUP
-            var config = AppSettings.GetConfiguration();
-            var settings = new BookAppSettings
-            {
-                DbNameSuffix = suffix
-            };
-
-            //ATTEMPT
-            var cosmosSettings = config.GetCosmosDbSettings(settings);
-
-            //VERIFY
-            cosmosSettings.EndPoint.ShouldNotBeEmpty();
-            cosmosSettings.AuthKey.ShouldNotBeEmpty();
-            cosmosSettings.DatabaseName.ShouldEqual("Cosmos" + (suffix ?? ""));
+            builder["Initial Catalog"].ShouldEqual("Default");
         }
 
         [Fact]

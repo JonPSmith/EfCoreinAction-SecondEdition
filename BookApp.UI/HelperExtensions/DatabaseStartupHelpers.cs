@@ -37,10 +37,10 @@ namespace BookApp.UI.HelperExtensions
             if (baseConnection == null)
                 throw new NullReferenceException($"The connection {connectionName} wasn't found.");
 
-            if (settings.DbNameSuffix != null)
+            if (settings.CosmosAvailable)
             {
                 var builder = new SqlConnectionStringBuilder(baseConnection);
-                builder["Initial Catalog"] += settings.DbNameSuffix;
+                builder["Initial Catalog"] += "-Cosmos";
                 return builder.ConnectionString;
             }
 
@@ -63,11 +63,6 @@ namespace BookApp.UI.HelperExtensions
                 return result;
 
             config.GetSection(settings.CosmosSettingSection).Bind(result);
-
-            if (settings.DbNameSuffix != null)
-            {
-                result.DatabaseName += settings.DbNameSuffix;
-            }
 
             return result;
         }
