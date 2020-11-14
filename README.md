@@ -5,7 +5,7 @@ Welcome to the Git repo that is associated with the first six chapters in the bo
 The current release of this code is running on:
 
 * EF Core 5.0
-* ASP.NET Core 5.0 (You MUST have NET Core 5.0 installed)
+* ASP.NET Core 5.0 (You MUST have NET 5.0 installed)
 
 Other branches are:
 
@@ -17,7 +17,7 @@ To run any of the code you need to.
 1. Install a development tool, either **Visual Studio** or **Visual Studio Code** (VS Code for short). If you are new to .NET Core development, then I recommend Visual Studio - here is a link on [how to install Visual Studio](http://mng.bz/2x0T).
 2. You need to install a SQL Server to run any applications and some of the unit tests. A SQL Server called `localdb` is installed when you install **Visual Studio on Windows** by choosing the "Data storage and processing" feature (VS Code and Visual Studio on Mac needs more work).
 3. Clone this repo to your local computer. See Visual Studio tutorial called [Open a project from a repo](https://docs.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
-4. Needs to have NET Core 5.0 installed for ASP.NET Core to work.
+4. You need NET 5.0 installed for the code to work.
 
 Both of these applications can be run from **Visual Studio** or **VS Code**.
 
