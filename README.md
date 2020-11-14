@@ -2,6 +2,11 @@
 
 Welcome to the Git repo that is associated with the first six chapters in the book Entity Framework Core in Action (second edition). This book details how to use Entity Framework Core (EF Core) to develop database access code in .NET 5 applications.
 
+The current release of this code is running on:
+
+* EF Core 5.0
+* ASP.NET Core 5.0 (You MUST have NET Core 5.0 installed)
+
 Other branches are:
 
 * `Part2`, which covers part 2 of the book - chapters 7 to 11.
@@ -12,18 +17,16 @@ To run any of the code you need to.
 1. Install a development tool, either **Visual Studio** or **Visual Studio Code** (VS Code for short). If you are new to .NET Core development, then I recommend Visual Studio - here is a link on [how to install Visual Studio](http://mng.bz/2x0T).
 2. You need to install a SQL Server to run any applications and some of the unit tests. A SQL Server called `localdb` is installed when you install **Visual Studio on Windows** by choosing the "Data storage and processing" feature (VS Code and Visual Studio on Mac needs more work).
 3. Clone this repo to your local computer. See Visual Studio tutorial called [Open a project from a repo](https://docs.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
-4. Currently need to have NET Core 3.1 installed for the code to work.
+4. Needs to have NET Core 5.0 installed for ASP.NET Core to work.
 
 Both of these applications can be run from **Visual Studio** or **VS Code**.
-
-Currently I am using EF Core 5 previews, but that will change when EF Core 5 is released.
 
 ## What can you run in this branch?
 
 I have placed all the code relating to part 1 of the book, which covers the first six chapters. The main projects you can run are:
 
 * `MyFirstEfCoreApp`, which is the console application found in chapter 1
-* `BookApp`, which is the ASP.NET Core application that I cover in chapters 2 to 6.
+* `BookApp`, which is the ASP.NET Core application that I cover in chapters 2 to 6. Best to mark that project as your Startup Project
 
 Once you have installed your chosen development tool, then you can run either of these applications - both are designed to create and seed any database that they use.
 
