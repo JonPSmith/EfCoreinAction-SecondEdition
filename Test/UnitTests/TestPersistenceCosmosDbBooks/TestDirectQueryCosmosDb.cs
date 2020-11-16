@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
@@ -10,7 +9,6 @@ using BookApp.Infrastructure.Books.CosmosDb.Services;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.Azure.Cosmos;
-using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
@@ -50,10 +48,10 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             await _sqlContext.Database.EnsureCreatedAsync();
 
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
-            var sqlbooks = _sqlContext.SeedDatabaseFourBooks();
-            foreach (var sqlbook in sqlbooks)
+            var sqlBooks = _sqlContext.SeedDatabaseFourBooks();
+            foreach (var sqlBook in sqlBooks)
             {
-                await service.AddCosmosBookAsync(sqlbook.BookId);
+                await service.AddCosmosBookAsync(sqlBook.BookId);
             }
         }
 
