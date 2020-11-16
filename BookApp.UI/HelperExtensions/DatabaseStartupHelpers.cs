@@ -21,51 +21,6 @@ namespace BookApp.UI.HelperExtensions
 {
     public static class DatabaseStartupHelpers
     {
-        public static string GetCorrectSqlConnection(this IConfiguration config, BookAppSettings settings = null)
-        {
-            if (settings == null)
-            {
-                settings = new BookAppSettings();
-                config.GetSection(nameof(BookAppSettings)).Bind(settings);
-            }
-
-            var connectionName = settings.ProductionDbs
-                ? "Production-DefaultConnection" //Assumed to be in secrets
-                : "DefaultConnection";
-            var baseConnection = config.GetConnectionString(connectionName) ;
-
-            if (baseConnection == null)
-                throw new NullReferenceException($"The connection {connectionName} wasn't found.");
-
-            if (settings.CosmosAvailable)
-            {
-                var builder = new SqlConnectionStringBuilder(baseConnection);
-                builder["Initial Catalog"] += "-Cosmos";
-                return builder.ConnectionString;
-            }
-
-            return baseConnection;
-        }
-
-        public static CosmosDbSettings GetCosmosDbSettings(this IConfiguration config, BookAppSettings settings = null)
-        {
-            if (settings == null)
-            {
-                settings = new BookAppSettings();
-                config.GetSection(nameof(BookAppSettings)).Bind(settings);
-            }
-
-            if (!settings.CosmosAvailable)
-                return null;
-
-            var result = new CosmosDbSettings();
-            if (settings.CosmosSettingSection == null)
-                return result;
-
-            config.GetSection(settings.CosmosSettingSection).Bind(result);
-
-            return result;
-        }
 
         /// <summary>
         /// This makes sure the database is created/updated
@@ -113,5 +68,40 @@ namespace BookApp.UI.HelperExtensions
             return webHost;
         }
 
+
+        public static string GetCorrectSqlConnection(this IConfiguration config, BookAppSettings settings)
+        {
+            var baseConnection = config.GetConnectionString(settings.SqlConnectionString, false);
+
+            if (baseConnection == null)
+                throw new NullReferenceException($"The {settings.SqlConnectionString} setting wasn't found or is null.");
+
+            return baseConnection;
+        }
+
+        public static CosmosDbSettings GetCosmosDbSettings(this IConfiguration config, BookAppSettings settings)
+        {
+
+            if (!settings.CosmosAvailable)
+                return null;
+
+            var connectionString = config.GetConnectionString(settings.CosmosConnectionString, true);
+
+            return new CosmosDbSettings(connectionString, settings.CosmosDatabaseName);
+        }
+
+        private const string SecretStart = "Secret|";
+        private const string EmulatorString = "Emulator";
+
+        private static string GetConnectionString(this IConfiguration config, string setupValue, bool cosmosConnection)
+        {
+            if (setupValue.StartsWith(SecretStart))
+                return config[setupValue.Substring(SecretStart.Length)];
+            if (setupValue == EmulatorString && cosmosConnection)
+                return
+                    "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+
+            return setupValue;
+        }
     }
 }

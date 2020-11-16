@@ -12,17 +12,19 @@ namespace Test.TestHelpers
 {
     public static class CosmosSetupHelpers
     {
+        private const string CosmosEmulatorCon =
+            "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+
         public static DbContextOptions<TContext> GetCosmosDbOptions<TContext>(this object callingClass)
             where TContext : DbContext
         {
             var config = AppSettings.GetConfiguration();
-            var dbSettings = new CosmosDbSettings();
+            var dbSettings = new CosmosDbSettings(CosmosEmulatorCon, callingClass.GetType().Name);
             config.GetSection(nameof(CosmosDbSettings)).Bind(dbSettings);
             var builder = new DbContextOptionsBuilder<TContext>()
                 .UseCosmos(
-                    dbSettings.EndPoint,
-                    dbSettings.AuthKey,
-                    callingClass?.GetType().Name ?? dbSettings.DatabaseName);
+                    dbSettings.ConnectionString,
+                    dbSettings.DatabaseName);
 
             return builder.Options;
         }
@@ -31,14 +33,13 @@ namespace Test.TestHelpers
         public static (CosmosDbContext cosmosContext, Container Container) GetCosmosContextAndContainer(this object callingClass)
         {
             var config = AppSettings.GetConfiguration();
-            var dbSettings = new CosmosDbSettings();
+            var dbSettings = new CosmosDbSettings(CosmosEmulatorCon, callingClass.GetType().Name);
             config.GetSection(nameof(CosmosDbSettings)).Bind(dbSettings);
             var databaseName = callingClass?.GetType().Name ?? dbSettings.DatabaseName;
             var builder = new DbContextOptionsBuilder<CosmosDbContext>()
                 .UseCosmos(
-                    dbSettings.EndPoint,
-                    dbSettings.AuthKey,
-                    databaseName);
+                    dbSettings.ConnectionString,
+                    dbSettings.DatabaseName);
 
             var cosmosContext = new CosmosDbContext(builder.Options);
 
