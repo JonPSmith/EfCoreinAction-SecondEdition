@@ -3,81 +3,88 @@
 
 using BookApp.UI.HelperExtensions;
 using BookApp.UI.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using TestSupport.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestBookAppUi
 {
     public class TestBookAppSettings
     {
+        private readonly ITestOutputHelper _output;
+
+        public TestBookAppSettings(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
-        public void TestBooAppSettings()
+        public void TestGetBookAppSettingsUsingSetupVersionNum()
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
 
             //ATTEMPT
-            var result = new BookAppSettings();
-            config.GetSection(nameof(BookAppSettings)).Bind(result);
+            var result = BookAppSettings.GetBookAppSettings(config);
 
             //VERIFY
-            result.CosmosAvailable.ShouldEqual(true);
-            result.MenuSet.ShouldEqual(BookAppMenuSettings.Chapter15);
-            result.ProductionDbs.ShouldBeFalse();
+            result.Title.ShouldEqual("Setup1");
+            result.MenuSet.ShouldEqual(BookAppMenuSettings.Basic);
+            result.SqlConnectionString.ShouldEqual("Setup1: sql connection string");
+            result.CosmosAvailable.ShouldBeFalse();
         }
 
-        [Theory]
-        [InlineData(false, "Default")]
-        [InlineData(true, "Production")]
-        public void TestGetCorrectSqlConnectionProvidedSettings(bool productionDbs, string expectedDbName)
+        [Fact]
+        public void TestGetBookAppSettingsList()
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
-            var settings = new BookAppSettings
+
+            //ATTEMPT
+            
+
+            //VERIFY
+            for (int versionNum = 1; versionNum <= 3; versionNum++)
             {
-                ProductionDbs = productionDbs
-            };
+                var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
+                _output.WriteLine(settings.ToString());
+            }
+        }
+
+
+        [Theory]
+        [InlineData(1, "Setup1: sql connection string")]
+        [InlineData(2, "Setup2: sql connection string")]
+        public void TestGetBookAppSettings(int versionNum, string expectedConn)
+        {
+            //SETUP
+            var config = AppSettings.GetConfiguration();
+            var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
 
             //ATTEMPT
             var connection = config.GetCorrectSqlConnection(settings);
 
             //VERIFY
-            var builder = new SqlConnectionStringBuilder(connection);
-            builder["Initial Catalog"].ShouldEqual(expectedDbName);
+            connection.ShouldEqual(expectedConn);
         }
 
-        [Fact]
-        public void TestGetCorrectSqlConnectionReadOwnSettings()
+        [Theory]
+        [InlineData(1, null, null)]
+        [InlineData(3, "Setup3: cosmos connection string", "BookAppCosmos3")]
+        public void TestGetCosmosDbSettings(int versionNum, string expectedConn, string expectedDbName)
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
-
-            //ATTEMPT
-            var connection = config.GetCorrectSqlConnection();
-
-            //VERIFY
-            var builder = new SqlConnectionStringBuilder(connection);
-            builder["Initial Catalog"].ShouldEqual("Default");
-        }
-
-        [Fact]
-        public void TestGetCosmosDbSettingsCosmosAvailableFalse()
-        {
-            //SETUP
-            var config = AppSettings.GetConfiguration();
-            var settings = new BookAppSettings
-            {
-                CosmosAvailable = false
-            };
+            var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
 
             //ATTEMPT
             var cosmosSettings = config.GetCosmosDbSettings(settings);
 
             //VERIFY
-            cosmosSettings.ShouldBeNull();
+            cosmosSettings?.ConnectionString.ShouldEqual(expectedConn);
+            cosmosSettings?.DatabaseName.ShouldEqual(expectedDbName);
         }
+
     }
 }

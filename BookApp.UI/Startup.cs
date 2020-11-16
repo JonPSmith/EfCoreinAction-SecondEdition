@@ -1,8 +1,10 @@
 // Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using AutoMapper.Configuration.Annotations;
 using BookApp.BackgroundTasks;
 using BookApp.Infrastructure.Books.CachedValues;
 using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
@@ -34,6 +36,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NetCore.AutoRegisterDi;
 
 namespace BookApp.UI
@@ -59,7 +62,12 @@ namespace BookApp.UI
                 });
 
             //This gets the correct sql connection string based on the BookAppSettings
-            var sqlConnection = Configuration.GetCorrectSqlConnection();
+
+
+            var bookAppSettings = BookAppSettings.GetBookAppSettings(Configuration);
+            services.AddSingleton(bookAppSettings);
+
+            var sqlConnection = Configuration.GetCorrectSqlConnection(bookAppSettings);
 
             //This registers both DbContext. Each MUST have a unique MigrationsHistoryTable for Migrations to work
             services.AddDbContext<BookDbContext>( 
@@ -69,11 +77,10 @@ namespace BookApp.UI
                 options => options.UseSqlServer(sqlConnection, dbOptions =>
                     dbOptions.MigrationsHistoryTable("OrderMigrationHistoryName")));
 
-            var cosmosSettings = Configuration.GetCosmosDbSettings();
+            var cosmosSettings = Configuration.GetCosmosDbSettings(bookAppSettings);
             if (cosmosSettings != null)
                 services.AddDbContext<CosmosDbContext>(options => options.UseCosmos(
-                    cosmosSettings.EndPoint,
-                    cosmosSettings.AuthKey,
+                    cosmosSettings.ConnectionString,
                     cosmosSettings.DatabaseName));
             else
             {
