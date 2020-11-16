@@ -100,5 +100,20 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             books.Count.ShouldEqual(2);
         }
 
+        [Fact]
+        public async Task TestBuildListOfYearsDropdownOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
+
+            //ATTEMPT
+            var resultSet = _cosmosContainer.GetItemQueryIterator<int>(
+                //NOTE if query contains a subquery then you must define every property to load
+                new QueryDefinition($"SELECT DISTINCT VALUE c.YearPublished FROM c WHERE c.YearPublished > {2000}"));
+            var years = (await resultSet.ReadNextAsync()).ToList();
+
+            //VERIFY
+        }
+
     }
 }
