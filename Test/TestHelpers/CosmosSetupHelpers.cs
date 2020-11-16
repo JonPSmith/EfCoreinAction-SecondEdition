@@ -28,6 +28,14 @@ namespace Test.TestHelpers
                     dbSettings.ConnectionString,
                     dbSettings.DatabaseName);
 
+            //var builder2 = new DbContextOptionsBuilder
+            //        <CosmosDbContext>()
+            //    .UseCosmos(
+            //        "connection string...",
+            //        "MyCosmosDatabase");
+
+            //var x = builder2.Options;
+
             return builder.Options;
         }
 
