@@ -1,34 +1,35 @@
 {
-  "BookId": 214,
-  "ActualPrice": 59.99,
-  "AuthorsOrdered": "Jon P Smith",
-  "EstimatedDate": true,
-  "ManningBookUrl": "https://www.manning.com/books/entity-framework-core-in-action-second-edition?a_aid=su4utaraxuTre8tuthup",
-  "OrgPrice": 59.99,
-  "PromotionalText": null,
-  "PublishedOn": "2021-05-15T05:00:00+01:00",
-  "ReviewsAverageVotes": 5,
-  "ReviewsCount": 1,
-  "Title": "Entity Framework Core in Action, Second Edition",
+  "BookId": 214,                                              //#A
+  "ActualPrice": 59.99,                                       //#A
+  "AuthorsOrdered": "Jon P Smith",                            //#A
+  "EstimatedDate": true,                                      //#A
+  "ManningBookUrl": "https://www.manning.com...",             //#A
+  "OrgPrice": 59.99,                                          //#A
+  "PromotionalText": null,                                    //#A
+  "PublishedOn": "2021-05-15T05:00:00+01:00",                 //#A
+  "ReviewsAverageVotes": 5,                                   //#A
+  "ReviewsCount": 1,                                          //#A
+  "Title": "Entity Framework Core in Action, Second Edition", //#A
 
-  "Tags": [
-    {
-      "TagId": "Databases"
-    },
-    {
-      "TagId": "Microsoft & .NET"
-    }
-  ],
+  "Tags": [                       //#B
+    {                             //#B
+      "TagId": "Databases"        //#B
+    },                            //#B
+    {                             //#B
+      "TagId": "Microsoft & .NET" //#B
+    }                             //#B
+  ],                              //#B
 
-  "YearPublished": 2021,
-  "TagsString": "| Databases | Microsoft & .NET |",
+  "YearPublished": 2021,                            //#C
+  "TagsString": "| Databases | Microsoft & .NET |", //#C
 
-  "Discriminator": "CosmosBook",
-  "id": "CosmosBook|214",
+  "Discriminator": "CosmosBook", //#D
 
-  "_rid": "QmRlAMizcQmwAgAAAAAAAA==",
-  "_self": "dbs/QmRlAA==/colls/QmRlAMizcQk=/docs/QmRlAMizcQmwAgAAAAAAAA==/",
-  "_etag": "\"1e01b788-0000-1100-0000-5facfa2f0000\"",
-  "_attachments": "attachments/",
-  "_ts": 1605171759
+  "id": "CosmosBook|214", //#E
+
+  "_rid": "QmRlAMizcQmwAg...==",                  //#F
+  "_self": "dbs/QmRlAA==/colls/QmRlAMizcQk=...",       //#F
+  "_etag": "\"1e01b788-0000-1100-0000-5facfa2f0000\"", //#F
+  "_ts": 1605171759,                                   //#F
+  "_attachments": "attachments/"                       //#F
 }

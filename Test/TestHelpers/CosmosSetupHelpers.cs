@@ -12,6 +12,8 @@ namespace Test.TestHelpers
 {
     public static class CosmosSetupHelpers
     {
+        private const string CosmosConnectionName = "CosmosConnectionString";
+
         private const string CosmosEmulatorCon =
             "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
 
@@ -19,8 +21,8 @@ namespace Test.TestHelpers
             where TContext : DbContext
         {
             var config = AppSettings.GetConfiguration();
-            var dbSettings = new CosmosDbSettings(CosmosEmulatorCon, callingClass.GetType().Name);
-            config.GetSection(nameof(CosmosDbSettings)).Bind(dbSettings);
+            var connectionString = config.GetConnectionString(CosmosConnectionName);
+            var dbSettings = new CosmosDbSettings(connectionString, callingClass.GetType().Name);
             var builder = new DbContextOptionsBuilder<TContext>()
                 .UseCosmos(
                     dbSettings.ConnectionString,
@@ -33,9 +35,8 @@ namespace Test.TestHelpers
         public static (CosmosDbContext cosmosContext, Container Container) GetCosmosContextAndContainer(this object callingClass)
         {
             var config = AppSettings.GetConfiguration();
-            var dbSettings = new CosmosDbSettings(CosmosEmulatorCon, callingClass.GetType().Name);
-            config.GetSection(nameof(CosmosDbSettings)).Bind(dbSettings);
-            var databaseName = callingClass?.GetType().Name ?? dbSettings.DatabaseName;
+            var connectionString = config.GetConnectionString(CosmosConnectionName);
+            var dbSettings = new CosmosDbSettings(connectionString, callingClass.GetType().Name);
             var builder = new DbContextOptionsBuilder<CosmosDbContext>()
                 .UseCosmos(
                     dbSettings.ConnectionString,
@@ -44,7 +45,7 @@ namespace Test.TestHelpers
             var cosmosContext = new CosmosDbContext(builder.Options);
 
             var cosmosClient = cosmosContext.Database.GetCosmosClient();
-            var database = cosmosClient.GetDatabase(databaseName);
+            var database = cosmosClient.GetDatabase(dbSettings.DatabaseName);
             var container = database.GetContainer(nameof(CosmosDbContext));
 
             return (cosmosContext, container);
