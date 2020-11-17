@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Persistence.CosmosDb.Books;
+using BookApp.ServiceLayer.CosmosEf.Books.Services;
+using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using Xunit;
@@ -53,6 +55,41 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             var readBook = await context.Books.SingleAsync();
             readBook.BookId.ShouldEqual(123);
             readBook.Tags.Select(x => x.TagId).ShouldEqual(new [] { "Tag1", "Tag2" });
+        }
+
+        [Fact]
+        public async Task TestFilterDropdownYears()
+        {
+            //SETUP
+            var options = this.GetCosmosDbOptions<CosmosDbContext>();
+            using var context = new CosmosDbContext(options);
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
+
+            var book1 = new CosmosBook
+            {
+                BookId = 123,
+                Title = "Year2000",
+                PublishedOn = new DateTime(2000,1,1),
+                YearPublished = 2000
+            };
+            var book2 = new CosmosBook
+            {
+                BookId = 567,
+                Title = "Year3000",
+                PublishedOn = new DateTime(3000, 1, 1),
+                YearPublished = 3000
+            };
+            context.AddRange(book1, book2);
+            await context.SaveChangesAsync();
+
+            var service = new CosmosEfBookFilterDropdownService(context);
+
+            //ATTEMPT
+            var dropdown = await service.GetFilterDropDownValuesAsync(BooksFilterBy.ByPublicationYear);
+
+            //VERIFY
+            dropdown.Select(x => x.Text).ShouldEqual(new []{ "Coming Soon", "2000"});
         }
 
         [Fact]
