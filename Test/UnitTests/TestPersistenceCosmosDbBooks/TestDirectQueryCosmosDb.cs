@@ -85,6 +85,37 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
         }
 
         [Fact]
+        public async Task TestDirectBooksOrderByOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
+
+            //ATTEMPT
+            var resultSet = _cosmosContainer.GetItemQueryIterator<CosmosBook>(new QueryDefinition("SELECT * FROM c ORDER BY c.BookId DESC"));
+            var books = (await resultSet.ReadNextAsync()).ToList();
+
+            //VERIFY
+            books.Count.ShouldEqual(4);
+            books.Select(x => x.BookId).ShouldEqual(new []{4,3,2,1});
+        }
+
+        [Fact]
+        public async Task TestDirectBooksPagingOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
+
+            //ATTEMPT
+            var resultSet = _cosmosContainer.GetItemQueryIterator<CosmosBook>(new QueryDefinition("SELECT * FROM c OFFSET 2 LIMIT 1"));
+            var books = (await resultSet.ReadNextAsync()).ToList();
+
+            //VERIFY
+            books.Count.ShouldEqual(1);
+            books.Select(x => x.BookId).ShouldEqual(new[] { 3 });
+        }
+
+
+        [Fact]
         public async Task TestFilterByTagsOk()
         {
             //SETUP

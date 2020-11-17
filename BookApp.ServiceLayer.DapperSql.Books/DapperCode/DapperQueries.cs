@@ -9,14 +9,13 @@ using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DapperSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
-namespace BookApp.ServiceLayer.DapperSql.Books.DapperQueries
+namespace BookApp.ServiceLayer.DapperSql.Books.DapperCode
 {
     public static class DapperQueries
     {

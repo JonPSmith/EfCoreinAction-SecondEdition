@@ -5,24 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
-using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DapperSql.Books.DapperCode;
-using BookApp.ServiceLayer.DapperSql.Books.Dtos;
+using BookApp.Persistence.CosmosDb.Books;
+using BookApp.ServiceLayer.CosmosDirect.Books;
+using BookApp.ServiceLayer.CosmosDirect.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApp.UI.Controllers
 {
-    public class DapperSqlController : BaseTraceController
+    public class CosmosDirectController : BaseTraceController
     {
-        public async Task<IActionResult> Index(SortFilterPageOptions options, [FromServices] BookDbContext context)
+        public async Task<IActionResult> Index(SortFilterPageOptions options, 
+            [FromServices] CosmosDbContext context,
+            [FromServices] BookAppSettings settings)
         {
-            options.SetupRestOfDto(await context.DapperBookListCountAsync(options));
-            var bookList = (await context.DapperBookListQueryAsync(options)).ToList();
+            options.SetupRestOfDto(await context.CosmosDirectCountAsync(options, settings.CosmosDatabaseName));
+            var bookList = (await context.CosmosDirectQueryAsync(options, settings.CosmosDatabaseName)).ToList();
 
             SetupTraceInfo();
 
-            return View(new DapperBookListCombinedDto(options, bookList));
+            return View(new CosmosDirectBookListCombinedDto(options, bookList));
         }
 
         /// <summary>
