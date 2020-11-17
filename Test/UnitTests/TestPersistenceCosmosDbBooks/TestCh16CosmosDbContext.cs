@@ -2,14 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using BookApp.Domain.Books;
-using BookApp.Persistence.CosmosDb.Books;
-using BookApp.ServiceLayer.CosmosEf.Books;
-using BookApp.ServiceLayer.CosmosEf.Books.Services;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter16Listings;
 using Test.TestHelpers;
