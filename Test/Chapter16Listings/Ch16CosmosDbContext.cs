@@ -18,13 +18,6 @@ namespace Test.Chapter16Listings
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CosmosGuidKey>()
-                .Property(x => x.MyDateTime)
-                .HasColumnType("date");
-
-            modelBuilder.Entity<CosmosGuidKey>()
-                .HasIndex(x => x.MyDateTime).IsUnique();
-
             modelBuilder.Entity<CosmosCompositeKey>()
                 .HasKey(x => new {x.Key1, x.Key2});
         }
