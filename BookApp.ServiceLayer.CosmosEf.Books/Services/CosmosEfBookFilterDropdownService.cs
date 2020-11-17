@@ -26,16 +26,16 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.Services
         /// </summary>
         /// <param name="filterBy"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<DropdownTuple>> GetFilterDropDownValuesAsync(BooksFilterBy filterBy)
+        public async Task<IEnumerable<DropdownTuple>> GetFilterDropDownValuesAsync(CosmosBooksFilterBy filterBy)
         {
             switch (filterBy)
             {
-                case BooksFilterBy.NoFilter:
+                case CosmosBooksFilterBy.NoFilter:
                     //return an empty list
                     return new List<DropdownTuple>();
-                case BooksFilterBy.ByVotes:
+                case CosmosBooksFilterBy.ByVotes:
                     return FormVotesDropDown();
-                case BooksFilterBy.ByPublicationYear:
+                case CosmosBooksFilterBy.ByPublicationYear:
                     var now = DateTime.UtcNow;
                     var comingSoon = await _db.Books
                         .FirstOrDefaultAsync(x => x.PublishedOn > now) != null;

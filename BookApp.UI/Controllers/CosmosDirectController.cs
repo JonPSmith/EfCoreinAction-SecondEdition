@@ -34,14 +34,15 @@ namespace BookApp.UI.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent(SortFilterPageOptions options, [FromServices] IBookFilterDropdownService service)
+        public async Task<JsonResult> GetFilterSearchContent(SortFilterPageOptions options,
+            [FromServices] CosmosDbContext context,
+            [FromServices] BookAppSettings settings)
         {
             var traceIdent = HttpContext.TraceIdentifier;
+            var dropdowns = await context.GetFilterDropDownValuesAsync(options.FilterBy, settings.CosmosDatabaseName);
             return Json(
                 new TraceIndentGeneric<IEnumerable<DropdownTuple>>(
-                    traceIdent,
-                    service.GetFilterDropDownValues(
-                        options.FilterBy)));
+                    traceIdent, dropdowns));
         }
     }
 }
