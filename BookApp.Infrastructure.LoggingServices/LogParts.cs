@@ -11,6 +11,7 @@ namespace BookApp.Infrastructure.LoggingServices
     {
         private const string EfCoreEventIdStartWith = "Microsoft.EntityFrameworkCore";
         public const string DapperEventName = "EfCoreInAction.Dapper";
+        public const string CosmosEventName = "EfCoreInAction.CosmosDirect";
 
         public LogParts(LogLevel logLevel, EventId eventId, string eventString)
         {
@@ -32,7 +33,8 @@ namespace BookApp.Infrastructure.LoggingServices
             {
                 var name = EventId.Name;
                 return name != null && (name.StartsWith(EfCoreEventIdStartWith)
-                                        || name.StartsWith(DapperEventName));
+                                        || name.StartsWith(DapperEventName)
+                                        || name.StartsWith(CosmosEventName));
             }
         }
 

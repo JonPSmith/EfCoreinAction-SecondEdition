@@ -39,6 +39,20 @@ namespace Test.TestHelpers
             return builder.Options;
         }
 
+        public static (CosmosDbContext context, string databaseName)  GetCosmosDbAndDatabaseName(this object callingClass)
+        {
+            var config = AppSettings.GetConfiguration();
+            var connectionString = config.GetConnectionString(CosmosConnectionName);
+            var dbSettings = new CosmosDbSettings(connectionString, callingClass.GetType().Name);
+            var builder = new DbContextOptionsBuilder<CosmosDbContext>()
+                .UseCosmos(
+                    dbSettings.ConnectionString,
+                    dbSettings.DatabaseName);
+            var cosmosContext = new CosmosDbContext(builder.Options);
+
+            return (cosmosContext, dbSettings.DatabaseName);
+        }
+
 
         public static (CosmosDbContext cosmosContext, Container Container) GetCosmosContextAndContainer(this object callingClass)
         {
