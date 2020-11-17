@@ -9,5 +9,8 @@ namespace Test.Chapter16Listings
     {
         public Guid Id { get; set; }
         public DateTime MyDateTime { get; set; }
+        public TimeSpan MyTimSpan { get; set; }
+
+        public string NullableProp { get; set; }
     }
 }
