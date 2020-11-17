@@ -14,27 +14,18 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.QueryObjects
 
         public static IQueryable<CosmosBook> FilterBooksBy(
             this IQueryable<CosmosBook> books, 
-            BooksFilterBy filterBy, string filterValue)         
+            CosmosBooksFilterBy filterBy, string filterValue)         
         {
             if (string.IsNullOrEmpty(filterValue))              
                 return books;                                   
 
             switch (filterBy)
             {
-                case BooksFilterBy.NoFilter:                    
+                case CosmosBooksFilterBy.NoFilter:                    
                     return books;                               
-                case BooksFilterBy.ByVotes:
+                case CosmosBooksFilterBy.ByVotes:
                     var filterVote = int.Parse(filterValue);     
-                    return books.Where(x => x.ReviewsAverageVotes > filterVote);   
-                case BooksFilterBy.ByPublicationYear:             
-                    var now = DateTime.UtcNow;
-                    if (filterValue == AllBooksNotPublishedString)
-                    {
-                        return books.Where(x => x.PublishedOn > now);
-                    }
-
-                    var filterYear = int.Parse(filterValue);      
-                    return books.Where(x => x.YearPublished == filterYear && x.PublishedOn <= now);   
+                    return books.Where(x => x.ReviewsAverageVotes > filterVote);
                 default:
                     throw new ArgumentOutOfRangeException
                         (nameof(filterBy), filterBy, null);

@@ -67,7 +67,6 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             }
         }
 
-
         [Fact]
         public async Task TestCosmosDirectCountOk()
         {
@@ -94,6 +93,30 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             books.Count().ShouldEqual(4);
         }
 
+        [Fact]
+        public async Task TestGetFilterDropDownValuesAsyncPublishedDatesOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
 
+            //ATTEMPT
+            var dropdowns = await _cosmosContext.GetFilterDropDownValuesAsync(BooksFilterBy.ByPublicationYear, _databaseName);
+
+            //VERIFY
+            dropdowns.Select(x => x.Value).ShouldEqual(new []{ "Coming Soon", "2003", "2002", "1999" });
+        }
+
+        [Fact]
+        public async Task TestGetFilterDropDownValuesAsyncTagsOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
+
+            //ATTEMPT
+            var dropdowns = await _cosmosContext.GetFilterDropDownValuesAsync(BooksFilterBy.ByTags, _databaseName);
+
+            //VERIFY
+            dropdowns.Select(x => x.Value).ShouldEqual(new[] { "Editor's Choice", "Refactoring", "Architecture", "Quantum Entanglement" });
+        }
     }
 }

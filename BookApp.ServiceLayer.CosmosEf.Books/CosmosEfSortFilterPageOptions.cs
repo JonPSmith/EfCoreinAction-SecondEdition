@@ -1,10 +1,18 @@
 ﻿// Copyright (c) 2019 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.ComponentModel.DataAnnotations;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books
 {
+    public enum CosmosBooksFilterBy
+    {
+        [Display(Name = "All")] NoFilter = 0,
+        [Display(Name = "By Votes...")] ByVotes,
+        [Display(Name = "TOO SLOW! (date)")] ByPublicationYear
+    }
+
     public class CosmosEfSortFilterPageOptions
     {
         public const int DefaultPageSize = 100;   //default page size is 100
@@ -16,7 +24,7 @@ namespace BookApp.ServiceLayer.CosmosEf.Books
 
         public OrderByOptions OrderByOptions { get; set; }
 
-        public BooksFilterBy FilterBy { get; set; }
+        public CosmosBooksFilterBy FilterBy { get; set; }
 
         public string FilterValue { get; set; }
 

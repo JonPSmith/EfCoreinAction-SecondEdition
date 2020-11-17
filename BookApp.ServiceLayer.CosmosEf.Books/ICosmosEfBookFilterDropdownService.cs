@@ -15,6 +15,6 @@ namespace BookApp.ServiceLayer.CosmosEf.Books
         /// </summary>
         /// <param name="filterBy"></param>
         /// <returns></returns>
-        Task<IEnumerable<DropdownTuple>> GetFilterDropDownValuesAsync(BooksFilterBy filterBy);
+        Task<IEnumerable<DropdownTuple>> GetFilterDropDownValuesAsync(CosmosBooksFilterBy filterBy);
     }
 }
