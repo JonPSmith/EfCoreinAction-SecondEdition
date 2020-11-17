@@ -29,12 +29,11 @@ namespace BookApp.UI.Controllers
         public async Task<JsonResult> GetFilterSearchContent    
             (CosmosEfSortFilterPageOptions options, [FromServices]ICosmosEfBookFilterDropdownService service)         
         {
-
-            var traceIdent = HttpContext.TraceIdentifier; 
+            var traceIdent = HttpContext.TraceIdentifier;
+            var dropdown = await service.GetFilterDropDownValuesAsync(options.FilterBy);
             return Json(                            
                 new TraceIndentGeneric<IEnumerable<DropdownTuple>>(
-                traceIdent,
-                await service.GetFilterDropDownValuesAsync(options.FilterBy)));            
+                traceIdent, dropdown));            
         }
 
     }

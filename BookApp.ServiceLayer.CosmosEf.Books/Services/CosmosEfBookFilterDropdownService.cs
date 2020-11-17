@@ -37,13 +37,15 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.Services
                     return FormVotesDropDown();
                 case BooksFilterBy.ByPublicationYear:
                     var now = DateTime.UtcNow;
-                    var comingSoon = _db.Books.Where(x => x.PublishedOn > now).Select(_ => 1).AsEnumerable().Any();  
+                    var comingSoon = await _db.Books
+                        .FirstOrDefaultAsync(x => x.PublishedOn > now) != null;
                     var nextYear = DateTime.UtcNow.AddYears(1).Year;
                     var allYears = await _db.Books
                         .Select(x => x.YearPublished)
                         .Distinct().ToListAsync();
                     //see this issue in EF Core about why I had to split the query - https://github.com/aspnet/EntityFrameworkCore/issues/16156
-                    var result = allYears.Where(x => x < nextYear)                   
+                    var result = allYears
+                        .Where(x => x < nextYear)                   
                         .OrderByDescending(x => x)                  
                         .Select(x => new DropdownTuple              
                         {                                           

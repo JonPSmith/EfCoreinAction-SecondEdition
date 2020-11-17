@@ -40,6 +40,8 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
                             Text = x.TagId
                         }).ToList();
                 case BooksFilterBy.ByPublicationYear:
+                    var comingSoon = _db.Books.                      
+                        Any(x => x.PublishedOn > DateTime.Today);
                     var result = _db.Books 
                         .Where(x => x.PublishedOn <= DateTime.Today) 
                         .Select(x => x.PublishedOn.Year)             
@@ -50,8 +52,6 @@ namespace BookApp.ServiceLayer.DefaultSql.Books.Services
                             Value = x.ToString(),                    
                             Text = x.ToString()                      
                         }).ToList();                                 
-                    var comingSoon = _db.Books.                      
-                        Any(x => x.PublishedOn > DateTime.Today);
                     if (comingSoon)
                         result.Insert(0, new DropdownTuple
                         {
