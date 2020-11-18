@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
@@ -112,6 +113,22 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             //VERIFY
             books.Count.ShouldEqual(1);
             books.Select(x => x.BookId).ShouldEqual(new[] { 3 });
+        }
+
+        [Fact]
+        public async Task TestGetTagsOk()
+        {
+            //SETUP
+            await ResetDatabasesAndSeedAsync();
+
+            //ATTEMPT
+            var resultSet = _cosmosContainer.GetItemQueryIterator<string>(
+                //NOTE if query contains a subquery then you must define every property to load
+                new QueryDefinition("SELECT DISTINCT value f.TagId FROM c JOIN f in c.Tags"));
+            var tags = (await resultSet.ReadNextAsync()).OrderBy(x => x).ToList();
+
+            //VERIFY
+            tags.ShouldEqual(new List<string>{ "Architecture", "Editor's Choice", "Quantum Entanglement", "Refactoring" });
         }
 
 
