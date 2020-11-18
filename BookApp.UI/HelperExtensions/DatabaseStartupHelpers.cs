@@ -10,7 +10,6 @@ using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.UI.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,15 +38,11 @@ namespace BookApp.UI.HelperExtensions
                 {
                     await bookContext.Database.MigrateAsync();
                     await orderContext.Database.MigrateAsync();
-                    if (!bookContext.Books.Any())
-                    {
-                        await bookContext.SeedDatabaseWithBooksAsync(env.WebRootPath);
-                    }
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while creating/migrating or seeding the database.");
+                    logger.LogError(ex, "An error occurred while creating/migrating the SQL database.");
 
                     throw;
                 }
@@ -63,6 +58,20 @@ namespace BookApp.UI.HelperExtensions
                         var logger = services.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "An error occurred while making sure Cosmos database was created.");
                     }
+
+                try
+                {
+                    if (!bookContext.Books.Any())
+                    {
+                        await bookContext.SeedDatabaseWithBooksAsync(env.WebRootPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                    throw;
+                }
             }
 
             return webHost;

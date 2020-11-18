@@ -86,5 +86,20 @@ namespace Test.UnitTests.TestBookAppUi
             cosmosSettings?.DatabaseName.ShouldEqual(expectedDbName);
         }
 
+        [Fact]
+        public void TestGetCosmosDbSettingsEmulator()
+        {
+            //SETUP
+            var config = AppSettings.GetConfiguration();
+            var settings = BookAppSettings.GetBookAppSettings(config, 4);
+
+            //ATTEMPT
+            var cosmosSettings = config.GetCosmosDbSettings(settings);
+
+            //VERIFY
+            cosmosSettings.ConnectionString.ShouldStartWith("AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/");
+            cosmosSettings?.DatabaseName.ShouldEqual("BookAppCosmos4");
+        }
+
     }
 }

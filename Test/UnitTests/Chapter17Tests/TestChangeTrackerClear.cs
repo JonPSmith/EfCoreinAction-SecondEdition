@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.Chapter17Tests
 {
@@ -27,6 +26,9 @@ namespace Test.UnitTests.Chapter17Tests
 
 
 
+
+
+
         [Fact]
         public void TestCreateBookAndReadBackBad()
         {
@@ -35,40 +37,12 @@ namespace Test.UnitTests.Chapter17Tests
             using var context = new BookDbContext(options);
             context.Database.EnsureCreated();
 
-            var book = AddBookWithTwoReviewsToDatabase(context);
+            var bookId = AddBookWithTwoReviewsToDatabase(context);
 
             //ATTEMPT
-            var readBook = context.Books.Single(x => x.BookId == book.BookId);
+            var readBook = context.Books.Single(x => x.BookId == bookId);
             var numReviews = readBook.Reviews.Count;
-
-            //VERIFY
-            _output.WriteLine($"Book has {numReviews} reviews");
-        }
-
-
-
-
-
-
-
-
-
-
-
-        [Fact]
-        public void TestCreateBookAndReadBackWithChangeTrackerClearOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using var context = new BookDbContext(options);
-            context.Database.EnsureCreated();
-
-            var book = AddBookWithTwoReviewsToDatabase(context);
-            context.ChangeTracker.Clear();
-
-            //ATTEMPT
-            var readBook = context.Books.Single(x => x.BookId == book.BookId);
-            var numReviews = readBook.Reviews?.Count;
+            //update the book based on the reviews count
 
             //VERIFY
             _output.WriteLine($"Book has {numReviews} reviews");
@@ -88,21 +62,53 @@ namespace Test.UnitTests.Chapter17Tests
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            Book book;
+            int bookId;
             using (var context = new BookDbContext(options))
             {
                 context.Database.EnsureCreated();
-                book = AddBookWithTwoReviewsToDatabase(context);
+                bookId = AddBookWithTwoReviewsToDatabase(context);
             }
+
             //ATTEMPT
             using (var context = new BookDbContext(options))
             {
-                var readBook = context.Books.Single(x => x.BookId == book.BookId);
+                var readBook = context.Books.Single(x => x.BookId == bookId);
 
                 //VERIFY
                 _output.WriteLine($"Book has {readBook.Reviews?.Count.ToString() ?? "null"} reviews");
             }
         }
+
+
+
+
+
+
+
+
+
+
+        [Fact]
+        public void TestCreateBookAndReadBackWithChangeTrackerClearOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            var bookId = AddBookWithTwoReviewsToDatabase(context);
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var readBook = context.Books.Single(x => x.BookId == bookId);
+            var numReviews = readBook.Reviews?.Count;
+
+            //VERIFY
+            _output.WriteLine($"Book has {numReviews?.ToString() ?? "null"} reviews");
+        }
+
+
+
 
 
 
@@ -117,14 +123,15 @@ namespace Test.UnitTests.Chapter17Tests
             using var context = new BookDbContext(options);
             context.Database.EnsureCreated();
 
-            var book = AddBookWithTwoReviewsToDatabase(context);
+            var bookId = AddBookWithTwoReviewsToDatabase(context);
             context.ChangeTracker.Clear();
 
             //ATTEMPT
             var readBook = context.Books
                 .Include(x => x.Reviews)
-                .Single(x => x.BookId == book.BookId);
+                .Single(x => x.BookId == bookId);
             var numReviews = readBook.Reviews.Count;
+            //update the book based on the reviews count
 
             //VERIFY
             _output.WriteLine($"Book has {numReviews} reviews");
@@ -137,7 +144,7 @@ namespace Test.UnitTests.Chapter17Tests
 
 
 
-        private static Book AddBookWithTwoReviewsToDatabase(BookDbContext context)
+        private static int AddBookWithTwoReviewsToDatabase(BookDbContext context)
         {
             var book = new Book("test title", new DateTime(2000, 1, 2), false,
                 "publisher", 123, "imageurl",
@@ -146,7 +153,7 @@ namespace Test.UnitTests.Chapter17Tests
                 new List<byte> {1, 2}, "reviewUser");
             context.Add(book);
             context.SaveChanges();
-            return book;
+            return book.BookId;
         }
     }
 }

@@ -56,6 +56,11 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
             if (cosmosBook != null) //#D
             {
+                var existingEntry = _cosmosContext.Find<CosmosBook>(cosmosBook.BookId);
+                if (existingEntry != null)
+                    //This stops an update if a previous Add or Update was run
+                    return;
+
                 _cosmosContext.Update(cosmosBook);        //#E
                 await CosmosSaveChangesWithChecksAsync(   //#E
                     WhatDoing.Updating, bookId);          //#E
