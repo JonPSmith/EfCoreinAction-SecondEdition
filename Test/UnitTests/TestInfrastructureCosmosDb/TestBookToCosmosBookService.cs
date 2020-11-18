@@ -95,6 +95,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
             var seeded = await ResetDatabasesAndSeedAsync();
             await AddDummyCosmosBook(seeded[3].BookId);
 
+            _cosmosContext.ChangeTracker.Clear();
             var service = new BookToCosmosBookService(_sqlContext, _cosmosContext);
 
             //ATTEMPT

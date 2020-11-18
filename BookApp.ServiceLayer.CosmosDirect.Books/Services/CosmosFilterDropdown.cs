@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
@@ -30,8 +31,8 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
                     return FormVotesDropDown();
                 case BooksFilterBy.ByTags:
                     var tagResults = container.GetItemQueryIterator<string>(
-                        new QueryDefinition($"SELECT DISTINCT value f.TagId FROM c JOIN f in c.Tags "));
-                    var tags = (await tagResults.ReadNextAsync()).ToList();
+                        new QueryDefinition("SELECT DISTINCT value f.TagId FROM c JOIN f in c.Tags"));
+                    var tags = (await tagResults.ReadNextAsync()).OrderBy(x => x).ToList();
                     return tags
                         .Select(x => new DropdownTuple
                         {

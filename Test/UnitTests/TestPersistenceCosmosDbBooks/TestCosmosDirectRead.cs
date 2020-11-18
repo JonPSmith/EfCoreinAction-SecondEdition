@@ -116,7 +116,7 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             var dropdowns = await _cosmosContext.GetFilterDropDownValuesAsync(BooksFilterBy.ByTags, _databaseName);
 
             //VERIFY
-            dropdowns.Select(x => x.Value).ShouldEqual(new[] { "Editor's Choice", "Refactoring", "Architecture", "Quantum Entanglement" });
+            dropdowns.Select(x => x.Value).ShouldEqual(new[] { "Architecture", "Editor's Choice", "Quantum Entanglement", "Refactoring" });
         }
     }
 }
