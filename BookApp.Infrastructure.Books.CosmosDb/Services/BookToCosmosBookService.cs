@@ -56,18 +56,18 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
             if (cosmosBook != null) //#D
             {
-                var existingEntry = _cosmosContext.Find<CosmosBook>(cosmosBook.BookId);
-                if (existingEntry != null)
-                    //This stops an update if a previous Add or Update was run
-                    return;
+                var existingEntry = _cosmosContext        //#E
+                    .Find<CosmosBook>(cosmosBook.BookId); //#E
+                if (existingEntry != null)                //#E
+                    return;                               //#E
 
-                _cosmosContext.Update(cosmosBook);        //#E
-                await CosmosSaveChangesWithChecksAsync(   //#E
-                    WhatDoing.Updating, bookId);          //#E
+                _cosmosContext.Update(cosmosBook);        //#F
+                await CosmosSaveChangesWithChecksAsync(   //#F
+                    WhatDoing.Updating, bookId);          //#F
             }
             else
             {
-                await DeleteCosmosBookAsync(bookId);
+                await DeleteCosmosBookAsync(bookId);  //#G
             }
         }
         /***************************************************************
@@ -75,8 +75,9 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
         #B The Book App can be run without access to Cosmos DB, in which case it exits immediately 
         #C This methods uses a Select method similar to the one used in chapter 2, to a CosmosBook entity class
         #D If the CosmosBook is successfully filled, then it executes the Cosmos update code
-        #E This updates the CosmosBook to the cosmosContext and then calls a method to save it to the database
-        #F If the SQL book wasn't found we ensure the Cosmos database version was removed
+        #E It is possible to get multiple add/updates. This ignores any later updates
+        #F This updates the CosmosBook to the cosmosContext and then calls a method to save it to the database
+        #G If the SQL book wasn't found we ensure the Cosmos database version was removed
          ***************************************************************/
 
         public async Task DeleteCosmosBookAsync(int bookId)
