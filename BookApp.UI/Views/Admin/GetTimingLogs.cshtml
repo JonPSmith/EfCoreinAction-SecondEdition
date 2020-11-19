@@ -63,12 +63,14 @@
             @Model.AllTimings.MinMillisecond.ToString("F2")
         </dd>
     </dl>
-    <h4>All timings</h4>
-    <ol>
+    <h4>All timings (ms.)</h4>
+    <table class="text-right">
         @foreach (var time in @Model.Timings)
         {
-            <li>@time.ToString("N1") ms.</li>
+            <tr>
+                <td>@time.ToString("N1")</td>
+            </tr>
         }
-    </ol>
+    </table>
 </div>
 
