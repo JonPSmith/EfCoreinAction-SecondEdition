@@ -15,7 +15,8 @@ namespace BookApp.Infrastructure.LoggingServices
         private static string[] UrlsToIgnore = new string[]
         {
             "http://localhost:59382/favicon.ico",
-            "http://localhost:59382/Admin/GetTimingLogs"
+            "http://localhost:59382/Admin/GetTimingLogs",
+            "http://localhost:59382/Logger/GetLog"
         };
 
         public HttpTimingLog(string loggedUrl)
@@ -32,7 +33,7 @@ namespace BookApp.Infrastructure.LoggingServices
 
         public static void AddLog(string url, string eventString)
         {
-            if (UrlsToIgnore.Contains(url))
+            if (UrlsToIgnore.Any(url.StartsWith))
                 return;
 
             if (_lastTimingLog?.LoggedUrl != url)
