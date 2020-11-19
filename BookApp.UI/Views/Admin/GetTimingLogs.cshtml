@@ -1,0 +1,74 @@
+﻿@model BookApp.Infrastructure.LoggingServices.TimingThisUrl
+
+@{
+    ViewData["Title"] = "GetTimingLogs";
+}
+
+<h1>Timing logs for url</h1>
+
+<div>
+    <p>URL = @Model.Url</p>
+    <hr />
+    <p>Last access at @Model.LastAccessed.ToString("t")</p>
+
+    @if (@Model.Timings.Count <= Model.LastN)
+    {
+        <h5>No enough timings to give the @Model.LastN stats</h5>
+    }
+    else
+    {
+        <h4>Last @Model.LastN</h4>
+        <dl class="row">
+
+            <dt class="col-sm-2">
+                Last @Model.LastN Average ms.
+            </dt>
+            <dd class="col-sm-10">
+                @Model.LastNTimings.AverageMilliseconds.ToString("F2")
+            </dd>
+            <dt class="col-sm-2">
+                Last @Model.LastN Max ms.
+            </dt>
+            <dd class="col-sm-10">
+                @Model.LastNTimings.MaxMillisecond.ToString("F2")
+            </dd>
+            <dt class="col-sm-2">
+                Last @Model.LastN Min ms.
+            </dt>
+            <dd class="col-sm-10">
+                @Model.LastNTimings.MinMillisecond.ToString("F2")
+            </dd>
+        </dl>
+    }
+
+    
+    <h4>Overall all timings</h4>
+    <dl class="row">
+        <dt class="col-sm-2">
+            All Average ms.
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AllTimings.AverageMilliseconds.ToString("F2")
+        </dd>
+        <dt class="col-sm-2">
+            All Max ms.
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AllTimings.MaxMillisecond.ToString("F2")
+        </dd>
+        <dt class="col-sm-2">
+            All Min ms.
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AllTimings.MinMillisecond.ToString("F2")
+        </dd>
+    </dl>
+    <h4>All timings</h4>
+    <ol>
+        @foreach (var time in @Model.Timings)
+        {
+            <li>@time.ToString("N1") ms.</li>
+        }
+    </ol>
+</div>
+
