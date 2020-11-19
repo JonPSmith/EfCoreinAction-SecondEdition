@@ -4,6 +4,7 @@
 using System;
 using BookApp.Infrastructure.LoggingServices;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace BookApp.UI.Logger
@@ -54,6 +55,11 @@ namespace BookApp.UI.Logger
                 var currHttpContext = _httpAccessor().HttpContext;
                 HttpRequestLog.AddLog(currHttpContext?.TraceIdentifier ?? NonHttpLogsIdentifier,
                     logLevel, eventId, formatter(state, exception));
+                if (currHttpContext != null && eventId.Name == "RequestFinished")
+                {
+                    var currentUrl = currHttpContext?.Request.GetEncodedUrl();
+                    HttpTimingLog.AddLog(currentUrl, state.ToString());
+                }
             }
 
             public IDisposable BeginScope<TState>(TState state)
