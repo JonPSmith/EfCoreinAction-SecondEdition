@@ -94,11 +94,12 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
                 case BooksFilterBy.NoFilter:
                     return null;
                 case BooksFilterBy.ByVotes:
-                    return $" WHERE c.ReviewsAverageVotes > {options.FilterValue}";
+                    return $" WHERE c.ReviewsAverageVotes > {options.FilterValue} ";
                 case BooksFilterBy.ByTags:
-                    return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
+                    return $" WHERE CONTAINS(c.TagsString, '{options.FilterValue}') ";
+                    //return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
                 case BooksFilterBy.ByPublicationYear:
-                    return $" WHERE c.YearPublished > {options.FilterValue} AND c.PublishedOn > {DateTime.UtcNow}";
+                    return $" WHERE c.YearPublished > {options.FilterValue} AND c.PublishedOn > {DateTime.UtcNow} ";
             }
             throw new NotImplementedException();
         }
@@ -131,7 +132,7 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
             return
 @"SELECT c.BookId, c.Title, c.PublishedOn, c.EstimatedDate, c.YearPublished,
 c.OrgPrice, c.ActualPrice, c.PromotionalText, c.ManningBookUrl,
-c.AuthorsOrdered, c.ReviewsCount, c.ReviewsAverageVotes, c.Tags
+c.AuthorsOrdered, c.ReviewsCount, c.ReviewsAverageVotes, c.Tags, c.TagsString
 FROM c
 ";
         }

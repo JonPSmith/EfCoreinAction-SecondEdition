@@ -63,7 +63,7 @@
             @Model.AllTimings.MinMillisecond.ToString("F2")
         </dd>
     </dl>
-    <h4>All timings (ms.)</h4>
+    <h4>All @Model.Timings.Count timings (ms.)</h4>
     <table class="text-right">
         @foreach (var time in @Model.Timings)
         {
