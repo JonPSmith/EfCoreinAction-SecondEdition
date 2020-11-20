@@ -12,11 +12,16 @@ namespace BookApp.Infrastructure.LoggingServices
     {
         private static HttpTimingLog _lastTimingLog;
 
-        private static string[] UrlsToIgnore = new string[]
+        private static readonly string[] UrlsToIgnore = new string[]
         {
             "http://localhost:59382/favicon.ico",
             "http://localhost:59382/Admin/GetTimingLogs",
-            "http://localhost:59382/Logger/GetLog"
+            "http://localhost:59382/Logger/GetLog",
+            "http://localhost:59382/CosmosEf/GetFilterSearchContent",
+            "http://localhost:59382/CosmosDirect/GetFilterSearchContent",
+            "http://localhost:59382/DapperSql/GetFilterSearchContent",
+            "http://localhost:59382/CachedSql/GetFilterSearchContent",
+            "http://localhost:59382/lib/"
         };
 
         public HttpTimingLog(string loggedUrl)
