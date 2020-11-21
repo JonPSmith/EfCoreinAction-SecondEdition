@@ -99,7 +99,9 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
                     return $" WHERE CONTAINS(c.TagsString, '{options.FilterValue}') ";
                     //return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
                 case BooksFilterBy.ByPublicationYear:
-                    return $" WHERE c.YearPublished > {options.FilterValue} AND c.PublishedOn > {DateTime.UtcNow} ";
+                    return options.FilterValue == BookListDtoFilter.AllBooksNotPublishedString 
+                        ? $" WHERE c.PublishedOn > '{DateTime.UtcNow:yyyy-MM-dd}' " 
+                        : $" WHERE c.YearPublished > {options.FilterValue} ";
             }
             throw new NotImplementedException();
         }
