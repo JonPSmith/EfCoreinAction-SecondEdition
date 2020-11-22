@@ -10,21 +10,54 @@ using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.UI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Test.TestHelpers;
+using TestSupport.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestPersistenceCosmosDbBooks
 {
     public class TestCosmosDbContext
     {
+        private ITestOutputHelper _output;
+
+        public TestCosmosDbContext(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         [Fact]
         public void TestAccessCosmosEmulator()
         {
             //SETUP
             var options = this.GetCosmosDbOptions<CosmosDbContext>();
             using var context = new CosmosDbContext(options);
+
+            //ATTEMPT
+            context.Database.EnsureCreated();
+
+            //VERIFY
+        }
+
+        [Fact]
+        public void TestAccessCosmosEmulatorWithLogging()
+        {
+            //SETUP
+            var config = AppSettings.GetConfiguration();
+            var connectionString = config.GetConnectionString(CosmosSetupHelpers.CosmosConnectionName);
+            var dbSettings = new CosmosDbSettings(connectionString, GetType().Name);
+            var builder = new DbContextOptionsBuilder<CosmosDbContext>()
+                .UseCosmos(
+                    dbSettings.ConnectionString,
+                    dbSettings.DatabaseName)
+                .LogTo(_output.WriteLine, LogLevel.Information);
+            using var context = new CosmosDbContext(builder.Options);
 
             //ATTEMPT
             context.Database.EnsureCreated();
