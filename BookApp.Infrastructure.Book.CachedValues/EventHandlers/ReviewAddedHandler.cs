@@ -9,7 +9,6 @@ using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
-    [DoNotAutoRegister]
     public class ReviewAddedHandler :                 
         IBeforeSaveEventHandler<BookReviewAddedEvent> //#A
     {
