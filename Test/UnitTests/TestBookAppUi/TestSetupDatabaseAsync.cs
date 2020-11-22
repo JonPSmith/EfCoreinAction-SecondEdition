@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using BookApp.Infrastructure.Books.CachedValues.EventHandlers;
 using BookApp.Infrastructure.Books.CosmosDb;
 using BookApp.Infrastructure.Books.CosmosDb.EventsHandlers;
 using BookApp.Infrastructure.Books.CosmosDb.Services;
@@ -16,7 +15,6 @@ using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.UI.HelperExtensions;
 using GenericEventRunner.ForSetup;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -24,8 +22,6 @@ using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
-using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestBookAppUi

@@ -3,21 +3,47 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace BookApp.Infrastructure.Books.CosmosDb.Services
 {
     public class BookToCosmosBookService : IBookToCosmosBookService
     {
+        private class LogCosmosCommand : IDisposable
+        {
+            private readonly string _command;
+            private readonly ILogger _myLogger;
+            private readonly Stopwatch _stopwatch = new Stopwatch();
+
+            public LogCosmosCommand(string command, CosmosDbContext context)
+            {
+                _command = command;
+                _myLogger = context.GetService<ILoggerFactory>().CreateLogger(nameof(BookToCosmosBookService));
+                _stopwatch.Start();
+            }
+
+            public void Dispose()
+            {
+                _stopwatch.Stop();
+                _myLogger.LogInformation(new EventId(1, LogParts.CosmosEventName),
+                    $"Cosmos Query. Execute time = {_stopwatch.ElapsedMilliseconds} ms.\n" + _command);
+            }
+        }
+
         private readonly BookDbContext _sqlContext;
         private readonly CosmosDbContext _cosmosContext;
+        private readonly ILogger _myLogger;
 
         private bool CosmosNotConfigured => _cosmosContext == null;
 
@@ -25,6 +51,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
         {
             _sqlContext = sqlContext ?? throw new ArgumentNullException(nameof(sqlContext));
             _cosmosContext = cosmosContext;
+            _myLogger = _cosmosContext?.GetService<ILoggerFactory>().CreateLogger(nameof(BookToCosmosBookService));
         }
 
         public async Task AddCosmosBookAsync(int bookId) 
@@ -46,21 +73,21 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             }
         }
 
-
         public async Task UpdateCosmosBookAsync(int bookId) //#A
         {
             if (CosmosNotConfigured)  //#B
                 return;               //#B
 
-            var cosmosBook = await MapBookToCosmosBookAsync(bookId); //#C
+            var alreadyUpdated  = _cosmosContext      //#C
+                .ChangeTracker.Entries<CosmosBook>()  //#C
+                .Any(x => x.Entity.BookId == bookId); //#C
+            if (alreadyUpdated)                       //#C
+                return;                               //#C
 
-            if (cosmosBook != null) //#D
+            var cosmosBook = await MapBookToCosmosBookAsync(bookId); //#D
+
+            if (cosmosBook != null) //#E
             {
-                var existingEntry = _cosmosContext        //#E
-                    .Find<CosmosBook>(cosmosBook.BookId); //#E
-                if (existingEntry != null)                //#E
-                    return;                               //#E
-
                 _cosmosContext.Update(cosmosBook);        //#F
                 await CosmosSaveChangesWithChecksAsync(   //#F
                     WhatDoing.Updating, bookId);          //#F
@@ -72,10 +99,10 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
         }
         /***************************************************************
         #A This method is called by the BookUpdated event handler, with the BookId of the SQL book
-        #B The Book App can be run without access to Cosmos DB, in which case it exits immediately 
-        #C This methods uses a Select method similar to the one used in chapter 2, to a CosmosBook entity class
-        #D If the CosmosBook is successfully filled, then it executes the Cosmos update code
-        #E It is possible to get multiple add/updates. This ignores any later updates
+        #B It is possible to get multiple add/updates. This ignores any later updates
+        #C The Book App can be run without access to Cosmos DB, in which case it exits immediately 
+        #D This method uses a Select method similar to the one used in chapter 2, to a CosmosBook entity class
+        #E If the CosmosBook is successfully filled, then it executes the Cosmos update code
         #F This updates the CosmosBook to the cosmosContext and then calls a method to save it to the database
         #G If the SQL book wasn't found we ensure the Cosmos database version was removed
          ***************************************************************/
@@ -105,37 +132,41 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
         private async Task CosmosSaveChangesWithChecksAsync //#A
             (WhatDoing whatDoing, int bookId)  //#B
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             try
             {
-                await _cosmosContext.SaveChangesAsync(); 
+                await _cosmosContext.SaveChangesAsync();
             }
             catch (CosmosException e) //#C
             {
-                if (e.StatusCode == HttpStatusCode.NotFound  //#D
-                    && whatDoing == WhatDoing.Updating)      //#D
+                if (e.StatusCode == HttpStatusCode.NotFound //#D
+                    && whatDoing == WhatDoing.Updating) //#D
                 {
-                    var updateVersion = _cosmosContext   //#E
-                        .Find<CosmosBook>(bookId);       //#E
-                    _cosmosContext.Entry(updateVersion)  //#E
-                        .State = EntityState.Detached;   //#E
+                    var updateVersion = _cosmosContext //#E
+                        .Find<CosmosBook>(bookId); //#E
+                    _cosmosContext.Entry(updateVersion) //#E
+                        .State = EntityState.Detached; //#E
 
-                    await AddCosmosBookAsync(bookId);       //#F
+                    await AddCosmosBookAsync(bookId); //#F
                 }
-                else if (e.StatusCode == HttpStatusCode.NotFound  //#G
-                         && whatDoing == WhatDoing.Deleting)      //#G
-                {                                                 //#G
+                else if (e.StatusCode == HttpStatusCode.NotFound //#G
+                         && whatDoing == WhatDoing.Deleting) //#G
+                {
+                    //#G
                     //Do nothing as already deleted               //#G
-                }                                                 //#G
-                else        //#H
-                {           //#H
-                    throw;  //#H
-                }           //#H
+                } //#G
+                else //#H
+                {
+                    //#H
+                    throw; //#H
+                } //#H
             }
             catch (DbUpdateException e) //#I
             {
-                var cosmosException = e.InnerException as CosmosException;   //#J
-                if (cosmosException?.StatusCode == HttpStatusCode.Conflict   //#K
-                    && whatDoing == WhatDoing.Adding)                        //#K
+                var cosmosException = e.InnerException as CosmosException; //#J
+                if (cosmosException?.StatusCode == HttpStatusCode.Conflict //#K
+                    && whatDoing == WhatDoing.Adding) //#K
                 {
                     var updateVersion = _cosmosContext.Find<CosmosBook>(bookId);
                     _cosmosContext.Entry(updateVersion)
@@ -146,6 +177,12 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 {
                     throw;
                 }
+            }
+            finally
+            {
+                stopwatch.Stop();
+                _myLogger.LogInformation(new EventId(1, LogParts.CosmosEventName),
+                    $"Cosmos SaveChangesAsync for {whatDoing}. Execute time = {stopwatch.ElapsedMilliseconds} ms.\n");
             }
         }
         /**************************************************************
