@@ -22,6 +22,7 @@ using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestBookAppUi
@@ -60,8 +61,8 @@ namespace Test.UnitTests.TestBookAppUi
         }
 
 
-        [RunnableInDebugOnly]
-        public async Task TestBookDbContextAddReviewCacheUpdatedOk()
+        [Fact]
+        public async Task TestSetupDatabaseAsyncOnlyOneUpdateOfCosmosOk()
         {
             //SETUP
             var booksOption = this.CreateUniqueClassOptions<BookDbContext>();
@@ -69,7 +70,7 @@ namespace Test.UnitTests.TestBookAppUi
             var cosmosOption = this.GetCosmosDbOptions<CosmosDbContext>();
             var services = new ServiceCollection();
 
-            services.RegisterGenericEventRunner(Assembly.GetAssembly(typeof(BookAddedHandlerAsync)));
+            services.RegisterGenericEventRunner(Assembly.GetAssembly(typeof(BookChangeHandlerAsync)));
             services.AddTransient<IBookToCosmosBookService, BookToCosmosBookService>();
 
             services.AddSingleton(booksOption);

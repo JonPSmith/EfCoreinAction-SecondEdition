@@ -78,33 +78,26 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             if (CosmosNotConfigured)  //#B
                 return;               //#B
 
-            var alreadyUpdated  = _cosmosContext      //#C
-                .ChangeTracker.Entries<CosmosBook>()  //#C
-                .Any(x => x.Entity.BookId == bookId); //#C
-            if (alreadyUpdated)                       //#C
-                return;                               //#C
+            var cosmosBook = await MapBookToCosmosBookAsync(bookId); //#C
 
-            var cosmosBook = await MapBookToCosmosBookAsync(bookId); //#D
-
-            if (cosmosBook != null) //#E
+            if (cosmosBook != null) //#D
             {
-                _cosmosContext.Update(cosmosBook);        //#F
-                await CosmosSaveChangesWithChecksAsync(   //#F
-                    WhatDoing.Updating, bookId);          //#F
+                _cosmosContext.Update(cosmosBook);        //#E
+                await CosmosSaveChangesWithChecksAsync(   //#E
+                    WhatDoing.Updating, bookId);          //#E
             }
             else
             {
-                await DeleteCosmosBookAsync(bookId);  //#G
+                await DeleteCosmosBookAsync(bookId);  //#F
             }
         }
         /***************************************************************
         #A This method is called by the BookUpdated event handler, with the BookId of the SQL book
-        #B It is possible to get multiple add/updates. This ignores any later updates
-        #C The Book App can be run without access to Cosmos DB, in which case it exits immediately 
-        #D This method uses a Select method similar to the one used in chapter 2, to a CosmosBook entity class
-        #E If the CosmosBook is successfully filled, then it executes the Cosmos update code
-        #F This updates the CosmosBook to the cosmosContext and then calls a method to save it to the database
-        #G If the SQL book wasn't found we ensure the Cosmos database version was removed
+        #B The Book App can be run without access to Cosmos DB, in which case it exits immediately 
+        #C This method uses a Select method similar to the one used in chapter 2, to a CosmosBook entity class
+        #D If the CosmosBook is successfully filled, then it executes the Cosmos update code
+        #E This updates the CosmosBook to the cosmosContext and then calls a method to save it to the database
+        #F If the SQL book wasn't found we ensure the Cosmos database version was removed
          ***************************************************************/
 
         public async Task DeleteCosmosBookAsync(int bookId)

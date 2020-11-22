@@ -146,13 +146,13 @@ namespace Test.UnitTests.Chapter12Tests
             //VERIFY
             services.Contains(new ServiceDescriptor(typeof(IEventRunner),
                 typeof(EventRunner),
-                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
+                ServiceLifetime.Transient), new ServiceDescriptorIncludeLifeTimeCompare()).ShouldBeTrue();
             services.Contains(new ServiceDescriptor(typeof(IEventHandler<LocationChangedEvent>),
                 typeof(LocationChangedEventHandler),
-                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
+                ServiceLifetime.Transient), new ServiceDescriptorIncludeLifeTimeCompare()).ShouldBeTrue();
             services.Contains(new ServiceDescriptor(typeof(IEventHandler<LocationChangedEvent>),
                 typeof(LocationChangedEventHandler),
-                ServiceLifetime.Transient), new ServiceDescriptorCompare()).ShouldBeTrue();
+                ServiceLifetime.Transient), new ServiceDescriptorIncludeLifeTimeCompare()).ShouldBeTrue();
         }
 
         private static DomainEventsDbContext SetupDependencyInjectionAndGetDbContext()

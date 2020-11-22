@@ -70,7 +70,7 @@ namespace BookApp.Domain.Books
                 status.AddError(                                      
                     "You must have at least one Author for a book."); 
             
-            book.AddEvent(new BookAddedEvent(), EventToSend.DuringSave);
+            book.AddEvent(new BookChangedEvent(BookChangeTypes.Added), EventToSend.DuringSave);
 
             return status.SetResult(book); 
         }
@@ -224,7 +224,7 @@ namespace BookApp.Domain.Books
         public void SetManningBookUrl(string manningBookUrl)
         {
             ManningBookUrl = manningBookUrl;
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+            AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
         }
 
         public void AlterSoftDelete(bool softDeleted)
@@ -232,8 +232,8 @@ namespace BookApp.Domain.Books
             if (SoftDeleted != softDeleted)
             {
                 AddEvent(softDeleted 
-                    ? (IEntityEvent) new BookDeleteEvent()
-                    : (IEntityEvent) new BookAddedEvent(), EventToSend.DuringSave);
+                    ? (IEntityEvent) new BookChangedEvent(BookChangeTypes.Deleted)
+                    : (IEntityEvent) new BookChangedEvent(BookChangeTypes.Added), EventToSend.DuringSave);
             }
             SoftDeleted = softDeleted;
         }
@@ -241,7 +241,7 @@ namespace BookApp.Domain.Books
         public void UpdatePublishedOn(DateTime publishedOn)
         {
             PublishedOn = publishedOn;
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+            AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
@@ -256,7 +256,7 @@ namespace BookApp.Domain.Books
 
             AddEvent(new BookReviewAddedEvent(numStars, //#C
                 UpdateReviewCachedValues)); //#D
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+            AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
         }
 
         //This works with the GenericServices' IncludeThen Attribute to pre-load the Reviews collection
@@ -274,7 +274,7 @@ namespace BookApp.Domain.Books
             
             AddEvent(new BookReviewRemovedEvent(localReview, //#F
                 UpdateReviewCachedValues)); //#D
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+            AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
         }
 
         /*******************************************************************
@@ -302,7 +302,7 @@ namespace BookApp.Domain.Books
             PromotionalText = promotionalText; 
 
             if (status.IsValid)
-                AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+                AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
 
             return status; 
         }
@@ -311,7 +311,7 @@ namespace BookApp.Domain.Books
         {
             ActualPrice = OrgPrice; 
             PromotionalText = null;
-            AddEvent(new BookUpdatedEvent(), EventToSend.DuringSave);
+            AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
         }
     }
 
