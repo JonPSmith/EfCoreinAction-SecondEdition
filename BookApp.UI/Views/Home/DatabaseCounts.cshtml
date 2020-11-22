@@ -1,0 +1,47 @@
+﻿@model BookApp.UI.Models.DatabaseStatsDto
+
+@{
+    ViewData["Title"] = "DatabaseCounts";
+}
+
+<h1>Database Counts</h1>
+
+<div>
+    <p>
+        The database that the Book App is accessing has the following data in it:
+        <table class="text-right">
+            <thead>
+            <tr>
+                <th class="text-left">Type</th>
+                <th class="text-right">Rows</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="text-left">Books&nbsp;</td>
+                <td class="text-right">@Model.NumBooks.ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="text-left">Reviews&nbsp;</td>
+                <td class="text-right">@Model.NumReviews.ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="text-left">BookAuthors&nbsp;</td>
+                <td class="text-right">@Model.NumBookAuthors.ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="text-left">Authors&nbsp;</td>
+                <td class="text-right">@Model.NumAuthors.ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="text-left">BookTags&nbsp;</td>
+                <td class="text-right">@Model.NumBookTags.ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="text-left">Tags&nbsp;</td>
+                <td class="text-right">@Model.NumTags.ToString("N0")</td>
+            </tr>
+            </tbody>
+        </table>
+    </p>
+</div>
