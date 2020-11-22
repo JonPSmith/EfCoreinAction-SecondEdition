@@ -9,8 +9,6 @@ namespace BookApp.UI.Models
 {
     public class DatabaseStatsDto
     {
-        public string Title { get; }
-
         public int NumBooks { get; }
         public int NumReviews { get; }
         public int NumBookAuthors { get; }
@@ -18,10 +16,8 @@ namespace BookApp.UI.Models
         public int NumBookTags { get; }
         public int NumTags { get; }
 
-        public DatabaseStatsDto(string title, BookDbContext context)
+        public DatabaseStatsDto(BookDbContext context)
         {
-            Title = title;
-
             NumBooks = context.Books.Count();
             NumReviews = context.Set<Review>().Count();
             NumBookAuthors = context.Set<BookAuthor>().Count();

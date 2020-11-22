@@ -13,9 +13,14 @@ namespace BookApp.UI.Controllers
     public class HomeController : BaseTraceController
     {
 
-        public IActionResult Index([FromServices]BookDbContext context, [FromServices]BookAppSettings settings)
+        public IActionResult Index([FromServices]BookAppSettings settings)
         {
-            return View(new DatabaseStatsDto(settings.Title, context));
+            return View(null, settings.Title);
+        }
+
+        public IActionResult DatabaseCounts([FromServices] BookDbContext context)
+        {
+            return View(new DatabaseStatsDto(context));
         }
 
         public IActionResult Privacy()
