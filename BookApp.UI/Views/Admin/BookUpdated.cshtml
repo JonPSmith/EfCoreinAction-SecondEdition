@@ -1,8 +1,8 @@
-﻿@model string
+﻿@model BookApp.UI.Controllers.AdminController.BookUpdatedDto
 
-<h2>@Model</h2>
+<h2>@Model.Message</h2>
 
 <p>Click the Logs menu item to see the SQL that EF Core created to update the book.</p>
 
-@Html.ActionLink("Default SQL Books", "Index", "DefaultSql")
+@Html.ActionLink("Back to book display", "Index", @Model.ControllerName)
 
