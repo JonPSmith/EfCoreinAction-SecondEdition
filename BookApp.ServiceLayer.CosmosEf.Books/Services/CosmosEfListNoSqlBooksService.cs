@@ -32,6 +32,8 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.Services
 
             options.SetupRestOfDto(booksFound.Count);
 
+            var x = _context.ChangeTracker;
+
             return booksFound;
         }
     }
