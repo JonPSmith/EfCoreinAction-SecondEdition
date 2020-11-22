@@ -143,6 +143,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 if (e.StatusCode == HttpStatusCode.NotFound //#D
                     && whatDoing == WhatDoing.Updating) //#D
                 {
+                    _myLogger.LogWarning($"Attempt to update a CosmosBook which wasn't found (fixed): BookId = {bookId}");
+
                     var updateVersion = _cosmosContext //#E
                         .Find<CosmosBook>(bookId); //#E
                     _cosmosContext.Entry(updateVersion) //#E
@@ -153,6 +155,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 else if (e.StatusCode == HttpStatusCode.NotFound //#G
                          && whatDoing == WhatDoing.Deleting) //#G
                 {
+                    _myLogger.LogWarning($"Attempt to delete a CosmosBook was already deleted (fixed): BookId = {bookId}");
                     //#G
                     //Do nothing as already deleted               //#G
                 } //#G
@@ -168,6 +171,8 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                 if (cosmosException?.StatusCode == HttpStatusCode.Conflict //#K
                     && whatDoing == WhatDoing.Adding) //#K
                 {
+                    _myLogger.LogWarning($"Attempt to add a CosmosBook which was already there (fixed): BookId = {bookId}");
+
                     var updateVersion = _cosmosContext.Find<CosmosBook>(bookId);
                     _cosmosContext.Entry(updateVersion)
                         .State = EntityState.Detached;
