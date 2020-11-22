@@ -11,7 +11,6 @@ using StatusGeneric;
 
 namespace BookApp.Infrastructure.Books.CachedValues.EventHandlers
 {
-    [DoNotAutoRegister]
     public class AuthorNameUpdatedHandler : 
         IBeforeSaveEventHandler<AuthorNameUpdatedEvent> //#A
     {
