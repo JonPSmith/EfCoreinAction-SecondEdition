@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using BookApp.UI.Models;
-using Microsoft.Extensions.Options;
 
 namespace BookApp.UI.Services
 {
@@ -33,7 +32,12 @@ namespace BookApp.UI.Services
                 new MenuData("CachedSql", "SQL (cached)"),
                 new MenuData("DapperSql", "SQL (Dapper)")
             },
-        };
+            [BookAppMenuSettings.CosmosOnly] = new List<MenuData>
+            {
+                new MenuData("CosmosEf", "Cosmos (EF)"),
+                new MenuData("CosmosDirect", "Cosmos (Direct)")
+            },
+            };
 
         public MenuBuilder(BookAppSettings settings)
         {

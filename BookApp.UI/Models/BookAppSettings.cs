@@ -2,11 +2,12 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
+using BookApp.UI.Controllers;
 using Microsoft.Extensions.Configuration;
 
 namespace BookApp.UI.Models
 {
-    public enum BookAppMenuSettings { Basic, SqlOnly, SqlAndCosmos, All}
+    public enum BookAppMenuSettings { Basic, SqlOnly, SqlAndCosmos, CosmosOnly, All}
     public class BookAppSettings
     {
         public string Title { get; set; }
@@ -16,6 +17,23 @@ namespace BookApp.UI.Models
         public string CosmosDatabaseName { get; set; }
 
         public bool CosmosAvailable => CosmosConnectionString != null;
+
+        public string GetDisplayControllerBasedOnTheMenuSet()
+        {
+            switch (MenuSet)
+            {
+                case BookAppMenuSettings.Basic:
+                case BookAppMenuSettings.SqlOnly:
+                    return "DefaultSql";
+                case BookAppMenuSettings.SqlAndCosmos:
+                case BookAppMenuSettings.CosmosOnly:
+                case BookAppMenuSettings.All:
+                    return "CosmosEf";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
 
         public static BookAppSettings GetBookAppSettings(IConfiguration config)
         {

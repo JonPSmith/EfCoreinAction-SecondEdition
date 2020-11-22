@@ -12,6 +12,7 @@ using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.UI.HelperExtensions;
+using BookApp.UI.Models;
 using GenericServices;
 using GenericServices.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,26 @@ namespace BookApp.UI.Controllers
 {
     public class AdminController : BaseTraceController
     {
+        private readonly string _backToDisplayController;
+
+        public class BookUpdatedDto
+        {
+            public BookUpdatedDto(string message, string controllerName)
+            {
+                Message = message;
+                ControllerName = controllerName;
+            }
+
+            public string Message { get; }
+            public string ControllerName { get; } 
+        }
+
+        public AdminController(BookAppSettings settings)
+        {
+            _backToDisplayController = settings.GetDisplayControllerBasedOnTheMenuSet();
+        }
+
+
         public async Task<IActionResult> ChangePubDate(int id, [FromServices]ICrudServicesAsync<BookDbContext> service) 
         {
             Request.ThrowErrorIfNotLocal(); 
@@ -40,7 +61,7 @@ namespace BookApp.UI.Controllers
             await service.UpdateAndSaveAsync(dto);
             SetupTraceInfo();
             if (service.IsValid)
-                return View("BookUpdated", service.Message);
+                return View("BookUpdated", new BookUpdatedDto(service.Message, _backToDisplayController));
 
             //Error state
             service.CopyErrorsToModelState(ModelState, dto);
@@ -67,7 +88,7 @@ namespace BookApp.UI.Controllers
             await service.UpdateAndSaveAsync(dto);
             SetupTraceInfo();
             if (!service.HasErrors)
-                return View("BookUpdated", service.Message);
+                return View("BookUpdated", new BookUpdatedDto(service.Message, _backToDisplayController));
 
             //Error state
             service.CopyErrorsToModelState(ModelState, dto);
@@ -98,7 +119,7 @@ namespace BookApp.UI.Controllers
             await service.UpdateAndSaveAsync(dto, nameof(Book.RemovePromotion));
             SetupTraceInfo();
             if (service.IsValid)
-                return View("BookUpdated", service.Message);
+                return View("BookUpdated", new BookUpdatedDto(service.Message, _backToDisplayController));
 
             //Error state
             service.CopyErrorsToModelState(ModelState, dto);
@@ -130,7 +151,7 @@ namespace BookApp.UI.Controllers
             await service.UpdateAndSaveAsync(dto);
             SetupTraceInfo();
             if (service.IsValid)
-                return View("BookUpdated", service.Message);
+                return View("BookUpdated", new BookUpdatedDto(service.Message, _backToDisplayController));
 
             //Error state
             service.CopyErrorsToModelState(ModelState, dto);
@@ -144,7 +165,9 @@ namespace BookApp.UI.Controllers
             await service.UpdateAndSaveAsync(dto);
             SetupTraceInfo();
 
-            return View("BookUpdated", service.IsValid ? "Successfully (soft) deleted the book" : service.GetAllErrors());
+            return View("BookUpdated", new BookUpdatedDto(
+                service.IsValid ? "Successfully (soft) deleted the book" : service.GetAllErrors(),
+                _backToDisplayController));
         }
 
         public async Task<IActionResult> ListSoftDeleted([FromServices] ICrudServicesAsync<BookDbContext> service)
@@ -165,8 +188,7 @@ namespace BookApp.UI.Controllers
             softDeletedBook.AlterSoftDelete(false);
             await context.SaveChangesAsync();
             SetupTraceInfo();
-
-            return View("BookUpdated", "Successfully un (soft) deleted the book");
+            return View("BookUpdated", new BookUpdatedDto("Successfully un (soft) deleted the book", _backToDisplayController));
         }
 
         //------------------------------------------------------------
