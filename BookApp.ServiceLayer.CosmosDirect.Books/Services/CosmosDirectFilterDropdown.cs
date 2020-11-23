@@ -4,23 +4,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using BookApp.Persistence.CosmosDb.Books;
-using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using Microsoft.Azure.Cosmos;
 
 namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
 {
-    public static class CosmosFilterDropdown
+    public static class CosmosDirectFilterDropdown
     {
         public static async Task<IEnumerable<DropdownTuple>> GetFilterDropDownValuesAsync(this CosmosDbContext context,
             BooksFilterBy filterBy, string databaseName)
         {
             var container = context.GetCosmosContainerFromDbContext(databaseName);
-
 
             switch (filterBy)
             {

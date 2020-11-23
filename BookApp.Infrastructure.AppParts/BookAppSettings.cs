@@ -2,10 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using BookApp.UI.Controllers;
-using Microsoft.Extensions.Configuration;
 
-namespace BookApp.UI.Models
+namespace BookApp.Infrastructure.AppParts
 {
     public enum BookAppMenuSettings { Basic, SqlOnly, SqlAndCosmos, CosmosOnly, All}
     public class BookAppSettings
@@ -32,26 +30,6 @@ namespace BookApp.UI.Models
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-
-        public static BookAppSettings GetBookAppSettings(IConfiguration config)
-        {
-            var setupNumString = config["SetupVersion"];
-            if (setupNumString == null || !int.TryParse(setupNumString, out var versionNum))
-                throw new InvalidOperationException("There must be a 'SetupVersion' integer in the appsettings.json file");
-
-            return GetBookAppSettings(config, versionNum);
-        }
-
-        public static BookAppSettings GetBookAppSettings(IConfiguration config, int versionNum)
-        {
-            var settings = new BookAppSettings();
-            config.GetSection($"Setup{versionNum}").Bind(settings);
-            if (settings.Title == null)
-                throw new InvalidOperationException($"Could not find 'Setup{versionNum}' section in appsettings.json file");
-
-            return settings;
         }
 
         public override string ToString()

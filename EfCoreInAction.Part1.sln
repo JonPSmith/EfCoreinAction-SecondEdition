@@ -51,7 +51,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.Book
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.CosmosEf.Books", "BookApp.ServiceLayer.CosmosEf.Books\BookApp.ServiceLayer.CosmosEf.Books.csproj", "{9D887A84-14AA-49AE-AD1C-075AE291F2C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.CosmosDirect.Books", "BookApp.ServiceLayer.CosmosDirect.Books\BookApp.ServiceLayer.CosmosDirect.Books.csproj", "{8106DA87-FF8A-4288-A37C-31A564BCB393}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.CosmosDirect.Books", "BookApp.ServiceLayer.CosmosDirect.Books\BookApp.ServiceLayer.CosmosDirect.Books.csproj", "{8106DA87-FF8A-4288-A37C-31A564BCB393}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.AppParts", "BookApp.Infrastructure.AppParts\BookApp.Infrastructure.AppParts.csproj", "{C7999415-EDE0-4642-AA23-1FDF97E65C51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,10 @@ Global
 		{8106DA87-FF8A-4288-A37C-31A564BCB393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8106DA87-FF8A-4288-A37C-31A564BCB393}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8106DA87-FF8A-4288-A37C-31A564BCB393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7999415-EDE0-4642-AA23-1FDF97E65C51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7999415-EDE0-4642-AA23-1FDF97E65C51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7999415-EDE0-4642-AA23-1FDF97E65C51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7999415-EDE0-4642-AA23-1FDF97E65C51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

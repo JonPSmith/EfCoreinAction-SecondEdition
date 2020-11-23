@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.Infrastructure.AppParts;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.Services;
@@ -117,10 +118,10 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             context.AddRange(book1, book2);
             await context.SaveChangesAsync();
 
-            var service = new CosmosEfBookFilterDropdownService(context);
+            var service = new CosmosEfBookFilterDropdownService(context, new BookAppSettings{CosmosDatabaseName  = GetType().Name}, null);
 
             //ATTEMPT
-            var dropdown = await service.GetFilterDropDownValuesAsync(CosmosBooksFilterBy.ByPublicationYear);
+            var dropdown = await service.GetFilterDropDownValuesAsync(BooksFilterBy.ByPublicationYear);
 
             //VERIFY
             dropdown.Select(x => x.Text).ShouldEqual(new []{ "Coming Soon", "2000"});

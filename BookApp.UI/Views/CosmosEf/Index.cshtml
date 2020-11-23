@@ -21,7 +21,7 @@
         <div class="col-sm-2">
             <label>Filter Type</label>
             <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
-                    asp-items="Html.GetEnumSelectList<CosmosBooksFilterBy>()"
+                    asp-items="Html.GetEnumSelectList<BooksFilterBy>()"
                     class="form-control"
                     onchange="BookList.filterByHasChanged(this)"></select>
         </div>
