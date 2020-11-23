@@ -6,7 +6,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Books\BookApp.Domain.Books.csproj" />
+    <ProjectReference Include="..\BookApp.Infrastructure.AppParts\BookApp.Infrastructure.AppParts.csproj" />
+    <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.CosmosDb.Books\BookApp.Persistence.CosmosDb.Books.csproj" />
+    <ProjectReference Include="..\BookApp.ServiceLayer.CosmosDirect.Books\BookApp.ServiceLayer.CosmosDirect.Books.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
   </ItemGroup>
 

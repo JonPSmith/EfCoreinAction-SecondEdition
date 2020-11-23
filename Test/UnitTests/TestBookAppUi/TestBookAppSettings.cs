@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using BookApp.Infrastructure.AppParts;
 using BookApp.UI.HelperExtensions;
 using BookApp.UI.Models;
+using BookApp.UI.Services;
 using TestSupport.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,7 +28,7 @@ namespace Test.UnitTests.TestBookAppUi
             var config = AppSettings.GetConfiguration();
 
             //ATTEMPT
-            var result = BookAppSettings.GetBookAppSettings(config);
+            var result = config.GetBookAppSettings();
 
             //VERIFY
             result.Title.ShouldEqual("Setup1");
@@ -47,7 +49,7 @@ namespace Test.UnitTests.TestBookAppUi
             //VERIFY
             for (int versionNum = 1; versionNum <= 3; versionNum++)
             {
-                var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
+                var settings = config.GetBookAppSettings(versionNum);
                 _output.WriteLine(settings.ToString());
             }
         }
@@ -60,7 +62,7 @@ namespace Test.UnitTests.TestBookAppUi
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
-            var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
+            var settings = config.GetBookAppSettings(versionNum);
 
             //ATTEMPT
             var connection = config.GetCorrectSqlConnection(settings);
@@ -76,7 +78,7 @@ namespace Test.UnitTests.TestBookAppUi
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
-            var settings = BookAppSettings.GetBookAppSettings(config, versionNum);
+            var settings = config.GetBookAppSettings(versionNum);
 
             //ATTEMPT
             var cosmosSettings = config.GetCosmosDbSettings(settings);
@@ -91,7 +93,7 @@ namespace Test.UnitTests.TestBookAppUi
         {
             //SETUP
             var config = AppSettings.GetConfiguration();
-            var settings = BookAppSettings.GetBookAppSettings(config, 4);
+            var settings = config.GetBookAppSettings(4);
 
             //ATTEMPT
             var cosmosSettings = config.GetCosmosDbSettings(settings);

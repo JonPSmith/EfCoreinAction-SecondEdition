@@ -231,9 +231,12 @@ namespace BookApp.Domain.Books
         {
             if (SoftDeleted != softDeleted)
             {
-                AddEvent(softDeleted 
-                    ? (IEntityEvent) new BookChangedEvent(BookChangeTypes.Deleted)
-                    : (IEntityEvent) new BookChangedEvent(BookChangeTypes.Added), EventToSend.DuringSave);
+                var eventType = softDeleted
+                    ? BookChangeTypes.Deleted
+                    : BookChangeTypes.Added;
+
+                AddEvent(new BookChangedEvent(eventType)
+                    , EventToSend.DuringSave);
             }
             SoftDeleted = softDeleted;
         }
@@ -302,7 +305,9 @@ namespace BookApp.Domain.Books
             PromotionalText = promotionalText; 
 
             if (status.IsValid)
-                AddEvent(new BookChangedEvent(BookChangeTypes.Updated), EventToSend.DuringSave);
+                AddEvent(
+                    new BookChangedEvent(BookChangeTypes.Updated), 
+                    EventToSend.DuringSave);
 
             return status; 
         }

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using AutoMapper.Configuration.Annotations;
 using BookApp.BackgroundTasks;
+using BookApp.Infrastructure.AppParts;
 using BookApp.Infrastructure.Books.CachedValues;
 using BookApp.Infrastructure.Books.CachedValues.ConcurrencyHandlers;
 using BookApp.Infrastructure.Books.CachedValues.EventHandlers;
@@ -61,12 +62,10 @@ namespace BookApp.UI
                     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            //This gets the correct sql connection string based on the BookAppSettings
-
-
-            var bookAppSettings = BookAppSettings.GetBookAppSettings(Configuration);
+            var bookAppSettings = Configuration.GetBookAppSettings();
             services.AddSingleton(bookAppSettings);
 
+            //This gets the correct sql connection string based on the BookAppSettings
             var sqlConnection = Configuration.GetCorrectSqlConnection(bookAppSettings);
 
             //This registers both DbContext. Each MUST have a unique MigrationsHistoryTable for Migrations to work

@@ -96,12 +96,12 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
                 case BooksFilterBy.ByVotes:
                     return $" WHERE c.ReviewsAverageVotes > {options.FilterValue} ";
                 case BooksFilterBy.ByTags:
-                    return $" WHERE CONTAINS(c.TagsString, '{options.FilterValue}') ";
-                    //return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
+                    //return $" WHERE CONTAINS(c.TagsString, '| {options.FilterValue} |') ";
+                    return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
                 case BooksFilterBy.ByPublicationYear:
                     return options.FilterValue == BookListDtoFilter.AllBooksNotPublishedString 
                         ? $" WHERE c.PublishedOn > '{DateTime.UtcNow:yyyy-MM-dd}' " 
-                        : $" WHERE c.YearPublished > {options.FilterValue} ";
+                        : $" WHERE c.YearPublished = {options.FilterValue} AND c.PublishedOn < '{DateTime.UtcNow:yyyy-MM-dd}' ";
             }
             throw new NotImplementedException();
         }

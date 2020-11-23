@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookApp.Infrastructure.AppParts;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books;
