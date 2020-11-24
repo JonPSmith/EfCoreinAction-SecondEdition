@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "Chapter15Setup";
+}
+
+<h1>Chapter 15 Setup</h1>
+
+<p>
+    This page contains the information for running the Book App with the four types of database performance approaches.
+</p>
+<ol>
+    <li>
+        In the appsetting.json file in the BookApp.UI project you should set the "SetupVersion" to "1".
+        <br />
+        This changes the menu over to show the three new versions of code that can display books.
+    </li>
+    <li>
+        Stop the Book App if its running and then start it again. I will take some seconds (but not minutes) to start as it will be building a new SQL database.
+        <br />
+        At this point it should create a new SQL database using localdb
+    </li>
+    <li>
+        Now click on any of the four ways of displaying the books.
+        <br/>
+        Also try adding a review as see that the Cached SQL version changes too.
+    </li>
+    <li>
+        If you want more books to play with, then use Admin -> Generate Books menu item to add more. 
+        No need to wipe the database it will just add more items to what is already there.
+    </li>
+</ol>

@@ -29,6 +29,16 @@ namespace BookApp.UI.Controllers
             return View();
         }
 
+        public IActionResult Chapter15Setup()
+        {
+            return View();
+        }
+
+        public IActionResult Chapter16Setup()
+        {
+            return View();
+        }
+
         public IActionResult About()
         {
             var isLocal = Request.IsLocal();

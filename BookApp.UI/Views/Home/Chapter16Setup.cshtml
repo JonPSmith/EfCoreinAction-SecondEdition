@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewData["Title"] = "Chapter16Setup";
+}
+
+<h1>Chapter 16 Setup</h1>
+
+<p>
+    This page contains the information for running the Book App that has a two-database CQRS system.
+</p>
+<ol>
+    <li>
+        You need access to a Cosmos DB database. The easier way to do this is download and run the
+        <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator">Azure Cosmos emulator</a> and run it locally.
+        <br/>
+        <i>NOTE: At the time of writing the emulator only works on Windows.</i>
+    </li>
+    <li>
+        Make sure the Azure Cosmos emulator is running. You need this running before you can run the Book App in Cosmos mode
+    </li>
+    <li>
+        In the appsetting.json file in the BookApp.UI project you should set the "SetupVersion" to "3".
+        <br/>
+        This changes the menu over to show the Cosmos (EF) and Cosmos (Direct) and two SQL versions
+    </li>
+    <li>
+        Stop the Book App if its running and then start it again. I will take many seconds (but not minutes) to start as it will be building two new databases.
+        <br/>
+        At this point it should create a new SQL database using localdb and at the same time create a Cosmos database.
+    </li>
+    <li>
+        Now click on "Cosmos (EF)" in the menu. You should see some books on display.
+        <br/>
+        Also try adding a review as see that the Cosmos version gets updated too.
+    </li>
+</ol>
+
+<h3>Things that could go wrong.</h3>
+<ul>
+    <li><strong>You get an error.</strong>  If its about the cosmos database then check the Azure Cosmos emulator</li>
+    <li>
+        <strong>You don't get any books in the Cosmos (EF) display</strong>, but the Cached SQL has books.
+        <br />
+        This can happen if you started the Book App with the Azure Cosmos emulator.
+        The way out is to use the Admin -> Generate Books menu item. Check the "Wipe database" checkbox and create a (few) books. You can always come back and add more.
+    </li>
+</ul>

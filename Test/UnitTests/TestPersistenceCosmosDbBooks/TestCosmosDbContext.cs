@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Infrastructure.AppParts;
 using BookApp.Persistence.CosmosDb.Books;
-using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.UI.Models;
@@ -25,7 +24,7 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
 {
     public class TestCosmosDbContext
     {
-        private ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
 
         public TestCosmosDbContext(ITestOutputHelper output)
         {
@@ -90,6 +89,40 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             var readBook = await context.Books.SingleAsync();
             readBook.BookId.ShouldEqual(123);
             readBook.Tags.Select(x => x.TagId).ShouldEqual(new [] { "Tag1", "Tag2" });
+        }
+
+        [Fact]
+        public async Task TestFromSqlRaw()
+        {
+            //SETUP
+            var options = this.GetCosmosDbOptions<CosmosDbContext>();
+            using var context = new CosmosDbContext(options);
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
+
+            var book1 = new CosmosBook
+            {
+                BookId = 123,
+                Title = "Year2000",
+                PublishedOn = new DateTime(2000, 1, 1),
+                YearPublished = 2000
+            };
+            var book2 = new CosmosBook
+            {
+                BookId = 567,
+                Title = "Year3000",
+                PublishedOn = new DateTime(3000, 1, 1),
+                YearPublished = 3000
+            };
+            context.AddRange(book1, book2);
+            await context.SaveChangesAsync();
+
+            //ATTEMPT
+            var list =
+                await context.Books.FromSqlRaw("SELECT * FROM c ORDER BY c.BookId").ToListAsync();
+
+            //VERIFY
+            list.Select(x => x.BookId).ShouldEqual(new[] { 123, 567 }); //WRONG IN EF CORE 5
         }
 
         [Fact]

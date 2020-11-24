@@ -70,7 +70,8 @@ namespace BookApp.Domain.Books
                 status.AddError(                                      
                     "You must have at least one Author for a book."); 
             
-            book.AddEvent(new BookChangedEvent(BookChangeTypes.Added), EventToSend.DuringSave);
+            if (status.IsValid)
+                book.AddEvent(new BookChangedEvent(BookChangeTypes.Added), EventToSend.DuringSave);
 
             return status.SetResult(book); 
         }

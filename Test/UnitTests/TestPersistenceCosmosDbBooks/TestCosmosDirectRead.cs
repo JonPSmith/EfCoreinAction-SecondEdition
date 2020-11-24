@@ -4,14 +4,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BookApp.Domain.Books;
 using BookApp.Infrastructure.Books.CosmosDb.Services;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
-using Microsoft.Azure.Cosmos;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
