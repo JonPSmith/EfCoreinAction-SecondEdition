@@ -175,14 +175,14 @@ namespace Test.Chapter13Listings.EfClasses
             
             var reviewToAdd = new Review(        //#E
                 numStars, comment, voterName,    //#E
-                BookId);            //#F
+                BookId);            //#E
 
-            context.Add(reviewToAdd); //#G
+            context.Add(reviewToAdd); //#F
         }
 
-        public void RemoveReviewUsingContext(  //#E
-            int reviewId,    //#E
-            DbContext context) //#F
+        public void RemoveReviewUsingContext(  //#G
+            int reviewId,    //#G
+            DbContext context) //#B
         {
             if (BookId == default)                         //#C
                 throw new Exception("Book must be in db"); //#C
@@ -192,15 +192,15 @@ namespace Test.Chapter13Listings.EfClasses
                     nameof(context),               //#D    
                     "You must provide a context"); //#D    
 
-            var reviewToDelete = context.Set<Review>()         //#G
-                .SingleOrDefault(x => x.ReviewId == reviewId); //#G
+            var reviewToDelete = context.Set<Review>()         //#H
+                .SingleOrDefault(x => x.ReviewId == reviewId); //#H
 
-            if (reviewToDelete == null)           //#H            
-                throw new Exception("Not found"); //#H
-            if (reviewToDelete.BookId != BookId)           //#I
-                throw new Exception("Not linked to book"); //#I
+            if (reviewToDelete == null)           //#I            
+                throw new Exception("Not found"); //#I
+            if (reviewToDelete.BookId != BookId)           //#J
+                throw new Exception("Not linked to book"); //#J
 
-            context.Remove(reviewToDelete); //#J
+            context.Remove(reviewToDelete); //#K
         }
         /****************************************************************
         #A The access method takes the normal AddReview inputs...
@@ -209,12 +209,11 @@ namespace Test.Chapter13Listings.EfClasses
         #D This method only works if an DbContext instance is provided
         #E You create the Review, and you set the Review BookId foreign key
         #F You use the DbContext Add method to mark the new Review to be added to the database
-        #E The access method takes the normal RemoveReview input...
-        #F ... but a new parameter is added, which is EF Core DbContext
-        #G reads in the review to delete
-        #H This a rudimentary check that the review entity was found
-        #I If not linked to this Book, then throw an exception
-        #J You delete the review
+        #G The access method takes the normal RemoveReview input of the ReviewId...
+        #H reads in the review to delete
+        #I This a rudimentary check that the review entity was found
+        #J If not linked to this Book, then throw an exception
+        #K You delete the review
          ******************************************************************/
 
 
