@@ -66,7 +66,32 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestLoadWorksForMe()
+        public void TestLoadWorksForMeNoWorkingAsNoTracking()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            using (var context = new Chapter06Context(options))
+            {
+                context.Database.EnsureCreated();
+                context.AddTestEmployeesToDb();
+            }
+            using (var context = new Chapter06Context(options))
+            {
+                //ATTEMPT
+                var all = context.Employees
+                    .AsNoTracking()
+                    .Include(x => x.WorksForMe)
+                    .ToList();
+
+                //VERIFY
+                all.Count.ShouldEqual(11);
+                all.Count(x => x.Manager == null).ShouldEqual(11);
+                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
+            }
+        }
+
+        [Fact]
+        public void TestLoadWorksForMeTracked()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
@@ -79,6 +104,34 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var all = context.Employees.Include(x => x.WorksForMe)
+                    .ToList();
+
+                //VERIFY
+                all.Count.ShouldEqual(11);
+                all.Count(x => x.Manager != null).ShouldEqual(10);
+                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
+                var top = all.Single(x => x.Manager == null);
+                top.ShowHierarchical(s => _output.WriteLine(s));
+            }
+        }
+
+
+        [Fact]
+        public void TestLoadWorksForMeAsNoTrackingWithIdentityResolution()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            using (var context = new Chapter06Context(options))
+            {
+                context.Database.EnsureCreated();
+                context.AddTestEmployeesToDb();
+            }
+            using (var context = new Chapter06Context(options))
+            {
+                //ATTEMPT
+                var all = context.Employees
+                    .AsNoTrackingWithIdentityResolution()
+                    .Include(x => x.WorksForMe)
                     .ToList();
 
                 //VERIFY
