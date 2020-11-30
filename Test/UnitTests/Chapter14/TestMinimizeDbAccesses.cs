@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Test.UnitTests.Chapter14
 {
-    public class MinimiseDbAccesses
+    public class TestMinimizeDbAccesses
     {
         private readonly ITestOutputHelper _output;
 
@@ -21,7 +21,7 @@ namespace Test.UnitTests.Chapter14
         private readonly DbContextOptions<BookDbContext> _options;
         private readonly int _firstBookId;
 
-        public MinimiseDbAccesses(ITestOutputHelper output)
+        public TestMinimizeDbAccesses(ITestOutputHelper output)
         {
             _output = output;
             showLogs = false;
