@@ -3,10 +3,10 @@
 
 using System;
 using System.Linq;
+using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
-using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -110,6 +110,21 @@ namespace Test.UnitTests.Chapter14
         }
 
         [Fact]
+        public void EagerLoadAuthorSeparatelyPerformance()
+        {
+            //SETUP
+
+            //ATTEMPT
+            RunManyTests("EagerLoadAuthorSeparately:", EagerLoadAuthorSeparately, 1, 10, 100, 10, 100, 100);
+            showLogs = true;
+            RunTest(1, "EagerLoadAuthorSeparately:", EagerLoadAuthorSeparately);
+            showLogs = false;
+
+            //VERIFY
+        }
+
+
+        [Fact]
         public void ExplicitPerformance()
         {
             //SETUP
@@ -168,6 +183,17 @@ namespace Test.UnitTests.Chapter14
                 .Include(x => x.Reviews)
                 .Include(x => x.Tags)
                 .Single(x => x.BookId == id);
+        }
+
+        private void EagerLoadAuthorSeparately(BookDbContext context, int id)
+        {
+            var bookNoAuthors = context.Books
+                .Include(x => x.Reviews)
+                .Include(x => x.Tags)
+                .Single(x => x.BookId == id);
+            var authors = context.Set<BookAuthor>().Include(x => x.Author)
+                .Where(x => x.BookId == id).ToList();
+
         }
 
         private void ExplicitLoading(BookDbContext context, int id)
