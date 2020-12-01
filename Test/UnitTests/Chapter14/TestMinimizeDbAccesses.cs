@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2019 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -75,7 +76,21 @@ namespace Test.UnitTests.Chapter14
             //ATTEMPT
             RunManyTests("SelectLoad:", SelectLoad, 1, 10, 100, 10, 100, 100);
             showLogs = true;
-            RunTest(1, "First access, SelectLoad:", SelectLoad);
+            RunTest(1, "SelectLoad:", SelectLoad);
+            showLogs = false;
+
+            //VERIFY
+        }
+
+        [Fact]
+        public void SelectLoadSeparatePerformance()
+        {
+            //SETUP
+
+            //ATTEMPT
+            RunManyTests("SelectLoadSeparate:", SelectLoadSeparate, 1, 10, 100, 10, 100, 100);
+            showLogs = true;
+            RunTest(1, "SelectLoadSeparate:", SelectLoadSeparate);
             showLogs = false;
 
             //VERIFY
@@ -212,24 +227,60 @@ namespace Test.UnitTests.Chapter14
         private void SelectLoad(BookDbContext context, int id)
         {
             var book = context.Books
-                .Select(p => new
+                .Select(p => new BookListDto
                 {
-                    p.BookId,
-                    p.Publisher,
-                    p.PublishedOn,
-                    p.EstimatedDate,
-                    p.OrgPrice,
-                    p.ActualPrice,
-                    p.PromotionalText,
-                    p.ImageUrl,
-                    p.ManningBookUrl,
-                    p.LastUpdatedUtc,
+                    BookId = p.BookId,          
+                    Title = p.Title,           
+                    PublishedOn = p.PublishedOn,     
+                    EstimatedDate = p.EstimatedDate,   
+                    OrgPrice = p.OrgPrice,        
+                    ActualPrice = p.ActualPrice,     
+                    PromotionText = p.PromotionalText, 
+                    AuthorsOrdered = string.Join(", ",
+                        p.AuthorsLink                         
+                            .OrderBy(q => q.Order)        
+                            .Select(q => q.Author.Name)),
+                    TagStrings = p.Tags           
+                        .Select(x => x.TagId).ToArray(),      
                     ReviewsCount = p.Reviews.Count(),
-                    ReviewsVotes = p.Reviews.Select(x => x.NumStars).ToList(),
-                    Authors = p.AuthorsLink.OrderBy(x => x.Order).Select(x => x.Author).ToList(),
-                    Tags = p.Tags.ToList()
+                    ReviewsAverageVotes =                   
+                        p.Reviews.Select(y =>                  
+                            (double?)y.NumStars).Average(),    
+                    ManningBookUrl = p.ManningBookUrl
                 })
                 .Single(x => x.BookId == id);
+        }
+
+        private void SelectLoadSeparate(BookDbContext context, int id)
+        {
+            var dto = context.Books
+                .Select(p => new BookListDto
+                {
+                    BookId = p.BookId,          
+                    Title = p.Title,           
+                    PublishedOn = p.PublishedOn,     
+                    EstimatedDate = p.EstimatedDate,   
+                    OrgPrice = p.OrgPrice,        
+                    ActualPrice = p.ActualPrice,     
+                    PromotionText = p.PromotionalText, 
+                    AuthorsOrdered = string.Join(", ",
+                        p.AuthorsLink                         
+                            .OrderBy(q => q.Order)        
+                            .Select(q => q.Author.Name)),
+                    TagStrings = p.Tags           
+                        .Select(x => x.TagId).ToArray(),      
+                    ReviewsCount = p.Reviews.Count(),
+                    ReviewsAverageVotes =                   
+                        p.Reviews.Select(y =>                  
+                            (double?)y.NumStars).Average(),    
+                    ManningBookUrl = p.ManningBookUrl
+                })
+                .Single(x => x.BookId == id);
+            dto.AuthorsOrdered = string.Join(", ", context.Set<BookAuthor>()
+                .Where(x => x.BookId == id)
+                .OrderBy(q => q.Order)
+                .Select(q => q.Author.Name));
+
         }
     }
 }
