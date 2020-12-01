@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
-using BookApp.ServiceLayer.UtfsSql.Books;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.UI.Controllers
 {
-    public class UtfsSqlController : BaseTraceController
+    public class UdfsSqlController : BaseTraceController
     {
         public async Task<IActionResult> Index(SortFilterPageOptions options, [FromServices] IListUdfsBooksService service)
         {
@@ -22,7 +22,7 @@ namespace BookApp.UI.Controllers
 
             SetupTraceInfo();
 
-            return View(new UtfsBookListCombinedDto(options, bookList));
+            return View(new UdfsBookListCombinedDto(options, bookList));
         }
 
         /// <summary>

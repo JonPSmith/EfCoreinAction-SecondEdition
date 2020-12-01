@@ -4,16 +4,16 @@
 using System.Linq;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
+namespace BookApp.ServiceLayer.UdfsSql.Books.QueryObjects
 {
-    public static class BookUtfsListDtoSelect
+    public static class BookUdfsListDtoSelect
     {
-        public static IQueryable<UtfsBookListDto> 
-            MapBookUtfsToDto(this IQueryable<Book> books) //#A
+        public static IQueryable<UdfsBookListDto> 
+            MapBookUdfsToDto(this IQueryable<Book> books) //#A
         {
-            return books.Select(p      => new UtfsBookListDto
+            return books.Select(p      => new UdfsBookListDto
             {
                 BookId         = p.BookId, 
                 Title          = p.Title, 
@@ -35,7 +35,7 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
         }
     }
     /*****************************************************
-    #A Updated MapBookToDto method, now called MapBookUtfsToDto
+    #A Updated MapBookToDto method, now called MapBookUdfsToDto
     #B The AuthorsOrdered and TagsString are set to the strings from the UDFs
      * *******************************************************/
 }

@@ -4,15 +4,15 @@
 using System;
 using System.Linq;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
+namespace BookApp.ServiceLayer.UdfsSql.Books.QueryObjects
 {
 
-    public static class BookUtfsListDtoSort
+    public static class BookUdfsListDtoSort
     {
-        public static IQueryable<UtfsBookListDto> OrderUtfsBooksBy
-            (this IQueryable<UtfsBookListDto> books, OrderByOptions orderByOptions)
+        public static IQueryable<UdfsBookListDto> OrderUdfsBooksBy
+            (this IQueryable<UdfsBookListDto> books, OrderByOptions orderByOptions)
         {
             switch (orderByOptions)
             {

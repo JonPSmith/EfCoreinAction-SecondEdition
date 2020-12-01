@@ -4,13 +4,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books
+namespace BookApp.ServiceLayer.UdfsSql.Books
 {
     public interface IListUdfsBooksService
     {
-        Task<IQueryable<UtfsBookListDto>> SortFilterPageAsync
+        Task<IQueryable<UdfsBookListDto>> SortFilterPageAsync
             (SortFilterPageOptions options);
     }
 }

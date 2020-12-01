@@ -21,7 +21,7 @@ namespace BookApp.UI.Services
             [BookAppMenuSettings.SqlOnly] = new List<MenuData>
             {
                 new MenuData("DefaultSql", "SQL (LINQ)"),
-                new MenuData("UtfsSql", "SQL (+UTFs)"),
+                new MenuData("UdfsSql", "SQL (+UDFs)"),
                 new MenuData("DapperSql", "SQL (Dapper)"),
                 new MenuData("CachedSql", "SQL (cached)")
             },

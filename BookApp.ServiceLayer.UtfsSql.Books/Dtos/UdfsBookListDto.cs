@@ -3,9 +3,9 @@
 
 using System;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.Dtos
+namespace BookApp.ServiceLayer.UdfsSql.Books.Dtos
 {
-    public class UtfsBookListDto
+    public class UdfsBookListDto
     {
         public int BookId { get; set; } 
         public string Title { get; set; }

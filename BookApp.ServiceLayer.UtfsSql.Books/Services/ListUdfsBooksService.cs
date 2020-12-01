@@ -7,11 +7,11 @@ using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
-using BookApp.ServiceLayer.UtfsSql.Books.QueryObjects;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books.QueryObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.Services
+namespace BookApp.ServiceLayer.UdfsSql.Books.Services
 {
     public class ListUdfsBooksService : IListUdfsBooksService
     {
@@ -22,7 +22,7 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.Services
             _context = context;
         }
 
-        public async Task<IQueryable<UtfsBookListDto>> SortFilterPageAsync
+        public async Task<IQueryable<UdfsBookListDto>> SortFilterPageAsync
             (SortFilterPageOptions options)
         {
             var preQuery = _context.Books
@@ -34,16 +34,16 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.Services
                         .Contains(options.FilterValue));
             }
 
-             var booksQuery = preQuery
-                .MapBookUtfsToDto() 
-                .OrderUtfsBooksBy(options.OrderByOptions) 
-                .FilterUtfsBooksBy(options.FilterBy, 
-                    options.FilterValue); 
+            var booksQuery = preQuery
+                .MapBookUdfsToDto()
+                .OrderUdfsBooksBy(options.OrderByOptions)
+                .FilterUdfsBooksBy(options.FilterBy,
+                    options.FilterValue);
 
-            await options.SetupRestOfDtoAsync(booksQuery); 
+            await options.SetupRestOfDtoAsync(booksQuery);
 
-            return booksQuery.Page(options.PageNum - 1, 
-                options.PageSize); 
+            return booksQuery.Page(options.PageNum - 1,
+                options.PageSize);
         }
     }
 

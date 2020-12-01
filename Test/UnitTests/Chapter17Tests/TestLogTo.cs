@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
+using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -106,7 +107,7 @@ namespace Test.UnitTests.Chapter17Tests
                 }, LogLevel.Information);
 
             using var context = new BookDbContext(builder.Options);
-            context.Database.EnsureCreated();
+            context.Database.EnsureClean();
             context.SeedDatabaseFourBooks();
 
             //ATTEMPT

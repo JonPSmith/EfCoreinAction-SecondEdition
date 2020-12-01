@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.Cached
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.DapperSql.Books", "BookApp.ServiceLayer.DapperSql.Books\BookApp.ServiceLayer.DapperSql.Books.csproj", "{8EFBE2F6-A5F5-4628-BE89-9FAEE1998213}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.UtfsSql.Books", "BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UtfsSql.Books.csproj", "{6636514C-76C8-4CF4-919D-B2B61D4E3C64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.UdfsSql.Books", "BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UdfsSql.Books.csproj", "{6636514C-76C8-4CF4-919D-B2B61D4E3C64}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.BackgroundTasks", "BookApp.BackgroundTasks\BookApp.BackgroundTasks.csproj", "{861A2BB1-5398-4018-92FB-FB50CB06BFF3}"
 EndProject
@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.Cosmos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.CosmosDirect.Books", "BookApp.ServiceLayer.CosmosDirect.Books\BookApp.ServiceLayer.CosmosDirect.Books.csproj", "{8106DA87-FF8A-4288-A37C-31A564BCB393}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.Infrastructure.AppParts", "BookApp.Infrastructure.AppParts\BookApp.Infrastructure.AppParts.csproj", "{C7999415-EDE0-4642-AA23-1FDF97E65C51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.AppParts", "BookApp.Infrastructure.AppParts\BookApp.Infrastructure.AppParts.csproj", "{C7999415-EDE0-4642-AA23-1FDF97E65C51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

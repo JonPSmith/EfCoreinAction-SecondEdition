@@ -4,11 +4,11 @@
 using System.Collections.Generic;
 using BookApp.ServiceLayer.DefaultSql.Books;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.Dtos
+namespace BookApp.ServiceLayer.UdfsSql.Books.Dtos
 {
-    public class UtfsBookListCombinedDto
+    public class UdfsBookListCombinedDto
     {
-        public UtfsBookListCombinedDto(SortFilterPageOptions sortFilterPageData, IEnumerable<UtfsBookListDto> booksList)
+        public UdfsBookListCombinedDto(SortFilterPageOptions sortFilterPageData, IEnumerable<UdfsBookListDto> booksList)
         {
             SortFilterPageData = sortFilterPageData;
             BooksList = booksList;
@@ -16,6 +16,6 @@ namespace BookApp.ServiceLayer.UtfsSql.Books.Dtos
 
         public SortFilterPageOptions SortFilterPageData { get; private set; }
 
-        public IEnumerable<UtfsBookListDto> BooksList { get; private set; }
+        public IEnumerable<UdfsBookListDto> BooksList { get; private set; }
     }
 }

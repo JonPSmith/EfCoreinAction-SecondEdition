@@ -2,20 +2,18 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
-using BookApp.ServiceLayer.UtfsSql.Books.Dtos;
+using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 
-namespace BookApp.ServiceLayer.UtfsSql.Books.QueryObjects
+namespace BookApp.ServiceLayer.UdfsSql.Books.QueryObjects
 {
-    public static class BookUtfsListDtoFilter
+    public static class BookUdfsListDtoFilter
     {
         public const string AllBooksNotPublishedString = "Coming Soon";
 
-        public static IQueryable<UtfsBookListDto> FilterUtfsBooksBy(
-            this IQueryable<UtfsBookListDto> books,
+        public static IQueryable<UdfsBookListDto> FilterUdfsBooksBy(
+            this IQueryable<UdfsBookListDto> books,
             BooksFilterBy filterBy, string filterValue) 
         {
             if (string.IsNullOrEmpty(filterValue)) 
