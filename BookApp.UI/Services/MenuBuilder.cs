@@ -35,9 +35,10 @@ namespace BookApp.UI.Services
             [BookAppMenuSettings.CosmosOnly] = new List<MenuData>
             {
                 new MenuData("CosmosEf", "Cosmos (EF)"),
-                new MenuData("CosmosDirect", "Cosmos (Direct)")
-            },
-            };
+                new MenuData("CosmosDirect", "Cosmos (Direct)"),
+                new MenuData("Orders", "Your Orders")
+            }
+        };
 
         public MenuBuilder(BookAppSettings settings)
         {
