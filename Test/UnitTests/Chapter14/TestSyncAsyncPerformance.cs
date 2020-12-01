@@ -1,11 +1,9 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
-using BookApp.Domain.Orders;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
@@ -50,17 +48,17 @@ namespace Test.UnitTests.Chapter14
             using var context = new BookDbContext(_options);
 
             //ATTEMPT
-            RunManyTests("Just Book", context.Books, 10,10,10,10,10);
-            await RunManyTestsAsync("Just Book", context.Books, 10,10,10,10,10);
+            RunManyTests("Just Book", context.Books, 100,100,100,100);
+            await RunManyTestsAsync("Just Book", context.Books, 100,100,100,100);
             _output.WriteLine("---------------------------------------------");
-            RunManyTests("Book with Includes", EagerLoadingBook(context), 10,10,10,10,10);
-            await RunManyTestsAsync("Book with Includes", EagerLoadingBook(context), 10,10,10,10,10);
+            RunManyTests("Book with Includes", EagerLoadingBook(context), 100,100,100,100);
+            await RunManyTestsAsync("Book with Includes", EagerLoadingBook(context), 100,100,100,100);
             _output.WriteLine("---------------------------------------------");
-            RunManyTests("Book with Includes - split", EagerLoadingBookSplit(context), 10, 10, 10, 10, 10, 10);
-            await RunManyTestsAsync("Book with Includes - split", EagerLoadingBookSplit(context), 10, 10, 10, 10, 10, 10);
+            RunManyTests("Book with Includes - split", EagerLoadingBookSplit(context), 100,100,100,100);
+            await RunManyTestsAsync("Book with Includes - split", EagerLoadingBookSplit(context), 100,100,100,100);
             _output.WriteLine("---------------------------------------------");
-            RunManyTests("BookInclude+filterSort", EagerBookSortPriceFilterReviews(context), 10,10,10,10,10);
-            await RunManyTestsAsync("BookInclude+filterSort", EagerBookSortPriceFilterReviews(context), 10,10,10,10,10);
+            RunManyTests("BookInclude+filterSort", EagerBookSortPriceFilterReviews(context), 100,100,100,100);
+            await RunManyTestsAsync("BookInclude+filterSort", EagerBookSortPriceFilterReviews(context), 100,100,100,100);
 
 
             //VERIFY
@@ -75,7 +73,8 @@ namespace Test.UnitTests.Chapter14
                 .AsNoTracking()
                 .Include(x => x.AuthorsLink)
                 .ThenInclude(x => x.Author)
-                .Include(x => x.Reviews);
+                .Include(x => x.Reviews)
+                .Include(x => x.Tags);
         }
         private IQueryable<Book> EagerLoadingBookSplit(BookDbContext context)
         {
@@ -84,17 +83,19 @@ namespace Test.UnitTests.Chapter14
                 .AsNoTracking()
                 .Include(x => x.AuthorsLink)
                 .ThenInclude(x => x.Author)
-                .Include(x => x.Reviews);
+                .Include(x => x.Reviews)
+                .Include(x => x.Tags);
         }
 
 
         private IQueryable<Book> EagerBookSortPriceFilterReviews(BookDbContext context)
         {
-             return context.Books
-                 .AsNoTracking()
+            return context.Books
+                .AsNoTracking()
                 .Include(x => x.AuthorsLink)
                 .ThenInclude(x => x.Author)
                 .Include(x => x.Reviews)
+                .Include(x => x.Tags)
                 .Where(b => b.Reviews.ToList().Count > 3)
                 .OrderBy(b => b.ActualPrice);
         }

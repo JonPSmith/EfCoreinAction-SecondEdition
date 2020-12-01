@@ -74,7 +74,6 @@ namespace Test.UnitTests.Chapter17Tests
             #G This creates the application's DbContext, in this case the context holding the books data
              ***********************************************************/
 
-
             context.Database.EnsureCreated();
 
             //ATTEMPT

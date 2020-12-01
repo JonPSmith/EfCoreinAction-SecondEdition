@@ -25,10 +25,14 @@ namespace Test.UnitTests.Chapter14
         {
             _output = output;
             showLogs = false;
+            int count = 1;
             _options = this.CreateUniqueClassOptionsWithLogging<BookDbContext>(log =>
             {
                 if (showLogs)
+                {
+                    _output.WriteLine($"\nLOG {count++:D2}");
                     _output.WriteLine(log.ToString());
+                }
             });
 
             using var context = new BookDbContext(_options);
@@ -151,6 +155,7 @@ namespace Test.UnitTests.Chapter14
                 .Include(x => x.AuthorsLink)
                 .ThenInclude(x => x.Author)
                 .Include(x => x.Reviews)
+                .Include(x => x.Tags)
                 .Single(x => x.BookId == id);
         }
 
@@ -161,6 +166,7 @@ namespace Test.UnitTests.Chapter14
                 .Include(x => x.AuthorsLink)
                 .ThenInclude(x => x.Author)
                 .Include(x => x.Reviews)
+                .Include(x => x.Tags)
                 .Single(x => x.BookId == id);
         }
 
@@ -174,6 +180,7 @@ namespace Test.UnitTests.Chapter14
                     .Reference(r => r.Author).Load();
             }
             context.Entry(book).Collection(c => c.Reviews).Load();
+            context.Entry(book).Collection(c => c.Tags).Load();
         }
 
         private void SelectLoad(BookDbContext context, int id)
@@ -193,7 +200,8 @@ namespace Test.UnitTests.Chapter14
                     p.LastUpdatedUtc,
                     ReviewsCount = p.Reviews.Count(),
                     ReviewsVotes = p.Reviews.Select(x => x.NumStars).ToList(),
-                    Authors = p.AuthorsLink.OrderBy(x => x.Order).Select(x => x.Author).ToList()
+                    Authors = p.AuthorsLink.OrderBy(x => x.Order).Select(x => x.Author).ToList(),
+                    Tags = p.Tags.ToList()
                 })
                 .Single(x => x.BookId == id);
         }
