@@ -55,6 +55,8 @@ namespace Test.UnitTests.Chapter14
                 context.SaveChanges();
             }
 
+            context.ChangeTracker.DetectChanges();
+
             //VERIFY
 
         }
