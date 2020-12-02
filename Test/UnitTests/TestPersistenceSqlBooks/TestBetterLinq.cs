@@ -56,6 +56,21 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             }
         }
 
+        [Fact]
+        public async Task TestListBooksServiceOrderNormalOk()
+        {
+            //SETUP
+            using var context = new BookDbContext(_options);
+
+            var service = new ListBooksService(context);
+            var sfpOptions = new SortFilterPageOptions();
+
+            //ATTEMPT
+            var query = (await service.SortFilterPageAsync(sfpOptions));
+
+            //VERIFY
+            _output.WriteLine(query.ToQueryString());
+        }
 
         [Fact]
         public async Task TestListBooksServiceOrderByVotesOk()
