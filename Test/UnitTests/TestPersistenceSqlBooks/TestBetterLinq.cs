@@ -100,6 +100,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             //ATTEMPT
             RunManyTests("SortVoteNoRels", SortVotesNoRelationships, 10, 100, 100, 100);
             RunManyTests("SortVoteWithRels", SortVotesWithRelationships, 10,100,100,100);
+            RunManyTests("SortVotesSplitQueries", SortVotesWithSplitQueries, 10, 100, 100, 100);            
             RunManyTests("SortVoteRelsAfter", SortVotesRelationshipsAddedAfter, 10, 100, 100, 100);
 
             //VERIFY
@@ -111,7 +112,9 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
         private void SortVotesNoRelationships(BookDbContext context)
         {
-            var books = context.Books.Select(p => new BookListDto
+            var books = context.Books
+                .AsNoTracking()
+                .Select(p => new BookListDto
                 {
                     BookId = p.BookId,
                     Title = p.Title,
@@ -126,7 +129,9 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
         private void SortVotesWithRelationships(BookDbContext context)
         {
-            var books = context.Books.Select(p => new BookListDto
+            var books = context.Books
+                .AsNoTracking()
+                .Select(p => new BookListDto
             {
                 BookId = p.BookId,          
                 Title = p.Title,           
@@ -145,9 +150,39 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
                 .ToList();
         }
 
+        private void SortVotesWithSplitQueries(BookDbContext context)
+        {
+            var books = context.Books
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(b => b.AuthorsLink).ThenInclude(x => x.Author)
+                .Include(b => b.Reviews)
+                .Include(b => b.Tags)
+                .OrderBy(x => x.ReviewsAverageVotes)
+                .ToList()
+                .Select(b => new BookListDto
+                {
+                    BookId = b.BookId,
+                    Title = b.Title,
+
+                    AuthorsOrdered = string.Join(", ",
+                        b.AuthorsLink
+                            .OrderBy(q => q.Order)
+                            .Select(q => q.Author.Name)),
+                    TagStrings = b.Tags
+                        .Select(x => x.TagId).ToArray(),
+                    ReviewsCount = b.Reviews.Count(),
+                    ReviewsAverageVotes =
+                        b.Reviews.Select(y =>
+                            (double?)y.NumStars).Average(),
+                });
+        }
+
         private void SortVotesRelationshipsAddedAfter(BookDbContext context)
         {
-            var books = context.Books.Select(p => new BookListDto
+            var books = context.Books
+                .AsNoTracking()
+                .Select(p => new BookListDto
             {
                 BookId = p.BookId,
                 Title = p.Title,
@@ -161,10 +196,12 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
 
             books.ForEach(b =>
             { 
-                b.AuthorsOrdered = string.Join(", ", context.Set<BookAuthor>().Where(x => x.BookId == b.BookId)
+                b.AuthorsOrdered = string.Join(", ", context.Set<BookAuthor>().AsNoTracking()
+                    .Where(x => x.BookId == b.BookId)
                     .OrderBy(q => q.Order)
                     .Select(q => q.Author.Name));
-                b.TagStrings = context.Set<BookTag>().Where(x => x.BookId == b.BookId)
+                b.TagStrings = context.Set<BookTag>().AsNoTracking()
+                    .Where(x => x.BookId == b.BookId)
                     .Select(x => x.TagId).ToArray();
             });
         }
