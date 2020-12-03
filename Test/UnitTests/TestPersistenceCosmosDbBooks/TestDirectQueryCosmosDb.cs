@@ -10,22 +10,26 @@ using BookApp.Infrastructure.Books.CosmosDb.Services;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.Azure.Cosmos;
+using Test.Chapter16Listings;
 using Test.TestHelpers;
+using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestPersistenceCosmosDbBooks
 {
     public class TestDirectQueryCosmosDb : IDisposable
     {
-
+        private ITestOutputHelper _output;
         private readonly CosmosDbContext _cosmosContext;
         private readonly Container _cosmosContainer;
         private readonly BookDbContext _sqlContext;
 
-        public TestDirectQueryCosmosDb()
+        public TestDirectQueryCosmosDb(ITestOutputHelper output)
         {
+            _output = output;
             var tuple = this.GetCosmosContextAndContainer();
              _cosmosContext = tuple.cosmosContext;
              _cosmosContainer = tuple.Container;
@@ -70,6 +74,58 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             //VERIFY
             count.ShouldEqual(4);
         }
+
+        [RunnableInDebugOnly]
+        public async Task TestWritePerformanceOk()
+        {
+            //SETUP
+            await _cosmosContext.Database.EnsureDeletedAsync();
+            await _cosmosContext.Database.EnsureCreatedAsync();
+            await _sqlContext.Database.EnsureCreatedAsync();
+
+            int i = 1;
+            i = await WriteToCosmosThreeWays(i);
+            i = await WriteToCosmosThreeWays(i);
+            await WriteToCosmosThreeWays(i);
+
+            //VERIFY
+
+        }
+
+        private async Task<int> WriteToCosmosThreeWays(int i)
+        {
+            int numToAdd = 100;
+
+            var directBooks = BookTestData.CreateDummyBooks(numToAdd).ToList()
+                .Select(x => new DirectCosmosBook(i++, x)).ToList();
+
+            //ATTEMPT
+            using (new TimeThings(_output, "Direct", numToAdd))
+            {
+                foreach (var book in directBooks)
+                {
+                    var response = await _cosmosContainer.CreateItemAsync(book);
+                }
+            }
+
+            using (new TimeThings(_output, "SQL", numToAdd))
+            {
+                _sqlContext.AddRange(BookTestData.CreateDummyBooks(numToAdd));
+                await _sqlContext.SaveChangesAsync();
+            }
+
+            var cBooks = BookTestData.CreateDummyBooks(numToAdd).AsQueryable()
+                .MapBookToCosmosBook().ToList();
+            cBooks.ForEach(x => x.BookId = i++);
+            using (new TimeThings(_output, "Via EfCore", numToAdd))
+            {
+                _cosmosContext.AddRange(cBooks);
+                await _cosmosContext.SaveChangesAsync();
+            }
+
+            return i;
+        }
+
 
         [Fact]
         public async Task TestDirectBooksOk()
