@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 

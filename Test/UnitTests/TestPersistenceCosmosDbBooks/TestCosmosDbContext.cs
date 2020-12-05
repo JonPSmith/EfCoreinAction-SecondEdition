@@ -157,7 +157,7 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             var dropdown = await service.GetFilterDropDownValuesAsync(BooksFilterBy.ByPublicationYear);
 
             //VERIFY
-            dropdown.Select(x => x.Text).ShouldEqual(new []{ "Coming Soon", "2000"});
+            dropdown.Select(x => x.Text).ToArray().ShouldEqual(new []{ "Coming Soon", "2000"});
         }
 
         [Fact]

@@ -84,6 +84,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
             //SETUP
             var userId1 = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<OrderDbContext>();
+            options.TurnOffDispose();
             using (var context = new OrderDbContext(options, new FakeUserIdService(userId1)))
             {
                 context.Database.EnsureCreated();
@@ -123,7 +124,7 @@ namespace Test.UnitTests.TestPersistenceNormalSqlOrders
                 orders.Count.ShouldEqual(1);
                 orders.Single().UserId.ShouldEqual(userId1);
             }
-
+            options.ManualDispose();
         }
     }
 }

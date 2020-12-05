@@ -27,6 +27,7 @@ namespace Test.UnitTests.Chapter17Tests
             //SETUP
             int numBooks = 100;
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            options.TurnOffDispose();
             using (var context = new BookDbContext(options))
             {
                 context.Database.EnsureCreated();
@@ -88,6 +89,7 @@ namespace Test.UnitTests.Chapter17Tests
                     .Include(x => x.AuthorsLink).ThenInclude(x => x.Author)
                     .ToList();
             }
+            options.ManualDispose();
         }
     }
 }

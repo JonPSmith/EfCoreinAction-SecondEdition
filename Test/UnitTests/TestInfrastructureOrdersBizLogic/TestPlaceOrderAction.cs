@@ -27,12 +27,12 @@ namespace Test.UnitTests.TestInfrastructureOrdersBizLogic
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<OrderDbContext>();
+            options.StopNextDispose();
             using var context = new OrderDbContext(options, new FakeUserIdService(userId));
 
             context.Database.EnsureCreated();
             var bookIds = context.SeedFourBookDdPartWithOptionalDbSchemaAdd(true);
             var service = new PlaceOrderBizLogic(new PlaceOrderDbAccess(context));
-
             //ATTEMPT
             var lineItems = new List<OrderLineItem>
             {

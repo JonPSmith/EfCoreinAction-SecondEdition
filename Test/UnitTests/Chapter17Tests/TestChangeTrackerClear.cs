@@ -62,6 +62,7 @@ namespace Test.UnitTests.Chapter17Tests
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            options.StopNextDispose();
             int bookId;
             using (var context = new BookDbContext(options))
             {

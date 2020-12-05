@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using Test.Chapter14Listings;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 

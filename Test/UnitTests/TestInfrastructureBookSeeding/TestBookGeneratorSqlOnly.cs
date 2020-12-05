@@ -16,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -141,22 +140,22 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             //SETUP
             var fileDir = Path.Combine(TestData.GetTestDataDir());
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                await context.SeedDatabaseWithBooksAsync(fileDir);
-            }
-            using (var context = new BookDbContext(options))
-            {
-                var serviceProvider = BuildServiceProvider(options);
-                var generator = new BookGenerator(serviceProvider);
+            options.TurnOffDispose();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+            await context.SeedDatabaseWithBooksAsync(fileDir);
 
-                //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, false, totalBooks, true, default);
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(totalBooks);
-            }
+            //ATTEMPT
+            var serviceProvider = BuildServiceProvider(options);
+            var generator = new BookGenerator(serviceProvider);
+
+            await generator.WriteBooksAsync(fileDir, false, totalBooks, true, default);
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(totalBooks);
+            options.ManualDispose();
         }
 
         [Fact]
@@ -165,32 +164,32 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             //SETUP
             var fileDir = Path.Combine(TestData.GetTestDataDir());
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
+            options.TurnOffDispose();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+            await context.SeedDatabaseWithBooksAsync(fileDir);
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var serviceProvider = BuildServiceProvider(options);
+            var generator = new BookGenerator(serviceProvider);
+
+            await generator.WriteBooksAsync(fileDir, false, 20, true, default);
+
+            //VERIFY
+            foreach (var book in context.Books)
             {
-                context.Database.EnsureCreated();
-                await context.SeedDatabaseWithBooksAsync(fileDir);
+                _output.WriteLine(book.ToString());
             }
-            using (var context = new BookDbContext(options))
-            {
-                var serviceProvider = BuildServiceProvider(options);
-                var generator = new BookGenerator(serviceProvider);
 
-                //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, false, 20, true, default);
-
-                //VERIFY
-                foreach (var book in context.Books)
-                {
-                    _output.WriteLine(book.ToString());
-                }
-
-                var books = context.Books.Include(x => x.Reviews).ToList();
-                books.Count(x => x.Reviews.Count > 0).ShouldEqual(13);
-                //Can't get exact review value compare
-                books.All(x => x.ReviewsCount == x.Reviews.Count).ShouldBeTrue();
-                books.Where(x => x.ReviewsCount > 0)
-                    .All(x => x.ReviewsAverageVotes == x.Reviews.Average(y => y.NumStars)).ShouldBeTrue();
-            }
+            var books = context.Books.Include(x => x.Reviews).ToList();
+            books.Count(x => x.Reviews.Count > 0).ShouldEqual(13);
+            //Can't get exact review value compare
+            books.All(x => x.ReviewsCount == x.Reviews.Count).ShouldBeTrue();
+            books.Where(x => x.ReviewsCount > 0)
+                .All(x => x.ReviewsAverageVotes == x.Reviews.Average(y => y.NumStars)).ShouldBeTrue();
+            options.ManualDispose();
         }
 
         [Fact]
@@ -199,6 +198,7 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             //SETUP
             var fileDir = Path.Combine(TestData.GetTestDataDir());
             var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            options.TurnOffDispose();
             var timeNow = DateTime.UtcNow;
 
             var eventConfig = new GenericEventRunnerConfig
@@ -207,27 +207,26 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             };
             eventConfig.AddActionToRunAfterDetectChanges<BookDbContext>(localContext =>
                 localContext.ChangeChecker());
-            using (var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig))
-            {
-                context.Database.EnsureCreated();
-                await context.SeedDatabaseWithBooksAsync(fileDir); //The LastUpdatedUtc is set via events
-            }
-            using (var context = new BookDbContext(options))
-            {
-                var serviceProvider = BuildServiceProvider(options);
-                var generator = new BookGenerator(serviceProvider);
+            using var context = options.CreateDbWithDiForHandlers<BookDbContext, ReviewAddedHandler>(null, eventConfig);
+            context.Database.EnsureCreated();
+            await context.SeedDatabaseWithBooksAsync(fileDir); //The LastUpdatedUtc is set via events
 
-                //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, false, 20, true, default);
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                var books = context.Books
-                    .Include(x => x.Reviews)
-                    .Include(x => x.AuthorsLink).ToList();
-                books.All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
-                books.SelectMany(x => x.Reviews).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
-                books.SelectMany(x => x.AuthorsLink).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
-            }
+            //ATTEMPT
+            var serviceProvider = BuildServiceProvider(options);
+
+            var generator = new BookGenerator(serviceProvider);
+            await generator.WriteBooksAsync(fileDir, false, 20, true, default);
+
+            //VERIFY
+            var books = context.Books
+                .Include(x => x.Reviews)
+                .Include(x => x.AuthorsLink).ToList();
+            books.All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
+            books.SelectMany(x => x.Reviews).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
+            books.SelectMany(x => x.AuthorsLink).All(x => x.LastUpdatedUtc >= timeNow).ShouldBeTrue();
+            options.ManualDispose();
         }
 
     }

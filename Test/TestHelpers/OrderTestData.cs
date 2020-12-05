@@ -52,6 +52,7 @@ namespace Test.TestHelpers
 
             var options = SqliteInMemory.CreateOptions<BookDbContext>(
                 builder => builder.UseSqlite(orderContext.Database.GetDbConnection()));
+            options.StopNextDispose();
             using var bookContext = new BookDbContext(options);
             var books = bookContext.SeedDatabaseFourBooks();
             return books.Select(x => orderContext.BookViews.Single(y => y.BookId == x.BookId));

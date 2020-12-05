@@ -7,8 +7,8 @@ using BookApp.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TestSupport.Attributes;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 
 namespace Test.UnitCommands
 {

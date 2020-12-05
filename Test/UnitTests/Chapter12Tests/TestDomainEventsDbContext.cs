@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Reflection;
 using GenericEventRunner.ForSetup;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Test.Chapter12Listings.BusinessLogic;
 using Test.Chapter12Listings.DomainEventEfClasses;
@@ -158,7 +160,7 @@ namespace Test.UnitTests.Chapter12Tests
         private static DomainEventsDbContext SetupDependencyInjectionAndGetDbContext()
         {
             var services = new ServiceCollection();
-            services.AddSingleton(SqliteInMemory.CreateOptions<DomainEventsDbContext>());
+            services.AddSingleton<DbContextOptions<DomainEventsDbContext>>(SqliteInMemory.CreateOptions<DomainEventsDbContext>());
             services.AddScoped<DomainEventsDbContext>();
 
             services.AddTransient<IEventRunner, EventRunner>();             //#B
