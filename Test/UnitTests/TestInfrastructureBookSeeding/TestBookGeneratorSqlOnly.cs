@@ -79,28 +79,24 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
         {
             //SETUP
             var options = this.CreateUniqueClassOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
-            {
-                context.Database.EnsureClean();
-            }
-            using (var context = new BookDbContext(options))
-            {
-                var fileDir = Path.Combine(TestData.GetTestDataDir());
-                var serviceProvider = BuildServiceProvider(options);
-                var generator = new BookGenerator(serviceProvider);
+            using var context = new BookDbContext(options);
+            context.Database.EnsureClean();
 
-                //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, false, 1, true, default);
+            var fileDir = Path.Combine(TestData.GetTestDataDir());
+            var serviceProvider = BuildServiceProvider(options);
+            var generator = new BookGenerator(serviceProvider);
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(6);
-                context.Authors.Count().ShouldEqual(8);
-                context.Tags.Count().ShouldEqual(6);
-                context.Books
-                    .Include(x => x.Tags)
-                    .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
-                    .ShouldEqual(6);
-            }
+            //ATTEMPT
+            await generator.WriteBooksAsync(fileDir, false, 1, true, default);
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(6);
+            context.Authors.Count().ShouldEqual(8);
+            context.Tags.Count().ShouldEqual(6);
+            context.Books
+                .Include(x => x.Tags)
+                .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
+                .ShouldEqual(6);
         }
 
         [Fact]
@@ -109,27 +105,25 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
             //SETUP
             var fileDir = Path.Combine(TestData.GetTestDataDir());
             var options = this.CreateUniqueClassOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                await context.SeedDatabaseWithBooksAsync(fileDir);
-            }
-            using (var context = new BookDbContext(options))
-            {
-                var serviceProvider = BuildServiceProvider(options);
-                var generator = new BookGenerator(serviceProvider);
+            using var context = new BookDbContext(options);
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+            await context.SeedDatabaseWithBooksAsync(fileDir);
 
-                //ATTEMPT
-                await generator.WriteBooksAsync(fileDir, true, 10, true, default);
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(10);
-                context.Books
-                    .Include(x => x.Tags)
-                    .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
-                    .ShouldEqual(6);
-            }
+            var serviceProvider = BuildServiceProvider(options);
+            var generator = new BookGenerator(serviceProvider);
+
+            //ATTEMPT
+            await generator.WriteBooksAsync(fileDir, true, 10, true, default);
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(10);
+            context.Books
+                .Include(x => x.Tags)
+                .Count(x => x.Tags.Select(y => y.TagId).Contains("Manning books"))
+                .ShouldEqual(6);
         }
 
         [Theory]
