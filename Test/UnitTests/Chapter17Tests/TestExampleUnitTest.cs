@@ -33,7 +33,7 @@ namespace Test.UnitTests.Chapter17Tests
                 .CreateOptions<BookDbContext>();
 
             using var context = new BookDbContext(options);
-            
+
             context.Database.EnsureCreated();
 
             context.SeedDatabaseFourBooks();
@@ -48,6 +48,84 @@ namespace Test.UnitTests.Chapter17Tests
             //VERIFY
             _output.WriteLine(query.ToQueryString());
             books.Count.ShouldEqual(3);
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureDeletedEnsureCreated()
+        {
+            //SETUP
+            var options = this.CreateUniqueClassOptions<BookDbContext>();
+
+            using var context = new BookDbContext(options);
+
+            using (new TimeThings(_output, "EnsureDeleted/EnsureCreated"))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+            }
+
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            var testDate = new DateTime(2020, 1, 1);
+            var query = context.Books
+                .Where(x => x.PublishedOn < testDate);
+
+            var books = query.ToList();
+
+            //VERIFY
+            books.Count.ShouldEqual(3);
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureDeletedEnsureCreatedAgain()
+        {
+            TestExampleSqlServerEnsureDeletedEnsureCreated();
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureDeletedEnsureCreatedAgainAgain()
+        {
+            TestExampleSqlServerEnsureDeletedEnsureCreated();
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureClean()
+        {
+            //SETUP
+            var options = this.
+                CreateUniqueClassOptions<BookDbContext>();
+
+            using var context = new BookDbContext(options);
+
+            using (new TimeThings(_output, "EnsureClean"))
+            {
+                context.Database.EnsureClean();
+            }
+
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            var testDate = new DateTime(2020, 1, 1);
+            var query = context.Books
+                .Where(x => x.PublishedOn < testDate);
+
+            var books = query.ToList();
+
+            //VERIFY
+            books.Count.ShouldEqual(3);
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureCleanAgain()
+        { 
+            TestExampleSqlServerEnsureClean();
+        }
+
+        [Fact]
+        public void TestExampleSqlServerEnsureCleanAgainAgain()
+        {
+            TestExampleSqlServerEnsureClean();
         }
     }
 }
