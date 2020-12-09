@@ -15,6 +15,39 @@ namespace Test.UnitTests.TestBizLogic
 {
     public class Ch04_PlaceOrderAction
     {
+
+        [Fact]
+        public void ExampleOfMockingOk()
+        {
+            //SETUP                                           //#A
+            var lineItems = new List<OrderLineItem>           //#A
+            {                                                 //#A
+                new OrderLineItem {BookId = 1, NumBooks = 4}, //#A
+            };                                                //#A
+            var userId = Guid.NewGuid();                      //#A
+            var input = new PlaceOrderInDto(true, userId,     //#A
+                lineItems.ToImmutableList());                 //#A
+
+            var mockDbA = new MockPlaceOrderDbAccess();  //#B
+            var service = new PlaceOrderAction(mockDbA); //#C
+
+            //ATTEMPT
+            service.Action(input); //#D
+
+            //VERIFY
+            service.Errors.Any().ShouldEqual(false); //#
+            mockDbA.AddedOrder.CustomerId     //#F
+                .ShouldEqual(userId);         //#F
+        }
+        /****************************************************************************
+        #A Creates the input to the PlaceOrderAction method
+        #B Creates an instance of the mock database access code. This has numerous controls, but in this case, you use the default settings.
+        #C Creates your PlaceOrderAction instance, providing it with a mock of the database access code
+        #D Runs the PlaceOrderAction’s method called Action, which takes in the input data and outputs an order
+        #E Checks that the order placement completed successfully
+        #F Your mock database access code has captured the order that the PlaceOrderAction’s method “wrote” to the database so you can check it was formed properly.
+         ******************************************************************************/
+
         [Fact]
         public void BookNotForSale()
         {
