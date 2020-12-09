@@ -9,7 +9,6 @@ using ServiceLayer.DatabaseServices;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 

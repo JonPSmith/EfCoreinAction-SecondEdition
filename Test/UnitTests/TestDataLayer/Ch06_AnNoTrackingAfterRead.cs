@@ -26,6 +26,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
 
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            options.StopNextDispose();
             using (var context = new Chapter06Context(options))
             {
                 context.Database.EnsureCreated();
@@ -105,6 +106,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             ManyTop entityToDetach;
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
+            options.StopNextDispose();
             using (var context = new Chapter06Context(options))
             {
                 context.Database.EnsureCreated();

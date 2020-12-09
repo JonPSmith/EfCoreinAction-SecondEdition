@@ -26,18 +26,16 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
 
-                var books = EfTestData.CreateFourBooks();
-                context.Books.AddRange(books);
-                context.SaveChanges();
+            var books = EfTestData.CreateFourBooks();
+            context.Books.AddRange(books);
+            context.SaveChanges();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(4);
-                context.Books.Count(p => p.Title.StartsWith("Quantum")).ShouldEqual(1);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(4);
+            context.Books.Count(p => p.Title.StartsWith("Quantum")).ShouldEqual(1);
         }
 
         [Fact]
@@ -45,7 +43,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-
+            options.StopNextDispose();
             //ATTEMPT
             using (var context = new EfCoreContext(options))
             {

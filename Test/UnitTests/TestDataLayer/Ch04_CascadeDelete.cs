@@ -9,7 +9,6 @@ using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -22,19 +21,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
+            //ATTEMPT
 
-                context.Books.Remove(context.Books.First());
-                context.SaveChanges();
+            context.Books.Remove(context.Books.First());
+            context.SaveChanges();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(3);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(3);
         }
 
         [Fact]
@@ -42,39 +39,36 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+            var userId = Guid.NewGuid();
 
-            using (var context = new EfCoreContext(options))
+            var order = new Order
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-                var userId = Guid.NewGuid();
-
-                var order = new Order
+                CustomerId = userId,
+                LineItems = new List<LineItem>
                 {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
+                    new LineItem
                     {
-                        new LineItem
-                        {
-                            ChosenBook = context.Books.First(),
-                            LineNum = 0,
-                            BookPrice = 123,
-                            NumBooks = 1
-                        }
+                        ChosenBook = context.Books.First(),
+                        LineNum = 0,
+                        BookPrice = 123,
+                        NumBooks = 1
                     }
-                };
-                context.Orders.Add(order);
-                context.SaveChanges();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                context.Books.Remove(context.Books.First());
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+                }
+            };
+            context.Orders.Add(order);
+            context.SaveChanges();
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            context.Books.Remove(context.Books.First());
+            var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
         }
 
         [Fact]
@@ -82,41 +76,38 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = this.CreateUniqueClassOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureClean();
+            context.SeedDatabaseFourBooks();
+
+            var userId = Guid.NewGuid();
+
+            var order = new Order
             {
-                context.Database.EnsureClean();
-                context.SeedDatabaseFourBooks();
-
-                var userId = Guid.NewGuid();
-
-                var order = new Order
+                CustomerId = userId,
+                LineItems = new List<LineItem>
                 {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
+                    new LineItem
                     {
-                        new LineItem
-                        {
-                            ChosenBook = context.Books.First(),
-                            LineNum = 0,
-                            BookPrice = 123,
-                            NumBooks = 1
-                        }
+                        ChosenBook = context.Books.First(),
+                        LineNum = 0,
+                        BookPrice = 123,
+                        NumBooks = 1
                     }
-                };
-                context.Orders.Add(order);
-                context.SaveChanges();
-            }
+                }
+            };
+            context.Orders.Add(order);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
 
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
-            {
-                context.Books.Remove(context.Books.First());
-                var ex = Assert.ThrowsAny<DbUpdateException>(() => context.SaveChanges());
+            context.Books.Remove(context.Books.First());
+            var ex = Assert.ThrowsAny<DbUpdateException>(() => context.SaveChanges());
 
-                //VERIFY
-                ex.InnerException.Message.StartsWith("The DELETE statement conflicted with the REFERENCE constraint \"FK_LineItem_Books_BookId\". ")
-                    .ShouldBeTrue();
-            }
+            //VERIFY
+            ex.InnerException.Message.StartsWith("The DELETE statement conflicted with the REFERENCE constraint \"FK_LineItem_Books_BookId\". ")
+                .ShouldBeTrue();
         }
     }
 }

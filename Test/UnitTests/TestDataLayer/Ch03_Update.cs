@@ -11,7 +11,6 @@ using ServiceLayer.AdminServices;
 using ServiceLayer.AdminServices.Concrete;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -32,29 +31,27 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var book = context.Books                          //#A
-                    .Single(p => p.Title == "Quantum Networking");//#B
-                book.PublishedOn = new DateTime(2058, 1, 1);      //#C     
-                context.SaveChanges();                            //#D
-                /**********************************************************
+            //ATTEMPT
+            var book = context.Books                          //#A
+                .Single(p => p.Title == "Quantum Networking");//#B
+            book.PublishedOn = new DateTime(2058, 1, 1);      //#C     
+            context.SaveChanges();                            //#D
+            /**********************************************************
                 #A Finds the specific book we want to update. In the case our special book on Quantum Networking
                 #B Single means the query will fail if there is no book of that name, or many books with that name
                 #C Changes the expected publication date to year 2058 (it was 2057)
                 #D Calls SaveChanges which includes running a method called DetectChanges. This spots that the PublishedOn property has been changed
                 * *******************************************************/
 
-                //VERIFY
-                var bookAgain = context.Books                     //#E
-                    .Single(p => p.Title == "Quantum Networking");//#E
-                bookAgain.PublishedOn                             //#F
-                    .ShouldEqual(new DateTime(2058, 1, 1));       //#F
-            }
+            //VERIFY
+            var bookAgain = context.Books                     //#E
+                .Single(p => p.Title == "Quantum Networking");//#E
+            bookAgain.PublishedOn                             //#F
+                .ShouldEqual(new DateTime(2058, 1, 1));       //#F
         }
         /**********************************************************
         #E This reloads the Quantum Networking book from the database
@@ -72,26 +69,23 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureClean();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureClean();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                showLog = true;
-                var book = context.Books                          
-                    .Single(p => p.Title == "Quantum Networking");
-                book.PublishedOn = new DateTime(2058, 1, 1);         
-                context.SaveChanges();                            
-                showLog = false;
+            //ATTEMPT
+            showLog = true;
+            var book = context.Books                          
+                .Single(p => p.Title == "Quantum Networking");
+            book.PublishedOn = new DateTime(2058, 1, 1);         
+            context.SaveChanges();                            
+            showLog = false;
 
-                //VERIFY
-                var bookAgain = context.Books                     
-                    .Single(p => p.Title == "Quantum Networking");
-                bookAgain.PublishedOn                             
-                    .ShouldEqual(new DateTime(2058, 1, 1));
-
-            }
+            //VERIFY
+            var bookAgain = context.Books                     
+                .Single(p => p.Title == "Quantum Networking");
+            bookAgain.PublishedOn                             
+                .ShouldEqual(new DateTime(2058, 1, 1));
         }
 
         [Fact]
@@ -104,26 +98,24 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                showLog = true;
-                var book = context.Books
-                    .Single(p => p.Title == "Quantum Networking");
-                book.Title = "New title";
-                book.PublishedOn = new DateTime(2058, 1, 1);
-                context.SaveChanges();
-                showLog = false;
+            //ATTEMPT
+            showLog = true;
+            var book = context.Books
+                .Single(p => p.Title == "Quantum Networking");
+            book.Title = "New title";
+            book.PublishedOn = new DateTime(2058, 1, 1);
+            context.SaveChanges();
+            showLog = false;
 
-                //VERIFY
-                var bookAgain = context.Books
-                    .Single(p => p.Title == "New title");
-                bookAgain.PublishedOn
-                    .ShouldEqual(new DateTime(2058, 1, 1));
-            }
+            //VERIFY
+            var bookAgain = context.Books
+                .Single(p => p.Title == "New title");
+            bookAgain.PublishedOn
+                .ShouldEqual(new DateTime(2058, 1, 1));
         }
 
         [Fact]
@@ -132,26 +124,22 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             ChangePubDateDto dto;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                var service = new ChangePubDateService(context);
-                dto = service.GetOriginal(4);
-                dto.PublishedOn = new DateTime(2058, 1, 1);
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var service = new ChangePubDateService(context);
+            var service = new ChangePubDateService(context);
+            dto = service.GetOriginal(4);
+            dto.PublishedOn = new DateTime(2058, 1, 1);
 
-                //ATTEMPT
-                service.UpdateBook(dto);
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                var bookAgain = context.Books.Single(p => p.BookId == dto.BookId);
-                bookAgain.PublishedOn.ShouldEqual(new DateTime(2058, 1, 1));
-            }
+            //ATTEMPT
+            service.UpdateBook(dto);
+
+            //VERIFY
+            var bookAgain = context.Books.Single(p => p.BookId == dto.BookId);
+            bookAgain.PublishedOn.ShouldEqual(new DateTime(2058, 1, 1));
         }
 
         [Fact]
@@ -165,43 +153,41 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var author = context.Books                        //#A
-                    .Where(p => p.Title == "Quantum Networking")  //#A
-                    .Select(p => p.AuthorsLink.First().Author)    //#A
-                    .Single();                                    //#A
-                author.Name = "Future Person 2";                  //#A
-                json = JsonConvert.SerializeObject(author); //#A
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                showLog = true;
-                //ATTEMPT
-                var author = JsonConvert
-                    .DeserializeObject<Author>(json);  //#B
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                context.Update(author); //#C                               
-                context.SaveChanges();  //#D  
+            context.ChangeTracker.Clear();
+
+            var author1 = context.Books                        //#A
+                .Where(p => p.Title == "Quantum Networking")  //#A
+                .Select(p => p.AuthorsLink.First().Author)    //#A
+                .Single();                                    //#A
+            author1.Name = "Future Person 2";                  //#A
+            json = JsonConvert.SerializeObject(author1); //#A
+
+            context.ChangeTracker.Clear();
+
+            showLog = true;
+            //ATTEMPT
+            var author2 = JsonConvert
+                .DeserializeObject<Author>(json);  //#B
+
+            context.Update(author2); //#C                               
+            context.SaveChanges();  //#D  
             /**********************************************************
             #A This simulates an external system returning a modified Author entity class as a JSON string
             #B This simulates receiving a JSON string from an external system and decoding it into an Author class
             #C I use the Update command, which replaces all the row data for the given primary key, in this case AuthorId
             * *******************************************************/
 
-                //VERIFY
-                var authorAgain = context.Books.Where(p => p.Title == "Quantum Networking")
-                    .Select(p => p.AuthorsLink.First().Author)
-                    .Single();
-                authorAgain.Name.ShouldEqual("Future Person 2");
-                context.Authors.Any(p =>
-                    p.Name == "Future Person").ShouldBeFalse();
-            }
+            //VERIFY
+            var authorAgain = context.Books.Where(p => p.Title == "Quantum Networking")
+                .Select(p => p.AuthorsLink.First().Author)
+                .Single();
+            authorAgain.Name.ShouldEqual("Future Person 2");
+            context.Authors.Any(p =>
+                p.Name == "Future Person").ShouldBeFalse();
         }
 
         [Fact]
@@ -209,23 +195,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            var author = new Author
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+                AuthorId = 999999,
+                Name = "Future Person 2"
+            };
+            context.Authors.Update(author);
+            var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
 
-                //ATTEMPT
-                var author = new Author
-                {
-                    AuthorId = 999999,
-                    Name = "Future Person 2"
-                };
-                context.Authors.Update(author);
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges());
-
-                //VERIFY
-                ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).").ShouldBeTrue();
-            }
+            //VERIFY
+            ex.Message.StartsWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).").ShouldBeTrue();
         }
 
         [Fact]
@@ -233,20 +217,18 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var books = context.Books.ToList();
-                books.First().PublishedOn = new DateTime(2020, 1, 1);   
-                context.SaveChanges();  
+            //ATTEMPT
+            var books = context.Books.ToList();
+            books.First().PublishedOn = new DateTime(2020, 1, 1);   
+            context.SaveChanges();  
 
-                //VERIFY
-                context.Books.First().PublishedOn  
-                    .ShouldEqual(new DateTime(2020, 1, 1)); 
-            }
+            //VERIFY
+            context.Books.First().PublishedOn  
+                .ShouldEqual(new DateTime(2020, 1, 1));
         }
     }
 }

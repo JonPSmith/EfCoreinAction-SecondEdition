@@ -23,17 +23,15 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                context.Database.EnsureCreated();
-                var service = new DisplayOrdersService(context);
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            var service = new DisplayOrdersService(context);
 
-                //ATTEMPT
-                var ex = Assert.Throws<NullReferenceException>(() => service.GetOrderDetail(1));
+            //ATTEMPT
+            var ex = Assert.Throws<NullReferenceException>(() => service.GetOrderDetail(1));
 
-                //VERIFY
-                ex.Message.ShouldEqual("Could not find the order with id of 1.");
-            }
+            //VERIFY
+            ex.Message.ShouldEqual("Could not find the order with id of 1.");
         }
 
 
@@ -43,39 +41,37 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            var order = new Order
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-
-                var order = new Order
+                CustomerId = userId,
+                LineItems = new List<LineItem>
                 {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
+                    new LineItem
                     {
-                        new LineItem
-                        {
-                            BookId = 1,
-                            LineNum = 0,
-                            BookPrice = 123,
-                            NumBooks = 456
-                        }
+                        BookId = 1,
+                        LineNum = 0,
+                        BookPrice = 123,
+                        NumBooks = 456
                     }
-                };
-                context.Orders.Add(order);
-                context.SaveChanges();
-                var service = new DisplayOrdersService(context);
+                }
+            };
+            context.Orders.Add(order);
+            context.SaveChanges();
+            var service = new DisplayOrdersService(context);
 
-                //ATTEMPT
-                var dto = service.GetOrderDetail(1);
+            //ATTEMPT
+            var dto = service.GetOrderDetail(1);
 
-                //VERIFY
-                var lineItems = dto.LineItems.ToList();
-                lineItems.Count.ShouldEqual(1);
-                lineItems.First().BookId.ShouldEqual(1);
-                lineItems.First().BookPrice.ShouldEqual(123);
-                lineItems.First().NumBooks.ShouldEqual((short)456);
-            }
+            //VERIFY
+            var lineItems = dto.LineItems.ToList();
+            lineItems.Count.ShouldEqual(1);
+            lineItems.First().BookId.ShouldEqual(1);
+            lineItems.First().BookPrice.ShouldEqual(123);
+            lineItems.First().NumBooks.ShouldEqual((short)456);
         }
 
         [Fact]
@@ -84,41 +80,39 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            var order = new Order
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-
-                var order = new Order
+                CustomerId = userId,
+                LineItems = new List<LineItem>
                 {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
+                    new LineItem
                     {
-                        new LineItem
-                        {
-                            BookId = 1,
-                            LineNum = 0,
-                            BookPrice = 123,
-                            NumBooks = 456
-                        }
+                        BookId = 1,
+                        LineNum = 0,
+                        BookPrice = 123,
+                        NumBooks = 456
                     }
-                };
-                context.Orders.Add(order);
-                context.SaveChanges();
-                var service = new DisplayOrdersService(context);
+                }
+            };
+            context.Orders.Add(order);
+            context.SaveChanges();
+            var service = new DisplayOrdersService(context);
 
-                //ATTEMPT
-                var orders = service.GetUsersOrders();
+            //ATTEMPT
+            var orders = service.GetUsersOrders();
 
-                //VERIFY
-                orders.Count.ShouldEqual(1);
-                orders.First().LineItems.ShouldNotBeNull();
-                var lineItems = orders.First().LineItems.ToList();
-                lineItems.Count.ShouldEqual(1);
-                lineItems.First().BookId.ShouldEqual(1);
-                lineItems.First().BookPrice.ShouldEqual(123);
-                lineItems.First().NumBooks.ShouldEqual((short)456);
-            }
+            //VERIFY
+            orders.Count.ShouldEqual(1);
+            orders.First().LineItems.ShouldNotBeNull();
+            var lineItems = orders.First().LineItems.ToList();
+            lineItems.Count.ShouldEqual(1);
+            lineItems.First().BookId.ShouldEqual(1);
+            lineItems.First().BookPrice.ShouldEqual(123);
+            lineItems.First().NumBooks.ShouldEqual((short)456);
         }
 
         [Fact]
@@ -127,6 +121,7 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            options.StopNextDispose();
             using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
             {
                 context.Database.EnsureCreated();

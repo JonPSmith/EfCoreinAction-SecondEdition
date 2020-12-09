@@ -11,7 +11,6 @@ using Test.TestHelpers;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit.Abstractions;
 
 namespace Test.UnitTests.TestDataLayer

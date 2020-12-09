@@ -26,16 +26,14 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                context.AddTestEmployeesToDb();
+            //ATTEMPT
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                context.Employees.Count().ShouldEqual(11);
-            }
+            //VERIFY
+            context.Employees.Count().ShouldEqual(11);
         }
 
         [Fact]
@@ -43,26 +41,24 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var all = context.Employees
-                    .Include(x => x.WorksForMe)
-                    .ThenInclude(x => x.WorksForMe)
-                    .ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                all.Count.ShouldEqual(11);
-                all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
-                var top = all.Single(x => x.Manager == null);
-                top.ShowHierarchical(s => _output.WriteLine(s));
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var all = context.Employees
+                .Include(x => x.WorksForMe)
+                .ThenInclude(x => x.WorksForMe)
+                .ToList();
+
+            //VERIFY
+            all.Count.ShouldEqual(11);
+            all.Count(x => x.Manager != null).ShouldEqual(10);
+            all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
+            var top = all.Single(x => x.Manager == null);
+            top.ShowHierarchical(s => _output.WriteLine(s));
         }
 
         [Fact]
@@ -70,24 +66,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var all = context.Employees
-                    .AsNoTracking()
-                    .Include(x => x.WorksForMe)
-                    .ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                all.Count.ShouldEqual(11);
-                all.Count(x => x.Manager == null).ShouldEqual(11);
-                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var all = context.Employees
+                .AsNoTracking()
+                .Include(x => x.WorksForMe)
+                .ToList();
+
+            //VERIFY
+            all.Count.ShouldEqual(11);
+            all.Count(x => x.Manager == null).ShouldEqual(11);
+            all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
         }
 
         [Fact]
@@ -95,24 +89,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var all = context.Employees.Include(x => x.WorksForMe)
-                    .ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                all.Count.ShouldEqual(11);
-                all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
-                var top = all.Single(x => x.Manager == null);
-                top.ShowHierarchical(s => _output.WriteLine(s));
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var all = context.Employees.Include(x => x.WorksForMe)
+                .ToList();
+
+            //VERIFY
+            all.Count.ShouldEqual(11);
+            all.Count(x => x.Manager != null).ShouldEqual(10);
+            all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
+            var top = all.Single(x => x.Manager == null);
+            top.ShowHierarchical(s => _output.WriteLine(s));
         }
 
 
@@ -121,26 +113,24 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var all = context.Employees
-                    .AsNoTrackingWithIdentityResolution()
-                    .Include(x => x.WorksForMe)
-                    .ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                all.Count.ShouldEqual(11);
-                all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
-                var top = all.Single(x => x.Manager == null);
-                top.ShowHierarchical(s => _output.WriteLine(s));
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var all = context.Employees
+                .AsNoTrackingWithIdentityResolution()
+                .Include(x => x.WorksForMe)
+                .ToList();
+
+            //VERIFY
+            all.Count.ShouldEqual(11);
+            all.Count(x => x.Manager != null).ShouldEqual(10);
+            all.Count(x => x.WorksForMe.Any()).ShouldEqual(5);
+            var top = all.Single(x => x.Manager == null);
+            top.ShowHierarchical(s => _output.WriteLine(s));
         }
 
         [Fact]
@@ -148,23 +138,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var all = context.Employees.Include(x => x.Manager)
-                    .ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                all.Count.ShouldEqual(11);
-                all.Count(x => x.Manager != null).ShouldEqual(10);
-                all.Count(x => x.WorksForMe != null).ShouldEqual(5);
-                all.Count(x => x.WorksForMe == null).ShouldEqual(6);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var all = context.Employees.Include(x => x.Manager)
+                .ToList();
+
+            //VERIFY
+            all.Count.ShouldEqual(11);
+            all.Count(x => x.Manager != null).ShouldEqual(10);
+            all.Count(x => x.WorksForMe != null).ShouldEqual(5);
+            all.Count(x => x.WorksForMe == null).ShouldEqual(6);
         }
 
         [Fact]
@@ -172,25 +160,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var query = context.Employees
-                    .Include(x => x.WorksForMe)
-                    .Where(x => x.WhatTheyDo.HasFlag(Roles.Development));
-                var devDept = query.ToList();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
 
-                //VERIFY
-                _output.WriteLine(query.ToQueryString());
-                devDept.Count.ShouldEqual(7);
-                var cto = devDept.Single(x => x.Manager == null);
-                cto.ShowHierarchical(s => _output.WriteLine(s));
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var query = context.Employees
+                .Include(x => x.WorksForMe)
+                .Where(x => x.WhatTheyDo.HasFlag(Roles.Development));
+            var devDept = query.ToList();
+
+            //VERIFY
+            _output.WriteLine(query.ToQueryString());
+            devDept.Count.ShouldEqual(7);
+            var cto = devDept.Single(x => x.Manager == null);
+            cto.ShowHierarchical(s => _output.WriteLine(s));
         }
 
         [Fact]
@@ -198,27 +184,25 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddTestEmployeesToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var devDept = context.Employees                          //#A
-                    .Include(x => x.WorksForMe)                         //#B
-                    .Where(x => x.WhatTheyDo.HasFlag(Roles.Development)) //#C
-                    .ToList();
-                /********************************************************
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddTestEmployeesToDb();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var devDept = context.Employees                          //#A
+                .Include(x => x.WorksForMe)                         //#B
+                .Where(x => x.WhatTheyDo.HasFlag(Roles.Development)) //#C
+                .ToList();
+            /********************************************************
                 #A The database holds all the Employees
                 #B One Include is all that you need - relational fixup will work out what is linked to what
                 #C This filters the employees down to ones that work in Development
                  **********************************************/
 
-                //VERIFY
-                devDept.Count.ShouldEqual(7);
-            }
+            //VERIFY
+            devDept.Count.ShouldEqual(7);
         }
 
 

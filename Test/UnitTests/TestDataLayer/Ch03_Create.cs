@@ -21,40 +21,38 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
 
-                var book = new Book                     //#A
-                {                                       //#A
-                    Title = "Test Book",                //#A
-                    PublishedOn = DateTime.Today,       //#A
-                    Reviews = new List<Review>()        //#B
-                    {
-                        new Review                       //#C
-                        {                                //#C
-                            NumStars = 5,                //#C
-                            Comment = "Great test book!",//#C
-                            VoterName = "Mr U Test"      //#C
-                        }
+            var book = new Book                     //#A
+            {                                       //#A
+                Title = "Test Book",                //#A
+                PublishedOn = DateTime.Today,       //#A
+                Reviews = new List<Review>()        //#B
+                {
+                    new Review                       //#C
+                    {                                //#C
+                        NumStars = 5,                //#C
+                        Comment = "Great test book!",//#C
+                        VoterName = "Mr U Test"      //#C
                     }
-                };
+                }
+            };
 
-                //ATTEMPT
-                context.Add(book);                      //#D
-                context.SaveChanges();                  //#E
-                /******************************************************
-                #A This creates the book with the title "Test Book"
-                #B I create a new collection of Reviews
-                #C I add one review, with its content
-                #D It uses the .Add method to add the book to the application's DbContext property, Books
-                #E It calls the SaveChanges() method from the application's DbContext to update the database. It finds a new Book, which has a collection containing a new Review, so it adds both of these to the database
-                 * *****************************************************/
+            //ATTEMPT
+            context.Add(book);                      //#D
+            context.SaveChanges();                  //#E
+            /******************************************************
+            #A This creates the book with the title "Test Book"
+            #B I create a new collection of Reviews
+            #C I add one review, with its content
+            #D It uses the .Add method to add the book to the application's DbContext property, Books
+            #E It calls the SaveChanges() method from the application's DbContext to update the database. It finds a new Book, which has a collection containing a new Review, so it adds both of these to the database
+             * *****************************************************/
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(1);
-                context.Set<Review>().Count().ShouldEqual(1); 
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(1);
+            context.Set<Review>().Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -62,41 +60,39 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var author = new Author {Name = "Existing Author"}; //#A
-                context.Add(author);                                //#A
-                context.SaveChanges();                              //#A
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var author = new Author {Name = "Existing Author"}; //#A
+            context.Add(author);                                //#A
+            context.SaveChanges();                              //#A
 
-                var book = new Book                                 //#B
-                {                                                   //#B
-                    Title = "Test Book",                            //#B
-                    PublishedOn = DateTime.Today                    //#B
-                };                                                  //#B
-                book.AuthorsLink = new List<BookAuthor>             //#C
-                {                                                   //#C
-                    new BookAuthor                                  //#C
-                    {                                               //#C
-                        Book = book,                                //#C
-                        Author = author                             //#C
-                    }                                               //#C
-                };                                                  //#C
+            var book = new Book                                 //#B
+            {                                                   //#B
+                Title = "Test Book",                            //#B
+                PublishedOn = DateTime.Today                    //#B
+            };                                                  //#B
+            book.AuthorsLink = new List<BookAuthor>             //#C
+            {                                                   //#C
+                new BookAuthor                                  //#C
+                {                                               //#C
+                    Book = book,                                //#C
+                    Author = author                             //#C
+                }                                               //#C
+            };                                                  //#C
 
-                //ATTEMPT
-                context.Add(book);                                  //#D
-                context.SaveChanges();                              //#D
-                /************************************************************
+            //ATTEMPT
+            context.Add(book);                                  //#D
+            context.SaveChanges();                              //#D
+            /************************************************************
                 #A This creates an author and saves it to the database
                 #B This creates a book in the same way as the previous example
                 #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
                 #D This is the same process: add the new book to the DbContext Books property and call SaveChanges
                  * *********************************************************/
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(1);   //#E
-                context.Authors.Count().ShouldEqual(1); //#F
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(1);   //#E
+            context.Authors.Count().ShouldEqual(1); //#F
         }
 
         [Fact]
@@ -104,37 +100,35 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
 
-                var oneBook =
-                    EfTestData.CreateDummyBookOneAuthor();
-                context.Add(oneBook);               
+            var oneBook =
+                EfTestData.CreateDummyBookOneAuthor();
+            context.Add(oneBook);               
 
-                var book = new Book                    
-                {                                      
-                    Title = "Test Book",               
-                    PublishedOn = DateTime.Today       
-                };                                     
-                book.AuthorsLink = new List<BookAuthor>
-                {                                      
-                    new BookAuthor                     
-                    {                                  
-                        Book = book,                   
-                        Author = oneBook.AuthorsLink   
-                             .First().Author           
-                    }                                  
-                };                                     
+            var book = new Book                    
+            {                                      
+                Title = "Test Book",               
+                PublishedOn = DateTime.Today       
+            };                                     
+            book.AuthorsLink = new List<BookAuthor>
+            {                                      
+                new BookAuthor                     
+                {                                  
+                    Book = book,                   
+                    Author = oneBook.AuthorsLink   
+                        .First().Author           
+                }                                  
+            };                                     
 
-                //ATTEMPT
-                context.Add(book);               
-                context.SaveChanges();                 
+            //ATTEMPT
+            context.Add(book);               
+            context.SaveChanges();                 
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(2);
-                context.Authors.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(2);
+            context.Authors.Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -143,40 +137,37 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             Author disconnectedAuthor;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            disconnectedAuthor = context.Authors.First();
+
+            context.ChangeTracker.Clear();
+
+            var book = new Book
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-
-                //ATTEMPT
-                disconnectedAuthor = context.Authors.First();
-            }
-
-            using (var context = new EfCoreContext(options))
+                Title = "Test Book",
+                PublishedOn = DateTime.Today
+            };
+            context.Authors.Attach(disconnectedAuthor);
+            book.AuthorsLink = new List<BookAuthor>
             {
-                var book = new Book
+                new BookAuthor
                 {
-                    Title = "Test Book",
-                    PublishedOn = DateTime.Today
-                };
-                context.Authors.Attach(disconnectedAuthor);
-                book.AuthorsLink = new List<BookAuthor>
-                {
-                    new BookAuthor
-                    {
-                        Book = book,
-                        Author = disconnectedAuthor
-                    }
-                };
+                    Book = book,
+                    Author = disconnectedAuthor
+                }
+            };
 
-                //ATTEMPT
-                context.Add(book);
-                context.SaveChanges();
+            //ATTEMPT
+            context.Add(book);
+            context.SaveChanges();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(5);
-                context.Authors.Count().ShouldEqual(3);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(5);
+            context.Authors.Count().ShouldEqual(3);
         }
 
         [Fact]
@@ -184,20 +175,18 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var oneBook =
-                    EfTestData.CreateDummyBookOneAuthor();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var oneBook =
+                EfTestData.CreateDummyBookOneAuthor();
 
-                //ATTEMPT
-                context.Add(oneBook);
-                context.Add(oneBook);
-                context.SaveChanges();
+            //ATTEMPT
+            context.Add(oneBook);
+            context.Add(oneBook);
+            context.SaveChanges();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -205,24 +194,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var oneBook = new Book { Title = "test" };
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var oneBook = new Book { Title = "test" };
 
-                //ATTEMPT
-                context.Add(oneBook);
-                context.SaveChanges();
-                var state1 = context.Entry(oneBook).State;
-                context.Add(oneBook);
-                var state2 = context.Entry(oneBook).State;
-                var ex = Assert.Throws<DbUpdateException>( () => context.SaveChanges());
+            //ATTEMPT
+            context.Add(oneBook);
+            context.SaveChanges();
+            var state1 = context.Entry(oneBook).State;
+            context.Add(oneBook);
+            var state2 = context.Entry(oneBook).State;
+            var ex = Assert.Throws<DbUpdateException>( () => context.SaveChanges());
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
-                state1.ShouldEqual(EntityState.Unchanged);
-                state2.ShouldEqual(EntityState.Added);
-            }
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
+            state1.ShouldEqual(EntityState.Unchanged);
+            state2.ShouldEqual(EntityState.Added);
         }
 
         [Fact]
@@ -231,26 +218,24 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             var oneBook = new Book {Title = "test"};
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
 
-                context.Add(oneBook);
-                context.SaveChanges();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var state1 = context.Entry(oneBook).State;
-                context.Add(oneBook);
-                var state2 = context.Entry(oneBook).State;
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+            context.Add(oneBook);
+            context.SaveChanges();
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
-                state1.ShouldEqual(EntityState.Detached);
-                state2.ShouldEqual(EntityState.Added);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var state1 = context.Entry(oneBook).State;
+            context.Add(oneBook);
+            var state2 = context.Entry(oneBook).State;
+            var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: Books.BookId'.");
+            state1.ShouldEqual(EntityState.Detached);
+            state2.ShouldEqual(EntityState.Added);
         }
     }
 }

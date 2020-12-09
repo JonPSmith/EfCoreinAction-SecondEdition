@@ -27,24 +27,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books
-                    .Single(p => p.Title == "Quantum Networking");
-                context.Remove(book); 
-                context.SaveChanges();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(3);
-                context.Set<BookAuthor>().Count().ShouldEqual(3);
-                context.Set<Review>().Count().ShouldEqual(0);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books
+                .Single(p => p.Title == "Quantum Networking");
+            context.Remove(book); 
+            context.SaveChanges();
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(3);
+            context.Set<BookAuthor>().Count().ShouldEqual(3);
+            context.Set<Review>().Count().ShouldEqual(0);
         }
 
         [Fact]
@@ -52,28 +50,26 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                var numPromotions = context.PriceOffers.Count();
+            var numPromotions = context.PriceOffers.Count();
 
-                //ATTEMPT
-                var promotion = context.PriceOffers     //#A
-                    .First();                           //#A
+            //ATTEMPT
+            var promotion = context.PriceOffers     //#A
+                .First();                           //#A
 
-                context.Remove(promotion);  //#B
-                context.SaveChanges();                  //#C                  
-                /**********************************************************
+            context.Remove(promotion);  //#B
+            context.SaveChanges();                  //#C                  
+            /**********************************************************
                 #A I find the first PriceOffer
                 #B I then remove that PriceOffer from the application's DbContext. The DbContext works what to remove based on its type of its parameter
                 #C The SaveChanges calls DetectChanges which finds a tracked PriceOffer entity which is marked as deleted. It then deletes it from the database
                 * *******************************************************/
 
-                //VERIFY
-                context.PriceOffers.Count().ShouldEqual(numPromotions - 1);
-            }
+            //VERIFY
+            context.PriceOffers.Count().ShouldEqual(numPromotions - 1);
         }
 
         [Fact]
@@ -86,25 +82,23 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                var numPromotions = context.PriceOffers.Count();
+            var numPromotions = context.PriceOffers.Count();
 
-                //ATTEMPT
-                showLog = true;
-                var promotion = context.PriceOffers     //#A
-                    .First();                           //#A
+            //ATTEMPT
+            showLog = true;
+            var promotion = context.PriceOffers     //#A
+                .First();                           //#A
 
-                context.PriceOffers.Remove(promotion);  //#B
-                context.SaveChanges();                  //#C                  
-                showLog = false;
+            context.PriceOffers.Remove(promotion);  //#B
+            context.SaveChanges();                  //#C                  
+            showLog = false;
 
-                //VERIFY
-                context.PriceOffers.Count().ShouldEqual(numPromotions - 1);
-            }
+            //VERIFY
+            context.PriceOffers.Count().ShouldEqual(numPromotions - 1);
         }
 
         [Fact]
@@ -112,34 +106,32 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var book = context.Books          
-                    .Include(p => p.Promotion)    //#A
-                    .Include(p => p.Reviews)      //#A
-                    .Include(p => p.AuthorsLink)  //#A
-                    .Single(p => p.Title          //#B
-                         == "Quantum Networking");//#B
+            //ATTEMPT
+            var book = context.Books          
+                .Include(p => p.Promotion)    //#A
+                .Include(p => p.Reviews)      //#A
+                .Include(p => p.AuthorsLink)  //#A
+                .Single(p => p.Title          //#B
+                             == "Quantum Networking");//#B
 
-                context.Books.Remove(book);       //#C
-                context.SaveChanges();            //#D
-                /**********************************************************
+            context.Books.Remove(book);       //#C
+            context.SaveChanges();            //#D
+            /**********************************************************
                 #A The three Includes make sure that the three dependent relationships are loaded with the Book
                 #B This finds the "Quantum Networking" book, which I know has a promotion, 2 reviews and one BookAuthor link
                 #B I then delete that book
                 #C The SaveChanges calls DetectChanges which finds a tracked Book entity which is marked as deleted. It then deletes its dependent relationships and then deletes the book
                 * *******************************************************/
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(3);
-                context.PriceOffers.Count().ShouldEqual(0);   //Quantum Networking is the only book with a priceOffer and reviews
-                context.Set<Review>().Count().ShouldEqual(0);
-                context.Set<BookAuthor>().Count().ShouldEqual(3); //three books left, each with a one author
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(3);
+            context.PriceOffers.Count().ShouldEqual(0);   //Quantum Networking is the only book with a priceOffer and reviews
+            context.Set<Review>().Count().ShouldEqual(0);
+            context.Set<BookAuthor>().Count().ShouldEqual(3); //three books left, each with a one author
         }
 
         [Fact]
@@ -147,25 +139,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var book = context.Books
-                    .Single(p => p.Title 
-                         == "Quantum Networking");
+            //ATTEMPT
+            var book = context.Books
+                .Single(p => p.Title 
+                             == "Quantum Networking");
 
-                context.Books.Remove(book); 
-                context.SaveChanges();                 
+            context.Books.Remove(book); 
+            context.SaveChanges();                 
 
-                //VERIFY
-                context.Books.Count().ShouldEqual(3);
-                context.PriceOffers.Count().ShouldEqual(0);   //Quantum Networking is the only book with a priceOffer and reviews
-                context.Set<Review>().Count().ShouldEqual(0);
-                context.Set<BookAuthor>().Count().ShouldEqual(3); //three books left, each with a one author
-            }
+            //VERIFY
+            context.Books.Count().ShouldEqual(3);
+            context.PriceOffers.Count().ShouldEqual(0);   //Quantum Networking is the only book with a priceOffer and reviews
+            context.Set<Review>().Count().ShouldEqual(0);
+            context.Set<BookAuthor>().Count().ShouldEqual(3); //three books left, each with a one author
         }
     }
 }

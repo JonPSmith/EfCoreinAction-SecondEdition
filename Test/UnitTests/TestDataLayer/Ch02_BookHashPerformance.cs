@@ -28,21 +28,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookHashContext>();
-            using (var context = new BookHashContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book = CreateBookWithHashReviews(2);
-                context.Add(book);
-                context.SaveChanges();
-            }
+            using var context = new BookHashContext(options);
+            context.Database.EnsureCreated();
+            context.Add(CreateBookWithHashReviews(2));
+            context.SaveChanges();
 
-            using (var context = new BookHashContext(options))
-            {
-                var book = context.Books
-                    .Include(x => x.Reviews)
-                    .Single();
-                book.Reviews.Count.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            var book= context.Books
+                .Include(x => x.Reviews)
+                .Single();
+
+            //VERIFY
+
+            book.Reviews.Count.ShouldEqual(2);
         }
 
         [Theory]
@@ -52,29 +51,26 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookHashContext>();
-            using (var context = new BookHashContext(options))
+            using var context = new BookHashContext(options);
+            context.Database.EnsureCreated();
+            context.Add(CreateBookWithHashReviews(numReviews));
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            using(new TimeThings(_output, $"1: BookHashReview: {numReviews} entries"))
             {
-                context.Database.EnsureCreated();
-                var book = CreateBookWithHashReviews(numReviews);
-                context.Add(book);
-                context.SaveChanges();
+                var book = context.Books
+                    .Include(x => x.Reviews)
+                    .Single();
+                book.Reviews.Count.ShouldEqual(numReviews);
             }
-            using (var context = new BookHashContext(options))
+            using (new TimeThings(_output, $"2: BookHashReview: {numReviews} entries"))
             {
-                using(new TimeThings(_output, $"1: BookHashReview: {numReviews} entries"))
-                {
-                    var book = context.Books
-                        .Include(x => x.Reviews)
-                        .Single();
-                    book.Reviews.Count.ShouldEqual(numReviews);
-                }
-                using (new TimeThings(_output, $"2: BookHashReview: {numReviews} entries"))
-                {
-                    var book = context.Books
-                        .Include(x => x.Reviews)
-                        .Single();
-                    book.Reviews.Count.ShouldEqual(numReviews);
-                }
+                var book = context.Books
+                    .Include(x => x.Reviews)
+                    .Single();
+                book.Reviews.Count.ShouldEqual(numReviews);
             }
         }
 
@@ -85,29 +81,26 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.Add(CreateBookWithListReviews(numReviews));
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            using (new TimeThings(_output, $"1: BookList: {numReviews} entries"))
             {
-                context.Database.EnsureCreated();
-                var book = CreateBookWithListReviews(numReviews);
-                context.Add(book);
-                context.SaveChanges();
+                var book = context.Books
+                    .Include(x => x.Reviews)
+                    .Single();
+                book.Reviews.Count.ShouldEqual(numReviews);
             }
-            using (var context = new EfCoreContext(options))
+            using (new TimeThings(_output, $"2: BookList: {numReviews} entries"))
             {
-                using (new TimeThings(_output, $"1: BookList: {numReviews} entries"))
-                {
-                    var book = context.Books
-                        .Include(x => x.Reviews)
-                        .Single();
-                    book.Reviews.Count.ShouldEqual(numReviews);
-                }
-                using (new TimeThings(_output, $"2: BookList: {numReviews} entries"))
-                {
-                    var book = context.Books
-                        .Include(x => x.Reviews)
-                        .Single();
-                    book.Reviews.Count.ShouldEqual(numReviews);
-                }
+                var book = context.Books
+                    .Include(x => x.Reviews)
+                    .Single();
+                book.Reviews.Count.ShouldEqual(numReviews);
             }
         }
 
@@ -118,22 +111,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookHashContext>();
-            using (var context = new BookHashContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book = CreateBookWithHashReviews(numReviews);
-                using (new TimeThings(_output, $"ADD: BookHashReview: {numReviews} entries"))
-                    context.Add(book);
-                context.SaveChanges();
+            using var context = new BookHashContext(options);
+            context.Database.EnsureCreated();
+            var book = CreateBookWithHashReviews(numReviews);
+            using (new TimeThings(_output, $"ADD: BookHashReview: {numReviews} entries"))
+                context.Add(book);
+            context.SaveChanges();
 
-                using (new TimeThings(_output, $"1: BookHashReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
-                using (new TimeThings(_output, $"2: BookHashReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
+            using (new TimeThings(_output, $"1: BookHashReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
+            }
+            using (new TimeThings(_output, $"2: BookHashReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
             }
         }
 
@@ -144,22 +135,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book = CreateBookWithListReviews(numReviews);
-                using (new TimeThings(_output, $"ADD BookListReview: {numReviews} entries"))
-                    context.Add(book);
-                context.SaveChanges();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var book = CreateBookWithListReviews(numReviews);
+            using (new TimeThings(_output, $"ADD BookListReview: {numReviews} entries"))
+                context.Add(book);
+            context.SaveChanges();
 
-                using (new TimeThings(_output, $"1: BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
-                using (new TimeThings(_output, $"2: BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
+            using (new TimeThings(_output, $"1: BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
+            }
+            using (new TimeThings(_output, $"2: BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
             }
         }
 
@@ -170,24 +159,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<BookHashContext>();
-            using (var context = new BookHashContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book1 = CreateBookWithHashReviews(numReviews);
-                using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
-                    context.Add(book1);
-                var book2 = CreateBookWithHashReviews(numReviews);
-                using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
-                    context.Add(book2);
+            using var context = new BookHashContext(options);
+            context.Database.EnsureCreated();
+            var book1 = CreateBookWithHashReviews(numReviews);
+            using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
+                context.Add(book1);
+            var book2 = CreateBookWithHashReviews(numReviews);
+            using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
+                context.Add(book2);
 
-                using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
-                using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
+            using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
+            }
+            using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
             }
         }
 
@@ -198,24 +185,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book1 = CreateBookWithListReviews(numReviews);
-                using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
-                    context.Add(book1);
-                var book2 = CreateBookWithListReviews(numReviews);
-                using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
-                    context.Add(book2);
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var book1 = CreateBookWithListReviews(numReviews);
+            using (new TimeThings(_output, $"ADD1 BookListReview: {numReviews} entries"))
+                context.Add(book1);
+            var book2 = CreateBookWithListReviews(numReviews);
+            using (new TimeThings(_output, $"ADD2 BookListReview: {numReviews} entries"))
+                context.Add(book2);
 
-                using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
-                using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
-                {
-                    context.SaveChanges();
-                }
+            using (new TimeThings(_output, $"Save(real): BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
+            }
+            using (new TimeThings(_output, $"Save nothing: BookListReview: {numReviews} entries"))
+            {
+                context.SaveChanges();
             }
         }
 

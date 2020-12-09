@@ -22,25 +22,23 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
-                var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var orderId = service.PlaceOrder(false);
-                context.SaveChanges();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                orderId.ShouldEqual(0);
-                service.Errors.Count.ShouldEqual(1);
-                service.Errors.First().ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
-            }
+            var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2");
+            var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
+
+            //ATTEMPT
+            var orderId = service.PlaceOrder(false);
+            context.SaveChanges();
+
+            //VERIFY
+            orderId.ShouldEqual(0);
+            service.Errors.Count.ShouldEqual(1);
+            service.Errors.First().ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
         }
 
         [Fact]
@@ -49,26 +47,24 @@ namespace Test.UnitTests.TestServiceLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{userId},1,2");
-                var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var orderId = service.PlaceOrder(true);
-                context.SaveChanges();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                orderId.ShouldNotEqual(0);
-                service.Errors.Count.ShouldEqual(0);
-                context.Orders.Count().ShouldEqual(1);
-                context.Orders.First().OrderId.ShouldEqual(orderId);
-            }
+            var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{userId},1,2");
+            var service = new PlaceOrderService(mockCookieRequests.CookiesIn, mockCookieRequests.CookiesOut, context);
+
+            //ATTEMPT
+            var orderId = service.PlaceOrder(true);
+            context.SaveChanges();
+
+            //VERIFY
+            orderId.ShouldNotEqual(0);
+            service.Errors.Count.ShouldEqual(0);
+            context.Orders.Count().ShouldEqual(1);
+            context.Orders.First().OrderId.ShouldEqual(orderId);
         }
     }
 }

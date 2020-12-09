@@ -29,22 +29,20 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-                bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var bookWithReviews  = context.Books
-                    .Include(x => x.Reviews)
-                    .Single(x => x.BookId == bookId);
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+            bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
 
-                //VERIFY
-                bookWithReviews.Reviews.Count.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var bookWithReviews  = context.Books
+                .Include(x => x.Reviews)
+                .Single(x => x.BookId == bookId);
+
+            //VERIFY
+            bookWithReviews.Reviews.Count.ShouldEqual(2);
         }
 
         [Fact]
@@ -53,25 +51,23 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-                bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var bookWithReviews = context.Books
-                    .Single(x => x.BookId == bookId);
-                bookWithReviews.Reviews.ShouldBeNull();
-                var reviews = context.Set<Review>()
-                    .Where(x => x.BookId == bookId)
-                    .ToList();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+            bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
 
-                //VERIFY
-                bookWithReviews.Reviews.Count.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var bookWithReviews = context.Books
+                .Single(x => x.BookId == bookId);
+            bookWithReviews.Reviews.ShouldBeNull();
+            var reviews = context.Set<Review>()
+                .Where(x => x.BookId == bookId)
+                .ToList();
+
+            //VERIFY
+            bookWithReviews.Reviews.Count.ShouldEqual(2);
         }
 
         [Fact]
@@ -79,27 +75,25 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book1 = context.Books
-                    .Include(r => r.AuthorsLink)
-                        .ThenInclude(r => r.Author)
-                    .First();
-                var book2 = context.Books
-                    .Include(r => r.AuthorsLink)
-                    .Skip(1).First();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                book1.AuthorsLink.First().Author.ShouldNotBeNull();
-                book2.AuthorsLink.First().Author.ShouldNotBeNull();
-                book1.AuthorsLink.First().Author.ShouldEqual(book2.AuthorsLink.First().Author);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book1 = context.Books
+                .Include(r => r.AuthorsLink)
+                .ThenInclude(r => r.Author)
+                .First();
+            var book2 = context.Books
+                .Include(r => r.AuthorsLink)
+                .Skip(1).First();
+
+            //VERIFY
+            book1.AuthorsLink.First().Author.ShouldNotBeNull();
+            book2.AuthorsLink.First().Author.ShouldNotBeNull();
+            book1.AuthorsLink.First().Author.ShouldEqual(book2.AuthorsLink.First().Author);
         }
 
         [Fact]
@@ -107,27 +101,25 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book1 = context.Books
-                    .Include(r => r.AuthorsLink)
-                    .ThenInclude(r => r.Author)
-                    .First();
-                var book2 = context.Books
-                    .AsNoTracking()
-                    .Include(r => r.AuthorsLink)
-                    .Skip(1).First();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                book1.AuthorsLink.First().Author.ShouldNotBeNull();
-                book2.AuthorsLink.First().Author.ShouldBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book1 = context.Books
+                .Include(r => r.AuthorsLink)
+                .ThenInclude(r => r.Author)
+                .First();
+            var book2 = context.Books
+                .AsNoTracking()
+                .Include(r => r.AuthorsLink)
+                .Skip(1).First();
+
+            //VERIFY
+            book1.AuthorsLink.First().Author.ShouldNotBeNull();
+            book2.AuthorsLink.First().Author.ShouldBeNull();
         }
 
         [Fact]
@@ -136,24 +128,22 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-                bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books.ToList();
-                var reviews = context.Set<Review>().ToList();
-                var authorsLinks = context.Set<BookAuthor>().ToList();
-                var authors = context.Authors.ToList();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+            bookId = context.Books.Single(x => x.Reviews.Any()).BookId;
 
-                //VERIFY
-                book.Last().Reviews.Count.ShouldEqual(2);
-                book.Last().AuthorsLink.Single().Author.ShouldNotBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books.ToList();
+            var reviews = context.Set<Review>().ToList();
+            var authorsLinks = context.Set<BookAuthor>().ToList();
+            var authors = context.Authors.ToList();
+
+            //VERIFY
+            book.Last().Reviews.Count.ShouldEqual(2);
+            book.Last().AuthorsLink.Single().Author.ShouldNotBeNull();
         }
     }
 }

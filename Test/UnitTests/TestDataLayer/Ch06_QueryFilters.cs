@@ -28,21 +28,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var bookWithReviews = context.SeedDatabaseFourBooks().First(x => x.Reviews?.Any() ?? false);
-                bookWithReviews.SoftDeleted = true;
-                context.SaveChanges();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var numReviews = context.Set<Review>().Count();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var bookWithReviews = context.SeedDatabaseFourBooks().First(x => x.Reviews?.Any() ?? false);
+            bookWithReviews.SoftDeleted = true;
+            context.SaveChanges();
 
-                //VERIFY
-                numReviews.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var numReviews = context.Set<Review>().Count();
+
+            //VERIFY
+            numReviews.ShouldEqual(2);
         }
 
         [Fact]
@@ -55,22 +53,20 @@ namespace Test.UnitTests.TestDataLayer
                 if (showlog)
                     _output.WriteLine(log.Message);
             });
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var bookWithReviews = context.SeedDatabaseFourBooks().First(x => x.Reviews?.Any() ?? false);
-                bookWithReviews.SoftDeleted = true;
-                context.SaveChanges();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                showlog = true;
-                var numReviews = context.Books.SelectMany(x => x.Reviews).Count();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var bookWithReviews = context.SeedDatabaseFourBooks().First(x => x.Reviews?.Any() ?? false);
+            bookWithReviews.SoftDeleted = true;
+            context.SaveChanges();
 
-                //VERIFY
-                numReviews.ShouldEqual(0);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            showlog = true;
+            var numReviews = context.Books.SelectMany(x => x.Reviews).Count();
+
+            //VERIFY
+            numReviews.ShouldEqual(0);
         }
 
         [Fact]
@@ -79,21 +75,19 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                bookId = context.SeedDatabaseFourBooks().First(x => x.Promotion != null).BookId;
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books.Single(x => x.BookId == bookId);
-                book.Promotion = new PriceOffer();
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            bookId = context.SeedDatabaseFourBooks().First(x => x.Promotion != null).BookId;
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: PriceOffers.BookId'.");
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books.Single(x => x.BookId == bookId);
+            book.Promotion = new PriceOffer();
+            var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'UNIQUE constraint failed: PriceOffers.BookId'.");
         }
 
     }

@@ -32,32 +32,30 @@ namespace Test.UnitTests.TestDataLayer
                 if (showlog)
                     _output.WriteLine(log.Message);
             });
-            using (var context = new LazyInjectContext(options))
+            using var context = new LazyInjectContext(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new BookLazy1
             {
-                context.Database.EnsureCreated();
-                var book = new BookLazy1
+                Promotion = new PriceOffer{ NewPrice = 5},
+                Reviews = new List<Lazy1Review>
                 {
-                    Promotion = new PriceOffer{ NewPrice = 5},
-                    Reviews = new List<Lazy1Review>
-                    {
-                        new Lazy1Review {NumStars = 5}, new Lazy1Review {NumStars = 1}
-                    }
-                };
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new LazyInjectContext(options))
-            {
-                //ATTEMPT
-                showlog = true;
-                var book = context.BookLazy1s.Single(); //#A
-                var reviews = book.Reviews.ToList(); //#B
+                    new Lazy1Review {NumStars = 5}, new Lazy1Review {NumStars = 1}
+                }
+            };
+            context.Add(bookSetup);
+            context.SaveChanges();
 
-                //VERIFY
-                book.Promotion.ShouldBeNull();
-                context.BookLazy1s.Select(x => x.Promotion).ShouldNotBeNull();
-                reviews.Count.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            showlog = true;
+            var book = context.BookLazy1s.Single(); //#A
+            var reviews = book.Reviews.ToList(); //#B
+
+            //VERIFY
+            book.Promotion.ShouldBeNull();
+            context.BookLazy1s.Select(x => x.Promotion).ShouldNotBeNull();
+            reviews.Count.ShouldEqual(2);
         }
 
         [Fact]
@@ -70,32 +68,30 @@ namespace Test.UnitTests.TestDataLayer
                 if (showlog)
                     _output.WriteLine(log.Message);
             });
-            using (var context = new LazyInjectContext(options))
+            using var context = new LazyInjectContext(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new BookLazy2
             {
-                context.Database.EnsureCreated();
-                var book = new BookLazy2
+                Promotion = new PriceOffer { NewPrice = 5 },
+                Reviews = new List<Lazy2Review>
                 {
-                    Promotion = new PriceOffer { NewPrice = 5 },
-                    Reviews = new List<Lazy2Review>
-                    {
-                        new Lazy2Review {NumStars = 5}, new Lazy2Review {NumStars = 1}
-                    }
-                };
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new LazyInjectContext(options))
-            {
-                //ATTEMPT
-                showlog = true;
-                var book = context.BookLazy2s.Single();
-                var reviews = book.Reviews.ToList();
+                    new Lazy2Review {NumStars = 5}, new Lazy2Review {NumStars = 1}
+                }
+            };
+            context.Add(bookSetup);
+            context.SaveChanges();
 
-                //VERIFY
-                book.Promotion.ShouldBeNull();
-                context.BookLazy2s.Select(x => x.Promotion).ShouldNotBeNull();
-                reviews.Count.ShouldEqual(2);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            showlog = true;
+            var book = context.BookLazy2s.Single();
+            var reviews = book.Reviews.ToList();
+
+            //VERIFY
+            book.Promotion.ShouldBeNull();
+            context.BookLazy2s.Select(x => x.Promotion).ShouldNotBeNull();
+            reviews.Count.ShouldEqual(2);
         }
 
         [Fact]
@@ -104,29 +100,27 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<LazyProxyContext>(
                 builder => builder.UseLazyLoadingProxies());
-            using (var context = new LazyProxyContext(options))
+            using var context = new LazyProxyContext(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new BookLazyProxy
             {
-                context.Database.EnsureCreated();
-                var book = new BookLazyProxy
+                Reviews = new List<LazyReview>
                 {
-                    Reviews = new List<LazyReview>
-                    {
-                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
-                    }
-                };
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new LazyProxyContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books.Single(); //#A
-                book.Reviews.Count().ShouldEqual(2); //#B
-                /*********************************************************
+                    new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
+                }
+            };
+            context.Add(bookSetup);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books.Single(); //#A
+            book.Reviews.Count().ShouldEqual(2); //#B
+            /*********************************************************
                 #A We just load the book class
                 #B When the Reviews are read, then EF Core will read in the reviews
                 * *******************************************************/
-            }
         }
 
         [Fact]
@@ -138,30 +132,28 @@ namespace Test.UnitTests.TestDataLayer
             {
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
-            }, applyExtraOption: builder => builder.UseLazyLoadingProxies());
+            }, builder: builder => builder.UseLazyLoadingProxies());
 
-            using (var context = new LazyProxyContext(options))
+            using var context = new LazyProxyContext(options);
+            context.Database.EnsureCreated();
+            var book = new BookLazyProxy
             {
-                context.Database.EnsureCreated();
-                var book = new BookLazyProxy
+                Reviews = new List<LazyReview>
                 {
-                    Reviews = new List<LazyReview>
-                    {
-                        new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
-                    }
-                };
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new LazyProxyContext(options))
-            {
-                //ATTEMPT
-                showLog = true;
-                var book1 = context.Books.TagWith("lazy").Single(); 
-                book1.Reviews.Count().ShouldEqual(2);
-                var book2 = context.Books.TagWith("include").Include(x => x.Reviews).Single();
-                book2.Reviews.Count().ShouldEqual(2);
-            }
+                    new LazyReview {NumStars = 5}, new LazyReview {NumStars = 1}
+                }
+            };
+            context.Add(book);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            showLog = true;
+            var book1 = context.Books.TagWith("lazy").Single(); 
+            book1.Reviews.Count().ShouldEqual(2);
+            var book2 = context.Books.TagWith("include").Include(x => x.Reviews).Single();
+            book2.Reviews.Count().ShouldEqual(2);
         }
     }
 }

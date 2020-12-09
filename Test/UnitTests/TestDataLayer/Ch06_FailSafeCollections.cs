@@ -30,20 +30,18 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books
-                    .First(x => x.Reviews.Any());
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                book.Reviews.ShouldBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books
+                .First(x => x.Reviews.Any());
+
+            //VERIFY
+            book.Reviews.ShouldBeNull();
         }
 
         [Fact]
@@ -51,22 +49,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var book = context.Books
-                    .First(x => x.Reviews.Any());
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                var ex = Assert.Throws<NullReferenceException>(() => book.Reviews.Count);
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                
-            }
+            var book = context.Books
+                .First(x => x.Reviews.Any());
+
+            //ATTEMPT
+            var ex = Assert.Throws<NullReferenceException>(() => book.Reviews.Count);
+
+            //VERIFY
         }
 
         [Fact]
@@ -75,24 +70,22 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int twoReviewBookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                twoReviewBookId = context.SeedDatabaseFourBooks().Last().BookId;
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var book = context.Books
-                    //missing .Include(x => x.Reviews)
-                    .Single(p => p.BookId == twoReviewBookId);
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            twoReviewBookId = context.SeedDatabaseFourBooks().Last().BookId;
 
-                //ATTEMPT
-                book.Reviews = new List<Review>{ new Review{ NumStars = 1}};
-                context.SaveChanges();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                context.Set<Review>().Count().ShouldEqual(3);
-            }
+            var book = context.Books
+                //missing .Include(x => x.Reviews)
+                .Single(p => p.BookId == twoReviewBookId);
+
+            //ATTEMPT
+            book.Reviews = new List<Review>{ new Review{ NumStars = 1}};
+            context.SaveChanges();
+
+            //VERIFY
+            context.Set<Review>().Count().ShouldEqual(3);
         }
 
         [Fact]
@@ -100,24 +93,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                var book = new BookNotSafe();
-                book.Reviews.Add(new ReviewNotSafe());
-                context.Add(book);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var book = context.Books   //#A
-                    //... missing Include(x => x.Reviews) //#B
-                    .First(x => x.Reviews.Any());
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new BookNotSafe();
+            bookSetup.Reviews.Add(new ReviewNotSafe());
+            context.Add(bookSetup);
+            context.SaveChanges();
 
-                //VERIFY
-                book.Reviews.ShouldNotBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books   //#A
+                //... missing Include(x => x.Reviews) //#B
+                .First(x => x.Reviews.Any());
+
+            //VERIFY
+            book.Reviews.ShouldNotBeNull();
         }
 
 

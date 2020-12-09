@@ -20,23 +20,21 @@ namespace Test.UnitTests.TestServiceLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //I select the last book, which has a promotion
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},4,1");
+            //I select the last book, which has a promotion
+            var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},4,1");
 
-                //ATTEMPT
+            //ATTEMPT
 
-                var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
-                var list = service.GetCheckoutList();
+            var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
+            var list = service.GetCheckoutList();
 
-                //VERIFY
-                list.Count.ShouldEqual(1);
-                list.First().BookPrice.ShouldEqual(219);
-            }
+            //VERIFY
+            list.Count.ShouldEqual(1);
+            list.First().BookPrice.ShouldEqual(219);
         }
 
         [Fact]
@@ -44,25 +42,24 @@ namespace Test.UnitTests.TestServiceLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(1);
-            }
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseDummyBooks(1);
+
+            context.ChangeTracker.Clear();
+
             //two line items: BookId:1 NumBooks:1
             var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,1");
 
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
-            {
-                var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
-                var list = service.GetCheckoutList();
+
+            var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
+            var list = service.GetCheckoutList();
                 
-                //VERIFY
-                list.Count.ShouldEqual(1);
-                list.First().BookId.ShouldEqual(1);
-                list.First().BookPrice.ShouldEqual(1);
-            }
+            //VERIFY
+            list.Count.ShouldEqual(1);
+            list.First().BookId.ShouldEqual(1);
+            list.First().BookPrice.ShouldEqual(1);
         }
 
         [Fact]
@@ -70,26 +67,26 @@ namespace Test.UnitTests.TestServiceLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseDummyBooks(10);
+
+            context.ChangeTracker.Clear();
+
+            //two line items: BookId:1 NumBooks:2, BookId:2 NumBooks:3
+            var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2,2,3");
+
+            //ATTEMPT
+
+            var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
+            var list = service.GetCheckoutList();
+
+            //VERIFY
+            for (int i = 0; i < list.Count(); i++)
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(10);
-
-                //two line items: BookId:1 NumBooks:2, BookId:2 NumBooks:3
-                var mockCookieRequests = new MockHttpCookieAccess(BasketCookie.BasketCookieName, $"{Guid.NewGuid()},1,2,2,3");
-
-                //ATTEMPT
-
-                var service = new CheckoutListService(context, mockCookieRequests.CookiesIn);
-                var list = service.GetCheckoutList();
-
-                //VERIFY
-                for (int i = 0; i < list.Count(); i++)
-                {
-                    list[i].BookId.ShouldEqual(i + 1);
-                    list[i].NumBooks.ShouldEqual((short)(i + 2));
-                    list[i].BookPrice.ShouldEqual((i + 1));
-                }
+                list[i].BookId.ShouldEqual(i + 1);
+                list[i].NumBooks.ShouldEqual((short)(i + 2));
+                list[i].BookPrice.ShouldEqual((i + 1));
             }
         }
     }

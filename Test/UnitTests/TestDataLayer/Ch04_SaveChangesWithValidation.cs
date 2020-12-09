@@ -93,35 +93,33 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
-            {
-                //ATTEMPT
-                var order = new Order
-                {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
-                    {
-                        new LineItem
-                        {
-                            BookId = context.Books.First().BookId,
-                            LineNum = 1,
-                            BookPrice = 123,
-                            NumBooks = 1
-                        }
-                    }
-                };
-                context.Orders.Add(order);
-                var errors = context.SaveChangesWithValidation();
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //VERIFY
-                errors.Any().ShouldBeFalse();
-                context.Orders.Count().ShouldEqual(1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var order = new Order
+            {
+                CustomerId = userId,
+                LineItems = new List<LineItem>
+                {
+                    new LineItem
+                    {
+                        BookId = context.Books.First().BookId,
+                        LineNum = 1,
+                        BookPrice = 123,
+                        NumBooks = 1
+                    }
+                }
+            };
+            context.Orders.Add(order);
+            var errors = context.SaveChangesWithValidation();
+
+            //VERIFY
+            errors.Any().ShouldBeFalse();
+            context.Orders.Count().ShouldEqual(1);
         }
 
 
@@ -131,34 +129,32 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var userId = Guid.NewGuid();
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options, new FakeUserIdService(userId)))
+            using var context = new EfCoreContext(options, new FakeUserIdService(userId));
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            var order = new Order
             {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-
-                //ATTEMPT
-                var order = new Order
+                CustomerId = userId,
+                LineItems = new List<LineItem>
                 {
-                    CustomerId = userId,
-                    LineItems = new List<LineItem>
+                    new LineItem
                     {
-                        new LineItem
-                        {
-                            BookId = context.Books.First().BookId,
-                            LineNum = 20,
-                            BookPrice = 123,
-                            NumBooks = 1
-                        }
+                        BookId = context.Books.First().BookId,
+                        LineNum = 20,
+                        BookPrice = 123,
+                        NumBooks = 1
                     }
-                };
-                context.Orders.Add(order);
-                var errors = context.SaveChangesWithValidation();
+                }
+            };
+            context.Orders.Add(order);
+            var errors = context.SaveChangesWithValidation();
 
-                //VERIFY
-                errors.Count.ShouldEqual(1);
-                errors.First().ErrorMessage.ShouldEqual("This order is over the limit of 5 books.");
-                context.Orders.Count().ShouldEqual(0);
-            }
+            //VERIFY
+            errors.Count.ShouldEqual(1);
+            errors.First().ErrorMessage.ShouldEqual("This order is over the limit of 5 books.");
+            context.Orders.Count().ShouldEqual(0);
         }
 
     }

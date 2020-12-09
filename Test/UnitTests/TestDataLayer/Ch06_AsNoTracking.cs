@@ -86,6 +86,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int numBooks = 100;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            options.TurnOffDispose();
             using (var context = new EfCoreContext(options))
             {
                 context.Database.EnsureCreated();
@@ -147,6 +148,7 @@ namespace Test.UnitTests.TestDataLayer
                     .Include(x => x.AuthorsLink).ThenInclude(x => x.Author)
                     .ToList();
             }
+            options.ManualDispose();
         }
     }
 }

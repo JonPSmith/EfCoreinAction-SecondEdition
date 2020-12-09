@@ -44,22 +44,20 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
-        {
-            context.Database.EnsureCreated();
-            var book4Reviews2Authors = EfTestData.CreateDummyBooks(5).Last();
-            context.Add(book4Reviews2Authors);
-            context.SaveChanges();
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var book4Reviews2Authors = EfTestData.CreateDummyBooks(5).Last();
+        context.Add(book4Reviews2Authors);
+        context.SaveChanges();
 
-            //ATTEMPT
-            var query = context.Books
-                .Include(x => x.Reviews)
-                .Include(x => x.AuthorsLink)
-                .ThenInclude(x => x.Author);
+        //ATTEMPT
+        var query = context.Books
+            .Include(x => x.Reviews)
+            .Include(x => x.AuthorsLink)
+            .ThenInclude(x => x.Author);
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-        }
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
     }
 
     //See first bullet point for why the sort doesn't work https://github.com/dotnet/efcore/issues/20777#issuecomment-632101694
@@ -68,28 +66,26 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var newBook = new Book
         {
-            context.Database.EnsureCreated();
-            var newBook = new Book
+            Reviews = new List<Review>
             {
-                Reviews = new List<Review>
-                {
-                    new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
-                }
-            };
-            context.Add(newBook);
-            context.SaveChanges();
+                new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
+            }
+        };
+        context.Add(newBook);
+        context.SaveChanges();
 
-            //ATTEMPT
-            var query = context.Books
-                .Include(x => x.Reviews.OrderBy(y => y.NumStars));
-            var books = query.ToList();
+        //ATTEMPT
+        var query = context.Books
+            .Include(x => x.Reviews.OrderBy(y => y.NumStars));
+        var books = query.ToList();
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 2,1,3 }); //WRONG! See comment on test
-        }
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
+        books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 2,1,3 }); //WRONG! See comment on test
     }
 
     [Fact]
@@ -97,32 +93,30 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var newBook = new Book
         {
-            context.Database.EnsureCreated();
-            var newBook = new Book
+            Reviews = new List<Review>
             {
-                Reviews = new List<Review>
-                {
-                    new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
-                }
-            };
-            context.Add(newBook);
-            context.SaveChanges();
-        }
-        using (var context = new EfCoreContext(options))
-        {
-            //ATTEMPT
-            var query = context.Books
-                .Include(x => x.Reviews.OrderBy(y => y.NumStars));
-            var books = query.ToList();
+                new Review {NumStars = 2}, new Review {NumStars = 1}, new Review {NumStars = 3}
+            }
+        };
+        context.Add(newBook);
+        context.SaveChanges();
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2, 3 });
-            var hashSet = new HashSet<Review>(context.Set<Review>().ToList());
-            hashSet.Select(x => x.NumStars).ShouldEqual(new[] { 2, 1, 3 });
-        }
+        context.ChangeTracker.Clear();
+
+        //ATTEMPT
+        var query = context.Books
+            .Include(x => x.Reviews.OrderBy(y => y.NumStars));
+        var books = query.ToList();
+
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
+        books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] { 1, 2, 3 });
+        var hashSet = new HashSet<Review>(context.Set<Review>().ToList());
+        hashSet.Select(x => x.NumStars).ShouldEqual(new[] { 2, 1, 3 });
     }
 
 
@@ -131,32 +125,30 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
-        {
-            context.Database.EnsureCreated();
-            context.SeedDatabaseFourBooks();
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        context.SeedDatabaseFourBooks();
 
-            //ATTEMPT
-            var firstBook = context.Books
-                .Include(book => book.AuthorsLink //#A
-                    .OrderBy(bookAuthor => bookAuthor.Order)) //#A
-                    .ThenInclude(bookAuthor => bookAuthor.Author)
-                .Include(book => book.Reviews //#B
-                    .Where(review => review.NumStars == 5)) //#B
-                .Include(book => book.Promotion)
-                .First();
-            /*********************************************************
+        //ATTEMPT
+        var firstBook = context.Books
+            .Include(book => book.AuthorsLink //#A
+                .OrderBy(bookAuthor => bookAuthor.Order)) //#A
+            .ThenInclude(bookAuthor => bookAuthor.Author)
+            .Include(book => book.Reviews //#B
+                .Where(review => review.NumStars == 5)) //#B
+            .Include(book => book.Promotion)
+            .First();
+        /*********************************************************
             #A Sort example: On the eager loading of the AuthorsLink collection you sort the BookAuthors so that the Authors will be in the correct order to display
             #B Filter example: here you only load the Reviews with a start rating of 5
             * *******************************************************/
 
-            //VERIFY
-            firstBook.AuthorsLink.ShouldNotBeNull();
-            firstBook.AuthorsLink.First()
-                .Author.ShouldNotBeNull();
+        //VERIFY
+        firstBook.AuthorsLink.ShouldNotBeNull();
+        firstBook.AuthorsLink.First()
+            .Author.ShouldNotBeNull();
 
-            firstBook.Reviews.ShouldNotBeNull();
-        }
+        firstBook.Reviews.ShouldNotBeNull();
     }
 
     [Fact]
@@ -164,33 +156,30 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var newBook = new Book
         {
-            context.Database.EnsureCreated();
-            var newBook = new Book
+            AuthorsLink = new List<BookAuthor>
             {
-                AuthorsLink = new List<BookAuthor>
-                {
-                    new BookAuthor {Author = new Author {Name = "Author2"}, Order = 2},
-                    new BookAuthor {Author = new Author {Name = "Author1"}, Order = 1},
-                }
-            };
-            context.Add(newBook);
-            context.SaveChanges();
-        }
-        using (var context = new EfCoreContext(options))
-        {
+                new BookAuthor {Author = new Author {Name = "Author2"}, Order = 2},
+                new BookAuthor {Author = new Author {Name = "Author1"}, Order = 1},
+            }
+        };
+        context.Add(newBook);
+        context.SaveChanges();
 
-            //ATTEMPT
-            var query = context.Books
+        context.ChangeTracker.Clear();
+
+        //ATTEMPT
+        var query = context.Books
             .Include(x => x.AuthorsLink.OrderBy(y => y.Order))
             .ThenInclude(x => x.Author);
-            var books = query.ToList();
+        var books = query.ToList();
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-            books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] {"Author1", "Author2" });
-        }
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
+        books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] {"Author1", "Author2" });
     }
 
     [Fact]
@@ -198,30 +187,28 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var newBook = new Book
         {
-            context.Database.EnsureCreated();
-            var newBook = new Book
-            {
-                AuthorsLink = new List<BookAuthor>
+            AuthorsLink = new List<BookAuthor>
             {
                 new BookAuthor {Author = new Author {Name = "Author2"}, Order = 2},
                 new BookAuthor {Author = new Author {Name = "Author1"}, Order = 1},
             }
-            };
-            context.Add(newBook);
-            context.SaveChanges();
+        };
+        context.Add(newBook);
+        context.SaveChanges();
 
-            //ATTEMPT
-            var query = context.Books
-                .Include(book => book.AuthorsLink)//.OrderBy(y => y.Order))
-                    .ThenInclude(bookAuthor => bookAuthor.OrderBy(y => y.Author.Name));
-            var books = query.ToList();
+        //ATTEMPT
+        var query = context.Books
+            .Include(book => book.AuthorsLink)//.OrderBy(y => y.Order))
+            .ThenInclude(bookAuthor => bookAuthor.OrderBy(y => y.Author.Name));
+        var books = query.ToList();
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-            books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] { "Author1", "Author2" });
-        }
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
+        books.Single().AuthorsLink.Select(x => x.Author.Name).ShouldEqual(new[] { "Author1", "Author2" });
     }
 
     [Fact]
@@ -229,31 +216,28 @@ namespace Test.UnitTests.TestDataLayer
     {
         //SETUP
         var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-        using (var context = new EfCoreContext(options))
+        using var context = new EfCoreContext(options);
+        context.Database.EnsureCreated();
+        var newBook = new Book
         {
-            context.Database.EnsureCreated();
-            var newBook = new Book
+            Reviews = new List<Review>
             {
-                Reviews = new List<Review>
-                {
-                    new Review {NumStars = 2}, new Review {NumStars = 1}
-                }
-            };
-            context.Add(newBook);
-            context.SaveChanges();
-        }
+                new Review {NumStars = 2}, new Review {NumStars = 1}
+            }
+        };
+        context.Add(newBook);
+        context.SaveChanges();
 
-        using (var context = new EfCoreContext(options))
-        {
-            //ATTEMPT
-            var query = context.Books
-                .Include(x => x.Reviews.Where(y => y.NumStars > 1));
-            var books = query.ToList();
+        context.ChangeTracker.Clear();
 
-            //VERIFY
-            _output.WriteLine(query.ToQueryString());
-            books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] {2});
-        }
+        //ATTEMPT
+        var query = context.Books
+            .Include(x => x.Reviews.Where(y => y.NumStars > 1));
+        var books = query.ToList();
+
+        //VERIFY
+        _output.WriteLine(query.ToQueryString());
+        books.Single().Reviews.Select(x => x.NumStars).ShouldEqual(new[] {2});
     }
 
 

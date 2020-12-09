@@ -132,22 +132,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CtorDbContext>();
-            using (var context = new CtorDbContext(options, false))
-            {
-                context.Database.EnsureCreated();
-                var newEntity = new ReviewGood("John Doe") { NumStars = -1 };
-                context.Add(newEntity);
-                context.SaveChanges();
-            }
-            using (var context = new CtorDbContext(options, false))
-            {
-                //ATTEMPT
-                var entity = context.ReviewGoods.Single();
+            using var context = new CtorDbContext(options, false);
+            context.Database.EnsureCreated();
+            var newEntity = new ReviewGood("John Doe") { NumStars = -1 };
+            context.Add(newEntity);
+            context.SaveChanges();
 
-                //VERIFY
-                entity.VoterName.ShouldEqual("John Doe");
-                entity.NumStars.ShouldEqual(-1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.ReviewGoods.Single();
+
+            //VERIFY
+            entity.VoterName.ShouldEqual("John Doe");
+            entity.NumStars.ShouldEqual(-1);
         }
 
         [Fact]
@@ -155,22 +153,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CtorDbContext>();
-            using (var context = new CtorDbContext(options, false))
-            {
-                context.Database.EnsureCreated();
-                var newEntity = new ReviewGood2("John Doe",1);
-                context.Add(newEntity);
-                context.SaveChanges();
-            }
-            using (var context = new CtorDbContext(options, false))
-            {
-                //ATTEMPT
-                var entity = context.Review2Goods.Single();
+            using var context = new CtorDbContext(options, false);
+            context.Database.EnsureCreated();
+            var newEntity = new ReviewGood2("John Doe",1);
+            context.Add(newEntity);
+            context.SaveChanges();
 
-                //VERIFY
-                entity.VoterName.ShouldEqual("John Doe");
-                entity.NumStars.ShouldEqual(1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.Review2Goods.Single();
+
+            //VERIFY
+            entity.VoterName.ShouldEqual("John Doe");
+            entity.NumStars.ShouldEqual(1);
         }
 
         [Fact]
@@ -178,23 +174,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CtorDbContext>();
-            using (var context = new CtorDbContext(options, false))
-            {
-                context.Database.EnsureCreated();
-                var newEntity = new ReviewBad("John Doe") {NumStars = -1};
-                newEntity.VoterName.ShouldEqual("Name: John Doe");
-                context.Add(newEntity);
-                context.SaveChanges();
-            }
-            using (var context = new CtorDbContext(options, false))
-            {
-                //ATTEMPT
-                var entity = context.ReviewBads.Single();
+            using var context = new CtorDbContext(options, false);
+            context.Database.EnsureCreated();
+            var newEntity = new ReviewBad("John Doe") {NumStars = -1};
+            newEntity.VoterName.ShouldEqual("Name: John Doe");
+            context.Add(newEntity);
+            context.SaveChanges();
 
-                //VERIFY
-                entity.VoterName.ShouldEqual("Name: Name: John Doe");
-                entity.NumStars.ShouldEqual(-1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.ReviewBads.Single();
+
+            //VERIFY
+            entity.VoterName.ShouldEqual("Name: Name: John Doe");
+            entity.NumStars.ShouldEqual(-1);
         }
 
         [Fact]
@@ -202,23 +196,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CtorDbContext>();
-            using (var context = new CtorDbContext(options, false))
-            {
-                context.Database.EnsureCreated();
-                var newEntity = new ReviewBadCtor2("John Doe", -1);
-                newEntity.VoterName.ShouldEqual("John Doe");
-                context.Add(newEntity);
-                context.SaveChanges();
-            }
-            using (var context = new CtorDbContext(options, false))
-            {
-                //ATTEMPT
-                var entity = context.ReviewBadCtor2s.Single();
+            using var context = new CtorDbContext(options, false);
+            context.Database.EnsureCreated();
+            var newEntity = new ReviewBadCtor2("John Doe", -1);
+            newEntity.VoterName.ShouldEqual("John Doe");
+            context.Add(newEntity);
+            context.SaveChanges();
 
-                //VERIFY
-                entity.VoterName.ShouldEqual("John Doe");
-                entity.NumStars.ShouldEqual(-1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.ReviewBadCtor2s.Single();
+
+            //VERIFY
+            entity.VoterName.ShouldEqual("John Doe");
+            entity.NumStars.ShouldEqual(-1);
         }
 
         //Has to be run on its own as it changes the DbContext configuration
@@ -227,14 +219,12 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<CtorDbContext>();
-            using (var context = new CtorDbContext(options, true))
-            {
-                //ATTEMPT
-                var ex = Assert.Throws<InvalidOperationException>(() => context.Database.EnsureCreated());
+            using var context = new CtorDbContext(options, true);
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => context.Database.EnsureCreated());
 
-                //VERIFY
-                ex.Message.ShouldStartWith("No suitable constructor found for entity type 'ReviewBadCtor1'.");
-            }
+            //VERIFY
+            ex.Message.ShouldStartWith("No suitable constructor found for entity type 'ReviewBadCtor1'.");
         }
     }
 }

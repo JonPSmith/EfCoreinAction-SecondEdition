@@ -21,35 +21,34 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                var book = new Book { Title = "Test Book" };
-                context.Add(book);
-                context.SaveChanges();
-                bookId = book.BookId;
-            }
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new Book { Title = "Test Book" };
+            context.Add(bookSetup);
+            context.SaveChanges();
+            bookId = bookSetup.BookId;
+            
+
+            context.ChangeTracker.Clear();
+
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
+            var book = new Book    //#A
             {
-                var book = new Book    //#A
-                {
-                    BookId = bookId    //#B
-                };
-                context.Remove(book);  //#C
-                context.SaveChanges(); //#D
-                /*****************************************************
+                BookId = bookId    //#B
+            };
+            context.Remove(book);  //#C
+            context.SaveChanges(); //#D
+            /*****************************************************
                  #A This creates the entity class that we want to delete - in this case a Book
                  #B This sets the primary key of the entity instance
                  #C The call to Remove tells EF Core you want this entity/row to be deleted
                  #D Then SaveChanges sends the command to the database to delete that row
                  ****************************************************/
-            }
+
+            context.ChangeTracker.Clear();
+
             //VERIFY
-            using (var context = new EfCoreContext(options))
-            {
-                context.Books.Count().ShouldEqual(0);
-            }
+            context.Books.Count().ShouldEqual(0);
         }
 
         [Fact]
@@ -58,33 +57,34 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int bookId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var bookSetup = new Book
             {
-                context.Database.EnsureCreated();
-                var book = new Book
-                {
-                    Title = "Test Book",
-                    Reviews = new List<Review>{new Review()}
-                };
-                context.Add(book);
-                context.SaveChanges();
-                bookId = book.BookId;
-                context.Books.Count().ShouldEqual(1);
-                context.Set<Review>().Count().ShouldEqual(1);
-            }
+                Title = "Test Book",
+                Reviews = new List<Review>{new Review()}
+            };
+            context.Add(bookSetup);
+            context.SaveChanges();
+            bookId = bookSetup.BookId;
+            context.Books.Count().ShouldEqual(1);
+            context.Set<Review>().Count().ShouldEqual(1);
+
+            context.ChangeTracker.Clear();
+
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
-            {
-                var book = new Book { BookId = bookId };
-                context.Remove(book);
-                context.SaveChanges();
-            }
+            var book = new Book { BookId = bookId };
+            context.Remove(book);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
             //VERIFY
-            using (var context = new EfCoreContext(options))
-            {
-                context.Books.Count().ShouldEqual(0);
-                context.Set<Review>().Count().ShouldEqual(0);
-            }
+
+            context.ChangeTracker.Clear();
+
+            context.Books.Count().ShouldEqual(0);
+            context.Set<Review>().Count().ShouldEqual(0);
         }
 
         [Fact]
@@ -93,33 +93,31 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int priceOfferId;
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var book = new Book
             {
-                context.Database.EnsureCreated();
-                var book = new Book
-                {
-                    Title = "Test Book",
-                    Promotion = new PriceOffer { NewPrice = 1 }
-                };
-                context.Add(book);
-                context.SaveChanges();
-                priceOfferId = book.Promotion.PriceOfferId;
-                context.Books.Count().ShouldEqual(1);
-                context.PriceOffers.Count().ShouldEqual(1);
-            }
+                Title = "Test Book",
+                Promotion = new PriceOffer { NewPrice = 1 }
+            };
+            context.Add(book);
+            context.SaveChanges();
+            priceOfferId = book.Promotion.PriceOfferId;
+            context.Books.Count().ShouldEqual(1);
+            context.PriceOffers.Count().ShouldEqual(1);
+
+            context.ChangeTracker.Clear();
+
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
-            {
-                var pOfferToDelete = new PriceOffer { PriceOfferId = priceOfferId };
-                context.Remove(pOfferToDelete);
-                context.SaveChanges();
-            }
+            var pOfferToDelete = new PriceOffer { PriceOfferId = priceOfferId };
+            context.Remove(pOfferToDelete);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
             //VERIFY
-            using (var context = new EfCoreContext(options))
-            {
-                context.Books.Count().ShouldEqual(1);
-                context.PriceOffers.Count().ShouldEqual(0);
-            }
+            context.Books.Count().ShouldEqual(1);
+            context.PriceOffers.Count().ShouldEqual(0);
         }
 
         [Fact]
@@ -127,34 +125,32 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var book = new Book
             {
-                context.Database.EnsureCreated();
-                var book = new Book
-                {
-                    Title = "Test Book",
-                    Promotion = new PriceOffer{NewPrice = 1}
-                };
-                context.Add(book);
-                context.SaveChanges();
-                context.Books.Count().ShouldEqual(1);
-                context.PriceOffers.Count().ShouldEqual(1);
-            }
+                Title = "Test Book",
+                Promotion = new PriceOffer{NewPrice = 1}
+            };
+            context.Add(book);
+            context.SaveChanges();
+            context.Books.Count().ShouldEqual(1);
+            context.PriceOffers.Count().ShouldEqual(1);
+
+            context.ChangeTracker.Clear();
+
             //ATTEMPT
-            using (var context = new EfCoreContext(options))
-            {
-                var bookWithPromotion = context.Books
-                    .Include(x => x.Promotion).Single();
-                context.Remove(bookWithPromotion.Promotion);
-                context.SaveChanges();
-                bookWithPromotion.Promotion.ShouldBeNull();
-            }
+            var bookWithPromotion = context.Books
+                .Include(x => x.Promotion).Single();
+            context.Remove(bookWithPromotion.Promotion);
+            context.SaveChanges();
+            bookWithPromotion.Promotion.ShouldBeNull();
+
+            context.ChangeTracker.Clear();
+
             //VERIFY
-            using (var context = new EfCoreContext(options))
-            {
-                context.Books.Count().ShouldEqual(1);
-                context.PriceOffers.Count().ShouldEqual(0);
-            }
+            context.Books.Count().ShouldEqual(1);
+            context.PriceOffers.Count().ShouldEqual(0);
         }
 
         [Fact]
@@ -162,21 +158,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+
+            //ATTEMPT
+            var book = new Book    
             {
-                context.Database.EnsureCreated();
+                BookId = 123       
+            };
+            context.Remove(book);  
+            var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges()); 
 
-                //ATTEMPT
-                var book = new Book    
-                {
-                    BookId = 123       
-                };
-                context.Remove(book);  
-                var ex = Assert.Throws<DbUpdateConcurrencyException>(() => context.SaveChanges()); 
-
-                //VERIFY
-                ex.Message.ShouldStartWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).");
-            }
+            //VERIFY
+            ex.Message.ShouldStartWith("Database operation expected to affect 1 row(s) but actually affected 0 row(s).");
         }
 
         [Fact]
@@ -184,23 +178,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.Add(new OnePrincipal {Link = new OneDependent()});
-                context.SaveChanges();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.Add(new OnePrincipal {Link = new OneDependent()});
+            context.SaveChanges();
 
-                context.ChangeTracker.Clear();
+            context.ChangeTracker.Clear();
 
-                //ATTEMPT
-                var depToRemove = new OneDependent {Id = 1};
-                context.Remove(depToRemove);
-                context.SaveChanges();
+            //ATTEMPT
+            var depToRemove = new OneDependent {Id = 1};
+            context.Remove(depToRemove);
+            context.SaveChanges();
 
-                //VERIFY
-                context.OneDependents.Count().ShouldEqual(0);
-                context.OnePrincipals.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.OneDependents.Count().ShouldEqual(0);
+            context.OnePrincipals.Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -208,23 +200,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.Add(new OnePrincipal { Link = new OneDependent() });
-                context.SaveChanges();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.Add(new OnePrincipal { Link = new OneDependent() });
+            context.SaveChanges();
 
-                context.ChangeTracker.Clear();
+            context.ChangeTracker.Clear();
 
-                //ATTEMPT
-                var depToRemove = new OnePrincipal { Id = 1 };
-                context.Remove(depToRemove);
-                context.SaveChanges();
+            //ATTEMPT
+            var depToRemove = new OnePrincipal { Id = 1 };
+            context.Remove(depToRemove);
+            context.SaveChanges();
 
-                //VERIFY
-                context.OneDependents.Count().ShouldEqual(0);
-                context.OnePrincipals.Count().ShouldEqual(0);
-            }
+            //VERIFY
+            context.OneDependents.Count().ShouldEqual(0);
+            context.OnePrincipals.Count().ShouldEqual(0);
         }
     }
 }

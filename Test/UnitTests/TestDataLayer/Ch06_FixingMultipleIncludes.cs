@@ -26,39 +26,38 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddManyTopWithRelationsToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var dummy1 = context.ManyTops.ToList();
-                var dummy2 = context.ManyTops.ToList();
-                ManyTop result;
-                using (new TimeThings(_output, "normal includes - first time"))
-                {
-                    result = context.ManyTops
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .Single();
-                }
-                using (new TimeThings(_output, "normal includes - second time"))
-                {
-                    result = context.ManyTops
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .Single();
-                }
 
-                //VERIFY
-                result.Collection1.Count.ShouldEqual(100);
-                result.Collection2.Count.ShouldEqual(100);
-                result.Collection3.Count.ShouldEqual(100);
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddManyTopWithRelationsToDb();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var dummy1 = context.ManyTops.ToList();
+            var dummy2 = context.ManyTops.ToList();
+            ManyTop result;
+            using (new TimeThings(_output, "normal includes - first time"))
+            {
+                result = context.ManyTops
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .Single();
             }
+            using (new TimeThings(_output, "normal includes - second time"))
+            {
+                result = context.ManyTops
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .Single();
+            }
+
+            //VERIFY
+            result.Collection1.Count.ShouldEqual(100);
+            result.Collection2.Count.ShouldEqual(100);
+            result.Collection3.Count.ShouldEqual(100);
         }
 
         [Fact]
@@ -71,46 +70,44 @@ namespace Test.UnitTests.TestDataLayer
                 if (showlog)
                     _output.WriteLine(log.Message);
             });
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddManyTopWithRelationsToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var dummy1 = context.ManyTops.ToList();
-                var dummy2 = context.ManyTops.ToList();
-                ManyTop result;
-                var id = 1;
-                using (new TimeThings(_output, "sync load - first time"))
-                {
-                    result = context.ManyTops
-                        .AsSplitQuery() //#A
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .Single(x => x.Id == id);
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddManyTopWithRelationsToDb();
 
-                    /*********************************************************
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var dummy1 = context.ManyTops.ToList();
+            var dummy2 = context.ManyTops.ToList();
+            ManyTop result;
+            var id = 1;
+            using (new TimeThings(_output, "sync load - first time"))
+            {
+                result = context.ManyTops
+                    .AsSplitQuery() //#A
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .Single(x => x.Id == id);
+
+                /*********************************************************
                     #A This will cause each Include to be loaded separately, thus stopping the multiplication problem 
                      **********************************************************/
-                }
-                using (new TimeThings(_output, "sync load - second time"))
-                {
-                    result = context.ManyTops
-                        .AsSplitQuery()
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .Single();
-                }
-
-                //VERIFY
-                result.Collection1.Count.ShouldEqual(100);
-                result.Collection2.Count.ShouldEqual(100);
-                result.Collection3.Count.ShouldEqual(100);
             }
+            using (new TimeThings(_output, "sync load - second time"))
+            {
+                result = context.ManyTops
+                    .AsSplitQuery()
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .Single();
+            }
+
+            //VERIFY
+            result.Collection1.Count.ShouldEqual(100);
+            result.Collection2.Count.ShouldEqual(100);
+            result.Collection3.Count.ShouldEqual(100);
         }
 
         [Fact]
@@ -118,46 +115,44 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter06Context>();
-            using (var context = new Chapter06Context(options))
-            {
-                context.Database.EnsureCreated();
-                context.AddManyTopWithRelationsToDb();
-            }
-            using (var context = new Chapter06Context(options))
-            {
-                //ATTEMPT
-                var dummy1 = context.ManyTops.ToList();
-                var dummy2 = context.ManyTops.ToList();
-                ManyTop result;
-                using (new TimeThings(_output, "async load - first time"))
-                {
-                    result = await context.ManyTops
-                        .AsSplitQuery()
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .SingleAsync();
+            using var context = new Chapter06Context(options);
+            context.Database.EnsureCreated();
+            context.AddManyTopWithRelationsToDb();
 
-                    /*********************************************************
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var dummy1 = context.ManyTops.ToList();
+            var dummy2 = context.ManyTops.ToList();
+            ManyTop result;
+            using (new TimeThings(_output, "async load - first time"))
+            {
+                result = await context.ManyTops
+                    .AsSplitQuery()
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .SingleAsync();
+
+                /*********************************************************
                     #A This read in the main entity class, ManyTop that the relationships link to first
                     #B Then you read in the collections one by one. Relational fixup will fill in the navigational properties in the main entity class, ManyTop  
                      **********************************************************/
-                }
-                using (new TimeThings(_output, "async load - second time"))
-                {
-                    result = await context.ManyTops
-                        .AsSplitQuery()
-                        .Include(x => x.Collection1)
-                        .Include(x => x.Collection2)
-                        .Include(x => x.Collection3)
-                        .SingleAsync();
-                }
-
-                //VERIFY
-                result.Collection1.Count.ShouldEqual(100);
-                result.Collection2.Count.ShouldEqual(100);
-                result.Collection3.Count.ShouldEqual(100);
             }
+            using (new TimeThings(_output, "async load - second time"))
+            {
+                result = await context.ManyTops
+                    .AsSplitQuery()
+                    .Include(x => x.Collection1)
+                    .Include(x => x.Collection2)
+                    .Include(x => x.Collection3)
+                    .SingleAsync();
+            }
+
+            //VERIFY
+            result.Collection1.Count.ShouldEqual(100);
+            result.Collection2.Count.ShouldEqual(100);
+            result.Collection3.Count.ShouldEqual(100);
         }
 
 
