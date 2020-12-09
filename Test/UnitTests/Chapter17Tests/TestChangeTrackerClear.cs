@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.Chapter17Tests
 {
@@ -139,7 +140,36 @@ namespace Test.UnitTests.Chapter17Tests
         }
 
 
-        
+
+
+
+        [Fact]
+        public void TestThreeChanceTrackerClearVersionOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using var context = new BookDbContext(options);
+            context.Database.EnsureCreated();
+
+            var bookId = AddBookWithTwoReviewsToDatabase(context);
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books
+                .Include(x => x.Reviews)
+                .OrderBy(x => x.BookId).Last();
+            book.AddReview(5, null, "test");
+            context.SaveChanges();
+
+            //VERIFY
+            context.ChangeTracker.Clear();
+            context.Books.Include(b => b.Reviews)
+                .OrderBy(x => x.BookId).Last()
+                .Reviews.Count.ShouldEqual(3);
+        }
+
+
+
 
 
 
