@@ -33,7 +33,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             await context.SaveChangesAsync();
 
             var logs = new List<LogOutput>();
-            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) }));
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
@@ -57,7 +57,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             await context.SaveChangesAsync();
 
             var logs = new List<LogOutput>();
-            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) }));
             var service = new CheckFixCacheValuesService(context,  logger);
 
             //ATTEMPT
@@ -87,7 +87,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             await context.SaveChangesAsync();
 
             var logs = new List<LogOutput>();
-            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) }));
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
@@ -118,7 +118,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             await context.SaveChangesAsync();
 
             var logs = new List<LogOutput>();
-            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) }));
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT
@@ -150,7 +150,7 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             await context.SaveChangesAsync();
 
             var logs = new List<LogOutput>();
-            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProvider(logs) }));
+            var logger = new Logger<CheckFixCacheValuesService>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) }));
             var service = new CheckFixCacheValuesService(context, logger);
 
             //ATTEMPT

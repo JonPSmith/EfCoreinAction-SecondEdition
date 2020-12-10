@@ -36,7 +36,10 @@ namespace Test.TestHelpers
             var services = new ServiceCollection();
             if (logs != null)
             {
-                services.AddSingleton<ILogger<EventsRunner>>(new Logger<EventsRunner>(new LoggerFactory(new[] { new MyLoggerProvider(logs) })));
+                services.AddSingleton<ILogger<EventsRunner>>(new Logger<EventsRunner>(new LoggerFactory(new[]
+                {
+                    new MyLoggerProviderActionOut(logs.Add)
+                })));
             }
             else
             {
@@ -71,7 +74,7 @@ namespace Test.TestHelpers
         {
             var services = new ServiceCollection();
             services.AddSingleton<ILogger<EventsRunner>>(
-                new Logger<EventsRunner>(new LoggerFactory(new[] {new MyLoggerProvider(logs)})));
+                new Logger<EventsRunner>(new LoggerFactory(new[] { new MyLoggerProviderActionOut(logs.Add) })));
             services.AddSingleton<IGenericEventRunnerConfig>(new GenericEventRunnerConfig());
             services.AddScoped<IEventsRunner, EventsRunner>();
 
