@@ -59,6 +59,40 @@ namespace Test.UnitTests.Chapter17Tests
         }
 
         [Fact]
+        public void TestEfCoreLoggingCheckSqlOutputShowLog()
+        {
+            //SETUP
+            var logToOptions = new LogToOptions //#A
+            {                                   //#A
+                ShowLog = false                 //#A
+            };                                  //#A
+            var options = SqliteInMemory //#B
+                .CreateOptionsWithLogTo  //#B
+                <BookDbContext>(         //#B
+                    _output.WriteLine,     //#C
+                    logToOptions);         //#D
+
+            using var context = new BookDbContext(options);  //#E
+            context.Database.EnsureCreated();                //#E
+            context.SeedDatabaseFourBooks();                 //#E
+
+            //ATTEMPT 
+            logToOptions.ShowLog = true;    //#F
+            var book = context.Books.Count(); //#G
+
+            //VERIFY
+        }
+        /***************************************************************************
+        #A In this case I want to change the default LogToOptions to set the ShowLog to false
+        #B This method sets up the SQLite in-memory options and adds LogTo to those options
+        #C The parameter is your Action<string> method and must be provided
+        #D The second parameter is optional, but in this case we want to provide the logToOptions to control the output
+        #E This setup and seed section doesn't produce any output because the ShowLog property is false
+        #F Now to turn on the logging output by setting the ShowLog property is true
+        #G This query will produce one log output which will be sent to the xUnit runner's window
+         ****************************************************************************/
+
+        [Fact]
         public void TestEfCoreLoggingCheckOnlyShowTheseCategories()
         {
             //SETUP
@@ -175,7 +209,7 @@ namespace Test.UnitTests.Chapter17Tests
             var logs = new List<string>();
             var options = this.CreateUniqueClassOptionsWithLogTo<BookDbContext>(log => logs.Add(log));
             using var context = new BookDbContext(options);
-            context.Database.EnsureCreated();
+            context.Database.EnsureClean();
             context.SeedDatabaseFourBooks();
 
             //ATTEMPT 
@@ -198,7 +232,7 @@ namespace Test.UnitTests.Chapter17Tests
             var logs = new List<string>();
             var options = this.CreateUniqueMethodOptionsWithLogTo<BookDbContext>(log => logs.Add(log));
             using var context = new BookDbContext(options);
-            context.Database.EnsureCreated();
+            context.Database.EnsureClean();
             context.SeedDatabaseFourBooks();
 
             //ATTEMPT 

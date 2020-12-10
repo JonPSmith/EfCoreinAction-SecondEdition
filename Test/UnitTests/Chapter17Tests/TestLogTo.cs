@@ -15,30 +15,30 @@ using Xunit.Abstractions;
 
 namespace Test.UnitTests.Chapter17Tests
 {
-    public class TestLogTo
+    public class TestLogTo //#A
     {
-        private readonly ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output; //#B
 
-        public TestLogTo(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
+        public TestLogTo(ITestOutputHelper output)//#C
+        {                                         //#C
+            _output = output;                     //#C
+        }                                         //#C
 
         [Fact]
-        public void TestLogToDemoToConsole()
+        public void TestLogToDemoToConsole()  //#D
         {
             //SETUP
-            var connectionString = this.GetUniqueDatabaseConnectionString();
-            var builder = new DbContextOptionsBuilder<BookDbContext>()
-                .UseSqlServer(connectionString)
-                .EnableSensitiveDataLogging()
-                .LogTo(_output.WriteLine, LogLevel.Information);
+            var connectionString = 
+                this.GetUniqueDatabaseConnectionString(); //#E
+            var builder =                                    //#F
+                new DbContextOptionsBuilder<BookDbContext>() //#F
+                .UseSqlServer(connectionString)              //#F
+                .EnableSensitiveDataLogging()  //#G
+                .LogTo(_output.WriteLine);     //#H
 
             using var context = new BookDbContext(builder.Options);
-            context.Database.EnsureCreated();
-            if (!context.Books.Any())
-                context.SeedDatabaseFourBooks();
+            context.Database.EnsureClean();
+            context.SeedDatabaseFourBooks();
 
             //ATTEMPT
             var books = context.Books
@@ -47,6 +47,16 @@ namespace Test.UnitTests.Chapter17Tests
 
             //VERIFY
         }
+        /*******************************************************************
+        #A This is the class holding my unit tests of LogTo
+        #B This is an xUnit interface which allows output to the unit test runner
+        #C xUnit will inject the ITestOutputHelper via the class's constructor
+        #D This method contains a test of LogTo
+        #E This provides a database connection where the database name is unique to this class
+        #F This sets up the option builder to a SQL Server database
+        #G It is good to turn on EnableSensitiveDataLogging in your unit tests
+        #H We add the simplest form of the LogTo method, which calls an Action<string> method
+         ******************************************************************/
 
         [Fact]
         public void TestLogToDemoToList()
@@ -74,11 +84,11 @@ namespace Test.UnitTests.Chapter17Tests
             #G This creates the application's DbContext, in this case the context holding the books data
              ***********************************************************/
 
-            context.Database.EnsureCreated();
+            context.Database.EnsureClean();
+            context.SeedDatabaseFourBooks();
 
             //ATTEMPT
-            if (!context.Books.Any())
-                context.SeedDatabaseFourBooks();
+            logs.Clear();
             var books = context.Books
                 .Where(x => x.PublishedOn < new DateTime(2020, 1, 1))
                 .ToList();
@@ -111,11 +121,12 @@ namespace Test.UnitTests.Chapter17Tests
 
             //ATTEMPT
             showLogs = true;
+            var books = context.Books
+                .Where(x => x.PublishedOn < new DateTime(2020, 1, 1))
+                .ToList();
 
             //VERIFY
         }
-
-
 
         [Fact]
         public void TestLogToCreateDatabaseToConsole()
