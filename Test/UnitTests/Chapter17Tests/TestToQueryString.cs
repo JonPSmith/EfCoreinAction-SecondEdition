@@ -42,8 +42,13 @@ namespace Test.UnitTests.Chapter17Tests
                 "WHERE NOT (\"b\".\"SoftDeleted\")");  //#D
             bookIds.ShouldEqual(new []{1,2,3,4});      //#E
         }
-
-
+        /****************************************************************
+        #A You provide the LINQ query without an execution part
+        #B Then you run the LINQ query by adding ToArray on the end
+        #C This will output the SQL for your LINQ query
+        #D Here I test than the SQL is what I expected
+        #E Finally I test the output of the query
+         ****************************************************************/
 
         [Fact]
         public void TestToQueryStringOnSqlQuery()
