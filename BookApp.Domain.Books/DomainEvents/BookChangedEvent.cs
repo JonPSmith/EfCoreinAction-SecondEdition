@@ -22,5 +22,6 @@ namespace BookApp.Domain.Books.DomainEvents
     #B This attribute causes the GenericEventRunner to remove other events that are for the same Book instance
     #C When an event is created you must say what type of change the Book has gone through
     #D This is used by the event handler to work out whether to add, update or delete the CosmosBook
+    #E This holds the type of change for the event handler to use
      ****************************************************************/
 }
