@@ -45,6 +45,9 @@ namespace Test.UnitTests.Chapter14
             RunManyTests("First", LoadWithFirst, 1000, 1000, 1000);
             RunManyTests("First", LoadWithFirst, 1000, 1000, 1000);
 
+            RunManyTests("LoadWithFirstOrDefault", LoadWithFirstOrDefault, 1000, 1000, 1000);
+            RunManyTests("LoadWithFirstOrDefault", LoadWithFirstOrDefault, 1000, 1000, 1000);
+
             RunManyTests("Single", LoadWithSingle, 1000, 1000, 1000);
             RunManyTests("Single", LoadWithSingle, 1000, 1000, 1000);
 
@@ -94,6 +97,11 @@ namespace Test.UnitTests.Chapter14
         private void LoadWithFirst(BookDbContext context, int id)
         {
             var book = context.Books.First(x => x.BookId == id);
+        }
+
+        private void LoadWithFirstOrDefault(BookDbContext context, int id)
+        {
+            var book = context.Books.FirstOrDefault(x => x.BookId == id);
         }
 
         private void LoadWithSingle(BookDbContext context, int id)
