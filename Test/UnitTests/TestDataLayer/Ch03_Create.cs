@@ -62,10 +62,16 @@ namespace Test.UnitTests.TestDataLayer
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
             using var context = new EfCoreContext(options);
             context.Database.EnsureCreated();
-            var author = new Author {Name = "Existing Author"}; //#A
-            context.Add(author);                                //#A
-            context.SaveChanges();                              //#A
 
+            context.Add(new Author { Name = "Mr. A" }); 
+            context.SaveChanges(); 
+
+            //ATTEMPT
+            var foundAuthor = context.Authors                    //#A
+                .SingleOrDefault(author => author.Name == "Mr. A");//#A
+            if (foundAuthor == null)                            //#A
+                throw new Exception("Author not found");        //#A
+            
             var book = new Book                                 //#B
             {                                                   //#B
                 Title = "Test Book",                            //#B
@@ -76,19 +82,18 @@ namespace Test.UnitTests.TestDataLayer
                 new BookAuthor                                  //#C
                 {                                               //#C
                     Book = book,                                //#C
-                    Author = author                             //#C
+                    Author = foundAuthor                        //#C
                 }                                               //#C
             };                                                  //#C
 
-            //ATTEMPT
             context.Add(book);                                  //#D
             context.SaveChanges();                              //#D
             /************************************************************
-                #A This creates an author and saves it to the database
-                #B This creates a book in the same way as the previous example
-                #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
-                #D This is the same process: add the new book to the DbContext Books property and call SaveChanges
-                 * *********************************************************/
+            #A You reads in the author with a check that the author was found
+            #B This creates a book in the same way as the previous example
+            #C This adds a AuthorBook linking entry, but it uses the Author that is already in the database
+            #D This adds the new book to the DbContext Books property and call SaveChanges
+             * *********************************************************/
 
             //VERIFY
             context.Books.Count().ShouldEqual(1);   //#E
