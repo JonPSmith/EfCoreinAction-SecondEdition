@@ -43,4 +43,8 @@
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Chapter09Listings\TwoDbContexts\Migration1\" />
+  </ItemGroup>
+
 </Project>

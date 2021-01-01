@@ -21,5 +21,5 @@ namespace Test.Chapter09Listings.TwoDbContexts
         }
     }
     //Set Test as startup project and then enter PMC command to create the migration
-    //Add-Migration Initial -context DbContext1 -OutputDir Chapter09Listings/TwoDbContexts/Migration1
+    //Add-Migration Initial -context DbContext1 -OutputDir Chapter09Listings/TwoDbContexts/Migration1 -StartupProject Test
 }

@@ -14,20 +14,34 @@ namespace Test.Chapter09Listings.TwoDbContexts.Migration2
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.0-preview.5.20278.2")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("Test.Chapter09Listings.TwoDbContexts.OnlyIn2", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.HasKey("Id");
 
                     b.ToTable("OnlyIn2s");
+                });
+
+            modelBuilder.Entity("Test.Chapter09Listings.TwoDbContexts.Shared", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("SharedString")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToView("Shared");
                 });
 #pragma warning restore 612, 618
         }
