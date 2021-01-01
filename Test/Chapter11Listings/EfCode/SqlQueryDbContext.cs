@@ -32,11 +32,11 @@ namespace Test.Chapter11Listings.EfCode
                 .HasQueryFilter(p => !p.SoftDeleted);
 
             modelBuilder.Entity<BookSqlQuery>().ToSqlQuery(  //#B
-        @"SELECT BookId                                    //#C
-             ,Title                                       //#C
-             ,(SELECT AVG(CAST([r0].[NumStars] AS float)) //#C
-        FROM Review AS r0                              //#C
-        WHERE t.BookId = r0.BookId)  AS AverageVotes   //#C
+        @"SELECT BookId                                   
+             ,Title                                       
+             ,(SELECT AVG(CAST([r0].[NumStars] AS float)) 
+        FROM Review AS r0                              
+        WHERE t.BookId = r0.BookId)  AS AverageVotes  
         FROM Books AS t");                               //#C
         }
     }
