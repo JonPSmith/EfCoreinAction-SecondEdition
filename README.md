@@ -4,7 +4,7 @@ Welcome to the Git repo that is associated with the first six chapters in the bo
 
 The current release of this code is running on:
 
-* EF Core 5.0
+* EF Core 5.1
 * ASP.NET Core 5.0 (You MUST have NET 5.0 installed)
 
 Other branches are:
