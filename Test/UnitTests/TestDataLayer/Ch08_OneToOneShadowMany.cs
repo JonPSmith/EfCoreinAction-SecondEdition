@@ -91,28 +91,26 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             //var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
+            var shadowAttendee = new ShadowAttendee
             {
-                context.Database.EnsureCreated();
-                var shadowAttendee = new ShadowAttendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1(),
-                    Notes = new List<ShadowAttendeeNote> {new ShadowAttendeeNote {Note = "test"}}
+                Name = "Person1",
+                TicketOption1 = new TicketOption1(),
+                Notes = new List<ShadowAttendeeNote> {new ShadowAttendeeNote {Note = "test"}}
 
-                };
-                context.Add(shadowAttendee);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                //ATTEMPT
-                context.Remove(context.TicketOption1s.Single());
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+            };
+            context.Add(shadowAttendee);
+            context.SaveChanges();
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
-            }
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            context.Remove(context.TicketOption1s.Single());
+            var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
         }
 
         [Fact]
@@ -120,30 +118,27 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
+            var shadowAttendee = new ShadowAttendee
             {
-                context.Database.EnsureCreated();
-                var shadowAttendee = new ShadowAttendee
-                {
-                    Name = "Person1",
-                    TicketOption1 = new TicketOption1(),
-                    Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
+                Name = "Person1",
+                TicketOption1 = new TicketOption1(),
+                Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
 
-                };
-                context.Add(shadowAttendee);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
+            };
+            context.Add(shadowAttendee);
+            context.SaveChanges();
 
-                //ATTEMPT
-                context.Remove(context.Set<ShadowAttendeeNote>().Single());
-                context.SaveChanges();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                context.Set<ShadowAttendeeNote>().Count().ShouldEqual(0);
-                context.ShadowAttendees.Count().ShouldEqual(1);
-            }
+            //ATTEMPT
+            context.Remove(context.Set<ShadowAttendeeNote>().Single());
+            context.SaveChanges();
+
+            //VERIFY
+            context.Set<ShadowAttendeeNote>().Count().ShouldEqual(0);
+            context.ShadowAttendees.Count().ShouldEqual(1);
         }
 
 
@@ -154,22 +149,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
+
+            //ATTEMPT
+            var shadowAttendee = new ShadowWithNotes
             {
-                context.Database.EnsureCreated();
+                Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
+            };
+            context.Add(shadowAttendee);
+            context.SaveChanges();
 
-                //ATTEMPT
-                var shadowAttendee = new ShadowWithNotes
-                {
-                    Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
-                };
-                context.Add(shadowAttendee);
-                context.SaveChanges();
-
-                //VERIFY
-                context.ShadowWithManys.Count().ShouldEqual(1);
-                context.Set<ShadowAttendeeNote>().Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.ShadowWithManys.Count().ShouldEqual(1);
+            context.Set<ShadowAttendeeNote>().Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -178,26 +171,24 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             //var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
+            //context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+            var shadowAttendee = new ShadowWithNotes
             {
-                //context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                var shadowAttendee = new ShadowWithNotes
-                {
-                    Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
-                };
-                context.Add(shadowAttendee);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                //ATTEMPT
-                context.Remove(context.ShadowWithManys.Single());
-                var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+                Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
+            };
+            context.Add(shadowAttendee);
+            context.SaveChanges();
 
-                //VERIFY
-                ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
-            }
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            context.Remove(context.ShadowWithManys.Single());
+            var ex = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+            //VERIFY
+            ex.InnerException.Message.ShouldEqual("SQLite Error 19: 'FOREIGN KEY constraint failed'.");
         }
 
         [Fact]
@@ -205,26 +196,24 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
+            var shadowAttendee = new ShadowWithNotes
             {
-                context.Database.EnsureCreated();
-                var shadowAttendee = new ShadowWithNotes
-                {
-                    Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
-                };
-                context.Add(shadowAttendee);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                //ATTEMPT
-                context.Remove(context.Set<ShadowAttendeeNote>().Single());
-                context.SaveChanges();
+                Notes = new List<ShadowAttendeeNote> { new ShadowAttendeeNote { Note = "test" } }
+            };
+            context.Add(shadowAttendee);
+            context.SaveChanges();
+            
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                context.Set<ShadowAttendeeNote>().Count().ShouldEqual(0);
-                context.ShadowWithManys.Count().ShouldEqual(1);
-            }
+            //ATTEMPT
+            context.Remove(context.Set<ShadowAttendeeNote>().Single());
+            context.SaveChanges();
+
+            //VERIFY
+            context.Set<ShadowAttendeeNote>().Count().ShouldEqual(0);
+            context.ShadowWithManys.Count().ShouldEqual(1);
         }
     }
 }

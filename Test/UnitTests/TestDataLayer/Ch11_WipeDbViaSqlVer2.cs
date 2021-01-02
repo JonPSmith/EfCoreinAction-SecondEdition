@@ -91,20 +91,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
 
-                //ATTEMPT
-                context.WipeAllDataFromDatabase();
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                //VERIFY
-                context.Books.Count().ShouldEqual(0);
-                context.Authors.Count().ShouldEqual(0);
-            }
+            //ATTEMPT
+            context.WipeAllDataFromDatabase();
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            context.Books.Count().ShouldEqual(0);
+            context.Authors.Count().ShouldEqual(0);
         }
 
     }

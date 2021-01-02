@@ -28,18 +28,16 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new OneEntityGuidOptional();
-                context.Update(entity);
-                context.SaveChanges();
+            //ATTEMPT
+            var entity = new OneEntityGuidOptional();
+            context.Update(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.Set<OneEntityGuidOptional>().Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.Set<OneEntityGuidOptional>().Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -47,19 +45,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new MyEntity {OneToOneOptional = new OneEntityOptional()};
-                context.Update(entity);
-                context.SaveChanges();
+            //ATTEMPT
+            var entity = new MyEntity {OneToOneOptional = new OneEntityOptional()};
+            context.Update(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.MyEntities.Count().ShouldEqual(1);
-                context.OneOptionalEntities.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.MyEntities.Count().ShouldEqual(1);
+            context.OneOptionalEntities.Count().ShouldEqual(1);
         }
 
 
@@ -68,21 +64,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new MyEntity { OneToOneOptional = new OneEntityOptional() };
-                context.Update(entity);
+            //ATTEMPT
+            var entity = new MyEntity { OneToOneOptional = new OneEntityOptional() };
+            context.Update(entity);
 
-                //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.Entry(entity).State.ShouldEqual(EntityState.Added);
-                context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneToOneOptional");
-                context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(2);
+            context.Entry(entity).State.ShouldEqual(EntityState.Added);
+            context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Added);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneToOneOptional");
+            context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("");
         }
 
         [Fact]
@@ -90,22 +84,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var oneToOne = new OneEntityGuidOptional();
-                context.Add(oneToOne);
-                context.SaveChanges();
-                var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
-                context.Update(entity);
-                context.SaveChanges();
+            //ATTEMPT
+            var oneToOne = new OneEntityGuidOptional();
+            context.Add(oneToOne);
+            context.SaveChanges();
+            var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
+            context.Update(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.MyEntities.Count().ShouldEqual(1);
-                context.Set<OneEntityGuidOptional>().Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.MyEntities.Count().ShouldEqual(1);
+            context.Set<OneEntityGuidOptional>().Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -113,24 +105,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var oneToOne = new OneEntityGuidOptional( );
-                context.Add(oneToOne);
-                context.SaveChanges();
-                var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
-                context.Update(entity);
+            //ATTEMPT
+            var oneToOne = new OneEntityGuidOptional( );
+            context.Add(oneToOne);
+            context.SaveChanges();
+            var entity = new MyEntity { OneEntityGuidOptional = oneToOne };
+            context.Update(entity);
 
-                //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.Entry(entity).State.ShouldEqual(EntityState.Added);
-                context.Entry(entity.OneEntityGuidOptional).State.ShouldEqual(EntityState.Modified);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneEntityGuidOptional");
-                context.GetAllPropsNavsIsModified(entity.OneEntityGuidOptional).ShouldEqual("MyEntityId");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(2);
+            context.Entry(entity).State.ShouldEqual(EntityState.Added);
+            context.Entry(entity.OneEntityGuidOptional).State.ShouldEqual(EntityState.Modified);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("OneEntityGuidOptional");
+            context.GetAllPropsNavsIsModified(entity.OneEntityGuidOptional).ShouldEqual("MyEntityId");
         }
 
         [Fact]
@@ -138,26 +128,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var entity = new MyEntity();
-                context.Add(entity);
-                context.SaveChanges();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new MyEntity());
+            context.SaveChanges();
 
-                //ATTEMPT
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entity = context.MyEntities.Single();
-                entity.OneToOneOptional = new OneEntityOptional();
-                context.Update(entity);
-                context.SaveChanges();
+            //ATTEMPT
+            context.ChangeTracker.Clear();
+            var entity = context.MyEntities.Single();
+            entity.OneToOneOptional = new OneEntityOptional();
+            context.Update(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.MyEntities.Count().ShouldEqual(1);
-                context.OneOptionalEntities.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.MyEntities.Count().ShouldEqual(1);
+            context.OneOptionalEntities.Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -165,27 +150,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var entity = new MyEntity();
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.MyEntities.Single();
-                entity.OneToOneOptional = new OneEntityOptional();
-                context.Update(entity);
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new MyEntity());
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.MyEntities.Single();
+            entity.OneToOneOptional = new OneEntityOptional();
+            context.Update(entity);
 
-                //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.Entry(entity).State.ShouldEqual(EntityState.Modified);
-                context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneToOneOptional");
-                context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(2);
+            context.Entry(entity).State.ShouldEqual(EntityState.Modified);
+            context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Added);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneToOneOptional");
+            context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("");
         }
 
         [Fact]
@@ -193,30 +174,24 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var entity = new MyEntity();
-                context.Add(entity);
-                var oneToOne = new OneEntityOptional();
-                context.Add(oneToOne);
-                context.SaveChanges();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new MyEntity());
+            context.Add(new OneEntityOptional());
+            context.SaveChanges();
 
-                //ATTEMPT
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entity = context.MyEntities.Single();
-                entity.OneToOneOptional = context.OneOptionalEntities.Single();
-                context.Update(entity);
+            //ATTEMPT
+            context.ChangeTracker.Clear();
+            var entity = context.MyEntities.Single();
+            entity.OneToOneOptional = context.OneOptionalEntities.Single();
+            context.Update(entity);
 
-                //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.Entry(entity).State.ShouldEqual(EntityState.Modified);
-                context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Modified);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneToOneOptional");
-                context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("MyEntityId");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(2);
+            context.Entry(entity).State.ShouldEqual(EntityState.Modified);
+            context.Entry(entity.OneToOneOptional).State.ShouldEqual(EntityState.Modified);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneToOneOptional");
+            context.GetAllPropsNavsIsModified(entity.OneToOneOptional).ShouldEqual("MyEntityId");
         }
 
         [Fact]
@@ -224,26 +199,21 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var entity = new MyEntity();
-                context.Add(entity);
-                context.SaveChanges();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new MyEntity());
+            context.SaveChanges();
 
-                //ATTEMPT
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entity = context.MyEntities.Single();
-                entity.OneEntityRequired = new OneEntityRequired();
-                context.Update(entity);
-                context.SaveChanges();
+            //ATTEMPT
+            context.ChangeTracker.Clear();
+            var entity = context.MyEntities.Single();
+            entity.OneEntityRequired = new OneEntityRequired();
+            context.Update(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.MyEntities.Count().ShouldEqual(1);
-                context.OneEntityRequired.Count().ShouldEqual(1);
-            }
+            //VERIFY
+            context.MyEntities.Count().ShouldEqual(1);
+            context.OneEntityRequired.Count().ShouldEqual(1);
         }
 
         [Fact]
@@ -251,28 +221,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var entity = new MyEntity();
-                context.Add(entity);
-                context.SaveChanges();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new MyEntity());
+            context.SaveChanges();
 
-                //ATTEMPT
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entity = context.MyEntities.Single();
-                entity.OneEntityRequired = new OneEntityRequired();
-                context.Update(entity);
+            //ATTEMPT
+            context.ChangeTracker.Clear();
+            var entity = context.MyEntities.Single();
+            entity.OneEntityRequired = new OneEntityRequired();
+            context.Update(entity);
 
-                //VERIFY
-                context.NumTrackedEntities().ShouldEqual(2);
-                context.Entry(entity).State.ShouldEqual(EntityState.Modified);
-                context.Entry(entity.OneEntityRequired).State.ShouldEqual(EntityState.Added);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneEntityRequired");
-                context.GetAllPropsNavsIsModified(entity.OneEntityRequired).ShouldEqual("");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(2);
+            context.Entry(entity).State.ShouldEqual(EntityState.Modified);
+            context.Entry(entity.OneEntityRequired).State.ShouldEqual(EntityState.Added);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString,OneEntityRequired");
+            context.GetAllPropsNavsIsModified(entity.OneEntityRequired).ShouldEqual("");
         }
 
     }

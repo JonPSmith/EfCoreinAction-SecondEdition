@@ -17,29 +17,27 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                var entity = new IndexClass
-                {
-                    IndexNonUnique = "a",
-                    IndexUnique = "a"
-                };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter07DbContext(options))
+            var entity = new IndexClass
             {
-                //ATTEMPT
-                var entity = context.IndexClasses.First();
-                entity.IndexNonUnique = "b";
-                entity.IndexUnique = "hello";
-                context.SaveChanges();
+                IndexNonUnique = "a",
+                IndexUnique = "a"
+            };
+            context.Add(entity);
+            context.SaveChanges();
 
-                //VERIFY
-                context.IndexClasses.Count().ShouldEqual(1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var readEntity = context.IndexClasses.First();
+            readEntity.IndexNonUnique = "b";
+            readEntity.IndexUnique = "hello";
+            context.SaveChanges();
+
+            //VERIFY
+            context.IndexClasses.Count().ShouldEqual(1);
         }
 
         [Fact]

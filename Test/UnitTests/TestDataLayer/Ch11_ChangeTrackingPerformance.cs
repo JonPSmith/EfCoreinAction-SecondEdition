@@ -55,28 +55,26 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
 
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseDummyBooks(numBooks);
-            }
-            using (var context = new EfCoreContext(options))
-            {
-                var books = context.Books
-                    .Include(x => x.AuthorsLink).ThenInclude(x => x.Author)
-                    .Include(x => x.Reviews)
-                    .ToList();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseDummyBooks(numBooks);
 
-                //ATTEMPT
-                var timer = new Stopwatch();
-                timer.Start();
-                context.SaveChanges();
-                timer.Stop();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                _output.WriteLine("#{0:####0} books: total time = {1:F2} ms ", numBooks,
-                    1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
-            }
+            var books = context.Books
+                .Include(x => x.AuthorsLink).ThenInclude(x => x.Author)
+                .Include(x => x.Reviews)
+                .ToList();
+
+            //ATTEMPT
+            var timer = new Stopwatch();
+            timer.Start();
+            context.SaveChanges();
+            timer.Stop();
+
+            //VERIFY
+            _output.WriteLine("#{0:####0} books: total time = {1:F2} ms ", numBooks,
+                1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
         }
 
         [RunnableInDebugOnly]
@@ -140,35 +138,31 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            var entities = new List<NotifyEntity>();
+            for (int i = 0; i < numEntities; i++)
             {
-                context.Database.EnsureCreated();
-                var entities = new List<NotifyEntity>();
-                for (int i = 0; i < numEntities; i++)
-                {
-                    var entity = new NotifyEntity();
-                    entities.Add(entity);
-                }
-                context.AddRange(entities);
-                context.SaveChanges();
-
+                var entity = new NotifyEntity();
+                entities.Add(entity);
             }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entities = context.Notify.ToList();
-                entities.Count.ShouldEqual(numEntities);
+            context.AddRange(entities);
+            context.SaveChanges();
 
-                //ATTEMPT
-                var timer = new Stopwatch();
-                timer.Start();
-                context.SaveChanges();
-                timer.Stop();
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                _output.WriteLine("#{0:####0} entities: total time = {1:2} ms ", numEntities,
-                    1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
-            }
+            var readEntities = context.Notify.ToList();
+            readEntities.Count.ShouldEqual(numEntities);
+
+            //ATTEMPT
+            var timer = new Stopwatch();
+            timer.Start();
+            context.SaveChanges();
+            timer.Stop();
+
+            //VERIFY
+            _output.WriteLine("#{0:####0} entities: total time = {1:2} ms ", numEntities,
+                1000.0 * timer.ElapsedTicks / Stopwatch.Frequency);
         }
     }
 }

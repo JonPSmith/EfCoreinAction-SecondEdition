@@ -71,30 +71,28 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             //var options = this.CreateUniqueClassOptions<Chapter08DbContext>();
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
 
-                var ticket = new TicketOption2
-                {
-                    Attendee = new ShadowAttendee
-                        { Name = "Person1", TicketOption1 = new TicketOption1() }
-                };
-                context.Add(ticket);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
+            var ticket = new TicketOption2
             {
-                //ATTEMPT
-                var existingAttendee = context.ShadowAttendees.Include(x => x.TicketOption2).Single();
-                context.Remove(existingAttendee.TicketOption2);
-                existingAttendee.TicketOption2 = new TicketOption2();
-                context.SaveChanges();
+                Attendee = new ShadowAttendee
+                    { Name = "Person1", TicketOption1 = new TicketOption1() }
+            };
+            context.Add(ticket);
+            context.SaveChanges();
 
-                //VERIFY
-                context.ShadowAttendees.Count().ShouldEqual(1);
-                context.TicketOption2s.Count().ShouldEqual(1);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var existingAttendee = context.ShadowAttendees.Include(x => x.TicketOption2).Single();
+            context.Remove(existingAttendee.TicketOption2);
+            existingAttendee.TicketOption2 = new TicketOption2();
+            context.SaveChanges();
+
+            //VERIFY
+            context.ShadowAttendees.Count().ShouldEqual(1);
+            context.TicketOption2s.Count().ShouldEqual(1);
         }
 
         [Fact]

@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter11Listings.EfClasses;
 using Test.Chapter11Listings.EfCode;
@@ -30,29 +29,22 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                var entity = new NotifyEntity() { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Notify.First();
-                entity.MyString = "Changed";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //VERIFY
-                var entity = context.Notify.First();
-                entity.MyString.ShouldEqual("Changed");
-                //see https://github.com/dotnet/efcore/issues/21835
-                //context.Entry(entity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
-            }
+            context.Add(new NotifyEntity() { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.Notify.First();
+            entity.MyString = "Changed";
+            context.SaveChanges();
+
+            //VERIFY
+            var checkEntity = context.Notify.First();
+            checkEntity.MyString.ShouldEqual("Changed");
+            context.Entry(checkEntity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Changed");
         }
 
         [Fact]
@@ -61,27 +53,21 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var entity = new Notify2Entity { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Notify2.First();
-                entity.MyString = "Changed";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //VERIFY
-                var entity = context.Notify2.First();
-                entity.MyString.ShouldEqual("Changed");
-            }
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new Notify2Entity { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.Notify2.First();
+            entity.MyString = "Changed";
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //VERIFY
+            var checkEntity = context.Notify2.First();
+            checkEntity.MyString.ShouldEqual("Changed");
         }
 
         [Fact]
@@ -89,30 +75,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new NotifyEntity { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.Notify.First();
+            entity.MyString = "Changed";
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var entity = new NotifyEntity {MyString = "Test"};
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Notify.First();
-                entity.MyString = "Changed";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //VERIFY
-                var entity = context.Notify.First();
-                entity.MyString.ShouldEqual("Changed");
-                //see https://github.com/dotnet/efcore/issues/21835
-                //context.Entry(entity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
-            }
+            //VERIFY
+            var checkEntity = context.Notify.First();
+            checkEntity.MyString.ShouldEqual("Changed");
+            context.Entry(checkEntity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
         }
 
         [Fact]
@@ -120,27 +96,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new Notify2Entity { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.Notify2.First();
+            entity.MyString = "Changed";
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var entity = new Notify2Entity { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Notify2.First();
-                entity.MyString = "Changed";
-
-                //VERIFY
-                var xx = context.Entry(entity);
-                context.NumTrackedEntities().ShouldEqual(1);
-                context.GetEntityState(entity).ShouldEqual(EntityState.Modified);
-                context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
-            }
+            //VERIFY
+            context.NumTrackedEntities().ShouldEqual(1);
+            context.GetEntityState(entity).ShouldEqual(EntityState.Modified);
+            context.GetAllPropsNavsIsModified(entity).ShouldEqual("MyString");
         }
 
 
@@ -150,29 +119,20 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new NotifyEntity() { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.Notify.First();
+            entity.MyString = "Changed";
 
-                var entity = new NotifyEntity() { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Notify.First();
-                entity.MyString = "Changed";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //VERIFY
-                var entity = context.Notify.First();
-                entity.MyString.ShouldEqual("Changed");
-                //see https://github.com/dotnet/efcore/issues/21835
-                //context.Entry(entity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
-            }
+            //VERIFY
+            var checkEntity = context.Notify.First();
+            checkEntity.MyString.ShouldEqual("Changed");
+            context.Entry(checkEntity).Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test");
         }
 
         [Fact]
@@ -180,28 +140,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+            context.Add(new Notify2Entity() { MyString = "Test" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity =
+                context.Notify2.First();
+            entity.MyString = "Changed";
+            var ex = Assert.Throws<InvalidOperationException>(() => context.Entry(entity)
+                .Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test"));
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var entity = new Notify2Entity() { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity =
-                    context.Notify2.First();
-                entity.MyString = "Changed";
-                var ex = Assert.Throws<InvalidOperationException>(() => context.Entry(entity)
-                    .Property(nameof(NotifyEntity.MyString)).OriginalValue.ShouldEqual("Test"));
-
-                //VERIFY
-                ex.Message.StartsWith("The original value for property 'Notify2Entity.MyString' cannot be accessed because it is not being tracked. ")
-                    .ShouldBeTrue();
-            }
+            //VERIFY
+            ex.Message.StartsWith(
+                    "The original value for property 'Notify2Entity.MyString' cannot be accessed because it is not being tracked. ")
+                .ShouldBeTrue();
         }
     }
 }

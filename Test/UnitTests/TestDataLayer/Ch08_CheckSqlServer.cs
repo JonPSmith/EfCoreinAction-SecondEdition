@@ -6,7 +6,6 @@ using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;

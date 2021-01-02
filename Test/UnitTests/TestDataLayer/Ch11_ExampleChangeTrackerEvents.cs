@@ -28,28 +28,26 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
             var logs = new List<LogOutput>();
-            var logProvider = new MyLoggerProvider(logs);
-            using (var context = new Chapter11DbContext(options, logProvider.CreateLogger("test")))
-            {
-                context.Database.EnsureCreated();
+            var logProvider = new MyLoggerProviderActionOut(log => logs.Add(log));
+            using var context = new Chapter11DbContext(options, logProvider.CreateLogger("test"));
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new MyEntity {MyString = "Test"};
-                context.Add(entity);
-                context.SaveChanges();
-                entity.MyString = "new Name";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options, logProvider.CreateLogger("test")))
-            {
-                var readIn = context.MyEntities.Single();
+            //ATTEMPT
+            var entity = new MyEntity {MyString = "Test"};
+            context.Add(entity);
+            context.SaveChanges();
+            entity.MyString = "new Name";
+            context.SaveChanges();
+            
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                logs.Count.ShouldEqual(4);
-                foreach (var logOutput in logs)
-                {
-                    _output.WriteLine(logOutput.Message);
-                }
+            var readIn = context.MyEntities.Single();
+
+            //VERIFY
+            logs.Count.ShouldEqual(4);
+            foreach (var logOutput in logs)
+            {
+                _output.WriteLine(logOutput.Message);
             }
         }
     }

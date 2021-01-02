@@ -4,7 +4,7 @@
 using System.Linq;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
-using TestSupportSchema;
+using TestSupport.EfHelpers;
 using Xunit;
 
 namespace Test.UnitTests.TestDataLayer

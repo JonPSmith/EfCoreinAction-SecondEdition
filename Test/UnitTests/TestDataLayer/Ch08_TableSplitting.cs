@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Test.Chapter08Listings.EFCode;
 using Test.Chapter08Listings.SplitOwnClasses;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -72,25 +71,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new BookSummary
-                {
-                    Title = "Title",
-                    AuthorsString = "AuthorA, AuthorB"
-                };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new SplitOwnDbContext(options))
+            //ATTEMPT
+            var entity = new BookSummary
             {
-                //VERIFY
-                var entity = context.BookSummaries.Single();
-                entity.Details.ShouldBeNull();
-            }
+                Title = "Title",
+                AuthorsString = "AuthorA, AuthorB"
+            };
+            context.Add(entity);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var readEntity = context.BookSummaries.Single();
+            readEntity.Details.ShouldBeNull();
         }
 
         [Fact]
@@ -98,19 +95,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddBookSummaryWithDetails(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.BookSummaries.Include(p => p.Details).First();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddBookSummaryWithDetails(context);
 
-                //VERIFY
-                entity.Details.ShouldNotBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.BookSummaries.Include(p => p.Details).First();
+
+            //VERIFY
+            entity.Details.ShouldNotBeNull();
         }
 
         [Fact]
@@ -118,19 +113,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddBookSummaryWithDetails(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.BookSummaries.First();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddBookSummaryWithDetails(context);
 
-                //VERIFY
-                entity.Details.ShouldBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.BookSummaries.First();
+
+            //VERIFY
+            entity.Details.ShouldBeNull();
         }
 
         [Fact]
@@ -138,21 +131,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddBookSummaryWithDetails(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.BookSummaries.First();
-                entity.Title = "New Title";
-                context.SaveChanges();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddBookSummaryWithDetails(context);
 
-                //VERIFY
-                context.BookSummaries.First().Title.ShouldEqual("New Title");
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.BookSummaries.First();
+            entity.Title = "New Title";
+            context.SaveChanges();
+
+            //VERIFY
+            context.BookSummaries.First().Title.ShouldEqual("New Title");
         }
 
         [Fact]
@@ -160,21 +151,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddBookSummaryWithDetails(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Set<BookDetail>().First();
-                entity.Price = 1000;
-                context.SaveChanges();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddBookSummaryWithDetails(context);
 
-                //VERIFY
-                context.Set<BookDetail>().First().Price.ShouldEqual(1000);
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.Set<BookDetail>().First();
+            entity.Price = 1000;
+            context.SaveChanges();
+
+            //VERIFY
+            context.Set<BookDetail>().First().Price.ShouldEqual(1000);
         }
     }
 }

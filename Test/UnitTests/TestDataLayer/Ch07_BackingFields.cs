@@ -44,20 +44,18 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var person = new Person {MyProperty = nameof(TestMyPropertySetGetOk) };
-                context.Add(person);
-                context.SaveChanges();
-            }
+            //ATTEMPT
+            var person = new Person {MyProperty = nameof(TestMyPropertySetGetOk) };
+            context.Add(person);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+            
             //VERIFY
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.People.First().MyProperty.ShouldEqual(nameof(TestMyPropertySetGetOk));
-            }
+            context.People.First().MyProperty.ShouldEqual(nameof(TestMyPropertySetGetOk));
         }
 
         //THIS FAILS in EF Core 5, preview 4!
@@ -68,25 +66,23 @@ namespace Test.UnitTests.TestDataLayer
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
             int personId;
             //ATTEMPT
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                var person = new Person{Name = "BackingFieldViaAnnotation test" };
-                person.SetPropertyAnnotationValue("some data");
-                context.Add(person);
-                context.SaveChanges();
-                personId = person.PersonId;
-            }
+            var person = new Person{Name = "BackingFieldViaAnnotation test" };
+            person.SetPropertyAnnotationValue("some data");
+            context.Add(person);
+            context.SaveChanges();
+            personId = person.PersonId;
+            
+            context.ChangeTracker.Clear();
+            
             //VERIFY
-            using (var context = new Chapter07DbContext(options))
-            {
-                var query = context.People.Where(x => x.PersonId == personId);
-                var entity = query.Single();
+            var query = context.People.Where(x => x.PersonId == personId);
+            var entity = query.Single();
 
-                _output.WriteLine(query.ToQueryString());
-                entity.BackingFieldViaAnnotation.ShouldEqual("some data");
-            }
+            _output.WriteLine(query.ToQueryString());
+            entity.BackingFieldViaAnnotation.ShouldEqual("some data");
         }
 
         [Fact]
@@ -96,26 +92,24 @@ namespace Test.UnitTests.TestDataLayer
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
             int personId;
             //ATTEMPT
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                var person = new Person();
-                person.SetPropertyFluentValue("some data");
-                context.Add(person);
-                context.SaveChanges();
-                personId = person.PersonId;
-            }
+            var person = new Person();
+            person.SetPropertyFluentValue("some data");
+            context.Add(person);
+            context.SaveChanges();
+            personId = person.PersonId;
+
+            context.ChangeTracker.Clear();
+            
             //VERIFY
-            using (var context = new Chapter07DbContext(options))
-            {
-                var entity = context.People.Single(x => x.PersonId == personId);
+            var entity = context.People.Single(x => x.PersonId == personId);
 
-                entity.BackingFieldViaFluentApi.ShouldEqual("some data");
-                context.People.Where(x => x.PersonId == personId)
-                    .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaFluentApi)))
-                    .Single().ShouldEqual("some data");
-            }
+            entity.BackingFieldViaFluentApi.ShouldEqual("some data");
+            context.People.Where(x => x.PersonId == personId)
+                .Select(x => EF.Property<string>(x, nameof(Person.BackingFieldViaFluentApi)))
+                .Single().ShouldEqual("some data");
         }
 
         [Fact]
@@ -124,20 +118,15 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter07DbContext>();
             //ATTEMPT
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                //var person = new Person();
-                //person.SetAutoProperty(1234);
-                //context.Add(person);
-                //context.SaveChanges();
-            }
+            //var person = new Person();
+            //person.SetAutoProperty(1234);
+            //context.Add(person);
+            //context.SaveChanges();
             //VERIFY
-            //using (var context = new Chapter07DbContext(options))
-            //{
-            //    context.People.First().AutoProperty.ShouldEqual(1234);
-            //}
+
         }
 
         [Fact]
@@ -162,23 +151,21 @@ namespace Test.UnitTests.TestDataLayer
             var tenYearsAgo = DateTime.Today.AddYears(-10).AddDays(-1);
             int personId;
             //ATTEMPT
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter07DbContext(options);
+            context.Database.EnsureCreated();
 
-                var person = new Person();
-                person.SetDateOfBirth(tenYearsAgo);
-                context.Add(person);
-                context.SaveChanges();
-                personId = person.PersonId;
-            }
+            var person = new Person();
+            person.SetDateOfBirth(tenYearsAgo);
+            context.Add(person);
+            context.SaveChanges();
+            personId = person.PersonId;
+
+            context.ChangeTracker.Clear();
+            
             //VERIFY
-            using (var context = new Chapter07DbContext(options))
-            {
-                context.People.Where(x => x.PersonId == personId)
-                    .Select(x => EF.Property<DateTime>(x, "_dateOfBirth"))
-                    .Single().ShouldEqual(tenYearsAgo);
-            }
+            context.People.Where(x => x.PersonId == personId)
+                .Select(x => EF.Property<DateTime>(x, "_dateOfBirth"))
+                .Single().ShouldEqual(tenYearsAgo);
         }
         
     }

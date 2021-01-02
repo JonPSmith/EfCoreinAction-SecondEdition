@@ -8,7 +8,6 @@ using Test.Chapter08Listings.EfClasses;
 using Test.Chapter08Listings.EFCode;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -42,34 +41,32 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                context.Add(new PaymentCard{Amount =  12, ReceiptCode = "1234"});
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
+            //ATTEMPT
+            context.Add(new PaymentCard{Amount =  12, ReceiptCode = "1234"});
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //You MUST read it untracked because of issue #7340
+            var untracked = context.Payments.AsNoTracking().Single();
+            //Then you need to copy ALL the information to the new TPH type, especially its primary key.
+            var changed = new PaymentCash
             {
-                //You MUST read it untracked because of issue #7340
-                var untracked = context.Payments.AsNoTracking().Single();
-                //Then you need to copy ALL the information to the new TPH type, especially its primary key.
-                var changed = new PaymentCash
-                {
-                    PaymentId = untracked.PaymentId,
-                    Amount = untracked.Amount,
-                    PType = PTypes.Cash //You MUST explicitly set the discriminator
-                };
-                context.Update(changed);
-                context.SaveChanges();
-            }
-            //VERITY
-            using (var context = new Chapter08DbContext(options))
-            {
-                var payment = context.Payments.Single();
-                payment.ShouldBeType<PaymentCash>();
-            }
+                PaymentId = untracked.PaymentId,
+                Amount = untracked.Amount,
+                PType = PTypes.Cash //You MUST explicitly set the discriminator
+            };
+            context.Update(changed);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+            
+            //VERIFY
+            var payment = context.Payments.Single();
+            payment.ShouldBeType<PaymentCash>();
         }
 
         [Fact]
@@ -126,24 +123,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                context.Add(new PaymentCash());
-                context.Add(new PaymentCard());
-                context.Add(new PaymentCash());
-                context.Add(new PaymentCash());
-                context.Add(new PaymentCard());
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
-            {
-                //VERIFY
-                context.Payments.OfType<PaymentCash>().Count().ShouldEqual(3);
-                context.Payments.OfType<PaymentCard>().Count().ShouldEqual(2);
-            }
+            //ATTEMPT
+            context.Add(new PaymentCash());
+            context.Add(new PaymentCard());
+            context.Add(new PaymentCash());
+            context.Add(new PaymentCash());
+            context.Add(new PaymentCard());
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            context.Payments.OfType<PaymentCash>().Count().ShouldEqual(3);
+            context.Payments.OfType<PaymentCard>().Count().ShouldEqual(2);
         }
 
         [Fact]
@@ -151,29 +146,27 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var sold = new SoldIt()
-                {
-                    WhatSold = "A hat",
-                    Payment = new PaymentCard { Amount = 12, ReceiptCode = "1234"}
-                };
-                context.Add(sold);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
+            //ATTEMPT
+            var sold = new SoldIt()
             {
-                //VERIFY
-                var sold = context.SoldThings.Include(x => x.Payment).Single(p => p.PaymentId == 1);
-                sold.Payment.PType.ShouldEqual(PTypes.Card);
-                sold.Payment.ShouldBeType<PaymentCard>();
-                var card = sold.Payment as PaymentCard;
-                card.ShouldNotBeNull();
-                card.ReceiptCode.ShouldEqual("1234");
-            }
+                WhatSold = "A hat",
+                Payment = new PaymentCard { Amount = 12, ReceiptCode = "1234"}
+            };
+            context.Add(sold);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var readSold = context.SoldThings.Include(x => x.Payment).Single(p => p.PaymentId == 1);
+            readSold.Payment.PType.ShouldEqual(PTypes.Card);
+            readSold.Payment.ShouldBeType<PaymentCard>();
+            var card = readSold.Payment as PaymentCard;
+            card.ShouldNotBeNull();
+            card.ReceiptCode.ShouldEqual("1234");
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Test.Chapter09Listings.SeedExample;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;

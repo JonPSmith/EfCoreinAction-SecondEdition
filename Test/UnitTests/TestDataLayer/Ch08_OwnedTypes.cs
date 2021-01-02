@@ -6,7 +6,6 @@ using System.Linq;
 using Test.Chapter08Listings.EFCode;
 using Test.Chapter08Listings.SplitOwnClasses;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -90,28 +89,27 @@ namespace Test.UnitTests.TestDataLayer
         public void TestReadOrderWithAddressesOk()
         {
             //SETUP
-            var showLog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<SplitOwnDbContext>(log =>
+            var logToOptions = new LogToOptions
             {
-                if (showLog)
-                    _output.WriteLine(log.ToString());
-            });
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddOrderWithAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
+                ShowLog = false
+            };
+            var options = SqliteInMemory.CreateOptionsWithLogTo<SplitOwnDbContext>(
+                _output.WriteLine, logToOptions);
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                showLog = true;
-                var order = context.Orders.Single();
+            context.Database.EnsureCreated();
+            AddOrderWithAddresses(context);
 
-                //VERIFY
-                order.DeliveryAddress.ShouldNotBeNull();
-                order.BillingAddress.ShouldNotBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            logToOptions.ShowLog = true;
+            var order = context.Orders.Single();
+
+            //VERIFY
+            order.DeliveryAddress.ShouldNotBeNull();
+            order.BillingAddress.ShouldNotBeNull();
         }
 
         [Fact]
@@ -119,25 +117,23 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new OrderInfo()
-                {
-                    OrderNumber = "123"
-                };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new SplitOwnDbContext(options))
+            //ATTEMPT
+            var entity = new OrderInfo()
             {
-                //VERIFY
-                var order = context.Orders.Single();
-                order.DeliveryAddress.ShouldBeNull();
-                order.BillingAddress.ShouldBeNull();
-            }
+                OrderNumber = "123"
+            };
+            context.Add(entity);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var order = context.Orders.Single();
+            order.DeliveryAddress.ShouldBeNull();
+            order.BillingAddress.ShouldBeNull();
         }
 
         //-------------------------------------------------
@@ -153,20 +149,18 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.ToString());
             });
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                showLog = true;
-                AddUserWithHomeAddresses(context);
-                showLog = false;
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //VERIFY
-                context.Users.Count().ShouldEqual(1);
-            }
+            //ATTEMPT
+            showLog = true;
+            AddUserWithHomeAddresses(context);
+            showLog = false;
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            context.Users.Count().ShouldEqual(1);
         }
 
         //SEE https://github.com/dotnet/efcore/issues/22444 BUG
@@ -175,20 +169,18 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                AddUserWithHomeAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var user = context.Find<User>(1);
+            AddUserWithHomeAddresses(context);
+            
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                user.HomeAddress.ShouldNotBeNull();
-            }
+            //ATTEMPT
+            var user = context.Find<User>(1);
+
+            //VERIFY
+            user.HomeAddress.ShouldNotBeNull();
         }
 
         [Fact]
@@ -201,21 +193,19 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.ToString());
             });
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                AddUserWithHomeAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                showLog = true;
-                var user = context.Users.First();
+            AddUserWithHomeAddresses(context);
 
-                //VERIFY
-                user.HomeAddress.ShouldNotBeNull();
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            showLog = true;
+            var user = context.Users.First();
+
+            //VERIFY
+            user.HomeAddress.ShouldNotBeNull();
         }
 
         [Fact]
@@ -249,23 +239,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                var user = new User {Name = "Unit Test"};
-                context.Add(user);
-                context.SaveChanges();
-            }
-            using (var context = new SplitOwnDbContext(options))
-            { 
-                //ATTEMPT
-                var user = context.Users.First();
 
-                //VERIFY
-                user.HomeAddress.ShouldBeNull();
+            context.Add(new User {Name = "Unit Test"});
+            context.SaveChanges();
 
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var user = context.Users.First();
+
+            //VERIFY
+            user.HomeAddress.ShouldBeNull();
         }
 
         [Fact]
@@ -278,22 +265,20 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.ToString());
             });
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
 
-                AddUserWithHomeAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var user = context.Users.First();
-                showLog = true;
-                context.Remove(user);
-                context.SaveChanges();
+            AddUserWithHomeAddresses(context);
 
-                //VERIFY
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var user = context.Users.First();
+            showLog = true;
+            context.Remove(user);
+            context.SaveChanges();
+
+            //VERIFY
         }
 
         [Fact]
@@ -306,23 +291,20 @@ namespace Test.UnitTests.TestDataLayer
                 if (showLog)
                     _output.WriteLine(log.ToString());
             });
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddOrderWithAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddOrderWithAddresses(context);
 
-                //ATTEMPT
-                showLog = true;
-                var entity = context.Orders.First();
-                showLog = false;
+            context.ChangeTracker.Clear();
 
-                //VERIFY
-                entity.DeliveryAddress.ShouldNotBeNull();
-                entity.BillingAddress.ShouldNotBeNull();
-            }
+            //ATTEMPT
+            showLog = true;
+            var entity = context.Orders.First();
+            showLog = false;
+
+            //VERIFY
+            entity.DeliveryAddress.ShouldNotBeNull();
+            entity.BillingAddress.ShouldNotBeNull();
         }
 
         [Fact]
@@ -361,21 +343,19 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<SplitOwnDbContext>();
-            using (var context = new SplitOwnDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                AddOrderWithAddresses(context);
-            }
-            using (var context = new SplitOwnDbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.Orders.First();
-                entity.OrderNumber = "567";
-                context.SaveChanges();
+            using var context = new SplitOwnDbContext(options);
+            context.Database.EnsureCreated();
+            AddOrderWithAddresses(context);
 
-                //VERIFY
-                context.Orders.First().OrderNumber.ShouldEqual("567");
-            }
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var entity = context.Orders.First();
+            entity.OrderNumber = "567";
+            context.SaveChanges();
+
+            //VERIFY
+            context.Orders.First().OrderNumber.ShouldEqual("567");
         }
     }
 }

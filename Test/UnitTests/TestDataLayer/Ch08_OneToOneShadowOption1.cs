@@ -144,7 +144,7 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             int dupticketId;
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
+            using var context = new Chapter08DbContext(options);
             {
                 context.Database.EnsureCreated();
 
@@ -155,7 +155,8 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
                 dupticketId = dupTicket.TicketOption1Id;
             }
-            using (var context = new Chapter08DbContext(options))
+            context.ChangeTracker.Clear();
+            
             {
                 var dupTicket = context.TicketOption1s.Find(dupticketId);
                 var newShadowAttendee = new ShadowAttendee { Name = "Person1", TicketOption1 = dupTicket };

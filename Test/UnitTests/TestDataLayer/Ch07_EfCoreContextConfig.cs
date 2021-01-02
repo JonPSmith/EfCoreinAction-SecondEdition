@@ -48,6 +48,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            options.StopNextDispose();
             var userId1 = Guid.NewGuid();
             using (var context = new EfCoreContext(options, new FakeUserIdService(userId1)))
             {
@@ -56,6 +57,7 @@ namespace Test.UnitTests.TestDataLayer
                 context.SaveChanges();
                 context.Orders.Count().ShouldEqual(1);
             }
+            
             //ATTEMPT
             using (var context = new EfCoreContext(options, new FakeUserIdService(Guid.Empty)))
             {

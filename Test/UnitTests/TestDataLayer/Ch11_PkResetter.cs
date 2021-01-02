@@ -25,6 +25,7 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            options.StopNextDispose();
             using (var context = new EfCoreContext(options, new FakeUserIdService(_userId)))
             {
                 CreateOrderToCopyInDifferentContext(options);

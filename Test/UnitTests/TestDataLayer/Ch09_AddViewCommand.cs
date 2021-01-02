@@ -4,15 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper.Configuration.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter09Listings.AddViewCommand;
-using Test.Chapter09Listings.MoveColumns;
 using TestSupport.Attributes;
 using TestSupport.EfHelpers;
-using TestSupport.Helpers;
-using TestSupportSchema;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 

@@ -150,27 +150,25 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter08DbContext>();
-            using (var context = new Chapter08DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter08DbContext(options);
+            context.Database.EnsureCreated();
 
-                //ATTEMPT
-                var entity = new Ch08Book
-                {
-                    Title = "Quantum Networking"
-                };
-                entity.AddReview(new Review {NumStars = 5, VoterName = "Unit Test"});
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter08DbContext(options))
+            //ATTEMPT
+            var entity = new Ch08Book
             {
-                //VERIFY
-                var entity = context.Books.Include(x => x.Reviews).Single();
-                entity.Reviews.ShouldNotBeNull();
-                entity.Reviews.Count().ShouldEqual(1);
-                entity.ReviewsAverageVotes.ShouldEqual(5);
-            }
+                Title = "Quantum Networking"
+            };
+            entity.AddReview(new Review {NumStars = 5, VoterName = "Unit Test"});
+            context.Add(entity);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var book = context.Books.Include(x => x.Reviews).Single();
+            book.Reviews.ShouldNotBeNull();
+            book.Reviews.Count().ShouldEqual(1);
+            book.ReviewsAverageVotes.ShouldEqual(5);
         }
 
         [Fact]

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Test.Chapter07Listings;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;

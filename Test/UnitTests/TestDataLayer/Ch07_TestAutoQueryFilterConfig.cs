@@ -84,6 +84,7 @@ namespace Test.UnitTests.TestDataLayer
             var userId2 = Guid.NewGuid();
             DbConnection connection;
             var options1 = SqliteInMemory.CreateOptions<EfCoreContext>();
+            options1.StopNextDispose();
             using (var context = new EfCoreContext(options1, new FakeUserIdService(userId1)))
             {
                 context.Database.EnsureCreated();

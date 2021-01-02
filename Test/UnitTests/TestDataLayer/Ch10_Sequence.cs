@@ -4,7 +4,6 @@
 using Test.Chapter10Listings.EfClasses;
 using Test.Chapter10Listings.EfCode;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 

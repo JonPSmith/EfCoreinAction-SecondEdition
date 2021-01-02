@@ -31,24 +31,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+
+            context.SavingChanges += delegate
+            (object dbContext,
+                SavingChangesEventArgs args)
             {
-                context.Database.EnsureCreated();
+                //VERIFY
+                context.ShouldBeSameAs(dbContext);
+                context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Added);
+            };
 
-                context.SavingChanges += delegate
-                (object dbContext,
-                    SavingChangesEventArgs args)
-                {
-                    //VERIFY
-                    context.ShouldBeSameAs(dbContext);
-                    context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Added);
-                };
-
-                //ATTEMPT
-                var entity = new MyEntity {MyString = "Test"};
-                context.Add(entity);   
-                context.SaveChanges();
-            }
+            //ATTEMPT
+            var entity = new MyEntity {MyString = "Test"};
+            context.Add(entity);   
+            context.SaveChanges();
         }
 
         [Fact]
@@ -56,24 +54,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+
+            context.SavedChanges += delegate
+            (object dbContext,
+                SavedChangesEventArgs args)
             {
-                context.Database.EnsureCreated();
+                //VERIFY
+                context.ShouldBeSameAs(dbContext);
+                context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Unchanged);
+            };
 
-                context.SavedChanges += delegate
-                (object dbContext,
-                    SavedChangesEventArgs args)
-                {
-                    //VERIFY
-                    context.ShouldBeSameAs(dbContext);
-                    context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Unchanged);
-                };
-
-                //ATTEMPT
-                var entity = new MyEntity { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
+            //ATTEMPT
+            var entity = new MyEntity { MyString = "Test" };
+            context.Add(entity);
+            context.SaveChanges();
         }
 
         [Fact]
@@ -81,24 +77,22 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+
+            context.SavingChanges += delegate
+            (object dbContext,
+                SavingChangesEventArgs args)
             {
-                context.Database.EnsureCreated();
+                //VERIFY
+                context.ShouldBeSameAs(dbContext);
+                context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Added);
+            };
 
-                context.SavingChanges += delegate
-                (object dbContext,
-                    SavingChangesEventArgs args)
-                {
-                    //VERIFY
-                    context.ShouldBeSameAs(dbContext);
-                    context.ChangeTracker.Entries().Single().State.ShouldEqual(EntityState.Added);
-                };
-
-                //ATTEMPT
-                var entity = new MyEntity { MyString = "Test" };
-                context.Add(entity);
-                await context.SaveChangesAsync();
-            }
+            //ATTEMPT
+            var entity = new MyEntity { MyString = "Test" };
+            context.Add(entity);
+            await context.SaveChangesAsync();
         }
 
         [Fact]
@@ -106,22 +100,20 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+
+            context.SaveChangesFailed += delegate
+            (object dbContext,
+                SaveChangesFailedEventArgs args)
             {
-                context.Database.EnsureCreated();
 
-                context.SaveChangesFailed += delegate
-                (object dbContext,
-                    SaveChangesFailedEventArgs args)
-                {
+            };
 
-                };
-
-                //ATTEMPT
-                var entity = new MyEntity { MyString = "Test" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
+            //ATTEMPT
+            var entity = new MyEntity { MyString = "Test" };
+            context.Add(entity);
+            context.SaveChanges();
         }
 
         [Fact]
@@ -129,43 +121,39 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                var entity = new EntityAddUpdate { Name = "Test1" };
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
+            context.Add(new EntityAddUpdate { Name = "Test1" });
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            context.SavingChanges += delegate
+            (object dbContext,
+                SavingChangesEventArgs args)
             {
-                context.SavingChanges += delegate
-                    (object dbContext, 
-                    SavingChangesEventArgs args)
+                foreach (var entity in ((DbContext) dbContext)
+                    .ChangeTracker.Entries()
+                    .Where(e =>
+                        e.State == EntityState.Added ||
+                        e.State == EntityState.Modified))
                 {
-                    foreach (var entity in ((DbContext)dbContext)
-                        .ChangeTracker.Entries()
-                        .Where(e =>
-                            e.State == EntityState.Added ||
-                            e.State == EntityState.Modified))
-                    {
-                        var tracked = entity.Entity as ICreatedUpdated;
-                        tracked?.LogChange(entity);
-                    }
+                    var tracked = entity.Entity as ICreatedUpdated;
+                    tracked?.LogChange(entity);
+                }
 
-                };
+            };
 
-                //ATTEMPT
-                var updateEntity = context.LoggedEntities.Single();
-                updateEntity.Name = "Test2";
-                var addEntity = new EntityAddUpdate { Name = "Test3" };
-                context.Add(addEntity);
-                context.SaveChanges();
+            //ATTEMPT
+            var updateEntity = context.LoggedEntities.Single();
+            updateEntity.Name = "Test2";
+            var addEntity = new EntityAddUpdate {Name = "Test3"};
+            context.Add(addEntity);
+            context.SaveChanges();
 
-                //VERIFY
-                updateEntity.WhenCreatedUtc.ShouldNotEqual(updateEntity.LastUpdatedUtc);
-                addEntity.WhenCreatedUtc.ShouldEqual(addEntity.LastUpdatedUtc);
-            }
+            //VERIFY
+            updateEntity.WhenCreatedUtc.ShouldNotEqual(updateEntity.LastUpdatedUtc);
+            addEntity.WhenCreatedUtc.ShouldEqual(addEntity.LastUpdatedUtc);
         }
 
 
@@ -175,30 +163,21 @@ namespace Test.UnitTests.TestDataLayer
             //SETUP
             var logs = new List<EntityEntry>();
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
+
+            context.SavingChanges += (dbContext, args) =>
             {
-                context.Database.EnsureCreated();
+                context.ChangeTracker.Entries().ToList().ForEach(x => logs.Add(x));
+            };
 
-                context.SavingChanges += (dbContext, args) =>
-                {
-                    context.ChangeTracker.Entries().ToList().ForEach(x => logs.Add(x));
-                };
+            //ATTEMPT
+            context.Add(new MyEntity { MyString = "Test1" });
+            context.SaveChanges();
 
-                //ATTEMPT
-                var entity = new MyEntity {MyString = "Test1"};
-                context.Add(entity);
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                var entity = new MyEntity { MyString = "Test2" };
-                context.Add(entity);
-                context.SaveChanges();
-
-                //VERIFY
-                logs.Count.ShouldEqual(1);
-                ((MyEntity)logs.Single().Entity).MyString.ShouldEqual("Test1");
-            }
+            //VERIFY
+            logs.Count.ShouldEqual(1);
+            ((MyEntity) logs.Single().Entity).MyString.ShouldEqual("Test1");
         }
 
     }

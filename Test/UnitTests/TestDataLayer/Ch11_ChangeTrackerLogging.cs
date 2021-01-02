@@ -42,20 +42,17 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            //ATTEMPT
+            var entity = new EntityAddUpdate();
+            context.Add(entity);
+            context.SaveChanges();
 
-                //ATTEMPT
-                var entity = new EntityAddUpdate();
-                context.Add(entity);
-                context.SaveChanges();
-
-                //VERIFY
-                entity.WhenCreatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
-                entity.LastUpdatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
-            }
+            //VERIFY
+            entity.WhenCreatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
+            entity.LastUpdatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
         }
 
         [Fact]
@@ -63,29 +60,24 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<Chapter11DbContext>();
-            using (var context = new Chapter11DbContext(options))
-            {
-                context.Database.EnsureCreated();
+            using var context = new Chapter11DbContext(options);
+            context.Database.EnsureCreated();
 
-                var entity = new EntityAddUpdate();
-                context.Add(entity);
-                context.SaveChanges();
-                Thread.Sleep(1000);
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //ATTEMPT
-                var entity = context.LoggedEntities.First();
-                entity.Name = "New Value";
-                context.SaveChanges();
-            }
-            using (var context = new Chapter11DbContext(options))
-            {
-                //VERIFY
-                var entity = context.LoggedEntities.First();
-                entity.WhenCreatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-1.5, -0.5);
-                entity.LastUpdatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
-            }
+            context.Add(new EntityAddUpdate());
+            context.SaveChanges();
+            Thread.Sleep(1000);
+            context.ChangeTracker.Clear();
+            
+            //ATTEMPT
+            var entity = context.LoggedEntities.First();
+            entity.Name = "New Value";
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+            
+            //VERIFY
+            var checkEntity = context.LoggedEntities.First();
+            checkEntity.WhenCreatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-1.5, -0.5);
+            checkEntity.LastUpdatedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-0.5, 0);
         }
 
     }

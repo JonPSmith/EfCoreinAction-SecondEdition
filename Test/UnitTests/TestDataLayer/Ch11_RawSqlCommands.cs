@@ -13,7 +13,6 @@ using Test.Chapter11Listings.Dtos;
 using Test.Chapter11Listings.EfCode;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;

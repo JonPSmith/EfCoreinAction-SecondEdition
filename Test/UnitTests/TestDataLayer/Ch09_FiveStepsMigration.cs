@@ -2,11 +2,10 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using EfSchemaCompare;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter09Listings.FiveStepMigration;
 using TestSupport.EfHelpers;
-using TestSupport.EfSchemeCompare;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
@@ -45,8 +44,10 @@ namespace Test.UnitTests.TestDataLayer
                 //APP2 RUNNING while APP2 is still running
                 using (var app2Context = new App2DbContext(app2Options))
                 {
-                    CheckDatabaseMatchesDbContext(app2Context,
-                        "WARNING: Database 'EfSchemaCompare does not check read-only types'. Expected = <null>, found = ReadOnlyUserWithAddress");
+                    var mEntities = app2Context.Model.GetEntityTypes()
+                        .Select(x => new {x, table = x.GetTableName()}).ToList();
+                    
+                    CheckDatabaseMatchesDbContext(app2Context, null);
 
                     app2Context.Add(new UserPart2
                     {

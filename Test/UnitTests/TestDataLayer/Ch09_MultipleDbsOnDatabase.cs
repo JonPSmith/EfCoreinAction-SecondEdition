@@ -4,8 +4,8 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Test.Chapter09Listings.TwoDbContexts;
+using TestSupport.EfHelpers;
 using TestSupport.Helpers;
-using TestSupportSchema;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
