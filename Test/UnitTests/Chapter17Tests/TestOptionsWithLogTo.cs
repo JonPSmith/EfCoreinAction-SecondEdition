@@ -132,7 +132,7 @@ namespace Test.UnitTests.Chapter17Tests
 
             //VERIFY
             logs.Count.ShouldEqual(1);
-            logs.Single().ShouldStartWith("Entity Framework Core 5.0.0 initialized 'BookDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite' with options: ");
+            logs.Single().ShouldStartWith("Entity Framework Core 5.0.1 initialized 'BookDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite' with options: ");
         }
 
         [Fact]
