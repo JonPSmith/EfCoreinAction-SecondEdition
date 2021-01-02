@@ -3,8 +3,6 @@
 
 using System.Threading.Tasks;
 using BookApp;
-using BookApp.HelperExtensions;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
