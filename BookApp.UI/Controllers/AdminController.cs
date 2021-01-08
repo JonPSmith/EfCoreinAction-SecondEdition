@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.Domain.Books.SupportTypes;
 using BookApp.Infrastructure.AppParts;
 using BookApp.Infrastructure.Books.CachedValues;
 using BookApp.Infrastructure.Books.CachedValues.CheckFixCode;
@@ -18,6 +19,7 @@ using GenericServices;
 using GenericServices.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SoftDeleteServices.Concrete;
 
 namespace BookApp.UI.Controllers
 {
@@ -159,37 +161,37 @@ namespace BookApp.UI.Controllers
             return View(dto);
         }
 
-        public async Task<IActionResult> SoftDelete(int id, [FromServices] ICrudServicesAsync<BookDbContext> service)
+        public async Task<IActionResult> SoftDelete(int id, [FromServices] SingleSoftDeleteServiceAsync<ISoftDelete> service)
         {
             Request.ThrowErrorIfNotLocal();
-            var dto = new AlterSoftDeleteDto { BookId = id, SoftDeleted = true };
-            await service.UpdateAndSaveAsync(dto);
+            var status = await service.SetSoftDeleteViaKeysAsync<Book>(id);
             SetupTraceInfo();
 
             return View("BookUpdated", new BookUpdatedDto(
-                service.IsValid ? "Successfully (soft) deleted the book" : service.GetAllErrors(),
+                status.IsValid ? status.Message : status.GetAllErrors(),
                 _backToDisplayController));
         }
 
-        public async Task<IActionResult> ListSoftDeleted([FromServices] ICrudServicesAsync<BookDbContext> service)
+        public async Task<IActionResult> ListSoftDeleted([FromServices] SingleSoftDeleteServiceAsync<ISoftDelete> service)
         {
             Request.ThrowErrorIfNotLocal();
 
-            var softDeletedBooks = await service.ProjectFromEntityToDto<Book, SimpleBookList>
-                (x => x.IgnoreQueryFilters().Where(y => y.SoftDeleted)).ToListAsync();
+            var softDeletedBooks = await service.GetSoftDeletedEntries<Book>()
+                .Select(x => new SimpleBookList{BookId = x.BookId, LastUpdatedUtc = x.LastUpdatedUtc, Title = x.Title})
+                .ToListAsync();
 
             SetupTraceInfo();
             return View(softDeletedBooks);
         }
 
-        public async Task<IActionResult> UnSoftDelete(int id, [FromServices] BookDbContext context)
+        public async Task<IActionResult> UnSoftDelete(int id, [FromServices] SingleSoftDeleteServiceAsync<ISoftDelete> service)
         {
             Request.ThrowErrorIfNotLocal();
-            var softDeletedBook = await context.Books.IgnoreQueryFilters().SingleAsync(x => x.BookId == id);
-            softDeletedBook.AlterSoftDelete(false);
-            await context.SaveChangesAsync();
+            var status = await service.ResetSoftDeleteViaKeysAsync<Book>(id);
             SetupTraceInfo();
-            return View("BookUpdated", new BookUpdatedDto("Successfully un (soft) deleted the book", _backToDisplayController));
+            return View("BookUpdated", new BookUpdatedDto(
+                status.IsValid ? status.Message : status.GetAllErrors(),
+                _backToDisplayController));
         }
 
         //------------------------------------------------------------

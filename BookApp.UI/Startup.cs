@@ -39,6 +39,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NetCore.AutoRegisterDi;
+using SoftDeleteServices.Configuration;
 
 namespace BookApp.UI
 {
@@ -127,6 +128,8 @@ namespace BookApp.UI
                 .ScanAssemblesForDtos(
                     Assembly.GetAssembly(typeof(ServiceLayer.DefaultSql.Books.Dtos.BookListDto))
                     ).RegisterGenericServices();
+
+            var softLogs = services.RegisterSoftDelServicesAndYourConfigurations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

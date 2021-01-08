@@ -37,6 +37,7 @@
     <PackageReference Include="EfCore.GenericEventRunner" Version="2.3.0" />
     <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="EfCore.GenericServices.AspNetCore" Version="4.1.1" />
+    <PackageReference Include="EfCore.SoftDeleteServices" Version="1.0.0-preview004" />
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="5.0.1" />
