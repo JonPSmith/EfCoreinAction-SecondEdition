@@ -22,14 +22,13 @@ To run any of the code you need to.
 3. You need to install a SQL Server to run any applications and some of the unit tests. A SQL Server called `localdb` is installed when you install **Visual Studio on Windows** by choosing the "Data storage and processing" feature (VS Code and Visual Studio on Mac needs more work).
 4. Clone this repo to your local computer. See Visual Studio tutorial called [Open a project from a repo](https://docs.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
 
-
 ## What can you run in this branch?
 
-I have placed all the code relating to part 3 of the book, chapters 12 to 17. The  `BookApp`, which is the ASP.NET Core application, is significancy different from Part 1 and 2. It is built using a number of different approaches such as Modular Monolith, Domain-Driven Design (DDD), and a Clean Code architecture.
+I have placed all the code relating to part 3 of the book, chapters 12 to 17. The `BookApp.UI`, which is the ASP.NET Core application, is significancy different from Part 1 and 2. It is built using a number of different approaches such as Modular Monolith, Domain-Driven Design (DDD), and a Clean Code architecture.
 
 The Part3 BookApp is designed to show different ways to performance tune EF Core applications and introduces you to Cosmos DB.
 
-Once you have installed your chosen development tool you can run the BookApp, which is designed to create and seed a SQL Server database on startup. The `BookApp` application can be run from **Visual Studio** or **VS Code**.
+Once you have installed your chosen development tool you can run the BookApp, which is designed to create and seed a SQL Server database on startup. The `BookApp.UI` application can be run from **Visual Studio** or **VS Code**. The home page of the `BookApp.UI` application contains a **Things to do** section with links to a page telling you how to configure the  `BookApp.UI` for chapter 15 and 16.
 
 ## How to find and run the unit tests
 
