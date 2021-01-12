@@ -17,11 +17,11 @@ Other branches are:
 To run any of the code you need to.
 
 1. Install a development tool, either **Visual Studio** or **Visual Studio Code** (VS Code for short). If you are new to .NET Core development, then I recommend Visual Studio - here is a link on [how to install Visual Studio](http://mng.bz/2x0T).
-2. You need to install a SQL Server to run any applications and some of the unit tests. A SQL Server called `localdb` is installed when you install **Visual Studio on Windows** by choosing the "Data storage and processing" feature (VS Code and Visual Studio on Mac needs more work).
-3. Clone this repo to your local computer. See Visual Studio tutorial called [Open a project from a repo](https://docs.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
-4. You need to install NET Core installed for ASP.NET Core to work.
+2. You need to install the NET 5 or above SDK. You can find this a [Microsoft NET download](https://dotnet.microsoft.com/download/dotnet/5.0) - select the **Build apps - SDK** version.  
+ *NOTE: If you installed the latest version of **Visual Studio** it should have installed NET 5 SDK for you. Use the console command `dotnet --list-sdks` to check what NET versions are installed.*
+3. You need to install a SQL Server to run any applications and some of the unit tests. A SQL Server called `localdb` is installed when you install **Visual Studio on Windows** by choosing the "Data storage and processing" feature (VS Code and Visual Studio on Mac needs more work).
+4. Clone this repo to your local computer. See Visual Studio tutorial called [Open a project from a repo](https://docs.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
 
-Currently I am using EF Core 5 previews, but that will change when EF Core 5 is released.
 
 ## What can you run in this branch?
 
