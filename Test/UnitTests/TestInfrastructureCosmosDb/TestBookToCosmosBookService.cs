@@ -68,7 +68,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = _cosmosContext.Books.Single(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057, Tags: | Quantum Entanglement |");
+            cBook.ToString().ShouldEqual($"Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published {new DateTime(2057, 1, 1):d}, Tags: | Quantum Entanglement |");
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057, Tags: | Quantum Entanglement |");
+            cBook.ToString().ShouldEqual($"Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published {new DateTime(2057, 1, 1):d}, Tags: | Quantum Entanglement |");
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Test.UnitTests.TestInfrastructureCosmosDb
 
             //VERIFY
             var cBook = await _cosmosContext.Books.SingleAsync(x => x.BookId == seeded[3].BookId);
-            cBook.ToString().ShouldEqual("Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published 01/01/2057, Tags: | Quantum Entanglement |");
+            cBook.ToString().ShouldEqual($"Quantum Networking: by Future Person. Price 219.0, 2 reviews. Published {new DateTime(2057, 1, 1):d}, Tags: | Quantum Entanglement |");
         }
 
         [Fact]

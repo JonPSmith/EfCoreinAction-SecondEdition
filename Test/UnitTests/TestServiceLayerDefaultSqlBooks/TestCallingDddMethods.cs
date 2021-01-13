@@ -162,7 +162,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
 
             //VERIFY
             var book = context.Books.Single();
-            book.ToString().ShouldEqual("New book: by Author1. Price 123, 0 reviews. Published 01/01/2020");
+            book.ToString().ShouldEqual($"New book: by Author1. Price 123, 0 reviews. Published {new DateTime(2020, 1, 1):d}");
         }
     }
 }
