@@ -179,7 +179,7 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
-        public void TestRemoveLinkToAuthorOk()
+        public void TestRemoveLinkByDeleteToAuthorOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
@@ -208,6 +208,39 @@ namespace Test.UnitTests.TestDataLayer
             bookAgain.AuthorsLink.ShouldNotBeNull();
             bookAgain.AuthorsLink.Count.ShouldEqual(1);
             bookAgain.AuthorsLink.First().Author.Name.ShouldEqual("Author0000");
+        }
+
+        [Fact]
+        public void TestRemoveLinkByRemovingFromCollectionToAuthorOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseDummyBooks(1);
+            var bookId = context.Books.First().BookId;
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var existingBook = context.Books
+                .Include(book => book.AuthorsLink.OrderBy(x => x.Order))
+                .Single(book => book.BookId == bookId);
+
+            var linkToRemove = existingBook.AuthorsLink.Last();
+            existingBook.AuthorsLink.Remove(linkToRemove);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var bookAgain = context.Books
+                .Include(p => p.AuthorsLink).ThenInclude(p => p.Author)
+                .Single(p => p.BookId == bookId);
+            bookAgain.AuthorsLink.ShouldNotBeNull();
+            bookAgain.AuthorsLink.Count.ShouldEqual(1);
+            bookAgain.AuthorsLink.First().Author.Name.ShouldEqual("Author0000");
+            context.Set<BookAuthor>().Count().ShouldEqual(1);
         }
 
         [Fact]
