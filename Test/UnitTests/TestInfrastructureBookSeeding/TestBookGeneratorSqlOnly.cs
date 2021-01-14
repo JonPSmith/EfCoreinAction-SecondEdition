@@ -47,13 +47,13 @@ namespace Test.UnitTests.TestInfrastructureBookSeeding
 
             //ATTEMPT
             var book = new Book("book title", new DateTime(2000,1,2), false, 
-                "publishier", 123, "imageurl", 
+                "publisher", 123, "imageurl", 
                 new List<Author>{ new Author("Author1", null)},
                 new List<Tag>{ new Tag("Tag1")},
                 new List<byte>{1,2,3}, "reviewUser" );
 
             //VERIFY
-            book.ToString().ShouldEqual("book title: by Author1. Price 123, 3 reviews. Published 02/01/2000 Tags: Tag1");
+            book.ToString().ShouldEqual($"book title: by Author1. Price 123, 3 reviews. Published {new DateTime(2000, 1, 2):d} Tags: Tag1");
             book.ReviewsAverageVotes.ShouldEqual(2);
             book.ReviewsCount.ShouldEqual(3);
         }
