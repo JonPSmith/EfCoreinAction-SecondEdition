@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.Linq;
 using DataLayer.EfClasses;
@@ -22,6 +23,35 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         private readonly ITestOutputHelper _output;
+
+        [Fact]
+        public void TestQueryFilterOnBookOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            var books = context.SeedDatabaseFourBooks();
+
+            books[3].SoftDeleted = true;
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var booksCount = context.Books.Count();
+            var findBook1 = context.Find<Book>(books[1].BookId);
+            var findBook3 = context.Find<Book>(books[3].BookId);
+            var singleBook3 = context.Books.SingleOrDefault(x => x.BookId == books[3].BookId);
+            var sqlBooksCount = context.Books.FromSqlRaw("SELECT * FROM Books").Count();
+
+            //VERIFY
+            booksCount.ShouldEqual(3);
+            findBook1.ShouldNotBeNull();
+            findBook3.ShouldBeNull();
+            singleBook3.ShouldBeNull();
+            sqlBooksCount.ShouldEqual(3);
+        }
 
         [Fact]
         public void TestCountReviewsBadOk()
