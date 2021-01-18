@@ -3,14 +3,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
+using Test.Chapter03Listings.EfClasses;
+using Test.Chapter03Listings.EfCode;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
+using Review = DataLayer.EfClasses.Review;
 
 namespace Test.UnitTests.TestDataLayer
 {
@@ -222,6 +224,43 @@ namespace Test.UnitTests.TestDataLayer
                 .First();
             bookAgain.Reviews.ShouldNotBeNull();
             bookAgain.Reviews.Count.ShouldEqual(1);
+        }
+
+        //------------------------------------------------------
+        //Check if with collection already set to empty
+
+        [Fact]
+        public void TestAddReviewNoIncludeCollectionAlreadySetOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<Chapter3DbContext>();
+            using var context = new Chapter3DbContext(options);
+            context.Database.EnsureCreated();
+
+            var writeBook = new BookCheckSet
+            {
+                Title = "Title",
+                Reviews = new List<ReviewSetCheck> {new ReviewSetCheck {NumStars = 5}}
+            };
+            context.Add(writeBook);
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.BookCheckSets
+                .Single(p => p.BookId == writeBook.BookId);
+            book.Reviews.Add(new ReviewSetCheck { NumStars = 5 });
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var bookAgain = context.BookCheckSets
+                .Include(p => p.Reviews)
+                .Single(p => p.BookId == book.BookId);
+            bookAgain.Reviews.ShouldNotBeNull();
+            bookAgain.Reviews.Count.ShouldEqual(2);
         }
     }
 }

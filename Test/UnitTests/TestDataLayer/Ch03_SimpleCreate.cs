@@ -3,6 +3,8 @@
 
 using System.Linq;
 using Test.Chapter03Listings;
+using Test.Chapter03Listings.EfClasses;
+using Test.Chapter03Listings.EfCode;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,8 +25,8 @@ namespace Test.UnitTests.TestDataLayer
         public void TestCreateOneEntry()
         {
             //SETUP
-            var options = SqliteInMemory.CreateOptions<SimpleDbContext>();
-            using (var context = new SimpleDbContext(options))
+            var options = SqliteInMemory.CreateOptions<Chapter3DbContext>();
+            using (var context = new Chapter3DbContext(options))
             {
                 context.Database.EnsureCreated();
                 var itemToAdd = new ExampleEntity
@@ -53,12 +55,12 @@ namespace Test.UnitTests.TestDataLayer
         {
             //SETUP
             var showLog = false;
-            var options = SqliteInMemory.CreateOptionsWithLogging<SimpleDbContext>(log =>
+            var options = SqliteInMemory.CreateOptionsWithLogging<Chapter3DbContext>(log =>
             {
                 if (showLog)
                     _output.WriteLine(log.DecodeMessage());
             });
-            using (var context = new SimpleDbContext(options))
+            using (var context = new Chapter3DbContext(options))
             {
                 context.Database.EnsureCreated();
 
