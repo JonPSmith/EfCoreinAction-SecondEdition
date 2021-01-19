@@ -7,21 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TestData\**" />
-    <EmbeddedResource Remove="TestData\**" />
-    <None Remove="TestData\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="TestData\AddUserDefinedFunctions.sql">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="TestData\seedData\ManningBooks-test6.json" />
-    <Content Include="TestData\seedData\ManningDetails-test-empty.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="EfCore.TestSupport" Version="5.0.0" />
