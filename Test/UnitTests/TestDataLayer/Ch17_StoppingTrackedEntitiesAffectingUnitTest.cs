@@ -23,14 +23,34 @@ namespace Test.UnitTests.TestDataLayer
         }
 
         [Fact]
+        public void ExampleIdentityResolutionBad()
+        {
+            //SETUP
+            var options = SqliteInMemory
+                .CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            //ATTEMPT
+            var book = context.Books.First();
+            book.Price = 123;
+            // Should call context.SaveChanges()
+
+            //VERIFY
+            var verifyBook = context.Books.First();
+            //!!! THIS IS WRONG !!! THIS IS WRONG
+            verifyBook.Price.ShouldEqual(123);
+        }
+
+        [Fact]
         public void INCORRECTtestOfDisconnectedState()
         {
             //SETUP
             var options = SqliteInMemory
                 .CreateOptions<EfCoreContext>();
-            ;
             using var context = new EfCoreContext(options);
-
 
             context.Database.EnsureCreated();  //#A
             context.SeedDatabaseFourBooks();   //#A
@@ -63,24 +83,25 @@ namespace Test.UnitTests.TestDataLayer
                 .CreateOptions<EfCoreContext>();
             using var context = new EfCoreContext(options);
 
-            context.Database.EnsureCreated();  //#A
-            context.SeedDatabaseFourBooks();   //#A
+            context.Database.EnsureCreated();               //#A
+            context.SeedDatabaseFourBooks();                //#A
 
-            context.ChangeTracker.Clear();   //#B
+            context.ChangeTracker.Clear();                  //#B
 
             //ATTEMPT
-            var book = context.Books //#C
-                .OrderBy(x => x.BookId).Last(); //#C
+            var book = context.Books                        //#C
+                .Include(b => b.Reviews)
+                .OrderBy(b => b.BookId).Last();             //#C
             book.Reviews.Add(new Review { NumStars = 5 });  //#D
 
-            context.SaveChanges();                      //#E
+            context.SaveChanges();                          //#E
 
             //VERIFY
-            context.ChangeTracker.Clear(); //#B
+            context.ChangeTracker.Clear();                  //#B
 
-            context.Books.Include(b => b.Reviews) //#F
-                .OrderBy(x => x.BookId).Last()    //#F
-                .Reviews.Count.ShouldEqual(3);    //#F
+            context.Books.Include(b => b.Reviews)           //#F
+                .OrderBy(x => x.BookId).Last()              //#F
+                .Reviews.Count.ShouldEqual(3);              //#F
         }
         /*************************************************************************
         #A Sets up the test database with test data consisting of four books
@@ -92,7 +113,7 @@ namespace Test.UnitTests.TestDataLayer
          *************************************************************************/
 
         [Fact]
-        public void UsingTwoInstancesOfTheDbcontext()
+        public void UsingThreeInstancesOfTheDbcontext()
         {
             //SETUP
             var options = SqliteInMemory          //#A
