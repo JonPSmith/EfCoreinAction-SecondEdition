@@ -4,7 +4,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DataLayer.EfCode;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
@@ -99,6 +101,36 @@ namespace Test.UnitTests.TestDataLayer
 
                 //VERIFY
 
+            }
+        }
+
+        [Fact]
+        public async Task TestIncludeWithCountOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                var bookId = context.SeedDatabaseFourBooks().Last().BookId;
+                
+                context.ChangeTracker.Clear();
+
+                //ATTEMPT
+                var query1 = context.Books.Include(b => b.Reviews)
+                    .Where(b => b.BookId == bookId)
+                    .Select(b => b.Reviews.Count);
+                var reviewCount1 = await query1.SingleAsync();
+                var query2 = context.Books
+                    .Where(b => b.BookId == bookId)
+                    .Select(b => b.Reviews.Count);
+                var reviewCount2 = await query2.SingleAsync();
+
+                //VERIFY
+                _output.WriteLine(query1.ToQueryString());
+                reviewCount1.ShouldEqual(2);
+                _output.WriteLine(query2.ToQueryString());
+                reviewCount2.ShouldEqual(2);
             }
         }
     }
