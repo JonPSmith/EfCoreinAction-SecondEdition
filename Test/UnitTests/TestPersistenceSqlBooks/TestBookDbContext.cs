@@ -4,18 +4,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using Microsoft.EntityFrameworkCore;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Test.UnitTests.TestPersistenceSqlBooks
 {
     public class TestBookDbContext
     {
+        private readonly ITestOutputHelper _output;
+
+        public TestBookDbContext(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void TestBookDbContextAddFourBooksOk()
         {
@@ -73,6 +82,46 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             context.Books.Count().ShouldEqual(1);
             context.Authors.Count().ShouldEqual(1);
             context.Tags.Count().ShouldEqual(2);
+        }
+
+        //see https://github.com/dotnet/efcore/issues/22701
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void TestCountOfCollectionWithTypeChanged(bool countNoBrackets)
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<BookDbContext>();
+            using (var context = new BookDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var bookId = context.SeedDatabaseFourBooks().Last().BookId;
+
+                context.ChangeTracker.Clear();
+
+                var query1 = context.Books
+                    .Where(b => b.BookId == bookId);
+                var query2 = countNoBrackets
+                    ? query1.Select(b => b.Reviews.Count)
+                    : query1.Select(b => b.Reviews.Count());
+
+                //ATTEMPT
+                int reviewCount;
+                try
+                {
+                    reviewCount = query2.Single();
+                }
+                catch
+                {
+                    countNoBrackets.ShouldBeTrue();
+                    return;
+                }
+
+                //VERIFY
+                countNoBrackets.ShouldBeFalse();
+                _output.WriteLine(query2.ToQueryString());
+                reviewCount.ShouldEqual(2);
+            }
         }
     }
 }
