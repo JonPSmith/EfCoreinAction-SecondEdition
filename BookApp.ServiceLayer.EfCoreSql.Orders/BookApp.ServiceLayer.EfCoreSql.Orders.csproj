@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Domain.Orders\BookApp.Domain.Orders.csproj" />
-    <ProjectReference Include="..\BookApp.Infrastructure.Orders.BizLogic\BookApp.Infrastructure.Orders.BizLogic.csproj" />
     <ProjectReference Include="..\BookApp.Persistence.EfCoreSql.Orders\BookApp.Persistence.EfCoreSql.Orders.csproj" />
+    <ProjectReference Include="..\BookApp.BizLogic.Orders\BookApp.BizLogic.Orders.csproj" />
   </ItemGroup>
 
 </Project>
