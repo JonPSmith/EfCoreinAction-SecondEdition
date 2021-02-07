@@ -2,8 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using BookApp.Infrastructure.Orders.BizLogic.BasketServices;
-using BookApp.Infrastructure.Orders.BizLogic.Orders;
+using BookApp.BizLogic.Orders.BasketServices;
+using BookApp.BizLogic.Orders.Orders;
 using BookApp.ServiceLayer.EfCoreSql.Orders.CheckoutServices.Concrete;
 using Microsoft.AspNetCore.Http;
 using StatusGeneric;

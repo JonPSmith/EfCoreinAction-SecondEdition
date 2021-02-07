@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace BookApp.Infrastructure.Orders.BizLogic.Orders
+namespace BookApp.BizLogic.Orders.Orders
 {
     public class PlaceOrderInDto
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using BookApp.Domain.Orders;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Orders.BizLogic.Orders
+namespace BookApp.BizLogic.Orders.Orders
 {
     public interface IPlaceOrderBizLogic
     {

@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 using BookApp.Domain.Orders;
 using BookApp.Domain.Orders.SupportTypes;
 using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
-using BookApp.Persistence.EfCoreSql.Orders.DbAccess.Orders;
 using StatusGeneric;
 
-namespace BookApp.Infrastructure.Orders.BizLogic.Orders.Concrete
+namespace BookApp.BizLogic.Orders.Orders.Concrete
 {
     public class PlaceOrderBizLogic : IPlaceOrderBizLogic
     {

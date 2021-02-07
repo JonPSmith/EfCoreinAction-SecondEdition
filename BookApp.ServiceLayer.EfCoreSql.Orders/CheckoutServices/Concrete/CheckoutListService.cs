@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using BookApp.Infrastructure.Orders.BizLogic.BasketServices;
-using BookApp.Infrastructure.Orders.BizLogic.Orders;
+using BookApp.BizLogic.Orders.BasketServices;
+using BookApp.BizLogic.Orders.Orders;
 using BookApp.Persistence.EfCoreSql.Orders;
 using Microsoft.AspNetCore.Http;
 
