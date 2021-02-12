@@ -21,11 +21,13 @@ namespace BookApp.ServiceLayer.CachedSql.Books.QueryObjects
                 OrgPrice               = p.OrgPrice, 
                 ActualPrice            = p.ActualPrice, 
                 PromotionText          = p.PromotionalText,
-                AuthorsOrdered         = p.AuthorsOrdered,
+                ManningBookUrl         = p.ManningBookUrl,
+                
                 TagStrings             = p.Tags.Select(x => x.TagId).ToArray(),
+                
+                AuthorsOrdered         = p.AuthorsOrdered,
                 ReviewsCount           = p.ReviewsCount,
-                ReviewsAverageVotes    = p.ReviewsAverageVotes,
-                ManningBookUrl         = p.ManningBookUrl
+                ReviewsAverageVotes    = p.ReviewsAverageVotes
             });
         }
 
