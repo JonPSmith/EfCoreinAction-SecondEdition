@@ -17,6 +17,7 @@ namespace BookApp.Infrastructure.LoggingServices
             "http://localhost:59382/favicon.ico",
             "http://localhost:59382/Admin/GetTimingLogs",
             "http://localhost:59382/Logger/GetLog",
+            "http://localhost:59382/DefaultSql/GetFilterSearchContent",
             "http://localhost:59382/CosmosEf/GetFilterSearchContent",
             "http://localhost:59382/CosmosDirect/GetFilterSearchContent",
             "http://localhost:59382/DapperSql/GetFilterSearchContent",
