@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using BookApp.Domain.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books.QueryObjects
 {

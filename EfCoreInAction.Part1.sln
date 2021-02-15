@@ -53,7 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.ServiceLayer.Cosmos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.Infrastructure.AppParts", "BookApp.Infrastructure.AppParts\BookApp.Infrastructure.AppParts.csproj", "{C7999415-EDE0-4642-AA23-1FDF97E65C51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.BizLogic.Orders", "BookApp.BizLogic.Orders\BookApp.BizLogic.Orders.csproj", "{6FEDCFF9-1A4B-41E3-B2CB-47B018F84C22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApp.BizLogic.Orders", "BookApp.BizLogic.Orders\BookApp.BizLogic.Orders.csproj", "{6FEDCFF9-1A4B-41E3-B2CB-47B018F84C22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApp.ServiceLayer.DisplayCommon.Books", "BookApp.ServiceLayer.DisplayCommon.Books\BookApp.ServiceLayer.DisplayCommon.Books.csproj", "{A3A41011-02A9-4210-AF31-6C21E883BD22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,10 @@ Global
 		{6FEDCFF9-1A4B-41E3-B2CB-47B018F84C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FEDCFF9-1A4B-41E3-B2CB-47B018F84C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FEDCFF9-1A4B-41E3-B2CB-47B018F84C22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3A41011-02A9-4210-AF31-6C21E883BD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A41011-02A9-4210-AF31-6C21E883BD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3A41011-02A9-4210-AF31-6C21E883BD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3A41011-02A9-4210-AF31-6C21E883BD22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

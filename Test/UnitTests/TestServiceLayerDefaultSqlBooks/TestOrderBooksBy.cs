@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using Test.TestHelpers;
 using TestSupport.EfHelpers;
 using Xunit;

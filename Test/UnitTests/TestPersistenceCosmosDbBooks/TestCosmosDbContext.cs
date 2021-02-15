@@ -10,6 +10,7 @@ using BookApp.Infrastructure.AppParts;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.UI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

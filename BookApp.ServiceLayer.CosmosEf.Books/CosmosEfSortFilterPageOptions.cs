@@ -3,6 +3,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books
 {

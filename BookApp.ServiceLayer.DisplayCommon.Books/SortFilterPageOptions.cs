@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books

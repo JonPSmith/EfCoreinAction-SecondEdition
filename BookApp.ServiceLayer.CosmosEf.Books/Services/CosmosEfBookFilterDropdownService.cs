@@ -11,6 +11,7 @@ using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using Microsoft.Azure.Cosmos;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books.Services

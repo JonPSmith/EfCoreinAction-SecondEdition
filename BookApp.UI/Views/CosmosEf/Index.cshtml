@@ -1,6 +1,4 @@
-﻿@using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
-@using BookApp.UI.HelperExtensions
-@using BookApp.ServiceLayer.CosmosEf.Books
+﻿@using BookApp.UI.HelperExtensions
 @model BookApp.ServiceLayer.CosmosEf.Books.CosmosEfBookListCombinedDto
 @{
     ViewData["Title"] = "Cosmos (Ef)";
@@ -13,7 +11,7 @@
         <div class="col-sm-2">
             <label>Sort By</label>
             <select asp-for="SortFilterPageData.OrderByOptions" name="OrderByOptions"
-                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DefaultSql.Books.QueryObjects.OrderByOptions>()"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DisplayCommon.Books.OrderByOptions>()"
                     class="form-control"
                     onchange="BookList.sendForm(this)"></select>
         </div>
@@ -21,7 +19,7 @@
         <div class="col-sm-2">
             <label>Filter Type</label>
             <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
-                    asp-items="Html.GetEnumSelectList<BooksFilterBy>()"
+                    asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DisplayCommon.Books.BooksFilterBy>()"
                     class="form-control"
                     onchange="BookList.filterByHasChanged(this)"></select>
         </div>

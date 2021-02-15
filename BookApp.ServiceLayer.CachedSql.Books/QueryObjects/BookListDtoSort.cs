@@ -6,7 +6,7 @@ using System.Linq;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
+namespace BookApp.ServiceLayer.CachedSql.Books.QueryObjects
 {
 
     public static class BookListDtoSort

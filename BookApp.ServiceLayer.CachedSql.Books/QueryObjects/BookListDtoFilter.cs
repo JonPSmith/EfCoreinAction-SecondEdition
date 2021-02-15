@@ -3,17 +3,18 @@
 
 using System;
 using System.Linq;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DisplayCommon.Books;
-using BookApp.ServiceLayer.UdfsSql.Books.Dtos;
 
-namespace BookApp.ServiceLayer.UdfsSql.Books.QueryObjects
+namespace BookApp.ServiceLayer.CachedSql.Books.QueryObjects
 {
-    public static class BookUdfsListDtoFilter
+
+    public static class BookListDtoFilter
     {
         public const string AllBooksNotPublishedString = "Coming Soon";
 
-        public static IQueryable<UdfsBookListDto> FilterUdfsBooksBy(
-            this IQueryable<UdfsBookListDto> books,
+        public static IQueryable<BookListDto> FilterBooksBy(
+            this IQueryable<BookListDto> books,
             BooksFilterBy filterBy, string filterValue) 
         {
             if (string.IsNullOrEmpty(filterValue)) 
@@ -28,8 +29,7 @@ namespace BookApp.ServiceLayer.UdfsSql.Books.QueryObjects
                     return books.Where(x => 
                         x.ReviewsAverageVotes > filterVote);
                 case BooksFilterBy.ByTags:
-                    //The ByTags has been handled in a prequery
-                    return books;
+                    return books.Where(x => x.TagStrings.Any(y => y == filterValue));
                 case BooksFilterBy.ByPublicationYear:
                     if (filterValue == AllBooksNotPublishedString) 
                         return books.Where( 

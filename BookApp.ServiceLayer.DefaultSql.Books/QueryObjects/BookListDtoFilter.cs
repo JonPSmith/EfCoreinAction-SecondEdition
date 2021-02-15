@@ -5,17 +5,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
 {
-    public enum BooksFilterBy
-    {
-        [Display(Name = "All")] NoFilter = 0,
-        [Display(Name = "By Votes...")] ByVotes,
-        [Display(Name = "By Tags...")] ByTags,
-        [Display(Name = "By Year published...")]
-        ByPublicationYear
-    }
 
     public static class BookListDtoFilter
     {
