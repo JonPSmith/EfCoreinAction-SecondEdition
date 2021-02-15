@@ -9,6 +9,8 @@ using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.DapperSql.Books.DapperCode;
 using BookApp.ServiceLayer.DapperSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApp.UI.Controllers

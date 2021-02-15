@@ -2,7 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.UdfsSql.Books.Dtos
 {

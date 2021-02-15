@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.CachedSql.Books.QueryObjects;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.CachedSql.Books.Services

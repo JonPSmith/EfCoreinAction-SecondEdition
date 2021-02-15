@@ -7,6 +7,8 @@ using BookApp.Infrastructure.LoggingServices;
 using BookApp.ServiceLayer.CachedSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

@@ -9,6 +9,7 @@ using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.Azure.Cosmos;
 
 namespace BookApp.ServiceLayer.CosmosDirect.Books.Services

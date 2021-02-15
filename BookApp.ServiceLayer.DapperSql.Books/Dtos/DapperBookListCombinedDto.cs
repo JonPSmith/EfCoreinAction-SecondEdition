@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.DapperSql.Books.Dtos
 {

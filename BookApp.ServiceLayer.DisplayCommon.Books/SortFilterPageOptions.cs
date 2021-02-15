@@ -4,10 +4,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BookApp.ServiceLayer.DisplayCommon.Books;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookApp.ServiceLayer.DefaultSql.Books
+namespace BookApp.ServiceLayer.DisplayCommon.Books
 {
     public class SortFilterPageOptions
     {

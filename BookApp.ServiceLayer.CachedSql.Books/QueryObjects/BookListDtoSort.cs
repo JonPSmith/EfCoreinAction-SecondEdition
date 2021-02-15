@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 
 namespace BookApp.ServiceLayer.CachedSql.Books.QueryObjects
 {

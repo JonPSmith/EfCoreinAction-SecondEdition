@@ -21,6 +21,7 @@ using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
 using BookApp.ServiceLayer.CachedSql.Books;
 using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices;
 using BookApp.ServiceLayer.UdfsSql.Books;
 using BookApp.UI.HelperExtensions;
@@ -126,7 +127,7 @@ namespace BookApp.UI
             //Register EfCoreGenericServices
             services.ConfigureGenericServicesEntities(typeof(BookDbContext), typeof(OrderDbContext))
                 .ScanAssemblesForDtos(
-                    Assembly.GetAssembly(typeof(ServiceLayer.DefaultSql.Books.Dtos.BookListDto))
+                    Assembly.GetAssembly(typeof(BookListDto))
                     ).RegisterGenericServices();
 
             var softLogs = services.RegisterSoftDelServicesAndYourConfigurations();

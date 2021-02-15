@@ -10,6 +10,8 @@ using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books.Services;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using BookApp.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 

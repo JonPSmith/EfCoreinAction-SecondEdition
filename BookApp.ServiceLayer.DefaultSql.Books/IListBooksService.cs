@@ -4,6 +4,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
+using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books
 {

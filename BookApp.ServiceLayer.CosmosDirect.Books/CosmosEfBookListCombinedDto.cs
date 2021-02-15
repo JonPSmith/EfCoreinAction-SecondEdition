@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using BookApp.Domain.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.CosmosDirect.Books
 {
