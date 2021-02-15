@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.DisplayCommon.Books
 {
-    public class SortFilterPageOptions
+    public class SortFilterPageOptions : ISortFilterPage
     {
         public const int DefaultPageSize = 100; //default page
 
@@ -29,6 +29,8 @@ namespace BookApp.ServiceLayer.DisplayCommon.Books
         public int PageNum { get; set; } = 1;
 
         public int PageSize { get; set; } = DefaultPageSize;
+
+        public bool NoCount { get; } = false;
 
 
         /// <summary>

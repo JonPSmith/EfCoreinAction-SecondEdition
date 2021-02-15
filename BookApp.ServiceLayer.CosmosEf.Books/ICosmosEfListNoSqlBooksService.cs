@@ -4,11 +4,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookApp.Domain.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books
 {
     public interface ICosmosEfListNoSqlBooksService
     {
-        Task<IList<CosmosBook>> SortFilterPageAsync(CosmosEfSortFilterPageOptions options);
+        Task<IList<CosmosBook>> SortFilterPageAsync(SortFilterPageOptionsNoCount options);
     }
 }

@@ -11,7 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BookApp.Infrastructure.LoggingServices\BookApp.Infrastructure.LoggingServices.csproj" />
     <ProjectReference Include="..\BookApp.Persistance.EfCoreSql.Books\BookApp.Persistence.EfCoreSql.Books.csproj" />
-    <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
+    <ProjectReference Include="..\BookApp.ServiceLayer.DisplayCommon.Books\BookApp.ServiceLayer.DisplayCommon.Books.csproj" />
   </ItemGroup>
 
 </Project>

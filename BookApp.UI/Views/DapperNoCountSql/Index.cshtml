@@ -1,10 +1,10 @@
 ﻿@using BookApp.UI.HelperExtensions
-@model BookApp.ServiceLayer.CosmosEf.Books.CosmosEfBookListCombinedDto
+@model BookApp.ServiceLayer.DisplayCommon.Books.Dtos.BookListNoCountCombinedDto
 @{
-    ViewData["Title"] = "Cosmos (Ef)";
+    ViewData["Title"] = "Dapper SQL NC";
 }
 
-<p><span class="text-primary h2">Cosmos (EF)&nbsp;</span>- using EF Core access Cosmos DB holding pre-built read version.</p>
+<p><span class="text-primary h2">Dapper SQL (No Count)&nbsp;</span>- Uses Dapper to query the database.</p>
 
 <form id="sort-filter-form" role="form">
     <div class="row">
@@ -12,7 +12,7 @@
             <label>Sort By</label>
             <select asp-for="SortFilterPageData.OrderByOptions" name="OrderByOptions"
                     asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DisplayCommon.Books.OrderByOptions>()"
-                    class="form-control"
+                    class="form-control sort-filter-width"
                     onchange="BookList.sendForm(this)"></select>
         </div>
 
@@ -20,7 +20,7 @@
             <label>Filter Type</label>
             <select asp-for="SortFilterPageData.FilterBy" name="FilterBy"
                     asp-items="Html.GetEnumSelectList<BookApp.ServiceLayer.DisplayCommon.Books.BooksFilterBy>()"
-                    class="form-control"
+                    class="form-control sort-filter-width"
                     onchange="BookList.filterByHasChanged(this)"></select>
         </div>
 
@@ -28,7 +28,7 @@
             <label>Filter By</label>
             <select asp-for="SortFilterPageData.FilterValue" name="FilterValue"
                     id="filter-value-dropdown"
-                    class="form-control"
+                    class="form-control sort-filter-width"
                     disabled
                     onchange="BookList.sendForm(this)">
                 <option>Select filter type...</option>
@@ -78,17 +78,17 @@
                     }
                 </div>
                 <div>
-                    Tags: @(string.Join(" | ", item.Tags.Select(x => x.TagId)))
+                    Tags: @item.TagStrings
                 </div>
                 <div>
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
                 </div>
                 <div>
                     <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"Price: ${item.ActualPrice:F}")</span>
-                    @if (item.PromotionalText != null)
+                    @if (item.PromotionText != null)
                     {
                         <span class="text-danger">
-                            <strong>&nbsp;<del>$@($"{item.OrgPrice:F}")</del>&nbsp;<i>@(item.PromotionalText)</i></strong>
+                            <strong >&nbsp;<del>$@($"{item.OrgPrice:F}")</del>&nbsp;<i>@(item.PromotionText)</i></strong>
                         </span>
                     }
                 </div>
@@ -102,7 +102,7 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="ChangePubDate" asp-route-id="@item.BookId">Change Pub Date</a>
-                            @if (item.PromotionalText == null)
+                            @if (item.PromotionText == null)
                             {
                                 <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="AddPromotion" asp-route-id="@item.BookId">Add Promotion</a>
                             }
@@ -154,6 +154,5 @@
             //A second operation started on this context before a previous operation completed. Any instance members are not guaranteed to be thread safe.
             $('.form-control').prop('disabled', true);
         }
-
     </script>
 }

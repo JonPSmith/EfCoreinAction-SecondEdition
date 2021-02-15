@@ -22,15 +22,15 @@ namespace BookApp.UI.Services
             {
                 new MenuData("DefaultSql", "SQL (LINQ)"),
                 new MenuData("UdfsSql", "SQL (+UDFs)"),
-                new MenuData("DapperSql", "SQL (Dapper)"),
-                new MenuData("CachedSql", "SQL (+cache)")
+                new MenuData("CachedSql", "SQL (+cache)"),
+                new MenuData("DapperSql", "SQL (Dapper)")
             },
             [BookAppMenuSettings.SqlAndCosmos] = new List<MenuData>
             {
                 new MenuData("CosmosEf", "Cosmos (EF)"),
                 new MenuData("CosmosDirect", "Cosmos (Direct)"),
-                new MenuData("CachedSql", "SQL (+cache)"),
-                new MenuData("DapperSql", "SQL (Dapper)")
+                new MenuData("DapperNoCountSql", "SQL (DapperNC)"),
+                new MenuData("CachedNoCountSql", "SQL (+cacheNC)")
             },
             [BookAppMenuSettings.CosmosOnly] = new List<MenuData>
             {

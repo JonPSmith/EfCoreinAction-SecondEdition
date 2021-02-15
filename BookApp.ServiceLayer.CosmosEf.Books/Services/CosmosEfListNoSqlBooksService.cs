@@ -7,6 +7,7 @@ using BookApp.Domain.Books;
 using BookApp.Persistence.Common.QueryObjects;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.QueryObjects;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books.Services
@@ -20,7 +21,7 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.Services
             _context = context;
         }
 
-        public async Task<IList<CosmosBook>> SortFilterPageAsync(CosmosEfSortFilterPageOptions options)
+        public async Task<IList<CosmosBook>> SortFilterPageAsync(SortFilterPageOptionsNoCount options)
         {
             var booksFound = await _context.Books
                 .AsNoTracking()                                             

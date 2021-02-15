@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.ServiceLayer.CosmosEf.Books;
-using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,7 @@ namespace BookApp.UI.Controllers
 {
     public class CosmosEfController : BaseTraceController
     {
-        public async Task<IActionResult> Index (CosmosEfSortFilterPageOptions options, [FromServices] ICosmosEfListNoSqlBooksService service)
+        public async Task<IActionResult> Index (SortFilterPageOptionsNoCount options, [FromServices] ICosmosEfListNoSqlBooksService service)
         {
             var output = await service.SortFilterPageAsync(options);
             SetupTraceInfo();
@@ -28,7 +28,7 @@ namespace BookApp.UI.Controllers
         /// <returns></returns>
         [HttpGet]
         public async Task<JsonResult> GetFilterSearchContent    
-            (CosmosEfSortFilterPageOptions options, [FromServices]ICosmosEfBookFilterDropdownService service)         
+            (SortFilterPageOptionsNoCount options, [FromServices]ICosmosEfBookFilterDropdownService service)         
         {
             var traceIdent = HttpContext.TraceIdentifier;
             var dropdown = await service.GetFilterDropDownValuesAsync(options.FilterBy);

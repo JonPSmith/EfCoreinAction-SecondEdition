@@ -14,16 +14,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookApp.UI.Controllers
 {
-    public class DapperSqlController : BaseTraceController
+    public class DapperNoCountSqlController : BaseTraceController
     {
-        public async Task<IActionResult> Index(SortFilterPageOptions options, [FromServices] BookDbContext context)
+        public async Task<IActionResult> Index(SortFilterPageOptionsNoCount options, [FromServices] BookDbContext context)
         {
-            options.SetupRestOfDto(await context.DapperBookListCountAsync(options));
             var bookList = (await context.DapperBookListQueryAsync(options)).ToList();
-
+            options.SetupRestOfDto(bookList.Count);
+            
             SetupTraceInfo();
 
-            return View(new BookListCombinedDto(options, bookList));
+            return View(new BookListNoCountCombinedDto(options, bookList));
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace BookApp.UI.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent(SortFilterPageOptions options, [FromServices] IBookFilterDropdownService service)
+        public JsonResult GetFilterSearchContent(SortFilterPageOptionsNoCount options, [FromServices] IBookFilterDropdownService service)
         {
             var traceIdent = HttpContext.TraceIdentifier;
             return Json(

@@ -3,18 +3,19 @@
 
 using System.Collections.Generic;
 using BookApp.Domain.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books;
 
 namespace BookApp.ServiceLayer.CosmosEf.Books
 {
     public class CosmosEfBookListCombinedDto
     {
-        public CosmosEfBookListCombinedDto(CosmosEfSortFilterPageOptions sortFilterPageData, IList<CosmosBook> booksList)
+        public CosmosEfBookListCombinedDto(SortFilterPageOptionsNoCount sortFilterPageData, IList<CosmosBook> booksList)
         {
             SortFilterPageData = sortFilterPageData;
             BooksList = booksList;
         }
 
-        public CosmosEfSortFilterPageOptions SortFilterPageData { get; private set; }
+        public SortFilterPageOptionsNoCount SortFilterPageData { get; private set; }
 
         public IList<CosmosBook> BooksList { get; private set; }
     }

@@ -2,28 +2,28 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
-using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DapperSql.Books.DapperCode;
+using BookApp.ServiceLayer.CachedSql.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookApp.UI.Controllers
 {
-    public class DapperSqlController : BaseTraceController
+    public class CachedNoCountSqlController : BaseTraceController
     {
-        public async Task<IActionResult> Index(SortFilterPageOptions options, [FromServices] BookDbContext context)
+        public async Task<IActionResult> Index(SortFilterPageOptionsNoCount options, [FromServices] IListBooksCachedNoCountService service)
         {
-            options.SetupRestOfDto(await context.DapperBookListCountAsync(options));
-            var bookList = (await context.DapperBookListQueryAsync(options)).ToList();
+            var bookList = await service.SortFilterPage(options)
+                .ToListAsync();
 
+            options.SetupRestOfDto(bookList.Count);
             SetupTraceInfo();
 
-            return View(new BookListCombinedDto(options, bookList));
+            return View(new BookListNoCountCombinedDto(options, bookList));
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace BookApp.UI.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent(SortFilterPageOptions options, [FromServices] IBookFilterDropdownService service)
+        public JsonResult GetFilterSearchContent(SortFilterPageOptionsNoCount options, [FromServices] IBookFilterDropdownService service)
         {
             var traceIdent = HttpContext.TraceIdentifier;
             return Json(

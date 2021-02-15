@@ -7,9 +7,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DapperSql.Books.Dtos;
-using BookApp.ServiceLayer.DefaultSql.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books;
+using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -40,15 +39,15 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperCode
             }
         }
 
-        public static async Task<IEnumerable<DapperBookListDto>> //#A
+        public static async Task<IEnumerable<BookListDto>> //#A
             DapperBookListQueryAsync(this BookDbContext context, //#B
-                SortFilterPageOptions options) //#C
+                ISortFilterPage options) //#C
         {
             var command = BuildQueryString(options, false); //#D
             using(new LogDapperCommand(command, context)) //#E
             {
                 return await context.Database.GetDbConnection() //#F
-                    .QueryAsync<DapperBookListDto>(command, new    //#G
+                    .QueryAsync<BookListDto>(command, new    //#G
                     {                                   //#G
                         pageSize = options.PageSize,    //#G
                         skipRows = options.PageSize     //#G
@@ -59,7 +58,7 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperCode
         }
 
         private static string BuildQueryString              //#H
-            (SortFilterPageOptions options, bool justCount) //#H
+            (ISortFilterPage options, bool justCount) //#H
         {
             var selectOptTop = FormSelectPart(options, justCount); //#I
             var filter = FormFilter(options); //#J
@@ -104,7 +103,7 @@ namespace BookApp.ServiceLayer.DapperSql.Books.DapperCode
             }
         }
 
-        private static string FormFilter(SortFilterPageOptions options)
+        private static string FormFilter(ISortFilterPage options)
         {
             const string start = "WHERE ([b].[SoftDeleted] = 0) ";
             switch (options.FilterBy)
@@ -129,7 +128,7 @@ AND ([b].[PublishedOn] <= GETUTCDATE()) ";
             throw new NotImplementedException();
         }
 
-        private static string FormSort(SortFilterPageOptions options)
+        private static string FormSort(ISortFilterPage options)
         {
             const string start = "ORDER BY ";
             switch (options.OrderByOptions)
@@ -148,14 +147,14 @@ AND ([b].[PublishedOn] <= GETUTCDATE()) ";
             throw new NotImplementedException();
         }
 
-        private static string FormOffsetEnd(SortFilterPageOptions options)
+        private static string FormOffsetEnd(ISortFilterPage options)
         {
             return options.PageNum <= 1
                 ? ""
                 : " OFFSET @skipRows ROWS FETCH NEXT @pageSize ROWS ONLY";
         }
 
-        private static string FormSelectPart(SortFilterPageOptions options, bool justCount)
+        private static string FormSelectPart(ISortFilterPage options, bool justCount)
         {
             if (justCount)
                 return "SELECT COUNT(*) FROM [Books] AS [b] ";

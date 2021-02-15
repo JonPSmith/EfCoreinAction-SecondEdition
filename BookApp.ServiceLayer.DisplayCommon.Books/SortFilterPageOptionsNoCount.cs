@@ -1,14 +1,10 @@
 ﻿// Copyright (c) 2019 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.ComponentModel.DataAnnotations;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
-using BookApp.ServiceLayer.DisplayCommon.Books;
-
-namespace BookApp.ServiceLayer.CosmosEf.Books
+namespace BookApp.ServiceLayer.DisplayCommon.Books
 {
 
-    public class CosmosEfSortFilterPageOptions
+    public class SortFilterPageOptionsNoCount : ISortFilterPage
     {
         public const int DefaultPageSize = 100;   //default page size is 100
 
@@ -29,6 +25,8 @@ namespace BookApp.ServiceLayer.CosmosEf.Books
         public int PageNum { get; set; } = 1;
 
         public int PageSize { get; set; } = DefaultPageSize;
+
+        public bool NoCount { get; } = true;
 
         public bool PrevPageValid { get; private set; }
         public bool NextPageValid { get; private set; }
