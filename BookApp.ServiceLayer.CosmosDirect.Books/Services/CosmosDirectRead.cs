@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 using BookApp.Domain.Books;
 using BookApp.Infrastructure.LoggingServices;
 using BookApp.Persistence.CosmosDb.Books;
-using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +97,7 @@ namespace BookApp.ServiceLayer.CosmosDirect.Books.Services
                     return $" WHERE CONTAINS(c.TagsString, '| {options.FilterValue} |') ";
                     //return $" JOIN f in c.Tags WHERE f.TagId = '{options.FilterValue}'";
                 case BooksFilterBy.ByPublicationYear:
-                    return options.FilterValue == BookListDtoFilter.AllBooksNotPublishedString 
+                    return options.FilterValue == DisplayConstants.AllBooksNotPublishedString 
                         ? $" WHERE c.PublishedOn > '{DateTime.UtcNow:yyyy-MM-dd}' " 
                         : $" WHERE c.YearPublished = {options.FilterValue} AND c.PublishedOn < '{DateTime.UtcNow:yyyy-MM-dd}' ";
             }

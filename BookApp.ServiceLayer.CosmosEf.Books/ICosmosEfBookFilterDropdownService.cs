@@ -3,8 +3,6 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 

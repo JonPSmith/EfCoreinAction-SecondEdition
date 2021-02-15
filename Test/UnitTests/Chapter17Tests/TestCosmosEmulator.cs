@@ -25,7 +25,7 @@ namespace Test.UnitTests.Chapter17Tests
         }
 
         [RunnableInDebugOnly]
-        public async Task AccessCosmosEmulatorViaConnectionString()
+        public void AccessCosmosEmulatorViaConnectionString()
         {
             //SETUP
             var connectionString = //#A

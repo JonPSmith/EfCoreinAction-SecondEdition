@@ -61,9 +61,7 @@ namespace Test.UnitTests.Chapter14
             //SETUP
             var options = this.CreateUniqueClassOptions<Chapter14DbContext>();
             using var context = new Chapter14DbContext(options);
-            context.Database.EnsureCreated();
-
-            context.WipeAllDataFromDatabase();
+            context.Database.EnsureClean();
 
             //ATTEMPT
             using (new TimeThings(_output, "One SaveChanges"))
@@ -100,9 +98,7 @@ namespace Test.UnitTests.Chapter14
             //SETUP
             var options = this.CreateUniqueClassOptions<Chapter14DbContext>();
             using var context = new Chapter14DbContext(options);
-            context.Database.EnsureCreated();
-
-            context.WipeAllDataFromDatabase();
+            context.Database.EnsureClean();
 
             //ATTEMPT
             using (new TimeThings(_output, "One Add and one SaveChanges"))

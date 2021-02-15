@@ -9,8 +9,6 @@ using BookApp.Infrastructure.AppParts;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.Persistence.EfCoreSql.Books;
 using BookApp.ServiceLayer.CosmosDirect.Books.Services;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.Azure.Cosmos;
@@ -85,8 +83,8 @@ namespace BookApp.ServiceLayer.CosmosEf.Books.Services
                     if (comingSoon)
                         result.Insert(0, new DropdownTuple
                         {
-                            Value = BookListDtoFilter.AllBooksNotPublishedString,
-                            Text = BookListDtoFilter.AllBooksNotPublishedString
+                            Value = DisplayConstants.AllBooksNotPublishedString,
+                            Text = DisplayConstants.AllBooksNotPublishedString
                         });
 
                     //This was the old one that took too long
