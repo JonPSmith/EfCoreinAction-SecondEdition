@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,9 @@ namespace BookApp.Infrastructure.LoggingServices
             "http://localhost:59382/CosmosEf/GetFilterSearchContent",
             "http://localhost:59382/CosmosDirect/GetFilterSearchContent",
             "http://localhost:59382/DapperSql/GetFilterSearchContent",
+            "http://localhost:59382/DapperNoCountSql/GetFilterSearchContent",
             "http://localhost:59382/CachedSql/GetFilterSearchContent",
+            "http://localhost:59382/CachedNoCountSql/GetFilterSearchContent",
             "http://localhost:59382/lib/"
         };
 
