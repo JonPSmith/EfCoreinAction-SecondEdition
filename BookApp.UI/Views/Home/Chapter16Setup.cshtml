@@ -12,7 +12,7 @@
     <li>
         You need access to a Cosmos DB database. The easier way to do this is download and run the
         <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator">Azure Cosmos emulator</a> and run it locally.
-        <br/>
+        <br />
         <i>NOTE: At the time of writing the emulator only works on Windows.</i>
     </li>
     <li>
@@ -20,17 +20,17 @@
     </li>
     <li>
         In the appsetting.json file in the BookApp.UI project you should set the "SetupVersion" to "3".
-        <br/>
+        <br />
         This changes the menu over to show the Cosmos (EF) and Cosmos (Direct) and two SQL versions
     </li>
     <li>
         Stop the Book App if its running and then start it again. I will take many seconds (but not minutes) to start as it will be building two new databases.
-        <br/>
+        <br />
         At this point it should create a new SQL database using localdb and at the same time create a Cosmos database.
     </li>
     <li>
         Now click on "Cosmos (EF)" in the menu. You should see some books on display.
-        <br/>
+        <br />
         Also try adding a review as see that the Cosmos version gets updated too.
     </li>
 </ol>
@@ -45,3 +45,5 @@
         The way out is to use the Admin -> Generate Books menu item. Check the "Wipe database" checkbox and create a (few) books. You can always come back and add more.
     </li>
 </ul>
+<br />
+<i>If you want to go back to the original version set the "SetupVersion" to "1" in the appsetting.json file and restart.</i>
