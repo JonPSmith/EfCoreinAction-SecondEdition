@@ -52,7 +52,7 @@ namespace Test.UnitTests.TestDataLayer
         #D If any of those things don't work it throws an exception
         #E The forms the full table name, with a schema if required.
         #F This forms the main part of the SQL code
-        #E This adds a parameter so that the ExecuteSqlRaw can check that parameter
+        #G This adds a parameter so that the ExecuteSqlRaw can check that parameter
          **********************************************************/
 
 
