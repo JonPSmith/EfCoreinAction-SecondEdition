@@ -15,7 +15,7 @@ namespace BookApp.BackgroundTasks
         /// <returns></returns>
         public TimeSpan TimeToWait()
         {
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            var tzi = TimeZoneInfo.Utc;  //Put your timezone here
             var nowAsEdtTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzi);
 
             return TimeTo1AmEveryDay(nowAsEdtTime);
