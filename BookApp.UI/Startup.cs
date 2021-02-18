@@ -21,6 +21,7 @@ using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
 using BookApp.ServiceLayer.CachedSql.Books;
 using BookApp.ServiceLayer.CosmosEf.Books;
 using BookApp.ServiceLayer.DefaultSql.Books;
+using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using BookApp.ServiceLayer.EfCoreSql.Orders.OrderServices;
 using BookApp.ServiceLayer.UdfsSql.Books;
@@ -97,6 +98,7 @@ namespace BookApp.UI
             //This registers all the services across all the projects in this application
             var diLogs = services.RegisterAssemblyPublicNonGenericClasses(
                     Assembly.GetAssembly(typeof(ICheckFixCacheValuesService)),
+                    Assembly.GetAssembly(typeof(BookListDto)),
                     Assembly.GetAssembly(typeof(IBookToCosmosBookService)),
                     Assembly.GetAssembly(typeof(IBookGenerator)),
                     Assembly.GetAssembly(typeof(IPlaceOrderBizLogic)),
@@ -127,8 +129,9 @@ namespace BookApp.UI
             //Register EfCoreGenericServices
             services.ConfigureGenericServicesEntities(typeof(BookDbContext), typeof(OrderDbContext))
                 .ScanAssemblesForDtos(
-                    Assembly.GetAssembly(typeof(BookListDto))
-                    ).RegisterGenericServices();
+                    Assembly.GetAssembly(typeof(BookListDto)),
+                    Assembly.GetAssembly(typeof(AddReviewDto))
+                ).RegisterGenericServices();
 
             var softLogs = services.RegisterSoftDelServicesAndYourConfigurations();
         }
