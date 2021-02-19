@@ -18,7 +18,7 @@ namespace Test.UnitTests.TestSupportCode
             //SETUP
 
             //ATTEMPT
-            var mock = new MockPlaceOrderDbAccess();
+            var mock = new StubPlaceOrderDbAccess();
            
             //VERIFY
             mock.Books.Count.ShouldEqual(10);
@@ -32,7 +32,7 @@ namespace Test.UnitTests.TestSupportCode
             //SETUP
 
             //ATTEMPT
-            var mock = new MockPlaceOrderDbAccess(true);
+            var mock = new StubPlaceOrderDbAccess(true);
 
             //VERIFY
             var expectedYear = EfTestData.DummyBookStartDate.Year;
@@ -49,7 +49,7 @@ namespace Test.UnitTests.TestSupportCode
             //SETUP
 
             //ATTEMPT
-            var mock = new MockPlaceOrderDbAccess(false,100);
+            var mock = new StubPlaceOrderDbAccess(false,100);
 
             //VERIFY
             mock.Books.Count.ShouldEqual(10);

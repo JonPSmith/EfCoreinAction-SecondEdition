@@ -11,14 +11,14 @@ using Test.TestHelpers;
 
 namespace Test.Mocks
 {
-    public class MockPlaceOrderDbAccess : IPlaceOrderDbAccess
+    public class StubPlaceOrderDbAccess : IPlaceOrderDbAccess
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="createLastInFuture">If true then the last book will be in the future</param>
         /// <param name="promotionPriceForFirstBook">if number it adds a promotion to the first book</param>
-        public MockPlaceOrderDbAccess(bool createLastInFuture = false, int? promotionPriceForFirstBook = null)
+        public StubPlaceOrderDbAccess(bool createLastInFuture = false, int? promotionPriceForFirstBook = null)
         {
             var numBooks = createLastInFuture ? DateTime.UtcNow.Year - EfTestData.DummyBookStartDate.Year + 2 : 10;
             var books = EfTestData.CreateDummyBooks(numBooks, createLastInFuture);

@@ -17,7 +17,7 @@ namespace Test.UnitTests.TestBizLogic
     {
 
         [Fact]
-        public void ExampleOfMockingOk()
+        public void ExampleOfStubbingOk()
         {
             //SETUP                                           //#A
             var lineItems = new List<OrderLineItem>           //#A
@@ -28,32 +28,32 @@ namespace Test.UnitTests.TestBizLogic
             var input = new PlaceOrderInDto(true, userId,     //#A
                 lineItems.ToImmutableList());                 //#A
 
-            var mockDbA = new MockPlaceOrderDbAccess();  //#B
-            var service = new PlaceOrderAction(mockDbA); //#C
+            var stubDbA = new StubPlaceOrderDbAccess();  //#B
+            var service = new PlaceOrderAction(stubDbA); //#C
 
             //ATTEMPT
             service.Action(input); //#D
 
             //VERIFY
             service.Errors.Any().ShouldEqual(false); //#
-            mockDbA.AddedOrder.CustomerId     //#F
+            stubDbA.AddedOrder.CustomerId     //#F
                 .ShouldEqual(userId);         //#F
         }
         /****************************************************************************
         #A Creates the input to the PlaceOrderAction method
-        #B Creates an instance of the mock database access code. This has numerous controls, but in this case, you use the default settings.
-        #C Creates your PlaceOrderAction instance, providing it with a mock of the database access code
+        #B Creates an instance of the stub database access code. This has numerous controls, but in this case, you use the default settings.
+        #C Creates your PlaceOrderAction instance, providing it with a stub of the database access code
         #D Runs the PlaceOrderAction’s method called Action, which takes in the input data and outputs an order
         #E Checks that the order placement completed successfully
-        #F Your mock database access code has captured the order that the PlaceOrderAction’s method “wrote” to the database so you can check it was formed properly.
+        #F Your stub database access code has captured the order that the PlaceOrderAction’s method “wrote” to the database so you can check it was formed properly.
          ******************************************************************************/
 
         [Fact]
         public void BookNotForSale()
         {
             //SETUP
-            var mockDbA = new MockPlaceOrderDbAccess(false, -1);
-            var service = new PlaceOrderAction(mockDbA);
+            var stubDbA = new StubPlaceOrderDbAccess(false, -1);
+            var service = new PlaceOrderAction(stubDbA);
             var lineItems = new List<OrderLineItem>
             {
                 new OrderLineItem {BookId = 1, NumBooks = 1},
@@ -76,8 +76,8 @@ namespace Test.UnitTests.TestBizLogic
         public void MissingBookError()
         {
             //SETUP
-            var mockDbA = new MockPlaceOrderDbAccess();
-            var service = new PlaceOrderAction(mockDbA);
+            var stubDbA = new StubPlaceOrderDbAccess();
+            var service = new PlaceOrderAction(stubDbA);
             var lineItems = new List<OrderLineItem>
             {
                 new OrderLineItem {BookId = 1, NumBooks = 4},
@@ -98,8 +98,8 @@ namespace Test.UnitTests.TestBizLogic
         public void NotAcceptTsAndCs()
         {
             //SETUP
-            var mockDbA = new MockPlaceOrderDbAccess(true);
-            var service = new PlaceOrderAction(mockDbA);
+            var stubDbA = new StubPlaceOrderDbAccess(true);
+            var service = new PlaceOrderAction(stubDbA);
             var userId = Guid.NewGuid();
 
             //ATTEMPT
@@ -115,8 +115,8 @@ namespace Test.UnitTests.TestBizLogic
         public void PlaceOrderOk()
         {
             //SETUP
-            var mockDbA = new MockPlaceOrderDbAccess();
-            var service = new PlaceOrderAction(mockDbA);
+            var stubDbA = new StubPlaceOrderDbAccess();
+            var service = new PlaceOrderAction(stubDbA);
             var lineItems = new List<OrderLineItem>
             {
                 new OrderLineItem {BookId = 1, NumBooks = 4},
@@ -130,10 +130,10 @@ namespace Test.UnitTests.TestBizLogic
 
             //VERIFY
             service.Errors.Any().ShouldEqual(false);
-            mockDbA.AddedOrder.CustomerId.ShouldEqual(userId);
-            mockDbA.AddedOrder.DateOrderedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-1,0);
-            mockDbA.AddedOrder.LineItems.Count.ShouldEqual(lineItems.Count);
-            var orderLineItems = mockDbA.AddedOrder.LineItems.ToImmutableList();
+            stubDbA.AddedOrder.CustomerId.ShouldEqual(userId);
+            stubDbA.AddedOrder.DateOrderedUtc.Subtract(DateTime.UtcNow).TotalSeconds.ShouldBeInRange(-1,0);
+            stubDbA.AddedOrder.LineItems.Count.ShouldEqual(lineItems.Count);
+            var orderLineItems = stubDbA.AddedOrder.LineItems.ToImmutableList();
             for (int i = 0; i < lineItems.Count; i++)
             {
                 orderLineItems[i].LineNum.ShouldEqual((byte)(i+1));
@@ -146,8 +146,8 @@ namespace Test.UnitTests.TestBizLogic
         public void PlaceOrderWithPromotionOk()
         {
             //SETUP
-            var mockDbA = new MockPlaceOrderDbAccess(false, 999);
-            var service = new PlaceOrderAction(mockDbA);
+            var stubDbA = new StubPlaceOrderDbAccess(false, 999);
+            var service = new PlaceOrderAction(stubDbA);
             var lineItems = new List<OrderLineItem>
             {
                 new OrderLineItem {BookId = 1, NumBooks = 1},
@@ -161,7 +161,7 @@ namespace Test.UnitTests.TestBizLogic
             //VERIFY
             service.Errors.Any().ShouldEqual(false);
 
-            var orderLineItems = mockDbA.AddedOrder.LineItems.ToList();
+            var orderLineItems = stubDbA.AddedOrder.LineItems.ToList();
             orderLineItems.First().BookPrice.ShouldEqual(999);
             orderLineItems.Last().BookPrice.ShouldEqual(2);
 

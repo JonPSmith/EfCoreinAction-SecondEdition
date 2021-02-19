@@ -129,6 +129,7 @@ namespace Test.UnitTests.TestDataLayer
             {
                 //ATTEMPT
                 var book = context.Books //#F
+                    .Include(x => x.Reviews)
                     .OrderBy(x => x.BookId).Last(); //#F
                 book.Reviews.Add(new Review { NumStars = 5 });  //#G
 
