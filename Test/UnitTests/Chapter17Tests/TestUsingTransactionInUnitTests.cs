@@ -51,9 +51,9 @@ namespace Test.UnitTests.Chapter17Tests
             context.SaveChanges();      //#C
 
             //VERIFY
-            context.Books.Count().ShouldEqual(4+10); //#E
+            context.Books.Count().ShouldEqual(4+10); //#D
 
-        } //#F
+        } //#E
 
         /****************************************************************
         #A You most likely will link to a database via a connection string
