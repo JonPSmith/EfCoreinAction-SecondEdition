@@ -14,6 +14,7 @@ namespace BookApp.Persistence.EfCoreSql.Books.Configurations
             entity.HasIndex(x => x.PublishedOn);
             entity.HasIndex(x => x.ActualPrice);
             entity.HasIndex(x => x.ReviewsAverageVotes);
+            entity.HasIndex(x => x.SoftDeleted);
 
             entity.HasOne(x => x.Details)
                 .WithOne()

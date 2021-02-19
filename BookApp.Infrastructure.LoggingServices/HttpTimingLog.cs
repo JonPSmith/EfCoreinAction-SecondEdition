@@ -23,6 +23,7 @@ namespace BookApp.Infrastructure.LoggingServices
             "http://localhost:59382/DapperNoCountSql/GetFilterSearchContent",
             "http://localhost:59382/CachedSql/GetFilterSearchContent",
             "http://localhost:59382/CachedNoCountSql/GetFilterSearchContent",
+            "http://localhost:59382/UdfsSql/GetFilterSearchContent",
             "http://localhost:59382/lib/"
         };
 
