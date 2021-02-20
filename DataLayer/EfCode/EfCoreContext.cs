@@ -146,7 +146,7 @@ namespace DataLayer.EfCode
 * The steps are:
 * a) Make sure the default project is BookApp
 * b) Use the PMC command
-*    Add-Migration NameForMigration -Project DataLayer
+*    Add-Migration NameForMigration -Project DataLayer -Context EfCoreContext
 * c) Use PMC command
 *    Update-database (or migrate on startup)
 *    
