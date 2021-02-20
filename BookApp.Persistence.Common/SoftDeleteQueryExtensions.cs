@@ -28,6 +28,10 @@ namespace BookApp.Persistence.Common
             var filter = methodToCall                             //#G
                 .Invoke(null, new object[] { userIdProvider });   //#G
             entityData.SetQueryFilter((LambdaExpression)filter);  //#H 
+            if (queryFilterType == MyQueryFilterTypes.SoftDelete)
+                entityData.AddIndex(entityData.FindProperty(nameof(ISoftDelete.SoftDeleted)));
+            if (queryFilterType == MyQueryFilterTypes.UserId)
+                entityData.AddIndex(entityData.FindProperty(nameof(IUserId.UserId)));
         }
 
         private static LambdaExpression GetUserIdFilter<TEntity>(     //#I
