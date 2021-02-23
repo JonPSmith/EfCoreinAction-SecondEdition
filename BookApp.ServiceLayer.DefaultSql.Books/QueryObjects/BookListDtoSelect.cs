@@ -3,7 +3,6 @@
 
 using System.Linq;
 using BookApp.Domain.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 
 namespace BookApp.ServiceLayer.DefaultSql.Books.QueryObjects
