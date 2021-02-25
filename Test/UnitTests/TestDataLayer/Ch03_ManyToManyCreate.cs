@@ -35,6 +35,9 @@ namespace Test.UnitTests.TestDataLayer
             var newBook = new Book()
             {
                 Title = "My Book",
+                //... other property settings left out
+
+                //Set your AuthorsLink property to an empty collection
                 AuthorsLink = new List<BookAuthor>()
             };
             newBook.AuthorsLink.Add(new BookAuthor
