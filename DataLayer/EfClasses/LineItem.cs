@@ -39,13 +39,13 @@ namespace DataLayer.EfClasses
 
             if (ChosenBook.Price < 0)                      //#E
                 yield return new ValidationResult(         //#E
-$"Sorry, the book '{ChosenBook.Title}' is not for sale."); //#E
+        $"Sorry, the book '{ChosenBook.Title}' is not for sale."); //#E
 
-            if (NumBooks > 100)
+            if (NumBooks > 100) //#F
                 yield return new ValidationResult(//#F
-"If you want to order a 100 or more books"+       //#F
-" please phone us on 01234-5678-90",              //#F
-                    new[] { nameof(NumBooks) });  //#F
+        "If you want to order a 100 or more books"+       //#F
+    " please phone us on 01234-5678-90",              //#F
+                    new[] { nameof(NumBooks) });  //#G
         }
     }
     //0123456789|123456789|123456789|123456789|123456789|123456789|123456789|xxxxx!
@@ -54,8 +54,8 @@ $"Sorry, the book '{ChosenBook.Title}' is not for sale."); //#E
     #B This will add an error message if the LineNum property is not in range
     #C This is the method that the IValidatableObject interface requires me to create
     #D This allows access the current DbContext if needed to get more information. 
-    #D Here I use the ChosenBook link to look at the date the book was published.
-    #E This moves the Price check out of the business logic
-    #F This tests a property so I can return that property with the error.
+    #E This moves the Price check out of the business logic into this validation
+    #F Extra validation rule: An order for more than 100 books need to phone in an order
+    #G Returning the name of the property with the error give better error messages
      * *******************************************************/
 }
