@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
@@ -427,7 +429,6 @@ namespace Test.UnitTests.TestDataLayer
             using var context = new EfCoreContext(options);
             context.Database.EnsureCreated();
             context.SeedDatabaseFourBooks();
-            var tagsCount = context.Tags.Count();
 
             context.ChangeTracker.Clear();
 
@@ -448,7 +449,59 @@ namespace Test.UnitTests.TestDataLayer
                 .First();
             bookAgain.Tags.Count.ShouldEqual(1);
             bookAgain.Tags.Single().TagId.ShouldEqual("Refactoring");
-            tagsCount.ShouldEqual(context.Tags.Count());
+        }
+
+        [Fact]
+        public void TestAddDuplicateExistingTagToBookOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books
+                .Include(p => p.Tags)
+                .Single(p => p.Title == "Quantum Networking");
+
+            book.Tags.Add(book.Tags.First());
+            context.SaveChanges();
+
+            context.ChangeTracker.Clear();
+
+            //VERIFY
+            var bookAgain = context.Books
+                .Include(p => p.Tags)
+                .Single(p => p.Title == "Quantum Networking");
+            bookAgain.Tags.Count.ShouldEqual(1);
+            bookAgain.Tags.Single().TagId.ShouldEqual("Quantum Entanglement");
+        }
+
+        [Fact]
+        public void TestAddDuplicateNewTagToBookOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using var context = new EfCoreContext(options);
+            context.Database.EnsureCreated();
+            context.SeedDatabaseFourBooks();
+            var tagsCount = context.Tags.Count();
+
+            context.ChangeTracker.Clear();
+
+            //ATTEMPT
+            var book = context.Books
+                .Include(p => p.Tags)
+                .Single(p => p.Title == "Quantum Networking");
+
+            book.Tags.Add( new Tag{TagId =  book.Tags.First().TagId});
+            var ex = Assert.Throws<InvalidOperationException>(() =>  context.SaveChanges());
+
+            //VERIFY
+            ex.Message.ShouldStartWith("The instance of entity type 'Tag' cannot be tracked because another instance with the key value");
         }
 
     }
