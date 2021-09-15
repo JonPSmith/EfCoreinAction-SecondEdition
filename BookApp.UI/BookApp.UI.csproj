@@ -71,7 +71,6 @@
     <ProjectReference Include="..\BookApp.ServiceLayer.DefaultSql.Books\BookApp.ServiceLayer.DefaultSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.EfCoreSql.Orders\BookApp.ServiceLayer.EfCoreSql.Orders.csproj" />
     <ProjectReference Include="..\BookApp.ServiceLayer.UdfsSql.Books\BookApp.ServiceLayer.UdfsSql.Books.csproj" />
-    <ProjectReference Include="..\BookApp.ServiceLayer.UtfsSql.Books\BookApp.ServiceLayer.UdfsSql.Books.csproj" />
     <ProjectReference Include="..\BookApp.BizLogic.Orders\BookApp.BizLogic.Orders.csproj" />
   </ItemGroup>
 
