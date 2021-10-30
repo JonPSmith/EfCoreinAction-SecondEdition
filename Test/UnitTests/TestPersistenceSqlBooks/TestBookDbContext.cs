@@ -83,45 +83,5 @@ namespace Test.UnitTests.TestPersistenceSqlBooks
             context.Authors.Count().ShouldEqual(1);
             context.Tags.Count().ShouldEqual(2);
         }
-
-        //see https://github.com/dotnet/efcore/issues/22701
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void TestCountOfCollectionWithTypeChanged(bool countNoBrackets)
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<BookDbContext>();
-            using (var context = new BookDbContext(options))
-            {
-                context.Database.EnsureCreated();
-                var bookId = context.SeedDatabaseFourBooks().Last().BookId;
-
-                context.ChangeTracker.Clear();
-
-                var query1 = context.Books
-                    .Where(b => b.BookId == bookId);
-                var query2 = countNoBrackets
-                    ? query1.Select(b => b.Reviews.Count)
-                    : query1.Select(b => b.Reviews.Count());
-
-                //ATTEMPT
-                int reviewCount;
-                try
-                {
-                    reviewCount = query2.Single();
-                }
-                catch
-                {
-                    countNoBrackets.ShouldBeTrue();
-                    return;
-                }
-
-                //VERIFY
-                countNoBrackets.ShouldBeFalse();
-                _output.WriteLine(query2.ToQueryString());
-                reviewCount.ShouldEqual(2);
-            }
-        }
     }
 }
