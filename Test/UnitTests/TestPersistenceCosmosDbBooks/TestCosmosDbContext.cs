@@ -119,8 +119,8 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             await context.SaveChangesAsync();
 
             //ATTEMPT
-            var list =
-                await context.Books.FromSqlRaw("SELECT * FROM c ORDER BY c.BookId").ToListAsync();
+            var list = await CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.BookId")
+                .ToListAsync();
 
             //VERIFY
             list.Select(x => x.BookId).ShouldEqual(new[] { 123, 567 }); //WRONG IN EF CORE 5

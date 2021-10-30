@@ -132,7 +132,7 @@ namespace Test.UnitTests.Chapter17Tests
 
             //VERIFY
             logs.Count.ShouldEqual(1);
-            logs.Single().ShouldStartWith("Entity Framework Core 5.0.1 initialized 'BookDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite' with options: ");
+            logs.Single().ShouldStartWith("Entity Framework Core 6.0.0");
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace Test.UnitTests.Chapter17Tests
             var lines = logs.Last().Split('\n').Select(x => x.Trim()).ToArray();
             lines[1].ShouldEqual("SELECT TOP(1) [b].[BookId]");
             lines[2].ShouldEqual("FROM [Books] AS [b]");
-            lines[3].ShouldEqual("WHERE ([b].[SoftDeleted] <> CAST(1 AS bit)) AND ((");
+            lines[3].ShouldEqual("WHERE ([b].[SoftDeleted] = CAST(0 AS bit)) AND ((");
             lines[4].ShouldEqual("SELECT COUNT(*)");
             lines[5].ShouldEqual("FROM [Review] AS [r]");
             lines[6].ShouldEqual("WHERE [b].[BookId] = [r].[BookId]) > 1)");
@@ -242,7 +242,7 @@ namespace Test.UnitTests.Chapter17Tests
             var lines = logs.Last().Split('\n').Select(x => x.Trim()).ToArray();
             lines[1].ShouldEqual("SELECT TOP(1) [b].[BookId]");
             lines[2].ShouldEqual("FROM [Books] AS [b]");
-            lines[3].ShouldEqual("WHERE ([b].[SoftDeleted] <> CAST(1 AS bit)) AND ((");
+            lines[3].ShouldEqual("WHERE ([b].[SoftDeleted] = CAST(0 AS bit)) AND ((");
             lines[4].ShouldEqual("SELECT COUNT(*)");
             lines[5].ShouldEqual("FROM [Review] AS [r]");
             lines[6].ShouldEqual("WHERE [b].[BookId] = [r].[BookId]) > 1)");

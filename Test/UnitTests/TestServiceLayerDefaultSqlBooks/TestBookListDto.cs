@@ -3,8 +3,6 @@
 
 using System.Linq;
 using BookApp.Persistence.EfCoreSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books;
-using BookApp.ServiceLayer.DefaultSql.Books.Dtos;
 using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -219,8 +217,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                 context.SeedDatabaseFourBooks();
 
                 //ATTEMPT
-                var books =
-                    context.Books.FromSqlRaw(
+                var books = RelationalQueryableExtensions.FromSqlRaw(context.Books, 
                             "SELECT * FROM Books AS a ORDER BY (SELECT AVG(b.NumStars) FROM Review AS b WHERE b.BookId = a.BookId) DESC")
                         .ToList();
 
