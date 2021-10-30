@@ -34,8 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EfCore.GenericEventRunner" Version="2.3.0" />
-    <PackageReference Include="EfCore.GenericServices" Version="5.0.1" />
+    <PackageReference Include="EfCore.GenericEventRunner" Version="2.3.3" />
+    <PackageReference Include="EfCore.GenericServices" Version="6.0.0-preview001" />
     <PackageReference Include="EfCore.GenericServices.AspNetCore" Version="4.1.1" />
     <PackageReference Include="EfCore.SoftDeleteServices" Version="1.1.3" />
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.1.0" />

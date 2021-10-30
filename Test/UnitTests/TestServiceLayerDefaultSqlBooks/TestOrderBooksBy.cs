@@ -48,7 +48,7 @@ namespace Test.UnitTests.TestServiceLayerDefaultSqlBooks
                     context.Books.MapBookToDto().OrderBooksBy(OrderByOptions.ByPriceLowestFirst).ToList());
 
                 //VERIFY
-                ex.Message.ShouldStartWith("SQLite cannot order by expressions of type 'decimal'.");
+                ex.Message.ShouldStartWith("SQLite does not support expressions of type 'decimal'");
             }
         }
     }
