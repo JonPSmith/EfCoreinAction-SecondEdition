@@ -19,8 +19,16 @@ namespace BookApp.Persistence.CosmosDb.Books
             modelBuilder.Entity<CosmosBook>()
                 .HasKey(x => x.BookId); //#C
 
-            modelBuilder.Entity<CosmosBook>() //#D
-                .OwnsMany(p => p.Tags);       //#D
+            //net6 needed a different way to configure a collection of owned types
+            //see https://docs.microsoft.com/en-gb/ef/core/modeling/owned-entities#collections-of-owned-types
+            modelBuilder.Entity<CosmosBook>()
+                .OwnsMany(p => p.Tags, a =>
+                    {
+                        a.WithOwner().HasForeignKey("BookId");
+                        a.Property<int>("BookId");
+                        a.HasKey(new string[] { "TagId", "BookId" });
+                    });
+
         }
     }
     /*****************************************************************
