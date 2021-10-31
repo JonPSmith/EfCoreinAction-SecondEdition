@@ -131,9 +131,10 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
             {
                 await _cosmosContext.SaveChangesAsync();
             }
-            catch (CosmosException e) //#C
+            catch (DbUpdateException e) //#I
             {
-                if (e.StatusCode == HttpStatusCode.NotFound //#D
+                var cosmosException = e.InnerException as CosmosException; //#J
+                if (cosmosException.StatusCode == HttpStatusCode.NotFound //#D
                     && whatDoing == WhatDoing.Updating) //#D
                 {
                     _myLogger.LogWarning($"Attempt to update a CosmosBook which wasn't found (fixed): BookId = {bookId}");
@@ -145,23 +146,14 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
 
                     await AddCosmosBookAsync(bookId); //#F
                 }
-                else if (e.StatusCode == HttpStatusCode.NotFound //#G
-                         && whatDoing == WhatDoing.Deleting) //#G
+                else if (cosmosException.StatusCode == HttpStatusCode.NotFound //#G
+                    && whatDoing == WhatDoing.Deleting) //#G
                 {
                     _myLogger.LogWarning($"Attempt to delete a CosmosBook was already deleted (fixed): BookId = {bookId}");
                     //#G
                     //Do nothing as already deleted               //#G
                 } //#G
-                else //#H
-                {
-                    //#H
-                    throw; //#H
-                } //#H
-            }
-            catch (DbUpdateException e) //#I
-            {
-                var cosmosException = e.InnerException as CosmosException; //#J
-                if (cosmosException?.StatusCode == HttpStatusCode.Conflict //#K
+                else if (cosmosException?.StatusCode == HttpStatusCode.Conflict //#K
                     && whatDoing == WhatDoing.Adding) //#K
                 {
                     _myLogger.LogWarning($"Attempt to add a CosmosBook which was already there (fixed): BookId = {bookId}");
@@ -169,6 +161,7 @@ namespace BookApp.Infrastructure.Books.CosmosDb.Services
                     var updateVersion = _cosmosContext.Find<CosmosBook>(bookId);
                     _cosmosContext.Entry(updateVersion)
                         .State = EntityState.Detached;
+
                     await UpdateCosmosBookAsync(bookId);
                 }
                 else
