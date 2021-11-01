@@ -14,6 +14,7 @@ namespace BookApp.Infrastructure.LoggingServices
         private static readonly string[] UrlsToIgnore = new string[]
         {
             "http://localhost:59382/favicon.ico",
+            "http://localhost:59382/_framework/aspnetcore-browser-refresh.js",
             "http://localhost:59382/Admin/GetTimingLogs",
             "http://localhost:59382/Logger/GetLog",
             "http://localhost:59382/DefaultSql/GetFilterSearchContent",
