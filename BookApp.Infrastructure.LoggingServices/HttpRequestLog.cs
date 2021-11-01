@@ -73,7 +73,8 @@ namespace BookApp.Infrastructure.LoggingServices
         public static HttpRequestLog GetHttpRequestLog(string traceIdentifier)
         {
             HttpRequestLog result;
-            if (AllHttpRequestLogs.TryGetValue(traceIdentifier, out result)) return result;
+            if (AllHttpRequestLogs.TryGetValue(traceIdentifier, out result)) 
+                return result;
 
             //No log so make up one to say what has happened.
             result = new HttpRequestLog(traceIdentifier);

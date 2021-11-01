@@ -15,6 +15,7 @@ namespace BookApp.UI.Logger
     public class RequestTransientLogger : ILoggerProvider
     {
         public const string NonHttpLogsIdentifier = "non-http-logs";
+        public const string RequestFinishedLogStartsWith = "Request finished";
 
         private readonly Func<IHttpContextAccessor> _httpAccessor;
 
@@ -53,13 +54,19 @@ namespace BookApp.UI.Logger
                 Func<TState, Exception, string> formatter)
             {
                 var currHttpContext = _httpAccessor().HttpContext;
+                var eventString = formatter(state, exception);
                 HttpRequestLog.AddLog(currHttpContext?.TraceIdentifier ?? NonHttpLogsIdentifier,
-                    logLevel, eventId, formatter(state, exception));
-                if (currHttpContext != null && eventId.Name == "RequestFinished")
+                    logLevel, eventId, eventString);
+                if (currHttpContext != null && ThisIsTheRequestFinishedLog(logLevel, eventString))
                 {
                     var currentUrl = currHttpContext?.Request.GetEncodedUrl();
                     HttpTimingLog.AddLog(currentUrl, state.ToString());
                 }
+            }
+
+            private bool ThisIsTheRequestFinishedLog(LogLevel logLevel, string eventString)
+            {
+                return logLevel == LogLevel.Information && eventString.StartsWith(RequestFinishedLogStartsWith);
             }
 
             public IDisposable BeginScope<TState>(TState state)
