@@ -119,7 +119,7 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             await context.SaveChangesAsync();
 
             //ATTEMPT
-            var list = await RelationalQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.BookId")
+            var list = await CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.BookId")
                 .ToListAsync();
 
             //VERIFY
