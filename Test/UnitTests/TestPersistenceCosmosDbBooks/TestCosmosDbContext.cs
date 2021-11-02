@@ -128,12 +128,12 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             //ATTEMPT
             //var list = await RelationalQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.YearPublished")
             //    .ToListAsync();
-            var query = CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c");
+            var query = CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.YearPublished");
             _output.WriteLine(query.ToQueryString());
             var list = await query.ToListAsync();
 
             //VERIFY
-            list.Select(x => x.BookId).ToArray().ShouldEqual(new[] { 123, 567, 890 });
+            list.Select(x => x.BookId).ToArray().ShouldEqual(new[] { 123, 890, 567 });
         }
 
         [Fact]

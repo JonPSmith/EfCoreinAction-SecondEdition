@@ -16,6 +16,8 @@ namespace BookApp.Persistence.CosmosDb.Books
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CosmosBook>().HasNoDiscriminator();
+
             modelBuilder.Entity<CosmosBook>()
                 .HasKey(x => x.BookId); //#C
 
