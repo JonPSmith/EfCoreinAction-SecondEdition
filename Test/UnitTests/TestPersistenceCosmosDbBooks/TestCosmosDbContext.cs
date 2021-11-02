@@ -115,15 +115,24 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
                 PublishedOn = new DateTime(3000, 1, 1),
                 YearPublished = 3000
             };
-            context.AddRange(book1, book2);
+            var book3 = new CosmosBook
+            {
+                BookId = 890,
+                Title = "Year3000",
+                PublishedOn = new DateTime(2500, 1, 1),
+                YearPublished = 2500
+            };
+            context.AddRange(book1, book2, book3);
             await context.SaveChangesAsync();
 
             //ATTEMPT
-            var list = await CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.BookId")
+            //var list = await RelationalQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.YearPublished")
+            //    .ToListAsync();
+            var list = await CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c")
                 .ToListAsync();
 
             //VERIFY
-            list.Select(x => x.BookId).ShouldEqual(new[] { 123, 567 }); //WRONG IN EF CORE 5
+            list.Select(x => x.BookId).ToArray().ShouldEqual(new[] { 123, 567, 890 });
         }
 
         [Fact]
