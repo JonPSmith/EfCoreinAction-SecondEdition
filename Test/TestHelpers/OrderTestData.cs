@@ -24,7 +24,7 @@ namespace Test.TestHelpers
                 throw new NotSupportedException("This only works on SQLite databases");
 
             var logs = new List<string>();
-            var bookOptions = SqliteInMemory.CreateOptionsWithLogging<BookDbContext>(log => logs.Add(log.DecodeMessage()));
+            var bookOptions = SqliteInMemory.CreateOptionsWithLogTo<BookDbContext>(log => logs.Add(log));
             using var tempBookContext = new BookDbContext(bookOptions);
             tempBookContext.Database.EnsureCreated();
 

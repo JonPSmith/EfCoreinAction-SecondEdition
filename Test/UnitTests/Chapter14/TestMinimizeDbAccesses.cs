@@ -28,7 +28,7 @@ namespace Test.UnitTests.Chapter14
             _output = output;
             showLogs = false;
             int count = 1;
-            _options = this.CreateUniqueClassOptionsWithLogging<BookDbContext>(log =>
+            _options = this.CreateUniqueClassOptionsWithLogTo<BookDbContext>(log =>
             {
                 if (showLogs)
                 {

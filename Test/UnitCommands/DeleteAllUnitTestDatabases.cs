@@ -23,7 +23,7 @@ namespace Test.UnitCommands
         public void DeleteAllTestDatabasesOk()
         {
             var numDeleted = DatabaseTidyHelper
-                .DeleteAllUnitTestDatabases();
+                .DeleteAllSqlServerTestDatabases();
             _output.WriteLine("This deleted {0} databases.", numDeleted);
         }
     }

@@ -126,14 +126,16 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             await context.SaveChangesAsync();
 
             //ATTEMPT
+            //NOTE: using RelationalQueryableExtensions.FromSqlRaw executes, but doesn't work properly
             //var list = await RelationalQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.YearPublished")
             //    .ToListAsync();
-            var query = CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c ORDER BY c.YearPublished");
+            //NOTE You can't use ORDER BY in Cosmos - see https://github.com/dotnet/efcore/issues/26502
+            var query = CosmosQueryableExtensions.FromSqlRaw(context.Books, "SELECT * FROM c");
             _output.WriteLine(query.ToQueryString());
             var list = await query.ToListAsync();
 
             //VERIFY
-            list.Select(x => x.BookId).ToArray().ShouldEqual(new[] { 123, 890, 567 });
+            list.Select(x => x.BookId).ToArray().ShouldEqual(new[] { 123, 567, 890 });
         }
 
         [Fact]
