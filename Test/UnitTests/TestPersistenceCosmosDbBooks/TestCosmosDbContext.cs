@@ -9,7 +9,6 @@ using BookApp.Domain.Books;
 using BookApp.Infrastructure.AppParts;
 using BookApp.Persistence.CosmosDb.Books;
 using BookApp.ServiceLayer.CosmosEf.Books.Services;
-using BookApp.ServiceLayer.DefaultSql.Books.QueryObjects;
 using BookApp.ServiceLayer.DisplayCommon.Books;
 using BookApp.UI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +40,7 @@ namespace Test.UnitTests.TestPersistenceCosmosDbBooks
             using var context = new CosmosDbContext(options);
 
             //ATTEMPT
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             //VERIFY

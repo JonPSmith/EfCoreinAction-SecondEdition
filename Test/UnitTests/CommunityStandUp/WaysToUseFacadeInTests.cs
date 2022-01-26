@@ -10,13 +10,8 @@ using BookApp.BizLogic.Orders.Orders;
 using BookApp.BizLogic.Orders.Orders.Concrete;
 using BookApp.Domain.Books;
 using BookApp.Domain.Orders;
-using BookApp.Persistence.EfCoreSql.Orders;
 using BookApp.Persistence.EfCoreSql.Orders.DbAccess;
-using BookApp.Persistence.EfCoreSql.Orders.DbAccess.Orders;
-using Microsoft.EntityFrameworkCore;
-using Test.Mocks;
 using Test.TestHelpers;
-using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -63,12 +58,9 @@ public class WaysToUseFacadeInTests
     {
         //SETUP
         var userId = Guid.NewGuid();
-        var options = SqliteInMemory.CreateOptions<OrderDbContext>();
-        using var context = new OrderDbContext(options, new FakeUserIdService(userId));
-        context.Database.EnsureCreated();
-
         var stubDbA = new StubPlaceOrderDbAccess();
         var service = new PlaceOrderBizLogic(stubDbA);
+
         //ATTEMPT
         var lineItems = new List<OrderLineItem>
         {
