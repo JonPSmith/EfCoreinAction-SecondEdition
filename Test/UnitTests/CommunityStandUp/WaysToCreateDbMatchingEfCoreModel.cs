@@ -46,6 +46,7 @@ public class WaysToCreateDbMatchingEfCoreModel
         var options = this.CreateUniqueClassOptions<BookDbContext>();
         using var context = new BookDbContext(options);
 
+        //see https://github.com/JonPSmith/EfCore.TestSupport/wiki/EnsureClean-your-database
         context.Database.EnsureClean(); //Only works with SQL Server and Postgres
 
         context.SeedDatabaseFourBooks();

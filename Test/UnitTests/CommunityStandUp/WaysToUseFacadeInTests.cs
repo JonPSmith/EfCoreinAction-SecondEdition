@@ -72,5 +72,8 @@ public class WaysToUseFacadeInTests
         //VERIFY
         status.IsValid.ShouldBeTrue(status.GetAllErrors());
         stubDbA.AddedOrder.UserId.ShouldEqual(userId);
+        stubDbA.AddedOrder.LineItems.Count.ShouldEqual(1);
+        stubDbA.AddedOrder.LineItems.Single().BookId.ShouldEqual(1);
+        stubDbA.AddedOrder.LineItems.Single().NumBooks.ShouldEqual((short)4);
     }
 }
