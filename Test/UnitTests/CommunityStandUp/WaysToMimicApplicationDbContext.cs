@@ -102,6 +102,7 @@ public class WaysToMimicApplicationDbContext
         context.Database.EnsureClean();
         context.SeedDatabaseFourBooks();
 
+        //see https://github.com/JonPSmith/EfCore.TestSupport/wiki/EnsureClean-your-database
         context.ChangeTracker.Clear(); //!!!!!!!!!!!!!!!!!!!!!!!
 
         //ATTEMPT

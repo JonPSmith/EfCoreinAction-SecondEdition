@@ -91,7 +91,6 @@ public class WaysToGetUniqueDatabaseName
 
         using var context = new BookDbContext(options);
 
-        context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
         context.SeedDatabaseFourBooks();
         context.ChangeTracker.Clear();
