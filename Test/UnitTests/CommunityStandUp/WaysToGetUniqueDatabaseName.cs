@@ -30,8 +30,7 @@ public class WaysToGetUniqueDatabaseName
 
         using var context = new BookDbContext(builder.Options);
 
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        context.Database.EnsureClean();
         context.SeedDatabaseFourBooks();
         context.ChangeTracker.Clear();
 
@@ -54,8 +53,7 @@ public class WaysToGetUniqueDatabaseName
         var options = this.CreateUniqueClassOptions<BookDbContext>();
         using var context = new BookDbContext(options);
 
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        context.Database.EnsureClean();
         context.SeedDatabaseFourBooks();
         context.ChangeTracker.Clear();
 
@@ -70,6 +68,8 @@ public class WaysToGetUniqueDatabaseName
         books.Select(x => x.Title).ShouldEqual(
             new[] { "Refactoring", "Patterns of Enterprise Application Architecture", "Domain-Driven Design" });
     }
+
+
 
     [Fact]
     public void TestUseSqlLiteInMemoryDatabase()
